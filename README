@@ -1,0 +1,10 @@
+Usher (let me show you to your request)
+
+this is a tree-based router (based on Ilya Grigorik suggestion). Turns out looking up in a hash and following a tree is faster than krauter's massive regex
+appraoch, so why not?
+
+still very much a WIP, but supports named routes. still needs route globbing, but should be easy and fast.
+
+looks about 20% faster than rails's built-in router for non-trivial cases. still need to investigate this massively.
+
+
