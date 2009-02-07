@@ -59,7 +59,7 @@ module ActionController
       end
       
       def reset!
-        @tree = Node.new(nil)
+        @tree = Node.root
         @names = {}
         @param_lookups = {}
         @param_keys = []
@@ -89,9 +89,11 @@ module ActionController
 
       def recognize(request)
         path = Route.path_to_route_parts(request.path)
-        route = @tree.find(path.dup)
-        params = {}
-        route.dynamic_indicies.each{|i| params[route.path.at(i).var] = path.at(i)}
+        (route, params_list) = @tree.find(path)
+        params = route.options
+        params_list.each do |pair|
+          params[pair[0]] = pair[1]
+        end
         request.path_parameters = params.with_indifferent_access
         "#{params[:controller].camelize}Controller".constantize
       end
@@ -121,7 +123,7 @@ module ActionController
 
       def generate_url(route, params)
         route = @names[route] if route.is_a?(Symbol)
-
+        
         param_list = case params
         when Hash
           params = route.options.merge(params)
@@ -136,7 +138,8 @@ module ActionController
       end
 
       class Node
-        attr_reader :value, :parent, :param_name
+        attr_reader :value, :parent, :lookup
+        attr_accessor :terminates
         
         def depth
           unless @depth
@@ -150,39 +153,69 @@ module ActionController
           @depth
         end
         
-        def initialize(parent)
-          @lookup = Hash.new
-          @parent = parent
+        def self.root
+          self.new(nil, nil)
         end
         
-        def add(route, path = :no_path)
-          add(route, route.path) and return if path == :no_path
+        def initialize(parent, value)
+          @parent = parent
+          @value = value
+          @lookup = Hash.new
+        end
+        
+        def terminates?
+          @terminates
+        end
+        
+        def find_parent(clazz)
+          @parent && @parent.value.is_a?(clazz) ? @parent : @parent.find_parent(clazz)
+        end
+        
+        def current_route
+          route = [@value]
+          p = self
+          while not (p = p.parent).nil?
+            route.unshift(@value)
+          end
+          route
+        end
+        
+        def add(route, path = route.path)
           
-          if path.size == 0
-            @value = route
-          else
-            key = case path.first
-            when Route::Variable
-              @param_name = path.first.var
-              nil
-            else
-              path.first
-            end
+          unless path.size == 0
+            key = path.first
+            key = nil if key.is_a?(Route::Variable)
             
             unless @lookup.key?(key)
-              @lookup[key] = Node.new(self)
+              @lookup[key] = Node.new(self, path.first)
             end
-            @lookup[key].add(route, path[1..(path.size-1)])
+            target_node = @lookup[key]
+            target_node.terminates = route if path.size == 1
+            target_node.add(route, path[1..(path.size-1)])
           end
         end
         
-        def find(path)
-          return @value if path.size.zero?
+        def find(path, params = [])
+          return [terminates, params] if terminates? && path.size.zero?
           part = path.shift
+          
           if @lookup[part]
-            @lookup[part].find(path)
+            @lookup[part].find(path, params)
           elsif @lookup[nil]
-            @lookup[nil].find(path)
+            next_part = @lookup[nil]
+            if next_part.value.is_a?(Route::Variable)
+              case next_part.value.type
+              when :*
+                params << [next_part.value.name, []]
+                params.last.last << part unless next_part.is_a?(Route::Seperator)
+              when :':'
+                params << [next_part.value.name, part]
+              end
+            end
+            @lookup[nil].find(path, params)
+          elsif find_parent(Route::Variable).value.type == :*
+            params.last.last << part unless part.is_a?(Route::Seperator)
+            find(path, params)
           else
             raise
           end
@@ -197,7 +230,7 @@ module ActionController
           path.insert(0, '/') unless path[0] == ?/
           ss = StringScanner.new(path)
           parts = []
-          while (part = ss.scan(/(:?[0-9a-z_]+|\/|\.)/))
+          while (part = ss.scan(/([:\*]?[0-9a-z_]+|\/|\.)/))
             parts << case part[0]
             when ?:
               Variable.new(:':', part[1..(path.size-1)])
@@ -226,7 +259,7 @@ module ActionController
           @path.each_index{|i| @dynamic_indicies << i if @path[i].is_a?(Variable)}
           @dynamic_map = {}
           @dynamic_keys = []
-          @dynamic_parts.each{|p| @dynamic_map[@dynamic_keys << p.var] = p }
+          @dynamic_parts.each{|p| @dynamic_map[@dynamic_keys << p.name] = p }
           raise "must include controller" unless @dynamic_keys.include?(:controller) || options.include?(:controller)
         end
         
@@ -247,10 +280,14 @@ module ActionController
         end
         
         class Variable
-          attr_accessor :type, :var
-          def initialize(type, var)
+          attr_reader :type, :name
+          def initialize(type, name)
             @type = type
-            @var = :"#{var}"
+            @name = :"#{name}"
+          end
+          
+          def to_s
+            "#{type}#{name}"
           end
         end
         
