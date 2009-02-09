@@ -5,21 +5,22 @@ module ActionController
   module Routing
     
     class RouteSet
-      attr_accessor :tree, :configuration_file
+      attr_reader :tree, :named_routes
+      attr_accessor :configuration_file
       
-      SymbolArraySorter = proc {|a,b| a.to_s <=> b.to_s}
+      SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
       
       class Mapper #:doc:
         def initialize(set) #:nodoc:
           @set = set
         end
-
+      
         # Create an unnamed route with the provided +path+ and +options+. See
         # ActionController::Routing for an introduction to routes.
         def connect(path, options = {})
           @set.add_route(path, options)
         end
-
+      
         # Creates a named route called "root" for matching the root level request.
         def root(options = {})
           if options.is_a?(Symbol)
@@ -29,11 +30,11 @@ module ActionController
           end
           named_route("root", '', options)
         end
-
+      
         def named_route(name, path, options = {}) #:nodoc:
           @set.add_named_route(name, path, options)
         end
-
+      
         def namespace(name, options = {}, &block)
           if options[:namespace]
             with_options({:path_prefix => "#{options.delete(:path_prefix)}/#{name}", :name_prefix => "#{options.delete(:name_prefix)}#{name}_", :namespace => "#{options.delete(:namespace)}#{name}/" }.merge(options), &block)
@@ -49,7 +50,8 @@ module ActionController
       end
       
       def reload
-        require @configuration_file
+        reset!
+        load @configuration_file
       end
       
       def draw
@@ -60,9 +62,9 @@ module ActionController
       
       def reset!
         @tree = Node.root
-        @names = {}
+        @named_routes = {}
         @param_lookups = {}
-        @param_keys = []
+        @significant_keys = []
         @module ||= Module.new
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
@@ -74,34 +76,45 @@ module ActionController
       end
 
       def add_named_route(name, path, options = {})
-        @names[name] = add_route(path, options)
+        @named_routes[name] = add_route(path, options)
       end
 
       def add_route(path, *args)
-        options = args.last.is_a?(Hash) ? args.last : {}
-        route = Route.new(Route.path_to_route_parts(path), options)
+        options = args.extract_options!
+        conditions = options.delete(:conditions)
+        request_method = conditions && conditions.delete(:method)
+        route = Route.new(Route.path_to_route_parts(path, :request_method => request_method), options.merge({:conditions => conditions}))
         @tree.add(route)
-        @param_keys.push(*route.dynamic_keys)
+        @significant_keys.push(*route.dynamic_keys)
+        @significant_keys.uniq!
         sorted_keys = route.dynamic_keys.sort(&SymbolArraySorter)
         @param_lookups[sorted_keys] = @param_lookups.key?(sorted_keys) ? nil : route
         route
       end
 
       def recognize(request)
-        path = Route.path_to_route_parts(request.path)
+        path = Route.path_to_route_parts(request.path, :request_method => request.method)
         (route, params_list) = @tree.find(path)
         params = route.options
         params_list.each do |pair|
+          p route.options
+          
+          if route.options[:requirements] && route.options[:requirements][pair[0]]
+            raise unless route.options[:requirements][pair[0]] === pair[1]
+          end
           params[pair[0]] = pair[1]
         end
         request.path_parameters = params.with_indifferent_access
+        
+        
+        p params
         "#{params[:controller].camelize}Controller".constantize
       end
 
       def install_helpers(destinations = [ActionController::Base, ActionView::Base], regenerate_code = false)
         #*_url and hash_for_*_url
         Array(destinations).each do |d| d.module_eval { include Helpers } 
-          @names.keys.each do |name|
+          @named_routes.keys.each do |name|
             @module.module_eval <<-end_eval # We use module_eval to avoid leaks
               def #{name}_url(options = {})
                 ActionController::Routing::UsherRoutes.generate_url(:#{name}, options)
@@ -115,14 +128,25 @@ module ActionController
       def generate(options, recall = {}, method = :generate)
         case method
         when :generate
-          generate_url(@param_lookups[options.keys.sort(&SymbolArraySorter)], options)
+          generate_url(route_for_options(recall.merge(options)), options)
         else
           raise
         end
       end
 
+      def route_for_options(options)
+        @param_lookups[(options.keys & @significant_keys).sort(&SymbolArraySorter)]
+      end
+
       def generate_url(route, params)
-        route = @names[route] if route.is_a?(Symbol)
+        route = case route
+        when Symbol
+          @named_routes[route]
+        when nil
+          route_for_options(params)
+        else
+          route
+        end
         
         param_list = case params
         when Hash
@@ -134,7 +158,9 @@ module ActionController
           Array(params)
         end
         
-        route.path.collect {|p| p.is_a?(Route::Variable) ? param_list.shift : p.to_s}.to_s
+        route.path.delete_if{|p| p.is_a?(Route::Method)}.collect {|p| p.is_a?(Route::Variable) ? param_list.shift : p.to_s}.to_s
+        
+        
       end
 
       class Node
@@ -148,7 +174,6 @@ module ActionController
             while not (p = p.parent).nil?
               @depth += 1
             end
-            @depth
           end
           @depth
         end
@@ -163,35 +188,45 @@ module ActionController
           @lookup = Hash.new
         end
         
+        def has_globber?
+          if @has_globber.nil?
+            @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
+            p @has_globber
+          end
+          @has_globber
+        end
+        
         def terminates?
           @terminates
         end
         
-        def find_parent(clazz)
-          @parent && @parent.value.is_a?(clazz) ? @parent : @parent.find_parent(clazz)
-        end
-        
-        def current_route
-          route = [@value]
-          p = self
-          while not (p = p.parent).nil?
-            route.unshift(@value)
+        def find_parent(&blk)
+          if @parent.nil?
+            nil
+          elsif yield @parent
+            @parent
+          else #keep searching
+            @parent.find_parent(&blk)
           end
-          route
         end
         
         def add(route, path = route.path)
-          
           unless path.size == 0
             key = path.first
             key = nil if key.is_a?(Route::Variable)
             
-            unless @lookup.key?(key)
-              @lookup[key] = Node.new(self, path.first)
+            unless target_node = @lookup[key]
+              target_node = @lookup[key] = Node.new(self, path.first)
+              
             end
-            target_node = @lookup[key]
-            target_node.terminates = route if path.size == 1
-            target_node.add(route, path[1..(path.size-1)])
+            @lookup[Route::Method::Any] = target_node if path.first.is_a?(Route::Method)
+            
+            if path.size == 1
+              target_node.terminates = route
+              target_node.add(route, [])
+            else
+              target_node.add(route, path[1..(path.size-1)])
+            end
           end
         end
         
@@ -199,10 +234,11 @@ module ActionController
           return [terminates, params] if terminates? && path.size.zero?
           part = path.shift
           
-          if @lookup[part]
-            @lookup[part].find(path, params)
-          elsif @lookup[nil]
-            next_part = @lookup[nil]
+          if next_part = @lookup[part]
+            next_part.find(path, params)
+          elsif part.is_a?(Route::Method) && next_part = @lookup[Route::Method::Any]
+            next_part.find(path, params)
+          elsif next_part = @lookup[nil]
             if next_part.value.is_a?(Route::Variable)
               case next_part.value.type
               when :*
@@ -212,21 +248,22 @@ module ActionController
                 params << [next_part.value.name, part]
               end
             end
-            @lookup[nil].find(path, params)
-          elsif find_parent(Route::Variable).value.type == :*
+            next_part.find(path, params)
+          elsif has_globber? && p = find_parent{|p| !p.is_a?(Route::Seperator)} && p.value.is_a?(Route::Variable) && p.value.type == :*
             params.last.last << part unless part.is_a?(Route::Seperator)
             find(path, params)
           else
-            raise
+            raise "did not recognize #{part}"
           end
         end
         
       end
       
       class Route
-        attr_accessor :path, :options
+        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies, :path, :options
         
-        def self.path_to_route_parts(path)
+        def self.path_to_route_parts(path, *args)
+          options = args.extract_options!
           path.insert(0, '/') unless path[0] == ?/
           ss = StringScanner.new(path)
           parts = []
@@ -246,10 +283,12 @@ module ActionController
               part
             end
           end
+          
+          parts << Method.for(options[:request_method])
+          
           parts
         end
         
-        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies
         
         def initialize(path, options = {})
           @path = path
@@ -276,7 +315,7 @@ module ActionController
           end
           
           Dot = Seperator.new(:'.')
-          Slash = Seperator.new(:'/')
+          Slash = Seperator.new(:/)
         end
         
         class Variable
@@ -289,6 +328,36 @@ module ActionController
           def to_s
             "#{type}#{name}"
           end
+        end
+
+        class Method
+          private
+          attr_reader :name
+          def initialize(name)
+            @name = name
+          end
+          
+          public
+          def self.for(name)
+            case name
+            when :get:    Get
+            when :post:   Post
+            when :put:    Put
+            when :delete: Delete
+            else          Any
+            end
+          end
+          
+          def matches(request)
+            self == Any || request.method.downcase.to_sym == name
+          end
+          
+          Get = Method.new(:get)
+          Post = Method.new(:post)
+          Put = Method.new(:put)
+          Delete = Method.new(:delete)
+          Any = Method.new(:*)
+          
         end
         
       end
