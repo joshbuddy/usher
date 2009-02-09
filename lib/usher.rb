@@ -15,23 +15,20 @@ module ActionController
           @set = set
         end
       
-        # Create an unnamed route with the provided +path+ and +options+. See
-        # ActionController::Routing for an introduction to routes.
         def connect(path, options = {})
           @set.add_route(path, options)
         end
       
-        # Creates a named route called "root" for matching the root level request.
         def root(options = {})
           if options.is_a?(Symbol)
-            if source_route = @set.named_routes.routes[options]
-              options = source_route.defaults.merge({ :conditions => source_route.conditions })
+            if source_route = @set.named_routes[options]
+              options = source_route.options.merge({ :conditions => source_route.conditions })
             end
           end
-          named_route("root", '', options)
+          named_route(:root, '/', options)
         end
       
-        def named_route(name, path, options = {}) #:nodoc:
+        def named_route(name, path, options = {})
           @set.add_named_route(name, path, options)
         end
       
@@ -83,7 +80,7 @@ module ActionController
         options = args.extract_options!
         conditions = options.delete(:conditions)
         request_method = conditions && conditions.delete(:method)
-        route = Route.new(Route.path_to_route_parts(path, :request_method => request_method), options.merge({:conditions => conditions}))
+        route = Route.new(Route.path_to_route_parts(path, :request_method => request_method), path, options.merge({:conditions => conditions}))
         @tree.add(route)
         @significant_keys.push(*route.dynamic_keys)
         @significant_keys.uniq!
@@ -97,17 +94,11 @@ module ActionController
         (route, params_list) = @tree.find(path)
         params = route.options
         params_list.each do |pair|
-          p route.options
-          
-          if route.options[:requirements] && route.options[:requirements][pair[0]]
-            raise unless route.options[:requirements][pair[0]] === pair[1]
-          end
+          tester = route.options[pair[0]] || (route.options[:requirements] && route.options[:requirements][pair[0]])
+          raise "#{pair[0]}=#{pair[1]} does not conform to #{tester} for route #{route.original_path}" unless !tester || tester === pair[1]
           params[pair[0]] = pair[1]
         end
         request.path_parameters = params.with_indifferent_access
-        
-        
-        p params
         "#{params[:controller].camelize}Controller".constantize
       end
 
@@ -260,7 +251,7 @@ module ActionController
       end
       
       class Route
-        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies, :path, :options
+        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies, :path, :options, :original_path
         
         def self.path_to_route_parts(path, *args)
           options = args.extract_options!
@@ -290,8 +281,9 @@ module ActionController
         end
         
         
-        def initialize(path, options = {})
+        def initialize(path, original_path, options = {})
           @path = path
+          @original_path = original_path
           @options = options
           @dynamic_parts = @path.select{|p| p.is_a?(Variable)}
           @dynamic_indicies = []
