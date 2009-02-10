@@ -1,6 +1,5 @@
-require 'set'
 require 'strscan'
-
+require 'set'
 module ActionController
   module Routing
     
@@ -22,7 +21,8 @@ module ActionController
         def root(options = {})
           if options.is_a?(Symbol)
             if source_route = @set.named_routes[options]
-              options = source_route.options.merge({ :conditions => source_route.conditions })
+              options = source_route.conditions.blank? ? 
+                source_route.options.merge({ :conditions => source_route.conditions }) : source_route.options
             end
           end
           named_route(:root, '/', options)
@@ -73,7 +73,7 @@ module ActionController
       end
 
       def add_named_route(name, path, options = {})
-        @named_routes[name] = add_route(path, options)
+        @named_routes[name.to_sym] = add_route(path, options)
       end
 
       def add_route(path, *args)
@@ -86,6 +86,7 @@ module ActionController
         @significant_keys.uniq!
         sorted_keys = route.dynamic_keys.sort(&SymbolArraySorter)
         @param_lookups[sorted_keys] = @param_lookups.key?(sorted_keys) ? nil : route
+        Grapher.instance.add_route(route)
         route
       end
 
@@ -95,7 +96,7 @@ module ActionController
         params = route.options
         params_list.each do |pair|
           tester = route.options[pair[0]] || (route.options[:requirements] && route.options[:requirements][pair[0]])
-          raise "#{pair[0]}=#{pair[1]} does not conform to #{tester} for route #{route.original_path}" unless !tester || tester === pair[1]
+          raise "#{pair[0]}=#{pair[1]} does not conform to #{tester} for route #{route.original_path}" unless tester.nil? || tester === pair[1]
           params[pair[0]] = pair[1]
         end
         request.path_parameters = params.with_indifferent_access
@@ -126,7 +127,7 @@ module ActionController
       end
 
       def route_for_options(options)
-        @param_lookups[(options.keys & @significant_keys).sort(&SymbolArraySorter)]
+        Grapher.instance.find_matching_route(options)
       end
 
       def generate_url(route, params)
@@ -138,7 +139,6 @@ module ActionController
         else
           route
         end
-        
         param_list = case params
         when Hash
           params = route.options.merge(params)
@@ -149,8 +149,13 @@ module ActionController
           Array(params)
         end
         
-        route.path.delete_if{|p| p.is_a?(Route::Method)}.collect {|p| p.is_a?(Route::Variable) ? param_list.shift : p.to_s}.to_s
-        
+        route.path.collect do |p| 
+          case p
+          when Route::Variable: param_list.shift
+          when Route::Method:   ''
+          else                  p.to_s
+          end
+        end.to_s
         
       end
 
@@ -182,7 +187,6 @@ module ActionController
         def has_globber?
           if @has_globber.nil?
             @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
-            p @has_globber
           end
           @has_globber
         end
@@ -208,9 +212,8 @@ module ActionController
             
             unless target_node = @lookup[key]
               target_node = @lookup[key] = Node.new(self, path.first)
-              
             end
-            @lookup[Route::Method::Any] = target_node if path.first.is_a?(Route::Method)
+            terminates = target_node if path.first.is_a?(Route::Method)
             
             if path.size == 1
               target_node.terminates = route
@@ -223,12 +226,12 @@ module ActionController
         
         def find(path, params = [])
           return [terminates, params] if terminates? && path.size.zero?
+
           part = path.shift
-          
           if next_part = @lookup[part]
             next_part.find(path, params)
-          elsif part.is_a?(Route::Method) && next_part = @lookup[Route::Method::Any]
-            next_part.find(path, params)
+          elsif part.is_a?(Route::Method) && terminates?
+            [terminates, params]
           elsif next_part = @lookup[nil]
             if next_part.value.is_a?(Route::Variable)
               case next_part.value.type
@@ -251,7 +254,7 @@ module ActionController
       end
       
       class Route
-        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies, :path, :options, :original_path
+        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies, :path, :options, :original_path, :dynamic_set
         
         def self.path_to_route_parts(path, *args)
           options = args.extract_options!
@@ -276,7 +279,6 @@ module ActionController
           end
           
           parts << Method.for(options[:request_method])
-          
           parts
         end
         
@@ -291,7 +293,8 @@ module ActionController
           @dynamic_map = {}
           @dynamic_keys = []
           @dynamic_parts.each{|p| @dynamic_map[@dynamic_keys << p.name] = p }
-          raise "must include controller" unless @dynamic_keys.include?(:controller) || options.include?(:controller)
+          @dynamic_set = Set.new(@dynamic_keys)
+          raise "route #{original_path} must include a controller" unless @dynamic_keys.include?(:controller) || options.include?(:controller)
         end
         
         class Seperator
@@ -341,7 +344,7 @@ module ActionController
           end
           
           def matches(request)
-            self == Any || request.method.downcase.to_sym == name
+            self.equals?(Any) || request.method.downcase.to_sym == name
           end
           
           Get = Method.new(:get)
@@ -351,7 +354,46 @@ module ActionController
           Any = Method.new(:*)
           
         end
-        
+      end
+
+      class Grapher
+        include Singleton
+  
+        def initialize
+          @orders = Hash.new{|h,k| h[k] = Hash.new{|h2, k2| h2[k2] = []}}
+          @key_count = Hash.new(0)
+        end
+  
+        def reset!
+    
+        end
+  
+        def add_route(route)
+          unless route.dynamic_keys.size.zero?
+            route.dynamic_keys.each do |k|
+              @orders[route.dynamic_keys.size][k] << route
+              @key_count[k] += 1
+            end
+          end
+        end
+  
+        def significant_keys
+          @key_count.keys
+        end
+  
+        def find_matching_route(params)
+          unless params.empty?
+            set = Set.new(params.keys)
+            set.size.downto(1) do |o|
+              set.each do |k|
+                @orders[o][k].each do |r|
+                  return r if r.dynamic_set.subset?(set)
+                end
+              end
+            end
+            nil
+          end
+        end
       end
 
     end
