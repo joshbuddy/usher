@@ -1,5 +1,11 @@
+$:.unshift File.dirname(__FILE__)
 require 'strscan'
 require 'set'
+require 'route_set/mapper'
+require 'route_set/node'
+require 'route_set/route'
+require 'route_set/grapher'
+
 module ActionController
   module Routing
     
@@ -8,43 +14,6 @@ module ActionController
       attr_accessor :configuration_file
       
       SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
-      
-      class Mapper #:doc:
-        def initialize(set) #:nodoc:
-          @set = set
-        end
-      
-        def connect(path, options = {})
-          @set.add_route(path, options)
-        end
-      
-        def root(options = {})
-          if options.is_a?(Symbol)
-            if source_route = @set.named_routes[options]
-              options = source_route.conditions.blank? ? 
-                source_route.options.merge({ :conditions => source_route.conditions }) : source_route.options
-            end
-          end
-          named_route(:root, '/', options)
-        end
-      
-        def named_route(name, path, options = {})
-          @set.add_named_route(name, path, options)
-        end
-      
-        def namespace(name, options = {}, &block)
-          if options[:namespace]
-            with_options({:path_prefix => "#{options.delete(:path_prefix)}/#{name}", :name_prefix => "#{options.delete(:name_prefix)}#{name}_", :namespace => "#{options.delete(:namespace)}#{name}/" }.merge(options), &block)
-          else
-            with_options({:path_prefix => name, :name_prefix => "#{name}_", :namespace => "#{name}/" }.merge(options), &block)
-          end
-        end
-        
-        def method_missing(route_name, *args, &proc) #:nodoc:
-          super unless args.length >= 1 && proc.nil?
-          @set.add_named_route(route_name, *args)
-        end
-      end
       
       def reload
         reset!
@@ -66,6 +35,7 @@ module ActionController
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
         end
+        Grapher.instance.reset!
       end
       
       def initialize
@@ -117,17 +87,19 @@ module ActionController
         end
       end
       
+      def route_for_options(options)
+        Grapher.instance.find_matching_route(options)
+      end
+
       def generate(options, recall = {}, method = :generate)
         case method
+        when :extra_keys
+          route_for_options(recall.merge(options)).dynamic_keys
         when :generate
           generate_url(route_for_options(recall.merge(options)), options)
         else
           raise
         end
-      end
-
-      def route_for_options(options)
-        Grapher.instance.find_matching_route(options)
       end
 
       def generate_url(route, params)
@@ -139,261 +111,48 @@ module ActionController
         else
           route
         end
+        params_hash = {}
         param_list = case params
         when Hash
-          params = route.options.merge(params)
-          route.dynamic_keys.collect{|k| params[k]}
+          params_hash = params.dup
+          route.dynamic_keys.collect{|k| route.options[k] || params_hash.delete(k)}
         when Array
           params
         else
           Array(params)
         end
         
-        route.path.collect do |p| 
-          case p
-          when Route::Variable: param_list.shift
+        #delete out nonsense
+        params_hash.delete(:conditions)
+
+        path = ""
+        
+        route.path.each do |p| 
+          path << case p
+          when Route::Variable: param_list.shift.to_s
           when Route::Method:   ''
           else                  p.to_s
           end
-        end.to_s
-        
-      end
-
-      class Node
-        attr_reader :value, :parent, :lookup
-        attr_accessor :terminates
-        
-        def depth
-          unless @depth
-            @depth = 0
-            p = self
-            while not (p = p.parent).nil?
-              @depth += 1
-            end
-          end
-          @depth
         end
-        
-        def self.root
-          self.new(nil, nil)
-        end
-        
-        def initialize(parent, value)
-          @parent = parent
-          @value = value
-          @lookup = Hash.new
-        end
-        
-        def has_globber?
-          if @has_globber.nil?
-            @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
-          end
-          @has_globber
-        end
-        
-        def terminates?
-          @terminates
-        end
-        
-        def find_parent(&blk)
-          if @parent.nil?
-            nil
-          elsif yield @parent
-            @parent
-          else #keep searching
-            @parent.find_parent(&blk)
-          end
-        end
-        
-        def add(route, path = route.path)
-          unless path.size == 0
-            key = path.first
-            key = nil if key.is_a?(Route::Variable)
-            
-            unless target_node = @lookup[key]
-              target_node = @lookup[key] = Node.new(self, path.first)
-            end
-            terminates = target_node if path.first.is_a?(Route::Method)
-            
-            if path.size == 1
-              target_node.terminates = route
-              target_node.add(route, [])
-            else
-              target_node.add(route, path[1..(path.size-1)])
-            end
-          end
-        end
-        
-        def find(path, params = [])
-          return [terminates, params] if terminates? && path.size.zero?
-
-          part = path.shift
-          if next_part = @lookup[part]
-            next_part.find(path, params)
-          elsif part.is_a?(Route::Method) && terminates?
-            [terminates, params]
-          elsif next_part = @lookup[nil]
-            if next_part.value.is_a?(Route::Variable)
-              case next_part.value.type
-              when :*
-                params << [next_part.value.name, []]
-                params.last.last << part unless next_part.is_a?(Route::Seperator)
-              when :':'
-                params << [next_part.value.name, part]
+        unless params_hash.blank?
+          has_query = path[??]
+          params_hash.each do |k,v|
+            path << (has_query ? '&' : has_query = true && '?')
+            case v
+            when Array
+              v.each do |v_part|
+                path << CGI.escape("#{k.to_s}[]")
+                path << '='
+                path << CGI.escape(v_part.to_s)
               end
-            end
-            next_part.find(path, params)
-          elsif has_globber? && p = find_parent{|p| !p.is_a?(Route::Seperator)} && p.value.is_a?(Route::Variable) && p.value.type == :*
-            params.last.last << part unless part.is_a?(Route::Seperator)
-            find(path, params)
-          else
-            raise "did not recognize #{part}"
-          end
-        end
-        
-      end
-      
-      class Route
-        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies, :path, :options, :original_path, :dynamic_set
-        
-        def self.path_to_route_parts(path, *args)
-          options = args.extract_options!
-          path.insert(0, '/') unless path[0] == ?/
-          ss = StringScanner.new(path)
-          parts = []
-          while (part = ss.scan(/([:\*]?[0-9a-z_]+|\/|\.)/))
-            parts << case part[0]
-            when ?:
-              Variable.new(:':', part[1..(path.size-1)])
-            when ?*
-              Variable.new(:'*', part[1..(path.size-1)])
-            when ?.
-              raise unless part.size == 1
-              Seperator::Dot
-            when ?/
-              raise unless part.size == 1
-              Seperator::Slash
             else
-              part
-            end
-          end
-          
-          parts << Method.for(options[:request_method])
-          parts
-        end
-        
-        
-        def initialize(path, original_path, options = {})
-          @path = path
-          @original_path = original_path
-          @options = options
-          @dynamic_parts = @path.select{|p| p.is_a?(Variable)}
-          @dynamic_indicies = []
-          @path.each_index{|i| @dynamic_indicies << i if @path[i].is_a?(Variable)}
-          @dynamic_map = {}
-          @dynamic_keys = []
-          @dynamic_parts.each{|p| @dynamic_map[@dynamic_keys << p.name] = p }
-          @dynamic_set = Set.new(@dynamic_keys)
-          raise "route #{original_path} must include a controller" unless @dynamic_keys.include?(:controller) || options.include?(:controller)
-        end
-        
-        class Seperator
-          private
-          def initialize(sep)
-            @sep = sep
-            @sep_to_s = sep.to_s
-          end
-          
-          public
-          def to_s
-            @sep_to_s
-          end
-          
-          Dot = Seperator.new(:'.')
-          Slash = Seperator.new(:/)
-        end
-        
-        class Variable
-          attr_reader :type, :name
-          def initialize(type, name)
-            @type = type
-            @name = :"#{name}"
-          end
-          
-          def to_s
-            "#{type}#{name}"
-          end
-        end
-
-        class Method
-          private
-          attr_reader :name
-          def initialize(name)
-            @name = name
-          end
-          
-          public
-          def self.for(name)
-            case name
-            when :get:    Get
-            when :post:   Post
-            when :put:    Put
-            when :delete: Delete
-            else          Any
-            end
-          end
-          
-          def matches(request)
-            self.equals?(Any) || request.method.downcase.to_sym == name
-          end
-          
-          Get = Method.new(:get)
-          Post = Method.new(:post)
-          Put = Method.new(:put)
-          Delete = Method.new(:delete)
-          Any = Method.new(:*)
-          
-        end
-      end
-
-      class Grapher
-        include Singleton
-  
-        def initialize
-          @orders = Hash.new{|h,k| h[k] = Hash.new{|h2, k2| h2[k2] = []}}
-          @key_count = Hash.new(0)
-        end
-  
-        def reset!
-    
-        end
-  
-        def add_route(route)
-          unless route.dynamic_keys.size.zero?
-            route.dynamic_keys.each do |k|
-              @orders[route.dynamic_keys.size][k] << route
-              @key_count[k] += 1
+              path << CGI.escape(k.to_s)
+              path << '='
+              path << CGI.escape(v.to_s)
             end
           end
         end
-  
-        def significant_keys
-          @key_count.keys
-        end
-  
-        def find_matching_route(params)
-          unless params.empty?
-            set = Set.new(params.keys)
-            set.size.downto(1) do |o|
-              set.each do |k|
-                @orders[o][k].each do |r|
-                  return r if r.dynamic_set.subset?(set)
-                end
-              end
-            end
-            nil
-          end
-        end
+        path
       end
 
     end
