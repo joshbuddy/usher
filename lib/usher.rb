@@ -17,7 +17,11 @@ module ActionController
       
       def reload
         reset!
-        load @configuration_file
+        if @configuration_file
+          load @configuration_file
+        else
+          add_route ":controller/:action/:id"
+        end
       end
       
       def draw
@@ -35,6 +39,7 @@ module ActionController
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
         end
+        @controller_action_added = false
         Grapher.instance.reset!
       end
       
@@ -47,6 +52,9 @@ module ActionController
       end
 
       def add_route(path, *args)
+        add_route('/:controller/:action', *args) if !@controller_action_added && path =~ %r{^/?:controller/:action/:id$}
+        @controller_action_added = true if path === /\A\/?:controller\/:action\Z/
+        
         options = args.extract_options!
         conditions = options.delete(:conditions)
         request_method = conditions && conditions.delete(:method)
@@ -92,14 +100,28 @@ module ActionController
       end
 
       def generate(options, recall = {}, method = :generate)
+        merged_options = recall.merge(options)
+        options[:controller] ||= recall[:controller]
+        options[:action] ||= 'index'
+        
+        route = if(named_route_name = options.delete(:use_route))
+          @named_routes[named_route_name.to_sym]
+        else
+          route_for_options(merged_options)
+        end
+
         case method
         when :extra_keys
-          route_for_options(recall.merge(options)).dynamic_keys
+          (route && route.dynamic_keys) || []
         when :generate
-          generate_url(route_for_options(recall.merge(options)), options)
+          generate_url(route, options)
         else
-          raise
+          raise "no route found for #{options.inspect}"
         end
+      end
+
+      def extra_keys(options, recall={})
+        generate(options, recall, :extra_keys)
       end
 
       def generate_url(route, params)
@@ -111,6 +133,7 @@ module ActionController
         else
           route
         end
+
         params_hash = {}
         param_list = case params
         when Hash
@@ -128,10 +151,14 @@ module ActionController
         path = ""
         
         route.path.each do |p| 
-          path << case p
-          when Route::Variable: param_list.shift.to_s
-          when Route::Method:   ''
-          else                  p.to_s
+          case p
+          when Route::Variable: 
+            path << param_list.shift.to_s
+            break if param_list.all?(&:nil?)
+          when Route::Method:
+            # do nothing
+          else
+            path << p.to_s
           end
         end
         unless params_hash.blank?
