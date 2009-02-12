@@ -56,9 +56,19 @@ module ActionController
         @controller_action_added = true if path === /\A\/?:controller\/:action\Z/
         
         options = args.extract_options!
-        conditions = options.delete(:conditions)
+        conditions = options.delete(:conditions) || {}
+        requirements = options.delete(:requirements) || {}
+        options.delete_if do |k, v|
+          if v.is_a?(Regexp)
+            requirements[k] = v 
+            true
+          end
+        end
         request_method = conditions && conditions.delete(:method)
-        route = Route.new(Route.path_to_route_parts(path, :request_method => request_method), path, options.merge({:conditions => conditions}))
+        route = Route.new(Route.path_to_route_parts(
+          path,
+          :request_method => request_method
+        ), path, options.merge({:conditions => conditions, :requirements => requirements}))
         @tree.add(route)
         @significant_keys.push(*route.dynamic_keys)
         @significant_keys.uniq!
@@ -73,10 +83,11 @@ module ActionController
         (route, params_list) = @tree.find(path)
         params = route.options
         params_list.each do |pair|
-          tester = route.options[pair[0]] || (route.options[:requirements] && route.options[:requirements][pair[0]])
+          tester = route.options[:requirements] && route.options[:requirements][pair[0]]
           raise "#{pair[0]}=#{pair[1]} does not conform to #{tester} for route #{route.original_path}" unless tester.nil? || tester === pair[1]
-          params[pair[0]] = pair[1]
-        end
+        end unless route.options[:requirements].blank?
+        params.delete(:conditions)
+        params.delete(:requirements)
         request.path_parameters = params.with_indifferent_access
         "#{params[:controller].camelize}Controller".constantize
       end
@@ -87,7 +98,8 @@ module ActionController
           @named_routes.keys.each do |name|
             @module.module_eval <<-end_eval # We use module_eval to avoid leaks
               def #{name}_url(options = {})
-                ActionController::Routing::UsherRoutes.generate_url(:#{name}, options)
+                options[:use_route] = :#{name}
+                ActionController::Routing::UsherRoutes.generate(options)
               end
             end_eval
           end
@@ -98,23 +110,22 @@ module ActionController
       def route_for_options(options)
         Grapher.instance.find_matching_route(options)
       end
-
+      
       def generate(options, recall = {}, method = :generate)
-        merged_options = recall.merge(options)
-        options[:controller] ||= recall[:controller]
-        options[:action] ||= 'index'
-        
         route = if(named_route_name = options.delete(:use_route))
           @named_routes[named_route_name.to_sym]
         else
+          merged_options = recall.merge(options)
+          merged_options[:action] = 'index' unless options.key?(:action)
+          merged_options[:controller] = recall[:controller] unless options.key?(:controller)
           route_for_options(merged_options)
         end
-
         case method
         when :extra_keys
           (route && route.dynamic_keys) || []
         when :generate
-          generate_url(route, options)
+          merged_options ||= recall.merge(options)
+          generate_url(route, merged_options)
         else
           raise "no route found for #{options.inspect}"
         end
@@ -137,8 +148,9 @@ module ActionController
         params_hash = {}
         param_list = case params
         when Hash
-          params_hash = params.dup
-          route.dynamic_keys.collect{|k| route.options[k] || params_hash.delete(k)}
+          params_hash = params
+          params_hash.delete(:conditions)
+          route.dynamic_keys.collect{|k| params_hash.delete(k)}
         when Array
           params
         else
@@ -146,8 +158,6 @@ module ActionController
         end
         
         #delete out nonsense
-        params_hash.delete(:conditions)
-
         path = ""
         
         route.path.each do |p| 

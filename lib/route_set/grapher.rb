@@ -1,3 +1,5 @@
+require 'singleton'
+
 module ActionController
   module Routing
     class RouteSet
