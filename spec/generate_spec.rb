@@ -20,4 +20,24 @@ describe "Usher URL generation" do
     route_set.generate_url(:sample, {:action => ['foo', 'baz']}).should == '/sample/foo/baz'
   end
   
+  it "should generate a mutliple vairable URL from a hash" do
+    route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
+    route_set.generate_url(:sample, {:first => 'zoo', :second => 'maz'}).should == '/sample/zoo/maz'
+  end
+
+  it "should generate a mutliple vairable URL from an array" do
+    route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
+    route_set.generate_url(:sample, ['maz', 'zoo']).should == '/sample/maz/zoo'
+  end
+
+  it "should generate append extra hash variables to the end" do
+    route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
+    route_set.generate_url(:sample, {:first => 'maz', :second => 'zoo', :third => 'zanz'}).should == '/sample/maz/zoo?third=zanz'
+  end
+
+  it "should generate append extra hash variables to the end using [] syntax if its an array" do
+    route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
+    route_set.generate_url(:sample, {:first => 'maz', :second => 'zoo', :third => ['zanz', 'susie']}).should == '/sample/maz/zoo?third%5B%5D=zanzthird%5B%5D=susie'
+  end
+
 end
