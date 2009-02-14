@@ -48,22 +48,18 @@ module ActionController
           end
         end
   
-        def add(route, path = route.path)
-          unless path.size == 0
-            key = path.first
-            key = nil if key.is_a?(Route::Variable)
-      
-            unless target_node = @lookup[key]
-              target_node = @lookup[key] = Node.new(self, path.first)
+        def add(route)
+          path = route.path.dup
+          current_node = self
+          while path.size != 0
+            key = path.shift
+            lookup_key = key.is_a?(Route::Variable) ? nil : key
+            unless target_node = current_node.lookup[lookup_key]
+              target_node = current_node.lookup[lookup_key] = Node.new(current_node, key)
             end
-            terminates = target_node if path.first.is_a?(Route::Method)
-      
-            if path.size == 1
-              target_node.terminates = route
-              target_node.add(route, [])
-            else
-              target_node.add(route, path[1..(path.size-1)])
-            end
+            terminates = target_node if key.is_a?(Route::Method)
+            target_node.terminates = route if path.size == 0
+            current_node = target_node
           end
         end
   
@@ -73,15 +69,16 @@ module ActionController
           part = path.shift
           if next_part = @lookup[part]
             next_part.find(path, params)
-          elsif part.is_a?(Route::Method) && terminates?
-            [terminates, params]
+          elsif part.is_a?(Route::Method) && next_part = @lookup[Route::Method::Any]
+            next_part.find(path, params)
           elsif next_part = @lookup[nil]
             if next_part.value.is_a?(Route::Variable)
+              raise "#{part} does not conform to #{next_part.value.validator}" unless next_part.value.validator.nil? || next_part.value.validator === part
               case next_part.value.type
               when :*
                 params << [next_part.value.name, []]
                 params.last.last << part unless next_part.is_a?(Route::Seperator)
-              when :':'
+              when ?:.to_sym
                 params << [next_part.value.name, part]
               end
             end

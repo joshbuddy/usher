@@ -2,19 +2,20 @@ module ActionController
   module Routing
     class RouteSet
       class Route
-        attr_reader :dynamic_parts, :dynamic_map, :dynamic_keys, :dynamic_indicies, :path, :options, :original_path, :dynamic_set
-  
-        def self.path_to_route_parts(path, *args)
-          options = args.extract_options!
+        attr_reader :dynamic_parts, :dynamic_map, :dynamic_indicies, :path, :original_path, :dynamic_set,
+          :requirements, :conditions, :request_method, :params
+        
+        ScanRegex = /([:\*]?[0-9a-z_]+|\/|\.)/
+        
+        def self.path_to_route_parts(path, request_method = nil, requirements = {})
           path.insert(0, '/') unless path[0] == ?/
           ss = StringScanner.new(path)
           parts = []
-          while (part = ss.scan(/([:\*]?[0-9a-z_]+|\/|\.)/))
+          while (part = ss.scan(ScanRegex))
             parts << case part[0]
-            when ?:
-              Variable.new(:':', part[1..(path.size-1)])
-            when ?*
-              Variable.new(:'*', part[1..(path.size-1)])
+            when ?*, ?:
+              type = part.slice!(0,1)
+              Variable.new(type.to_sym, part, requirements[part.to_sym])
             when ?.
               raise unless part.size == 1
               Seperator::Dot
@@ -26,23 +27,32 @@ module ActionController
             end
           end
     
-          parts << Method.for(options[:request_method])
+          parts << Method.for(request_method)
           parts
         end
   
   
-        def initialize(path, original_path, options = {})
-          @path = path
+        def initialize(original_path, options = {})
           @original_path = original_path
-          @options = options
-          @dynamic_parts = @path.select{|p| p.is_a?(Variable)}
+          @params = options
+          @params[:action] = 'index' unless @params[:action]
+          @conditions = @params.delete(:conditions) || {}
+          requirements = @params.delete(:requirements) || {}
+          @params.delete_if do |k, v|
+            if v.is_a?(Regexp)
+              requirements[k] = v 
+              true
+            end
+          end
+          @request_method = @conditions && @conditions.delete(:method)
+          @path = Route.path_to_route_parts(@original_path, @request_method, requirements)
           @dynamic_indicies = []
           @path.each_index{|i| @dynamic_indicies << i if @path[i].is_a?(Variable)}
+          @dynamic_parts = @path.values_at(*@dynamic_indicies)
           @dynamic_map = {}
-          @dynamic_keys = []
-          @dynamic_parts.each{|p| @dynamic_map[@dynamic_keys << p.name] = p }
-          @dynamic_set = Set.new(@dynamic_keys)
-          raise "route #{original_path} must include a controller" unless @dynamic_keys.include?(:controller) || options.include?(:controller)
+          @dynamic_parts.each{|p| @dynamic_map[p.name] = p }
+          @dynamic_set = Set.new(@dynamic_map.keys)
+          raise "route #{original_path} must include a controller" unless @dynamic_set.include?(:controller) || options.include?(:controller)
         end
   
         class Seperator
@@ -62,8 +72,8 @@ module ActionController
         end
   
         class Variable
-          attr_reader :type, :name
-          def initialize(type, name)
+          attr_reader :type, :name, :validator
+          def initialize(type, name, validator = nil)
             @type = type
             @name = :"#{name}"
           end
@@ -82,25 +92,21 @@ module ActionController
     
           public
           def self.for(name)
-            case name
-            when :get:    Get
-            when :post:   Post
-            when :put:    Put
-            when :delete: Delete
-            else          Any
-            end
+            name && Methods[name] || Any
           end
-    
+          
           def matches(request)
             self.equals?(Any) || request.method.downcase.to_sym == name
           end
-    
+          
           Get = Method.new(:get)
           Post = Method.new(:post)
           Put = Method.new(:put)
           Delete = Method.new(:delete)
           Any = Method.new(:*)
-    
+          
+          Methods = {:get => Get, :post => Post, :put => Put, :delete => Delete}
+          
         end
       end
     end

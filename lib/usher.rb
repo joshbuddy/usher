@@ -24,6 +24,14 @@ module ActionController
         end
       end
       
+      def load_routes!
+        reload
+      end
+      
+      def empty?
+        @route_count.zero?
+      end
+
       def draw
         reset!
         yield Mapper.new(self)
@@ -33,15 +41,15 @@ module ActionController
       def reset!
         @tree = Node.root
         @named_routes = {}
-        @param_lookups = {}
-        @significant_keys = []
         @module ||= Module.new
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
         end
         @controller_action_added = false
+        @route_count = 0
         Grapher.instance.reset!
       end
+      alias clear! reset!
       
       def initialize
         reset!
@@ -51,45 +59,23 @@ module ActionController
         @named_routes[name.to_sym] = add_route(path, options)
       end
 
-      def add_route(path, *args)
-        add_route('/:controller/:action', *args) if !@controller_action_added && path =~ %r{^/?:controller/:action/:id$}
-        @controller_action_added = true if path === /\A\/?:controller\/:action\Z/
-        
-        options = args.extract_options!
-        conditions = options.delete(:conditions) || {}
-        requirements = options.delete(:requirements) || {}
-        options.delete_if do |k, v|
-          if v.is_a?(Regexp)
-            requirements[k] = v 
-            true
-          end
+      def add_route(path, options = {})
+        if !@controller_action_added && path =~ %r{^/?:controller/:action/:id$}
+          add_route('/:controller/:action', options)
+          @controller_action_added = true 
         end
-        request_method = conditions && conditions.delete(:method)
-        route = Route.new(Route.path_to_route_parts(
-          path,
-          :request_method => request_method
-        ), path, options.merge({:conditions => conditions, :requirements => requirements}))
+        route = Route.new(path, options)
         @tree.add(route)
-        @significant_keys.push(*route.dynamic_keys)
-        @significant_keys.uniq!
-        sorted_keys = route.dynamic_keys.sort(&SymbolArraySorter)
-        @param_lookups[sorted_keys] = @param_lookups.key?(sorted_keys) ? nil : route
         Grapher.instance.add_route(route)
+        @route_count += 1
         route
       end
 
       def recognize(request)
-        path = Route.path_to_route_parts(request.path, :request_method => request.method)
+        path = Route.path_to_route_parts(request.path, request.method)
         (route, params_list) = @tree.find(path)
-        params = route.options
-        params_list.each do |pair|
-          tester = route.options[:requirements] && route.options[:requirements][pair[0]]
-          raise "#{pair[0]}=#{pair[1]} does not conform to #{tester} for route #{route.original_path}" unless tester.nil? || tester === pair[1]
-        end unless route.options[:requirements].blank?
-        params.delete(:conditions)
-        params.delete(:requirements)
-        request.path_parameters = params.with_indifferent_access
-        "#{params[:controller].camelize}Controller".constantize
+        request.path_parameters = (params_list && !params_list.empty? ? route.params.merge(Hash[*(params_list.first)]) : route.params).with_indifferent_access
+        "#{request.path_parameters[:controller].camelize}Controller".constantize
       end
 
       def install_helpers(destinations = [ActionController::Base, ActionView::Base], regenerate_code = false)
@@ -98,8 +84,7 @@ module ActionController
           @named_routes.keys.each do |name|
             @module.module_eval <<-end_eval # We use module_eval to avoid leaks
               def #{name}_url(options = {})
-                options[:use_route] = :#{name}
-                ActionController::Routing::UsherRoutes.generate(options)
+                ActionController::Routing::UsherRoutes.generate(options, {}, :generate, :#{name})
               end
             end_eval
           end
@@ -111,12 +96,11 @@ module ActionController
         Grapher.instance.find_matching_route(options)
       end
       
-      def generate(options, recall = {}, method = :generate)
-        route = if(named_route_name = options.delete(:use_route))
-          @named_routes[named_route_name.to_sym]
+      def generate(options, recall = {}, method = :generate, route_name = nil)
+        route = if(route_name)
+          @named_routes[route_name]
         else
           merged_options = recall.merge(options)
-          merged_options[:action] = 'index' unless options.key?(:action)
           merged_options[:controller] = recall[:controller] unless options.key?(:controller)
           route_for_options(merged_options)
         end
@@ -149,8 +133,7 @@ module ActionController
         param_list = case params
         when Hash
           params_hash = params
-          params_hash.delete(:conditions)
-          route.dynamic_keys.collect{|k| params_hash.delete(k)}
+          route.dynamic_set.collect{|k| params_hash.delete(k)}
         when Array
           params
         else
@@ -160,11 +143,15 @@ module ActionController
         #delete out nonsense
         path = ""
         
-        route.path.each do |p| 
+        route.path.each do |p|
           case p
-          when Route::Variable: 
-            path << param_list.shift.to_s
-            break if param_list.all?(&:nil?)
+          when Route::Variable:
+            path << case p.type
+            when :*
+              param_list.shift * '/'
+            else
+              param_list.shift
+            end
           when Route::Method:
             # do nothing
           else

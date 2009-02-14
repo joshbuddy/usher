@@ -17,9 +17,9 @@ module ActionController
         end
 
         def add_route(route)
-          unless route.dynamic_keys.size.zero?
-            route.dynamic_keys.each do |k|
-              @orders[route.dynamic_keys.size][k] << route
+          unless route.dynamic_set.size.zero?
+            route.dynamic_set.each do |k|
+              @orders[route.dynamic_set.size][k] << route
               @key_count[k] += 1
             end
           end
