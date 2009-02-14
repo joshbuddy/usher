@@ -73,7 +73,7 @@ module ActionController
             next_part.find(path, params)
           elsif next_part = @lookup[nil]
             if next_part.value.is_a?(Route::Variable)
-              raise "#{part} does not conform to #{next_part.value.validator}" unless next_part.value.validator.nil? || next_part.value.validator === part
+              raise "#{part} does not conform to #{next_part.value.validator}" if next_part.value.validator && (not next_part.value.validator === part)
               case next_part.value.type
               when :*
                 params << [next_part.value.name, []]

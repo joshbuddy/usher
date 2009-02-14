@@ -8,19 +8,17 @@ module ActionController
         ScanRegex = /([:\*]?[0-9a-z_]+|\/|\.)/
         
         def self.path_to_route_parts(path, request_method = nil, requirements = {})
-          path.insert(0, '/') unless path[0] == ?/
+          parts = path[0] == ?/ ? [] : [Seperator::Slash]
           ss = StringScanner.new(path)
-          parts = []
-          while (part = ss.scan(ScanRegex))
+          while !ss.eos?
+            part = ss.scan(ScanRegex)
             parts << case part[0]
             when ?*, ?:
-              type = part.slice!(0,1)
-              Variable.new(type.to_sym, part, requirements[part.to_sym])
+              type = part.slice!(0).chr.to_sym
+              Variable.new(type, part, requirements[part.to_sym])
             when ?.
-              raise unless part.size == 1
               Seperator::Dot
             when ?/
-              raise unless part.size == 1
               Seperator::Slash
             else
               part
@@ -30,7 +28,6 @@ module ActionController
           parts << Method.for(request_method)
           parts
         end
-  
   
         def initialize(original_path, options = {})
           @original_path = original_path
@@ -76,6 +73,7 @@ module ActionController
           def initialize(type, name, validator = nil)
             @type = type
             @name = :"#{name}"
+            @validator = validator
           end
     
           def to_s
