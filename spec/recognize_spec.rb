@@ -49,4 +49,9 @@ describe "Usher route recognition" do
     proc { route_set.recognize(build_request_mock('/sample/asdqwe', :post, {})) }.should raise_error
   end
   
+  it "should add /:controller/:action if /:controller/:action/:id is added" do
+    route_set.add_route('/:controller/:action/:id')
+    route_set.route_count.should == 2
+  end
+  
 end

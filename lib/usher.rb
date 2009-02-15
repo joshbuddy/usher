@@ -10,7 +10,7 @@ module ActionController
   module Routing
     
     class RouteSet
-      attr_reader :tree, :named_routes
+      attr_reader :tree, :named_routes, :route_count
       attr_accessor :configuration_file
       
       SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
@@ -161,15 +161,16 @@ module ActionController
         unless params_hash.blank?
           has_query = path[??]
           params_hash.each do |k,v|
-            path << (has_query ? '&' : has_query = true && '?')
             case v
             when Array
               v.each do |v_part|
+                path << (has_query ? '&' : has_query = true && '?')
                 path << CGI.escape("#{k.to_s}[]")
                 path << '='
                 path << CGI.escape(v_part.to_s)
               end
             else
+              path << (has_query ? '&' : has_query = true && '?')
               path << CGI.escape(k.to_s)
               path << '='
               path << CGI.escape(v.to_s)
