@@ -10,6 +10,7 @@ module ActionController
         def self.path_to_route_parts(path, request_method = nil, requirements = {})
           parts = path[0] == ?/ ? [] : [Seperator::Slash]
           ss = StringScanner.new(path)
+          
           while !ss.eos?
             part = ss.scan(ScanRegex)
             parts << case part[0]
@@ -23,9 +24,10 @@ module ActionController
             else
               part
             end
-          end
+          end unless path.blank? 
     
           parts << Method.for(request_method)
+    
           parts
         end
   
@@ -84,7 +86,7 @@ module ActionController
         class Method
           private
           attr_reader :name
-          def initialize(name)
+          def initialize(name = nil)
             @name = name
           end
     
@@ -93,15 +95,11 @@ module ActionController
             name && Methods[name] || Any
           end
           
-          def matches(request)
-            self.equals?(Any) || request.method.downcase.to_sym == name
-          end
-          
           Get = Method.new(:get)
           Post = Method.new(:post)
           Put = Method.new(:put)
           Delete = Method.new(:delete)
-          Any = Method.new(:*)
+          Any = Method.new
           
           Methods = {:get => Get, :post => Post, :put => Put, :delete => Delete}
           

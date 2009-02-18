@@ -54,4 +54,13 @@ describe "Usher route recognition" do
     route_set.route_count.should == 2
   end
   
+  it "should support root nodes" do
+    route_set.add_route('/sample', :controller => 'sample', :action => 'action')
+    route_set.add_route('/sample/:action', :controller => 'not_sample')
+    route_set.add_route('/sample/test', :controller => 'sample', :action => 'action')
+    route_set.add_route('/:controller/:action/:id')
+    route_set.add_route('/', :controller => 'sample')
+    route_set.recognize(build_request_mock('/', :get, {:controller => 'sample', :action => 'index'})).should == SampleController
+  end
+  
 end

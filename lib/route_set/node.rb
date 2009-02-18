@@ -16,7 +16,7 @@ module ActionController
           end
           @depth
         end
-  
+        
         def self.root
           self.new(nil, nil)
         end
@@ -51,20 +51,23 @@ module ActionController
         def add(route)
           path = route.path.dup
           current_node = self
-          while path.size != 0
+          until path.size.zero?
             key = path.shift
             lookup_key = key.is_a?(Route::Variable) ? nil : key
             unless target_node = current_node.lookup[lookup_key]
               target_node = current_node.lookup[lookup_key] = Node.new(current_node, key)
             end
-            terminates = target_node if key.is_a?(Route::Method)
-            target_node.terminates = route if path.size == 0
             current_node = target_node
           end
+          current_node.terminates = route
+          current_node
         end
   
         def find(path, params = [])
-          return [terminates, params] if terminates? && path.size.zero?
+          if path.size.zero?
+            return [terminates, params] if terminates?
+            raise "could not recognize route" 
+          end
 
           part = path.shift
           if next_part = @lookup[part]
