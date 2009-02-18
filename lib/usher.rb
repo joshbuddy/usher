@@ -102,6 +102,7 @@ module ActionController
         else
           merged_options = recall.merge(options)
           merged_options[:controller] = recall[:controller] unless options.key?(:controller)
+          merged_options[:action] = 'index' unless options.key?(:action)
           route_for_options(merged_options)
         end
         case method
@@ -150,7 +151,7 @@ module ActionController
             when :*
               param_list.shift * '/'
             else
-              param_list.shift
+              param_list.shift.to_s
             end
           when Route::Method:
             # do nothing

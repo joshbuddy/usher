@@ -19,6 +19,11 @@ describe "Usher URL generation" do
     route_set.generate_url(:sample, {:action => 'action'}).should == '/sample/action'
   end
   
+  it "should generate a simple URL with a single variable (thats not a string)" do
+    route_set.add_named_route(:sample, '/sample/:action/:id', :controller => 'sample')
+    route_set.generate_url(:sample, {:action => 'action', :id => 123}).should == '/sample/action/123'
+  end
+  
   it "should generate a simple URL with a glob variable" do
     route_set.add_named_route(:sample, '/sample/*action', :controller => 'sample')
     route_set.generate_url(:sample, {:action => ['foo', 'baz']}).should == '/sample/foo/baz'
@@ -43,5 +48,11 @@ describe "Usher URL generation" do
     route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
     route_set.generate_url(:sample, {:first => 'maz', :second => 'zoo', :third => ['zanz', 'susie']}).should == '/sample/maz/zoo?third%5B%5D=zanz&third%5B%5D=susie'
   end
+
+  it "should default action to index when not present" do
+    route_set.add_route('/:controller/:action/:id')
+    route_set.generate({:controller => 'sample'}, {}, :generate)
+  end
+
 
 end
