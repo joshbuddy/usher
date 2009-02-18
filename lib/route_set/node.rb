@@ -78,7 +78,7 @@ module ActionController
               when :*
                 params << [next_part.value.name, []]
                 params.last.last << part unless next_part.is_a?(Route::Seperator)
-              when ?:.to_sym
+              when :':'
                 params << [next_part.value.name, part]
               end
             end

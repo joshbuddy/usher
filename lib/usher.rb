@@ -100,9 +100,11 @@ module ActionController
         route = if(route_name)
           @named_routes[route_name]
         else
-          merged_options = recall.merge(options)
+          merged_options = options
           merged_options[:controller] = recall[:controller] unless options.key?(:controller)
-          merged_options[:action] = 'index' unless options.key?(:action)
+          unless options.key?(:action)
+            options[:action] = nil
+          end
           route_for_options(merged_options)
         end
         case method
@@ -134,29 +136,30 @@ module ActionController
         param_list = case params
         when Hash
           params_hash = params
-          route.dynamic_set.collect{|k| params_hash.delete(k)}
+          route.dynamic_parts.collect{|k| params_hash.delete(k.name)}
         when Array
           params
         else
           Array(params)
         end
-        
-        #delete out nonsense
+
         path = ""
         
         route.path.each do |p|
           case p
           when Route::Variable:
-            path << case p.type
+            case p.type
             when :*
-              param_list.shift * '/'
+              path << '/' << param_list.shift * '/'
             else
-              param_list.shift.to_s
+              (dp = param_list.shift) && path << '/' << dp.to_s
             end
+          when Route::Seperator:
+            # do nothing
           when Route::Method:
             # do nothing
           else
-            path << p.to_s
+            path << '/' << p.to_s
           end
         end
         unless params_hash.blank?
@@ -180,7 +183,6 @@ module ActionController
         end
         path
       end
-
     end
 
     UsherRoutes = RouteSet.new

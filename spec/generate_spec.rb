@@ -50,9 +50,12 @@ describe "Usher URL generation" do
   end
 
   it "should default action to index when not present" do
-    route_set.add_route('/:controller/:action/:id')
+    route_set.add_route('/:controller/:action')
     route_set.generate({:controller => 'sample'}, {}, :generate)
   end
 
-
+  it "should leave off the action and id" do
+    route_set.add_route(':controller/:action/:id')
+    route_set.generate({:controller => 'controller'}, {}, :generate).should == '/controller'
+  end
 end
