@@ -45,13 +45,15 @@ module ActionController
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
         end
-        @controller_action_added = false
+        @controller_action_route_added = false
+        @controller_route_added = false
         @route_count = 0
         Grapher.instance.reset!
       end
       alias clear! reset!
       
-      def initialize
+      def initialize(mode = :rails)
+        @mode = mode
         reset!
       end
 
@@ -60,10 +62,16 @@ module ActionController
       end
 
       def add_route(path, options = {})
-        if !@controller_action_added && path =~ %r{^/?:controller/:action/:id$}
+        if !@controller_action_route_added && path =~ %r{^/?:controller/:action/:id$}
           add_route('/:controller/:action', options)
-          @controller_action_added = true 
+          @controller_action_route_added = true 
         end
+
+        if !@controller_route_added && path =~ %r{^/?:controller/:action$}
+          add_route('/:controller', options.merge({:action => 'index'}))
+          @controller_route_added = true 
+        end
+
         route = Route.new(path, options)
         @tree.add(route)
         Grapher.instance.add_route(route)

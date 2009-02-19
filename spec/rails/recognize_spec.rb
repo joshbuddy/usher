@@ -49,9 +49,9 @@ describe "Usher route recognition" do
     proc { route_set.recognize(build_request_mock('/sample/asdqwe', :post, {})) }.should raise_error
   end
   
-  it "should add /:controller/:action if /:controller/:action/:id is added" do
+  it "should add /:controller and /:controller/:action if /:controller/:action/:id is added" do
     route_set.add_route('/:controller/:action/:id')
-    route_set.route_count.should == 2
+    route_set.route_count.should == 3
   end
   
   it "should support root nodes" do
@@ -62,5 +62,11 @@ describe "Usher route recognition" do
     route_set.add_route('/', :controller => 'sample')
     route_set.recognize(build_request_mock('/', :get, {:controller => 'sample', :action => 'index'})).should == SampleController
   end
+  
+  it "should default action to 'index' when controller (and not index) is specified" do
+    route_set.add_route('/:controller/:action')
+    route_set.recognize(build_request_mock('/sample', :get, {:controller => 'sample', :action => 'index'})).should == SampleController
+  end
+  
   
 end

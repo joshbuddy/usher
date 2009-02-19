@@ -49,13 +49,14 @@ describe "Usher URL generation" do
     route_set.generate_url(:sample, {:first => 'maz', :second => 'zoo', :third => ['zanz', 'susie']}).should == '/sample/maz/zoo?third%5B%5D=zanz&third%5B%5D=susie'
   end
 
-  it "should default action to index when not present" do
-    route_set.add_route('/:controller/:action')
-    route_set.generate({:controller => 'sample'}, {}, :generate)
-  end
-
   it "should leave off the action and id" do
     route_set.add_route(':controller/:action/:id')
     route_set.generate({:controller => 'controller'}, {}, :generate).should == '/controller'
   end
+
+  it "should fill in the controller from recall" do
+    route_set.add_route(':controller/:action/:id')
+    route_set.generate({:action => 'thingy'}, {:controller => 'sample', :action => 'index', :id => 123}, :generate).should == '/sample/thingy'
+  end
+
 end

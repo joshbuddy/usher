@@ -90,7 +90,7 @@ module ActionController
             params.last.last << part unless part.is_a?(Route::Seperator)
             find(path, params)
           else
-            raise "did not recognize #{part}"
+            raise "did not recognize #{part} in #{@lookup.keys.inspect}"
           end
         end
   
