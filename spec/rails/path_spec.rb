@@ -1,7 +1,7 @@
 require 'lib/compat'
 require 'lib/usher'
 
-route_set = ActionController::Routing::UsherRoutes
+route_set = Usher.new
 
 describe "Usher route adding" do
 

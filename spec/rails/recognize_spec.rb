@@ -1,7 +1,7 @@
 require 'lib/compat'
 require 'lib/usher'
 
-route_set = ActionController::Routing::UsherRoutes
+route_set = Usher.new
 
 def build_request_mock(path, method, params)
   request = mock "Request"
