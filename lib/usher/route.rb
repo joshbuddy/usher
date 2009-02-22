@@ -22,7 +22,7 @@ class Usher
         else
           part
         end
-      end unless path.blank? 
+      end unless !path || path.empty?
 
       parts << Method.for(request_method)
 
@@ -46,7 +46,6 @@ class Usher
 
     def to(options)
       @params = options
-      raise "route #{original_path} must include a controller" unless @dynamic_set.include?(:controller) || @params.include?(:controller)
       self
     end
 

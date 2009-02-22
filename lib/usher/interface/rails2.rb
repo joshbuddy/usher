@@ -1,6 +1,7 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'rails2/mapper'
+require 'rails2/route'
 
 class Usher
   module Interface
@@ -11,6 +12,7 @@ class Usher
       
       def initialize
         reset!
+        Route.extend(Rails2::Route)
       end
       
       def reset!
@@ -40,7 +42,10 @@ class Usher
       end
       
       def recognize(request)
-        @usher.recognize(request)
+        (route, params_list) = @usher.recognize(request)
+        params = params_list.inject({}){|h,(k,v)| h[k]=v; h }
+        request.path_parameters = (params_list.empty? ? route.params : route.params.merge(params)).with_indifferent_access
+        "#{request.path_parameters[:controller].camelize}Controller".constantize
       end
       
       def add_named_route(name, route, options = {})
@@ -88,10 +93,10 @@ class Usher
       end
 
       def reload
+        @usher.reset!
         if @configuration_file
-          @usher.load(@configuration_file)
+          Kernel.load(@configuration_file)
         else
-          @usher.reset!
           @usher.add_route ":controller/:action/:id"
         end
       end

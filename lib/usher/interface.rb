@@ -8,6 +8,12 @@ class Usher
       when :rails2
         require 'interface/rails2'
         Rails2.new
+      when :merb
+        require 'interface/merb_interface'
+        MerbInterface.new
+      when :rack
+        require 'interface/rack_interface'
+        RackInterface.new
       end
     end
     

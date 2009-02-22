@@ -1,4 +1,5 @@
 $:.unshift File.dirname(__FILE__)
+
 require 'strscan'
 require 'set'
 require 'usher/node'
@@ -7,16 +8,11 @@ require 'usher/grapher'
 require 'usher/interface'
 
 class Usher
-  attr_reader :tree, :named_routes, :route_count
+  attr_reader :tree, :named_routes, :route_count, :routes
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
   Version = '0.0.1'
-  
-  def load(file)
-    reset!
-    Kernel.load(file)
-  end
-  
+    
   def empty?
     @route_count.zero?
   end
@@ -24,6 +20,7 @@ class Usher
   def reset!
     @tree = Node.root
     @named_routes = {}
+    @routes = []
     @route_count = 0
     Grapher.instance.reset!
   end
@@ -55,6 +52,7 @@ class Usher
     route = Route.new(path, self, {:conditions => conditions, :requirements => requirements}).to(options)
     
     @tree.add(route)
+    @routes << route
     Grapher.instance.add_route(route)
     @route_count += 1
     route
@@ -62,9 +60,7 @@ class Usher
 
   def recognize(request)
     path = Route.path_to_route_parts(request.path, request.method)
-    (route, params_list) = @tree.find(path)
-    request.path_parameters = (params_list.blank? ? route.params : route.params.merge(Hash[*params_list.flatten])).with_indifferent_access
-    "#{request.path_parameters[:controller].camelize}Controller".constantize
+    @tree.find(path)
   end
 
   def route_for_options(options)
