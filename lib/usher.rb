@@ -150,21 +150,22 @@ class Usher
 
     path = ""
     
+    sep_p = nil
     route.path.each do |p|
       case p
       when Route::Variable:
         case p.type
         when :*
-          path << '/' << param_list.shift * '/'
+          path << sep_p.to_s << param_list.shift * '/'
         else
-          (dp = param_list.shift) && path << '/' << dp.to_s
+          (dp = param_list.shift) && path << sep_p.to_s << dp.to_s
         end
       when Route::Seperator:
-        # do nothing
+        sep_p = p
       when Route::Method:
         # do nothing
       else
-        path << '/' << p.to_s
+        path << sep_p.to_s << p.to_s
       end
     end
     unless params_hash.blank?

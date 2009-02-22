@@ -49,9 +49,14 @@ describe "Usher URL generation" do
     route_set.generate_url(:sample, {:first => 'maz', :second => 'zoo', :third => ['zanz', 'susie']}).should == '/sample/maz/zoo?third%5B%5D=zanz&third%5B%5D=susie'
   end
 
-  it "should leave off the action and id" do
-    route_set.add_route(':controller/:action/:id')
-    route_set.generate({:controller => 'controller'}, {}, :generate).should == '/controller'
+  it "should generate a mutliple vairable URL from an array" do
+    route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
+    route_set.generate_url(:sample, ['maz', 'zoo']).should == '/sample/maz/zoo'
+  end
+
+  it "should generate a simple URL with a format" do
+    route_set.add_named_route(:sample, '/sample/:action.:format', :controller => 'sample')
+    route_set.generate_url(:sample, {:action => 'action', :format => 'html'}).should == '/sample/action.html'
   end
 
   it "should fill in the controller from recall" do
