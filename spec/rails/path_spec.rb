@@ -1,7 +1,7 @@
 require 'lib/compat'
 require 'lib/usher'
 
-route_set = Usher.new
+route_set = Usher::Interface.for(:rails2)
 
 describe "Usher route adding" do
 

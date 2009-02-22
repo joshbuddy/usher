@@ -29,18 +29,11 @@ class Usher
       parts
     end
 
-    def initialize(original_path, options = {})
+    def initialize(original_path, router, options = {})
       @original_path = original_path
-      @params = options
-      @params[:action] = 'index' unless @params[:action]
-      @conditions = @params.delete(:conditions) || {}
-      requirements = @params.delete(:requirements) || {}
-      @params.delete_if do |k, v|
-        if v.is_a?(Regexp)
-          requirements[k] = v 
-          true
-        end
-      end
+      @router = router
+      @requirements = options.delete(:requirements)
+      @conditions = options.delete(:conditions)
       @request_method = @conditions && @conditions.delete(:method)
       @path = Route.path_to_route_parts(@original_path, @request_method, requirements)
       @dynamic_indicies = []
@@ -49,7 +42,16 @@ class Usher
       @dynamic_map = {}
       @dynamic_parts.each{|p| @dynamic_map[p.name] = p }
       @dynamic_set = Set.new(@dynamic_map.keys)
-      raise "route #{original_path} must include a controller" unless @dynamic_set.include?(:controller) || options.include?(:controller)
+    end
+
+    def to(options)
+      @params = options
+      raise "route #{original_path} must include a controller" unless @dynamic_set.include?(:controller) || @params.include?(:controller)
+      self
+    end
+
+    def name(name)
+      @router.name(name, self)
     end
 
     class Seperator

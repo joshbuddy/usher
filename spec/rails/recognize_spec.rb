@@ -1,7 +1,7 @@
 require 'lib/compat'
 require 'lib/usher'
 
-route_set = Usher.new
+route_set = Usher::Interface.for(:rails2)
 
 def build_request_mock(path, method, params)
   request = mock "Request"
