@@ -10,6 +10,7 @@ class Usher
   attr_reader :tree, :named_routes, :route_count
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
+  Version = '0.0.1'
   
   def load(file)
     reset!

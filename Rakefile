@@ -1,5 +1,13 @@
+require 'hoe'
 require 'spec'
 require 'spec/rake/spectask'
+require 'lib/usher'
+
+Hoe.new('usher', Usher::Version) do |p|
+  p.author = 'Joshua Hull'
+  p.email = 'joshbuddy@gmail.com'
+  p.summary = 'Tree-based router'
+end
 
 task :spec => 'spec:all'
 namespace(:spec) do
