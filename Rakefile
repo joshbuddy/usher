@@ -11,9 +11,7 @@ end
 
 task :spec => 'spec:all'
 namespace(:spec) do
-  task :all => [:usher]
-
-  Spec::Rake::SpecTask.new(:usher) do |t|
+  Spec::Rake::SpecTask.new(:all) do |t|
     t.spec_opts ||= []
     t.spec_opts << "-rubygems"
     t.spec_opts << "--options" << "spec/spec.opts"
@@ -22,3 +20,7 @@ namespace(:spec) do
 
 end
 
+task :cultivate do
+  system "touch Manifest.txt; rake check_manifest | grep -v \"(in \" | patch"
+  system "rake debug_gem | grep -v \"(in \" > `basename \\`pwd\\``.gemspec"
+end
