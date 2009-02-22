@@ -79,7 +79,7 @@ class Usher
   def recognize(request)
     path = Route.path_to_route_parts(request.path, request.method)
     (route, params_list) = @tree.find(path)
-    request.path_parameters = (params_list && !params_list.empty? ? route.params.merge(Hash[*(params_list.first)]) : route.params).with_indifferent_access
+    request.path_parameters = (params_list.blank? ? route.params : route.params.merge(Hash[*params_list.flatten])).with_indifferent_access
     "#{request.path_parameters[:controller].camelize}Controller".constantize
   end
 

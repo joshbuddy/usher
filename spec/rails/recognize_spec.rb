@@ -54,6 +54,11 @@ describe "Usher route recognition" do
     route_set.route_count.should == 3
   end
   
+  it "should correctly recognize a format (dynamic path path with . delimiter)" do
+    route_set.add_route('/:controller/:action/:id.:format')
+    route_set.recognize(build_request_mock('/sample/test/123.html', 'get', {:controller => 'sample', :action => 'test', :id => '123', :format => 'html'})).should == SampleController
+  end
+  
   it "should support root nodes" do
     route_set.add_route('/sample', :controller => 'sample', :action => 'action')
     route_set.add_route('/sample/:action', :controller => 'not_sample')
