@@ -1,18 +1,18 @@
 $:.unshift File.dirname(__FILE__)
 
-require 'rails2/mapper'
-require 'rails2/route'
+require 'rails2_interface/mapper'
+require 'rails2_interface/route'
 
 class Usher
   module Interface
-    class Rails2
+    class Rails2Interface
       
       attr_reader :usher
       attr_accessor :configuration_file
       
       def initialize
         reset!
-        Route.extend(Rails2::Route)
+        Route.extend(Rails2Interface::Route)
       end
       
       def reset!

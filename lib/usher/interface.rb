@@ -6,8 +6,8 @@ class Usher
     def self.for(type)
       case type
       when :rails2
-        require 'interface/rails2'
-        Rails2.new
+        require 'interface/rails2_interface'
+        Rails2Interface.new
       when :merb
         require 'interface/merb_interface'
         MerbInterface.new

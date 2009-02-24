@@ -6,6 +6,7 @@ require 'usher/node'
 require 'usher/route'
 require 'usher/grapher'
 require 'usher/interface'
+require 'usher/exceptions'
 
 class Usher
   attr_reader :tree, :named_routes, :route_count, :routes

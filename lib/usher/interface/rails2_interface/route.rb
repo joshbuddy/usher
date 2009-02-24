@@ -1,6 +1,6 @@
 class Usher
   module Interface
-    class Rails2
+    class Rails2Interface
       module Route
         
         def to(options)

@@ -64,7 +64,7 @@ class Usher
     def find(path, params = [])
       if path.size.zero?
         return [terminates, params] if terminates?
-        raise "could not recognize route" 
+        raise UnrecognizedException.new
       end
 
       part = path.shift
@@ -88,7 +88,7 @@ class Usher
         params.last.last << part unless part.is_a?(Route::Seperator)
         find(path, params)
       else
-        raise "did not recognize #{part} in #{@lookup.keys.inspect}"
+        raise UnrecognizedException.new("did not recognize #{part} in possible values #{@lookup.keys.inspect}")
       end
     end
 
