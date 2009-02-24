@@ -1,7 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'rails2_interface/mapper'
-require 'rails2_interface/route'
 
 class Usher
   module Interface
@@ -9,10 +8,9 @@ class Usher
       
       attr_reader :usher
       attr_accessor :configuration_file
-      
+
       def initialize
         reset!
-        Route.extend(Rails2Interface::Route)
       end
       
       def reset!
@@ -38,7 +36,9 @@ class Usher
         end
 
         options[:action] = 'index' unless options[:action]
-        @usher.add_route(path, options)
+        route = @usher.add_route(path, options)
+        raise unless route.dynamic_set.include?(:controller) || route.params.include?(:controller)
+        route
       end
       
       def recognize(request)

@@ -15,7 +15,7 @@ end
 
 SampleController = Object.new
 
-describe "Usher route recognition" do
+describe "Usher (for rails) route recognition" do
 
   before(:each) do
     route_set.reset!
