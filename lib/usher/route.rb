@@ -3,24 +3,33 @@ class Usher
     attr_reader :dynamic_parts, :dynamic_map, :dynamic_indicies, :path, :original_path, :dynamic_set,
       :requirements, :conditions, :request_method, :params
     
-    ScanRegex = /([:\*]?[0-9a-z_]+|\/|\.)/
+    ScanRegex = /([:\*]?[0-9a-z_]+|\/|\.|\(|\))/
     
     def self.path_to_route_parts(path, request_method = nil, requirements = {})
       parts = path[0] == ?/ ? [] : [Seperator::Slash]
       ss = StringScanner.new(path)
-      
+      groups = [parts]
+      current_group = parts
       while !ss.eos?
         part = ss.scan(ScanRegex)
-        parts << case part[0]
+        case part[0]
         when ?*, ?:
           type = part.slice!(0).chr.to_sym
-          Variable.new(type, part, requirements[part.to_sym])
+          current_group << Variable.new(type, part, requirements[part.to_sym])
         when ?.
-          Seperator::Dot
+          current_group << Seperator::Dot
         when ?/
-          Seperator::Slash
+          current_group << Seperator::Slash
+        when ?(
+          new_group = []
+          groups << new_group
+          current_group << new_group
+          current_group = new_group
+        when ?)
+          groups.pop
+          current_group = groups.last
         else
-          part
+          current_group << part
         end
       end unless !path || path.empty?
 
@@ -45,6 +54,7 @@ class Usher
     end
 
     def to(options)
+      p "options: #{options.inspect}"
       @params = options
       self
     end
@@ -79,6 +89,10 @@ class Usher
 
       def to_s
         "#{type}#{name}"
+      end
+      
+      def ==(o)
+        o && (o.type == @type && o.name == @name && o.validator == @validator)
       end
     end
 
