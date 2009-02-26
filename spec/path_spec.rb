@@ -1,4 +1,3 @@
-require 'lib/compat'
 require 'lib/usher'
 
 route_set = Usher.new

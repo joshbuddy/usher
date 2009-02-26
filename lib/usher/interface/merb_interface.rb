@@ -17,11 +17,20 @@ class Usher
         UsherRoutes = Usher.new
         
         def prepare(first = [], last = [], &block)
-          routes = []
+          @routes = []
           root_behavior._with_proxy(&block)
-          routes = first + routes + last
-          routes.each {|r| UsherRoutes.add_route(r) }
+          @routes = first + @routes + last
+          compile
           self
+        end
+        
+        def compile
+          routes.each do |r| 
+            r.segments
+          end
+          
+          #puts r.inspect; UsherRoutes.add_route(r) }
+          #routes.each {|r| }
         end
         
         def named_routes
@@ -33,7 +42,9 @@ class Usher
         end
 
         def route_for(request)
-          (route, params) = UsherRoutes.recognize(request)
+          p request
+          p UsherRoutes.tree
+          UsherRoutes.recognize(request)
         end
         
       end

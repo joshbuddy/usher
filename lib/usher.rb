@@ -60,7 +60,7 @@ class Usher
   end
 
   def recognize(request)
-    path = Route.path_to_route_parts(request.path, request.method)
+    path = Route::Split.new(request.path, request.method).paths.first
     @tree.find(path)
   end
 

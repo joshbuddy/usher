@@ -4,6 +4,13 @@ class Usher
     attr_reader :value, :parent, :lookup
     attr_accessor :terminates
 
+    def initialize(parent, value)
+      @parent = parent
+      @value = value
+      @lookup = Hash.new
+      @alternate_routes = []
+    end
+
     def depth
       unless @depth
         @depth = 0
@@ -17,12 +24,6 @@ class Usher
     
     def self.root
       self.new(nil, nil)
-    end
-
-    def initialize(parent, value)
-      @parent = parent
-      @value = value
-      @lookup = Hash.new
     end
 
     def has_globber?

@@ -34,10 +34,15 @@ This is a tree-based router (based on Ilya Grigorik suggestion). Turns out looki
   >> curl http://127.0.0.1:3000/hello/samueltanders
   << Hi there samueltanders
 
+== DONE
+
+* add support for () optional parts
+
 == TODO
 
 * Make it integrate with merb
 * Make it integrate with rails3
+* Create decent DSL for use with rack
 
 Looks about 20-50% faster than the router Rails ships with for non-trivial cases.
 
