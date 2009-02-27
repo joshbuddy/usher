@@ -4,6 +4,19 @@ Tree-based router for Ruby on Rails.
 
 This is a tree-based router (based on Ilya Grigorik suggestion). Turns out looking up in a hash and following a tree is faster than Krauter's massive regex approach, so why not? I said, Heck Yes, and here we are.
 
+== Route format
+
+Here are some examples of routes recognized by usher (so far)
+
+<table>
+  <tr><th>Route</th>                         <th>Matches</th></tr>
+  <tr><td>/path/to/something</td>            <td>/path/to/something</td></tr>
+  <tr><td>/path/:variable/more</td>          <td>/path/foo/more, /path/bar/more ...</td></tr>
+  <tr><td>/show/*tags</td>                   <td>/show/hot /show/hot/coffee /show/some/more/hot/coffee ...</td></tr>
+  <tr><td>/route(/help)</td>                 <td>/route, /route/help</td></tr>
+  <tr><td>/route(.:format)</td>              <td>/route, /route.xml, /route.html ...</td></tr>
+</table
+
 == Rails
 
   script/plugin install git://github.com/joshbuddy/usher.git
@@ -43,6 +56,8 @@ This is a tree-based router (based on Ilya Grigorik suggestion). Turns out looki
 * Make it integrate with merb
 * Make it integrate with rails3
 * Create decent DSL for use with rack
+* Emit exceptions inline with relevant interfaces
+* More RDoc! (optionally cowbell)
 
 Looks about 20-50% faster than the router Rails ships with for non-trivial cases.
 
