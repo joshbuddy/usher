@@ -8,14 +8,12 @@ This is a tree-based router (based on Ilya Grigorik suggestion). Turns out looki
 
 Here are some examples of routes recognized by usher (so far)
 
-<table>
-  <tr><th>Route</th>                         <th>Matches</th></tr>
-  <tr><td>/path/to/something</td>            <td>/path/to/something</td></tr>
-  <tr><td>/path/:variable/more</td>          <td>/path/foo/more, /path/bar/more ...</td></tr>
-  <tr><td>/show/*tags</td>                   <td>/show/hot /show/hot/coffee /show/some/more/hot/coffee ...</td></tr>
-  <tr><td>/route(/help)</td>                 <td>/route, /route/help</td></tr>
-  <tr><td>/route(.:format)</td>              <td>/route, /route.xml, /route.html ...</td></tr>
-</table
+  _Route_                  _Matches_
+  /path/to/something       /path/to/something
+  /path/:variable/more     /path/foo/more, /path/bar/more ...
+  /show/*tags              /show/hot /show/hot/coffee /show/some/more/hot/coffee ...
+  /route(/help)            /route, /route/help
+  /route(.:format)         /route, /route.xml, /route.html ...
 
 == Rails
 
