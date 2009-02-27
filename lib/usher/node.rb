@@ -48,18 +48,20 @@ class Usher
     end
 
     def add(route)
-      path = route.path.dup
-      current_node = self
-      until path.size.zero?
-        key = path.shift
-        lookup_key = key.is_a?(Route::Variable) ? nil : key
-        unless target_node = current_node.lookup[lookup_key]
-          target_node = current_node.lookup[lookup_key] = Node.new(current_node, key)
+      route.paths.each do |path|
+        parts = path.parts.dup
+        current_node = self
+        until parts.size.zero?
+          key = parts.shift
+          lookup_key = key.is_a?(Route::Variable) ? nil : key
+          unless target_node = current_node.lookup[lookup_key]
+            target_node = current_node.lookup[lookup_key] = Node.new(current_node, key)
+          end
+          current_node = target_node
         end
-        current_node = target_node
+        current_node.terminates = path
       end
-      current_node.terminates = route
-      current_node
+      route
     end
 
     def find(path, params = [])
@@ -79,14 +81,14 @@ class Usher
           case next_part.value.type
           when :*
             params << [next_part.value.name, []]
-            params.last.last << part unless next_part.is_a?(Route::Seperator)
+            params.last.last << part unless next_part.is_a?(Route::Separator)
           when :':'
             params << [next_part.value.name, part]
           end
         end
         next_part.find(path, params)
-      elsif has_globber? && p = find_parent{|p| !p.is_a?(Route::Seperator)} && p.value.is_a?(Route::Variable) && p.value.type == :*
-        params.last.last << part unless part.is_a?(Route::Seperator)
+      elsif has_globber? && p = find_parent{|p| !p.is_a?(Route::Separator)} && p.value.is_a?(Route::Variable) && p.value.type == :*
+        params.last.last << part unless part.is_a?(Route::Separator)
         find(path, params)
       else
         raise UnrecognizedException.new("did not recognize #{part} in possible values #{@lookup.keys.inspect}")

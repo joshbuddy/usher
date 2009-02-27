@@ -15,10 +15,12 @@ class Usher
     end
 
     def add_route(route)
-      unless route.dynamic_set.size.zero?
-        route.dynamic_set.each do |k|
-          @orders[route.dynamic_set.size][k] << route
-          @key_count[k] += 1
+      route.paths.each do |path|
+        unless path.dynamic_set.size.zero?
+          path.dynamic_set.each do |k|
+            @orders[path.dynamic_set.size][k] << path
+            @key_count[k] += 1
+          end
         end
       end
     end
@@ -27,7 +29,7 @@ class Usher
       @significant_keys ||= Set.new(@key_count.keys)
     end
 
-    def find_matching_route(params)
+    def find_matching_path(params)
       unless params.empty?
         set = Set.new(params.keys) & significant_keys
         set.size.downto(1) do |o|

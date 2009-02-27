@@ -37,7 +37,7 @@ class Usher
   end
 
   def name(name, route)
-    @named_routes[name] = route
+    @named_routes[name] = route.primary_path
   end
 
   def add_route(path, options = {})
@@ -60,16 +60,16 @@ class Usher
   end
 
   def recognize(request)
-    path = Route::Split.new(request.path, request.method).paths.first
+    path = Route::Splitter.new(request.path, request.method).paths.first
     @tree.find(path)
   end
 
   def route_for_options(options)
-    Grapher.instance.find_matching_route(options)
+    Grapher.instance.find_matching_path(options)
   end
   
   def generate_url(route, params)
-    route = case route
+    path = case route
     when Symbol
       @named_routes[route]
     when nil
@@ -82,52 +82,52 @@ class Usher
     param_list = case params
     when Hash
       params_hash = params
-      route.dynamic_parts.collect{|k| params_hash.delete(k.name)}
+      path.dynamic_parts.collect{|k| params_hash.delete(k.name)}
     when Array
       params
     else
       Array(params)
     end
 
-    path = ""
+    generated_path = ""
     
     sep_p = nil
-    route.path.each do |p|
+    path.parts.each do |p|
       case p
       when Route::Variable:
         case p.type
         when :*
-          path << sep_p.to_s << param_list.shift * '/'
+          generated_path << sep_p.to_s << param_list.shift * '/'
         else
-          (dp = param_list.shift) && path << sep_p.to_s << dp.to_s
+          (dp = param_list.shift) && generated_path << sep_p.to_s << dp.to_s
         end
-      when Route::Seperator:
+      when Route::Separator:
         sep_p = p
       when Route::Method:
         # do nothing
       else
-        path << sep_p.to_s << p.to_s
+        generated_path << sep_p.to_s << p.to_s
       end
     end
     unless params_hash.blank?
-      has_query = path[??]
+      has_query = generated_path[??]
       params_hash.each do |k,v|
         case v
         when Array
           v.each do |v_part|
-            path << (has_query ? '&' : has_query = true && '?')
-            path << CGI.escape("#{k.to_s}[]")
-            path << '='
-            path << CGI.escape(v_part.to_s)
+            generated_path << (has_query ? '&' : has_query = true && '?')
+            generated_path << CGI.escape("#{k.to_s}[]")
+            generated_path << '='
+            generated_path << CGI.escape(v_part.to_s)
           end
         else
-          path << (has_query ? '&' : has_query = true && '?')
-          path << CGI.escape(k.to_s)
-          path << '='
-          path << CGI.escape(v.to_s)
+          generated_path << (has_query ? '&' : has_query = true && '?')
+          generated_path << CGI.escape(k.to_s)
+          generated_path << '='
+          generated_path << CGI.escape(v.to_s)
         end
       end
     end
-    path
+    generated_path
   end
 end

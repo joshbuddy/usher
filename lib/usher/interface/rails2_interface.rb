@@ -37,14 +37,16 @@ class Usher
 
         options[:action] = 'index' unless options[:action]
         route = @usher.add_route(path, options)
-        raise unless route.dynamic_set.include?(:controller) || route.params.include?(:controller)
+        route.paths.each do |p|
+          raise unless p.dynamic_set.include?(:controller) || route.params.include?(:controller)
+        end
         route
       end
       
       def recognize(request)
-        (route, params_list) = @usher.recognize(request)
+        (path, params_list) = @usher.recognize(request)
         params = params_list.inject({}){|h,(k,v)| h[k]=v; h }
-        request.path_parameters = (params_list.empty? ? route.params : route.params.merge(params)).with_indifferent_access
+        request.path_parameters = (params_list.empty? ? path.route.params : path.route.params.merge(params)).with_indifferent_access
         "#{request.path_parameters[:controller].camelize}Controller".constantize
       end
       
