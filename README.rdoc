@@ -40,7 +40,7 @@ Here are some examples of routes recognized by usher (so far)
   routes.add('/hello/:name').to(app)
   run routes
 
-=========
+  ------------
 
   >> curl http://127.0.0.1:3000/hello/samueltanders
   << Hi there samueltanders
