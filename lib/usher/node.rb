@@ -68,6 +68,7 @@ class Usher
           end
           current_node = target_node
         end
+        raise "terminator already taken" if current_node.terminates
         current_node.terminates = path
         
       end
@@ -76,8 +77,8 @@ class Usher
     
     def find(request, path = Route::Splitter.split(request.path, true), params = [])
       part = path.shift unless path.size.zero?
-      
       if @urgent_lookup_type && next_part = @urgent_lookup[request.send(@urgent_lookup_type)]
+        path.unshift(part)
         next_part.find(request, path, params)
       elsif path.size.zero? && !part
         if terminates?
