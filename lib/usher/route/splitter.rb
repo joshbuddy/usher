@@ -5,11 +5,16 @@ class Usher
       
       attr_reader :paths
       
-      def initialize(path, request_method = nil, requirements = {})
-        @parts = path[0] == ?/ ? [] : [Separator::Slash]
+      def initialize(path, requirements = {})
+        @parts = Splitter.split(path, false, requirements)
+        @paths = calc_paths(@parts)
+      end
+
+      def self.split(path, ignore_optional = false, requirements = {})
+        parts = path[0] == ?/ ? [] : [Separator::Slash]
         ss = StringScanner.new(path)
-        groups = [@parts]
-        current_group = @parts
+        groups = [parts]
+        current_group = parts
         while !ss.eos?
           part = ss.scan(ScanRegex)
           case part[0]
@@ -21,19 +26,22 @@ class Usher
           when ?/
             current_group << Separator::Slash
           when ?(
-            new_group = []
-            groups << new_group
-            current_group << new_group
-            current_group = new_group
+            unless ignore_optional
+              new_group = []
+              groups << new_group
+              current_group << new_group
+              current_group = new_group
+            end
           when ?)
-            groups.pop
-            current_group = groups.last
+            unless ignore_optional
+              groups.pop
+              current_group = groups.last
+            end
           else
             current_group << part
           end
         end unless !path || path.empty?
-        @parts << Method.for(request_method)
-        @paths = calc_paths(@parts)
+        parts
       end
 
       private

@@ -4,7 +4,6 @@ route_set = Usher.new
 
 S = Usher::Route::Separator::Slash
 D = Usher::Route::Separator::Dot
-M = Usher::Route::Method
 
 describe "Usher route adding" do
 
@@ -26,12 +25,12 @@ describe "Usher route adding" do
   it "should add every kind of optional route possible" do
     route_set.add_route('/a/b(/c)(/d(/e))')
     route_set.routes.first.paths.collect{|a| a.parts }.should == [
-      [S, "a", S, "b", M.for(:any)],
-      [S, "a", S, "b", S, "c", M.for(:any)],
-      [S, "a", S, "b", S, "d", M.for(:any)],
-      [S, "a", S, "b", S, "d", S, "e", M.for(:any)], 
-      [S, "a", S, "b", S, "c", S, "d", M.for(:any)], 
-      [S, "a", S, "b", S, "c", S, "d", S, "e", M.for(:any)]
+      [S, "a", S, "b"],
+      [S, "a", S, "b", S, "c"],
+      [S, "a", S, "b", S, "d"],
+      [S, "a", S, "b", S, "d", S, "e"], 
+      [S, "a", S, "b", S, "c", S, "d"], 
+      [S, "a", S, "b", S, "c", S, "d", S, "e"]
     ]
     
   end

@@ -51,6 +51,7 @@ Here are some examples of routes recognized by usher (so far)
 
 == TODO
 
+* Add support for arbitrary HTTP header checks
 * Make it integrate with merb
 * Make it integrate with rails3
 * Create decent DSL for use with rack

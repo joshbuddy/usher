@@ -60,8 +60,7 @@ class Usher
   end
 
   def recognize(request)
-    path = Route::Splitter.new(request.path, request.method).paths.first
-    @tree.find(path)
+    @tree.find(request)
   end
 
   def route_for_options(options)
@@ -103,8 +102,6 @@ class Usher
         end
       when Route::Separator:
         sep_p = p
-      when Route::Method:
-        # do nothing
       else
         generated_path << sep_p.to_s << p.to_s
       end

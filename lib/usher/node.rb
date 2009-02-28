@@ -1,14 +1,16 @@
 class Usher
 
   class Node
-    attr_reader :value, :parent, :lookup
-    attr_accessor :terminates
+    attr_reader :value, :parent, :lookup, :urgent_lookup
+    attr_accessor :terminates, :urgent_lookup_type
 
     def initialize(parent, value)
       @parent = parent
       @value = value
-      @lookup = Hash.new
-      @alternate_routes = []
+      @lookup = {}
+      @urgent_lookup_type = nil
+      @urgent_lookup = {}
+      @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
     end
 
     def depth
@@ -27,9 +29,6 @@ class Usher
     end
 
     def has_globber?
-      if @has_globber.nil?
-        @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
-      end
       @has_globber
     end
 
@@ -48,33 +47,46 @@ class Usher
     end
 
     def add(route)
+      method = route.conditions.delete(:method)
       route.paths.each do |path|
-        parts = path.parts.dup
+        parts = route.conditions.keys.collect{|k| Route::Urgent.new(k, route.conditions[k])} + path.parts.dup
+        parts << Route::Urgent.new(:method, method) if method
         current_node = self
         until parts.size.zero?
           key = parts.shift
-          lookup_key = key.is_a?(Route::Variable) ? nil : key
-          unless target_node = current_node.lookup[lookup_key]
-            target_node = current_node.lookup[lookup_key] = Node.new(current_node, key)
+          target_node = case key
+          when Route::Urgent
+            if current_node.lookup.empty? && (current_node.urgent_lookup_type.nil? || current_node.urgent_lookup_type == key.type)
+              n = current_node.urgent_lookup[key.value] ||= Node.new(current_node, key)
+              current_node.urgent_lookup_type = key.type
+            else
+              parts.unshift(key)
+            end
+            n
+          else
+            current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
           end
           current_node = target_node
         end
         current_node.terminates = path
+        
       end
       route
     end
-
-    def find(path, params = [])
-      if path.size.zero?
-        return [terminates, params] if terminates?
-        raise UnrecognizedException.new
-      end
-
-      part = path.shift
-      if next_part = @lookup[part]
-        next_part.find(path, params)
-      elsif part.is_a?(Route::Method) && next_part = @lookup[Route::Method::Any]
-        next_part.find(path, params)
+    
+    def find(request, path = Route::Splitter.split(request.path, true), params = [])
+      part = path.shift unless path.size.zero?
+      
+      if @urgent_lookup_type && next_part = @urgent_lookup[request.send(@urgent_lookup_type)]
+        next_part.find(request, path, params)
+      elsif path.size.zero? && !part
+        if terminates?
+          [terminates, params]
+        else
+          raise UnrecognizedException.new
+        end
+      elsif next_part = @lookup[part]
+        next_part.find(request, path, params)
       elsif next_part = @lookup[nil]
         if next_part.value.is_a?(Route::Variable)
           raise "#{part} does not conform to #{next_part.value.validator}" if next_part.value.validator && (not next_part.value.validator === part)
@@ -86,10 +98,10 @@ class Usher
             params << [next_part.value.name, part]
           end
         end
-        next_part.find(path, params)
+        next_part.find(request, path, params)
       elsif has_globber? && p = find_parent{|p| !p.is_a?(Route::Separator)} && p.value.is_a?(Route::Variable) && p.value.type == :*
         params.last.last << part unless part.is_a?(Route::Separator)
-        find(path, params)
+        find(request, path, params)
       else
         raise UnrecognizedException.new("did not recognize #{part} in possible values #{@lookup.keys.inspect}")
       end
