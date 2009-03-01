@@ -19,7 +19,7 @@ class Usher
   end
 
   def reset!
-    @tree = Node.root
+    @tree = Node.root(self)
     @named_routes = {}
     @routes = []
     @route_count = 0

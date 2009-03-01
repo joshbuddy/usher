@@ -4,7 +4,7 @@ require 'route/path'
 require 'route/splitter'
 require 'route/separator'
 require 'route/variable'
-require 'route/urgent'
+require 'route/http'
 
 class Usher
   class Route

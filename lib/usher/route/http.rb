@@ -1,6 +1,6 @@
 class Usher
   class Route
-    class Urgent
+    class Http
   
       attr_reader :type, :value
   

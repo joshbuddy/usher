@@ -1,15 +1,17 @@
 class Usher
 
   class Node
-    attr_reader :value, :parent, :lookup, :urgent_lookup
-    attr_accessor :terminates, :urgent_lookup_type
+    
+    ConditionalTypes = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]
+    
+    attr_reader :value, :lookup
+    attr_accessor :terminates, :exclusive_type, :parent
 
     def initialize(parent, value)
       @parent = parent
       @value = value
       @lookup = {}
-      @urgent_lookup_type = nil
-      @urgent_lookup = {}
+      @exclusive_type = nil
       @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
     end
 
@@ -24,8 +26,8 @@ class Usher
       @depth
     end
     
-    def self.root
-      self.new(nil, nil)
+    def self.root(route_set)
+      self.new(route_set, nil)
     end
 
     def has_globber?
@@ -37,7 +39,7 @@ class Usher
     end
 
     def find_parent(&blk)
-      if @parent.nil?
+      if @parent.nil? || !@parent.is_a?(Node)
         nil
       elsif yield @parent
         @parent
@@ -46,25 +48,45 @@ class Usher
       end
     end
 
+    def replace(src, dest)
+      @lookup.each{ |k,v| @lookup[k] = dest if v == src}
+    end
+
     def add(route)
-      method = route.conditions.delete(:method)
       route.paths.each do |path|
-        parts = route.conditions.keys.collect{|k| Route::Urgent.new(k, route.conditions[k])} + path.parts.dup
-        parts << Route::Urgent.new(:method, method) if method
+        parts = path.parts.dup
+        ConditionalTypes.each do |type|
+          parts << Route::Http.new(type, route.conditions[type]) if route.conditions[type]
+        end
+        
         current_node = self
         until parts.size.zero?
           key = parts.shift
           target_node = case key
-          when Route::Urgent
-            if current_node.lookup.empty? && (current_node.urgent_lookup_type.nil? || current_node.urgent_lookup_type == key.type)
-              n = current_node.urgent_lookup[key.value] ||= Node.new(current_node, key)
-              current_node.urgent_lookup_type = key.type
-            else
+          when Route::Http
+            if current_node.exclusive_type == key.type
+              # same type, keep using it
+              current_node.lookup[key.value] ||= Node.new(current_node, key)
+            elsif current_node.exclusive_type.nil? || ConditionalTypes.index(current_node.exclusive_type) < ConditionalTypes.index(key.type)
+              # insert yourself into the chain
+              n = Node.new(current_node.parent, key)
+              current_node.parent = n
+              n.exclusive_type = key.type
+              n.parent.replace(current_node, n)
               parts.unshift(key)
+              n
+            else
+              # you're exclusive too, but you have to go later. sorry.
+              parts.unshift(key)
+              current_node.lookup[nil] ||= Node.new(current_node, Route::Http.new(current_node.exclusive_type, nil))
             end
-            n
           else
-            current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
+            if current_node.exclusive_type
+              parts.unshift(key)
+              current_node.lookup[nil] ||= Node.new(current_node, Route::Http.new(current_node.exclusive_type, nil))
+            else
+              current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
+            end
           end
           current_node = target_node
         end
@@ -77,7 +99,10 @@ class Usher
     
     def find(request, path = Route::Splitter.split(request.path, true), params = [])
       part = path.shift unless path.size.zero?
-      if @urgent_lookup_type && next_part = @urgent_lookup[request.send(@urgent_lookup_type)]
+      if @exclusive_type && next_part = @lookup[request.send(@exclusive_type)]
+        path.unshift(part)
+        next_part.find(request, path, params)
+      elsif @exclusive_type && next_part = @lookup[nil]
         path.unshift(part)
         next_part.find(request, path, params)
       elsif path.size.zero? && !part
