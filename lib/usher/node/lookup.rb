@@ -53,11 +53,9 @@ class Usher
       end
       
       def regex_lookup(key)
-        if key.is_a?(String)
-          if data = regex_test.match(key)
-            (data_array = data.to_a).each_index do |i|
-              break @regexes[i].last if data_array.at(i)
-            end
+        if !@regexes.empty? && key.is_a?(String) && data = regex_test.match(key)
+          (data_array = data.to_a).each_index do |i|
+            break @regexes[i].last if data_array.at(i)
           end
         end
       end
