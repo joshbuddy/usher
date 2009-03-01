@@ -37,7 +37,7 @@ class Usher
 
         options[:action] = 'index' unless options[:action]
         route = @usher.add_route(path, options)
-        raise unless route.primary_path.dynamic_set.include?(:controller) || route.params.include?(:controller)
+        raise "your route must include a controller" unless route.primary_path.dynamic_set.include?(:controller) || route.params.include?(:controller)
         route
       end
       

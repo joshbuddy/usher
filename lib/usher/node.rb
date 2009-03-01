@@ -8,7 +8,7 @@ class Usher
     
     ConditionalTypes = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]
     
-    attr_reader :value, :lookup
+    attr_reader :lookup, :value
     attr_accessor :terminates, :exclusive_type, :parent
 
     def initialize(parent, value)
@@ -23,7 +23,7 @@ class Usher
       unless @depth
         @depth = 0
         p = self
-        while not (p = p.parent).nil?
+        while (p = p.parent) && p.is_a?(Node)
           @depth += 1
         end
       end
@@ -55,12 +55,22 @@ class Usher
     def replace(src, dest)
       @lookup.replace(src, dest)
     end
-
+    
+    def pp
+      $stdout << " " * depth
+      $stdout << "#{depth}: #{value.inspect} #{!!terminates?}\n"
+      @lookup.each do |k,v|
+        $stdout << " " * (depth + 1)
+        $stdout << "#{k} ==> \n"
+        v.pp
+      end
+    end
+    
     def add(route)
       route.paths.each do |path|
         parts = path.parts.dup
         ConditionalTypes.each do |type|
-          parts << Route::Http.new(type, route.conditions[type]) if route.conditions[type]
+          parts.unshift(Route::Http.new(type, route.conditions[type])) if route.conditions[type]
         end
         
         current_node = self
@@ -69,19 +79,19 @@ class Usher
           target_node = case key
           when Route::Http
             if current_node.exclusive_type == key.type
-              # same type, keep using it
+              current_node.lookup[key.value] ||= Node.new(current_node, key)
+            elsif current_node.exclusive_type.nil? && current_node.lookup.empty?
+              current_node.exclusive_type = key.type
               current_node.lookup[key.value] ||= Node.new(current_node, key)
             elsif current_node.exclusive_type.nil? || ConditionalTypes.index(current_node.exclusive_type) < ConditionalTypes.index(key.type)
-              # insert yourself into the chain
-              n = Node.new(current_node.parent, key)
-              
+              # insert ourselves in the tree
+              current_node.parent.lookup.delete_value(current_node)
+              n = Node.new(current_node.parent, nil)
               current_node.parent = n
               n.exclusive_type = key.type
-              n.parent.replace(current_node, n)
-              parts.unshift(key)
+              n.lookup[nil] = current_node
               n
-            else
-              # you're exclusive too, but you have to go later. sorry.
+            elsif current_node.exclusive_type
               parts.unshift(key)
               current_node.lookup[nil] ||= Node.new(current_node, Route::Http.new(current_node.exclusive_type, nil))
             end
@@ -95,17 +105,17 @@ class Usher
           end
           current_node = target_node
         end
-        raise "terminator already taken" if current_node.terminates
+                
+        raise "terminator already taken trying to add #{path.parts * ''}" if current_node.terminates
         current_node.terminates = path
-        
       end
       route
     end
     
     def find(request, path = Route::Splitter.split(request.path, true), params = [])
       part = path.shift unless path.size.zero?
-      if @exclusive_type && next_part = (@lookup[request.send(@exclusive_type)] || @lookup[nil])
-        path.unshift(part)
+      if @exclusive_type && (next_part = (@lookup[request.send(@exclusive_type)] || @lookup[nil]))
+        path.unshift part
         next_part.find(request, path, params)
       elsif path.size.zero? && !part
         if terminates?

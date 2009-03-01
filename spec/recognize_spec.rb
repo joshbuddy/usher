@@ -41,4 +41,12 @@ describe "Usher route recognition" do
     target_route_https_admin.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => nil})).first).should == true
   end
   
+  it "should correctly fix that tree if conditionals are used later" do
+    noop_route = route_set.add_route('noop', :controller => 'products', :action => 'noop')
+    product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
+    noop_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/noop', :domain => 'admin.host.com'})).first).should == true
+    product_show_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'})).first).should == true
+    
+  end
+  
 end

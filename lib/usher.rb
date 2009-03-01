@@ -18,6 +18,10 @@ class Usher
     @route_count.zero?
   end
 
+  def lookup
+    @tree.lookup
+  end
+
   def reset!
     @tree = Node.root(self)
     @named_routes = {}
@@ -76,7 +80,7 @@ class Usher
     else
       route
     end
-
+    
     params_hash = {}
     param_list = case params
     when Hash

@@ -22,4 +22,12 @@ describe "String/regexp lookup table" do
     l['asd'].should == 'qwe2'
   end
 
+  it "should allow nil keys" do
+    l = Usher::Node::Lookup.new
+    l[nil] = 'qwe2'
+    l['asd'] = 'qwe'
+    l['asd'].should == 'qwe'
+    l[nil].should == 'qwe2'
+  end
+
 end

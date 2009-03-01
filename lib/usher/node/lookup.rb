@@ -9,12 +9,25 @@ class Usher
         @regexes_reverse = {}
       end
       
+      def empty?
+        @hash.empty? && @regexes.empty?
+      end
+      
       def keys
         @hash.keys + @regexes.collect{|r| r.first}
       end
       
       def values
         @hash.values + @regexes.collect{|r| r.last}
+      end
+      
+      def each
+        @hash.each{|k,v| yield k,v }
+        @regexes.each{|v| yield v.first, v.last }
+      end
+      
+      def delete_value(value)
+        @hash.delete(@hash_reverse[value]) || ((rr = @regexes_reverse[value]) && @regexes.delete_at(rr[0]))
       end
       
       def []=(key, value)
