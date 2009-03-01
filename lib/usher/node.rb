@@ -1,3 +1,7 @@
+$:.unshift File.dirname(__FILE__)
+
+require 'node/lookup'
+
 class Usher
 
   class Node
@@ -10,7 +14,7 @@ class Usher
     def initialize(parent, value)
       @parent = parent
       @value = value
-      @lookup = {}
+      @lookup = Lookup.new
       @exclusive_type = nil
       @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
     end
@@ -49,7 +53,7 @@ class Usher
     end
 
     def replace(src, dest)
-      @lookup.each{ |k,v| @lookup[k] = dest if v == src}
+      @lookup.replace(src, dest)
     end
 
     def add(route)
@@ -70,6 +74,7 @@ class Usher
             elsif current_node.exclusive_type.nil? || ConditionalTypes.index(current_node.exclusive_type) < ConditionalTypes.index(key.type)
               # insert yourself into the chain
               n = Node.new(current_node.parent, key)
+              
               current_node.parent = n
               n.exclusive_type = key.type
               n.parent.replace(current_node, n)

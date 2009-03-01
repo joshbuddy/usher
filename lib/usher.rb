@@ -93,14 +93,14 @@ class Usher
     sep_p = nil
     path.parts.each do |p|
       case p
-      when Route::Variable:
+      when Route::Variable
         case p.type
         when :*
           generated_path << sep_p.to_s << param_list.shift * '/'
         else
           (dp = param_list.shift) && generated_path << sep_p.to_s << dp.to_s
         end
-      when Route::Separator:
+      when Route::Separator
         sep_p = p
       else
         generated_path << sep_p.to_s << p.to_s
