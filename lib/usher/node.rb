@@ -99,10 +99,7 @@ class Usher
     
     def find(request, path = Route::Splitter.split(request.path, true), params = [])
       part = path.shift unless path.size.zero?
-      if @exclusive_type && next_part = @lookup[request.send(@exclusive_type)]
-        path.unshift(part)
-        next_part.find(request, path, params)
-      elsif @exclusive_type && next_part = @lookup[nil]
+      if @exclusive_type && next_part = (@lookup[request.send(@exclusive_type)] || @lookup[nil])
         path.unshift(part)
         next_part.find(request, path, params)
       elsif path.size.zero? && !part
