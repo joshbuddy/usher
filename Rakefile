@@ -7,6 +7,7 @@ Hoe.new('usher', Usher::Version) do |p|
   p.author = 'Joshua Hull'
   p.email = 'joshbuddy@gmail.com'
   p.summary = 'Tree-based router'
+  p.developer('Joshua Hull', 'joshbuddy@gmail.com')
 end
 
 task :spec => 'spec:all'
