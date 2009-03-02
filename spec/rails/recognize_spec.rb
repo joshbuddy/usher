@@ -1,5 +1,6 @@
 require 'lib/compat'
 require 'lib/usher'
+require 'action_controller'
 
 route_set = Usher::Interface.for(:rails2)
 
@@ -47,6 +48,11 @@ describe "Usher (for rails) route recognition" do
   it "should raise based upon an invalid param" do
     route_set.add_named_route(:sample, '/sample/:action', :controller => 'sample', :requirements => {:action => /\d+/})
     proc { route_set.recognize(build_request_mock('/sample/asdqwe', :post, {})) }.should raise_error
+  end
+  
+  it "should raise based upon an invalid route" do
+    route_set.add_named_route(:sample, '/sample', :controller => 'sample', :action => 'test')
+    proc { route_set.recognize(build_request_mock('/test/asdqwe', :post, {})) }.should raise_error(ActionController::RoutingError)
   end
   
   it "should add /:controller and /:controller/:action if /:controller/:action/:id is added" do

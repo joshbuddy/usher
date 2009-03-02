@@ -26,7 +26,7 @@ class Usher
       
       def add_route(path, options = {})
         if !@controller_action_route_added && path =~ %r{^/?:controller/:action/:id$}
-          add_route('/:controller/:action', options)
+          add_route('/:controller/:action', options.dup)
           @controller_action_route_added = true 
         end
 
@@ -36,6 +36,7 @@ class Usher
         end
 
         options[:action] = 'index' unless options[:action]
+        
         route = @usher.add_route(path, options)
         raise "your route must include a controller" unless route.primary_path.dynamic_set.include?(:controller) || route.params.include?(:controller)
         route
@@ -46,6 +47,8 @@ class Usher
         params = params_list.inject({}){|h,(k,v)| h[k]=v; h }
         request.path_parameters = (params_list.empty? ? path.route.params : path.route.params.merge(params)).with_indifferent_access
         "#{request.path_parameters[:controller].camelize}Controller".constantize
+      rescue
+        raise ActionController::RoutingError, "No route matches #{request.path.inspect} with #{request.inspect}"
       end
       
       def add_named_route(name, route, options = {})

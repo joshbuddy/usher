@@ -1,16 +1,35 @@
 class Usher
   class Route
     class Splitter
+      
       ScanRegex = /([:\*]?[0-9a-z_]+|\/|\.|\(|\))/
+      UrlScanRegex = /\/|\.|\w+/
       
       attr_reader :paths
       
       def initialize(path, requirements = {})
-        @parts = Splitter.split(path, false, requirements)
+        @parts = Splitter.split(path, requirements)
         @paths = calc_paths(@parts)
       end
 
-      def self.split(path, ignore_optional = false, requirements = {})
+      def self.url_split(path)
+        parts = path[0] == ?/ ? [] : [Separator::Slash]
+        ss = StringScanner.new(path)
+          while !ss.eos?
+            part = ss.scan(UrlScanRegex)
+            case part[0]
+            when ?.
+              parts << Separator::Dot
+            when ?/
+              parts << Separator::Slash
+            else
+              parts << part
+            end
+          end if path && !path.empty?
+        parts
+      end
+      
+      def self.split(path, requirements = {})
         parts = path[0] == ?/ ? [] : [Separator::Slash]
         ss = StringScanner.new(path)
         groups = [parts]
@@ -26,17 +45,13 @@ class Usher
           when ?/
             current_group << Separator::Slash
           when ?(
-            unless ignore_optional
-              new_group = []
-              groups << new_group
-              current_group << new_group
-              current_group = new_group
-            end
+            new_group = []
+            groups << new_group
+            current_group << new_group
+            current_group = new_group
           when ?)
-            unless ignore_optional
-              groups.pop
-              current_group = groups.last
-            end
+            groups.pop
+            current_group = groups.last
           else
             current_group << part
           end

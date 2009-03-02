@@ -8,8 +8,8 @@ class Usher
     
     ConditionalTypes = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]
     
-    attr_reader :lookup, :value
-    attr_accessor :terminates, :exclusive_type, :parent
+    attr_reader :lookup
+    attr_accessor :terminates, :exclusive_type, :parent, :value
 
     def initialize(parent, value)
       @parent = parent
@@ -70,7 +70,7 @@ class Usher
       route.paths.each do |path|
         parts = path.parts.dup
         ConditionalTypes.each do |type|
-          parts.unshift(Route::Http.new(type, route.conditions[type])) if route.conditions[type]
+          parts.push(Route::Http.new(type, route.conditions[type])) if route.conditions[type]
         end
         
         current_node = self
@@ -80,18 +80,10 @@ class Usher
           when Route::Http
             if current_node.exclusive_type == key.type
               current_node.lookup[key.value] ||= Node.new(current_node, key)
-            elsif current_node.exclusive_type.nil? && current_node.lookup.empty?
+            elsif current_node.lookup.empty?
               current_node.exclusive_type = key.type
               current_node.lookup[key.value] ||= Node.new(current_node, key)
-            elsif current_node.exclusive_type.nil? || ConditionalTypes.index(current_node.exclusive_type) < ConditionalTypes.index(key.type)
-              # insert ourselves in the tree
-              current_node.parent.lookup.delete_value(current_node)
-              n = Node.new(current_node.parent, nil)
-              current_node.parent = n
-              n.exclusive_type = key.type
-              n.lookup[nil] = current_node
-              n
-            elsif current_node.exclusive_type
+            else
               parts.unshift(key)
               current_node.lookup[nil] ||= Node.new(current_node, Route::Http.new(current_node.exclusive_type, nil))
             end
@@ -105,23 +97,24 @@ class Usher
           end
           current_node = target_node
         end
-                
-        raise "terminator already taken trying to add #{path.parts * ''}" if current_node.terminates
         current_node.terminates = path
       end
       route
     end
     
-    def find(request, path = Route::Splitter.split(request.path, true), params = [])
+    def find(request, path = Route::Splitter.url_split(request.path), params = [])
       part = path.shift unless path.size.zero?
-      if @exclusive_type && (next_part = (@lookup[request.send(@exclusive_type)] || @lookup[nil]))
+      if @exclusive_type
         path.unshift part
-        next_part.find(request, path, params)
+        [@lookup[request.send(@exclusive_type)], @lookup[nil]].each do |n|
+          ret = n.find(request, path.dup, params.dup) if n
+          ret and return ret
+        end
       elsif path.size.zero? && !part
         if terminates?
           [terminates, params]
         else
-          raise UnrecognizedException.new
+          nil
         end
       elsif next_part = @lookup[part]
         next_part.find(request, path, params)
@@ -141,7 +134,7 @@ class Usher
         params.last.last << part unless part.is_a?(Route::Separator)
         find(request, path, params)
       else
-        raise UnrecognizedException.new("did not recognize #{part} in possible values #{@lookup.keys.inspect}")
+        nil
       end
     end
 

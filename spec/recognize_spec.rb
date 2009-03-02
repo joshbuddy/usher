@@ -46,7 +46,11 @@ describe "Usher route recognition" do
     product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
     noop_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/noop', :domain => 'admin.host.com'})).first).should == true
     product_show_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'})).first).should == true
-    
+  end
+  
+  it "should should raise if malformed variables are used" do
+    route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
+    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error
   end
   
 end
