@@ -45,6 +45,7 @@ class Usher
   end
 
   def add_route(path, options = {})
+    transformers = options.delete(:transformers) || {}
     conditions = options.delete(:conditions) || {}
     requirements = options.delete(:requirements) || {}
     options.delete_if do |k, v|
@@ -54,7 +55,7 @@ class Usher
       end
     end
     
-    route = Route.new(path, self, {:conditions => conditions, :requirements => requirements}).to(options)
+    route = Route.new(path, self, {:transformers => transformers, :conditions => conditions, :requirements => requirements}).to(options)
     
     @tree.add(route)
     @routes << route

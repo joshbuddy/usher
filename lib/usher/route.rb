@@ -15,7 +15,8 @@ class Usher
       @router = router
       @requirements = options.delete(:requirements)
       @conditions = options.delete(:conditions)
-      @paths = Splitter.new(@original_path, requirements).paths.collect {|path| Path.new(self, path)}
+      @transformers = options.delete(:transformers)
+      @paths = Splitter.new(@original_path, @requirements, @transformers).paths.collect {|path| Path.new(self, path)}
       @primary_path = @paths.first
     end
 

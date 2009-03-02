@@ -1,11 +1,13 @@
 class Usher
   class Route
     class Variable
-      attr_reader :type, :name, :validator
-      def initialize(type, name, validator = nil)
+      attr_reader :type, :name, :validator, :transformer
+      
+      def initialize(type, name, opts = {})
         @type = type
         @name = :"#{name}"
-        @validator = validator
+        @validator = opts[:validator]
+        @transformer = opts[:transformer]
       end
 
       def to_s

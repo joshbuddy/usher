@@ -120,6 +120,13 @@ class Usher
         next_part.find(request, path, params)
       elsif next_part = @lookup[nil]
         if next_part.value.is_a?(Route::Variable)
+          case t = next_part.value.transformer
+          when Proc
+            part = t.call(part)
+          when Symbol
+            part = part.send(t)
+          end
+          part = 
           raise "#{part} does not conform to #{next_part.value.validator}" if next_part.value.validator && (not next_part.value.validator === part)
           case next_part.value.type
           when :*

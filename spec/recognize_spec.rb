@@ -48,6 +48,16 @@ describe "Usher route recognition" do
     product_show_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'})).first).should == true
   end
   
+  it "should use a transformer (proc) on incoming variables" do
+    route_set.add_route('/:controller/:action/:id', :transformers => {:id => proc{|v| v.to_i}})
+    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).last.rassoc(123).first.should == :id
+  end
+  
+  it "should use a transformer (symbol) on incoming variables" do
+    route_set.add_route('/:controller/:action/:id', :transformers => {:id => :to_i})
+    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).last.rassoc(123).first.should == :id
+  end
+  
   it "should should raise if malformed variables are used" do
     route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
     proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error

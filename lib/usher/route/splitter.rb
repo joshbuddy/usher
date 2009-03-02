@@ -7,8 +7,8 @@ class Usher
       
       attr_reader :paths
       
-      def initialize(path, requirements = {})
-        @parts = Splitter.split(path, requirements)
+      def initialize(path, requirements = {}, transformers = {})
+        @parts = Splitter.split(path, requirements, transformers)
         @paths = calc_paths(@parts)
       end
 
@@ -29,7 +29,7 @@ class Usher
         parts
       end
       
-      def self.split(path, requirements = {})
+      def self.split(path, requirements = {}, transformers = {})
         parts = path[0] == ?/ ? [] : [Separator::Slash]
         ss = StringScanner.new(path)
         groups = [parts]
@@ -39,7 +39,7 @@ class Usher
           case part[0]
           when ?*, ?:
             type = part.slice!(0).chr.to_sym
-            current_group << Variable.new(type, part, requirements[part.to_sym])
+            current_group << Variable.new(type, part, :validator => requirements[part.to_sym], :transformer => transformers[part.to_sym])
           when ?.
             current_group << Separator::Dot
           when ?/
