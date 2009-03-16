@@ -2,8 +2,8 @@ class Usher
   class Route
     class Splitter
       
-      ScanRegex = /([:\*]?[0-9a-z_]+|\/|\.|\(|\))/
-      UrlScanRegex = /\/|\.|\w+/
+      ScanRegex = /((:|\*||\.:|)[0-9a-z_]+|\/|\(|\))/
+      UrlScanRegex = /\/|\.?\w+/
       
       attr_reader :paths
       
@@ -13,37 +13,27 @@ class Usher
       end
 
       def self.url_split(path)
-        parts = path[0] == ?/ ? [] : [Separator::Slash]
+        parts = []
         ss = StringScanner.new(path)
           while !ss.eos?
-            part = ss.scan(UrlScanRegex)
-            case part[0]
-            when ?.
-              parts << Separator::Dot
-            when ?/
-              parts << Separator::Slash
-            else
-              parts << part
+            if part = ss.scan(UrlScanRegex)
+              parts << part unless part == '/'
             end
           end if path && !path.empty?
         parts
       end
       
       def self.split(path, requirements = {}, transformers = {})
-        parts = path[0] == ?/ ? [] : [Separator::Slash]
+        parts = []
         ss = StringScanner.new(path)
         groups = [parts]
         current_group = parts
         while !ss.eos?
           part = ss.scan(ScanRegex)
           case part[0]
-          when ?*, ?:
-            type = part.slice!(0).chr.to_sym
+          when ?*, ?:, ?.
+            type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
             current_group << Variable.new(type, part, :validator => requirements[part.to_sym], :transformer => transformers[part.to_sym])
-          when ?.
-            current_group << Separator::Dot
-          when ?/
-            current_group << Separator::Slash
           when ?(
             new_group = []
             groups << new_group
@@ -52,6 +42,7 @@ class Usher
           when ?)
             groups.pop
             current_group = groups.last
+          when ?/
           else
             current_group << part
           end

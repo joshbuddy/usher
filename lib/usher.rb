@@ -93,22 +93,21 @@ class Usher
       Array(params)
     end
 
-    generated_path = ""
+    generated_path = ''
     
-    sep_p = nil
     path.parts.each do |p|
       case p
       when Route::Variable
         case p.type
         when :*
-          generated_path << sep_p.to_s << param_list.shift * '/'
+          generated_path << '/' << param_list.shift * '/'
+        when :'.:'
+          (dp = param_list.shift) && generated_path << '.' << dp.to_s
         else
-          (dp = param_list.shift) && generated_path << sep_p.to_s << dp.to_s
+          (dp = param_list.shift) && generated_path << '/' << dp.to_s
         end
-      when Route::Separator
-        sep_p = p
       else
-        generated_path << sep_p.to_s << p.to_s
+        generated_path << '/' << p.to_s
       end
     end
     unless params_hash.blank?

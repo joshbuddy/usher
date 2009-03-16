@@ -2,7 +2,6 @@ $:.unshift File.dirname(__FILE__)
 
 require 'route/path'
 require 'route/splitter'
-require 'route/separator'
 require 'route/variable'
 require 'route/http'
 

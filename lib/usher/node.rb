@@ -1,6 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
-require 'node/lookup'
+require 'fuzzy_hash'
 
 class Usher
 
@@ -14,7 +14,7 @@ class Usher
     def initialize(parent, value)
       @parent = parent
       @value = value
-      @lookup = Lookup.new
+      @lookup = FuzzyHash.new
       @exclusive_type = nil
       @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
     end
@@ -104,6 +104,7 @@ class Usher
     
     def find(request, path = Route::Splitter.url_split(request.path), params = [])
       part = path.shift unless path.size.zero?
+
       if @exclusive_type
         path.unshift part
         [@lookup[request.send(@exclusive_type)], @lookup[nil]].each do |n|
@@ -126,19 +127,21 @@ class Usher
           when Symbol
             part = part.send(t)
           end
-          part = 
           raise "#{part} does not conform to #{next_part.value.validator}" if next_part.value.validator && (not next_part.value.validator === part)
           case next_part.value.type
           when :*
             params << [next_part.value.name, []]
-            params.last.last << part unless next_part.is_a?(Route::Separator)
+            params.last.last << part
           when :':'
+            params << [next_part.value.name, part]
+          when:'.:'
+            part.slice!(0)
             params << [next_part.value.name, part]
           end
         end
         next_part.find(request, path, params)
-      elsif has_globber? && p = find_parent{|p| !p.is_a?(Route::Separator)} && p.value.is_a?(Route::Variable) && p.value.type == :*
-        params.last.last << part unless part.is_a?(Route::Separator)
+      elsif has_globber? && p = find_parent{|p| p.value.is_a?(Route::Variable) && p.value.type == :*}
+        params.last.last << part
         find(request, path, params)
       else
         nil

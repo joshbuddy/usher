@@ -12,6 +12,7 @@ class Usher
       @significant_keys = nil
       @orders = Hash.new{|h,k| h[k] = Hash.new{|h2, k2| h2[k2] = []}}
       @key_count = Hash.new(0)
+      @cache = {}
     end
 
     def add_route(route)
