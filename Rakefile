@@ -1,15 +1,23 @@
-require 'hoe'
-require 'spec'
-require 'spec/rake/spectask'
 require 'lib/usher'
 
-Hoe.new('usher', Usher::Version) do |p|
-  p.author = 'Joshua Hull'
-  p.email = 'joshbuddy@gmail.com'
-  p.summary = 'Tree-based router'
-  p.developer('Joshua Hull', 'joshbuddy@gmail.com')
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |s|
+    s.name = "usher"
+    s.description = s.summary = "A general purpose routing library"
+    s.email = "joshbuddy@gmail.com"
+    s.homepage = "http://github.com/joshbuddy/usher"
+    s.description = "TODO"
+    s.authors = ["Joshua Hull"]
+    s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
+    s.add_dependency 'joshbuddy-fuzzy_hash'    
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
 end
 
+require 'spec'
+require 'spec/rake/spectask'
 task :spec => 'spec:all'
 namespace(:spec) do
   Spec::Rake::SpecTask.new(:all) do |t|
@@ -19,9 +27,4 @@ namespace(:spec) do
     t.spec_files = FileList['spec/**/*_spec.rb']
   end
 
-end
-
-task :cultivate do
-  system "touch Manifest.txt; rake check_manifest | grep -v \"(in \" | patch"
-  system "rake debug_gem | grep -v \"(in \" > `basename \\`pwd\\``.gemspec"
 end

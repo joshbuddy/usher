@@ -12,7 +12,6 @@ class Usher
   attr_reader :tree, :named_routes, :route_count, :routes
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
-  Version = '0.0.2'
     
   def empty?
     @route_count.zero?
