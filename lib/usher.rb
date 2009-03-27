@@ -1,7 +1,5 @@
 $:.unshift File.dirname(__FILE__)
 
-require 'strscan'
-require 'set'
 require 'usher/node'
 require 'usher/route'
 require 'usher/grapher'
