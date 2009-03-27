@@ -7,7 +7,6 @@ begin
     s.description = s.summary = "A general purpose routing library"
     s.email = "joshbuddy@gmail.com"
     s.homepage = "http://github.com/joshbuddy/usher"
-    s.description = "TODO"
     s.authors = ["Joshua Hull"]
     s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
     s.add_dependency 'joshbuddy-fuzzy_hash'    
