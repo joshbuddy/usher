@@ -10,15 +10,24 @@ class Usher
   attr_reader :tree, :named_routes, :route_count, :routes
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
-    
+  
+  # Returns whether the route set is empty
+  #   
+  #   set = Usher.new
+  #   set.empty? => true
+  #   set.add_route('/test')
+  #   set.empty? => false
   def empty?
     @route_count.zero?
   end
 
-  def lookup
-    @tree.lookup
-  end
-
+  # Resets the route set back to its initial state
+  #   
+  #   set = Usher.new
+  #   set.add_route('/test')
+  #   set.empty? => false
+  #   set.reset!
+  #   set.empty? => true
   def reset!
     @tree = Node.root(self)
     @named_routes = {}
@@ -28,19 +37,60 @@ class Usher
   end
   alias clear! reset!
   
-  def initialize(mode = :rails)
-    @mode = mode
+  # Creates a route set
+  def initialize
     reset!
   end
 
+  # Adds a route referencable by +name+. Sett add_route for format +path+ and +options+.
+  #   
+  #   set = Usher.new
+  #   set.add_named_route(:test_route, '/test')
   def add_named_route(name, path, options = {})
     add_route(path, options).name(name)
   end
 
+  # Attaches a +route+ to a +name+
+  #   
+  #   set = Usher.new
+  #   route = set.add_route('/test')
+  #   set.name(:test, route)
   def name(name, route)
     @named_routes[name] = route.primary_path
   end
 
+  # Creates a route from +path+ and +options+
+  #  
+  # <tt>+path+</tt>::
+  #    A path consists a mix of dynamic and static parts delimited by <tt>/</tt>
+  # 
+  #    *Dynamic*
+  #
+  #    Dynamic parts are prefixed with either :, *.  :variable matches only one part of the path, whereas *variable can match one or
+  #    more parts. Example:
+  #    <b>/path/:variable/path</b> would match
+  #    
+  #    * /path/test/path
+  #    * /path/something_else/path
+  #    * /path/one_more/path
+  #    
+  #    In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key :variable.
+  #    However, /path/test/one_more/path would not be matched. 
+  #    
+  #    Example:
+  #    <b>/path/*variable/path</b> would match
+  #    
+  #    * /path/one/two/three/path
+  #    * /path/four/five/path
+  #    
+  #    In the above examples, ['one', 'two', 'three'] and ['four', 'five'] respectively would be bound to the key :variable.
+  #    
+  # <tt>+options+</tt>::
+  #    --
+  #    * :transformers - Transforms a variable before it gets to the conditions and requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
+  #    * :requirements - After transformation, tests the condition using ===. If it returns false, it raises an +Usher::ValidationException+
+  #    * :conditions - Accepts any of the following +:protocol+, +:domain+, +:port+, +:query_string+, +:remote_ip+, +:user_agent+, +:referer+ and +:method+. This can be either a +string+ or a +regexp+.
+  #   
   def add_route(path, options = {})
     transformers = options.delete(:transformers) || {}
     conditions = options.delete(:conditions) || {}
@@ -61,6 +111,11 @@ class Usher
     route
   end
 
+  # Recognizes a +request+ and returns +nil+ or an Usher::Route::Path
+  #   
+  #   set = Usher.new
+  #   route = set.add_route('/test')
+  #   set.name(:test, route)
   def recognize(request)
     @tree.find(request)
   end

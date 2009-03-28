@@ -127,7 +127,7 @@ class Usher
           when Symbol
             part = part.send(t)
           end
-          raise "#{part} does not conform to #{next_part.value.validator}" if next_part.value.validator && (not next_part.value.validator === part)
+          raise ValidationException.new("#{part} does not conform to #{next_part.value.validator}") if next_part.value.validator && (not next_part.value.validator === part)
           case next_part.value.type
           when :*
             params << [next_part.value.name, []]
