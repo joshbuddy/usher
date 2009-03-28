@@ -90,7 +90,7 @@ class Usher
   #    * :transformers - Transforms a variable before it gets to the conditions and requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
   #    * :requirements - After transformation, tests the condition using ===. If it returns false, it raises an +Usher::ValidationException+
   #    * :conditions - Accepts any of the following +:protocol+, +:domain+, +:port+, +:query_string+, +:remote_ip+, +:user_agent+, +:referer+ and +:method+. This can be either a +string+ or a +regexp+.
-  #   
+  #    * any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = {})
     transformers = options.delete(:transformers) || {}
     conditions = options.delete(:conditions) || {}
@@ -120,10 +120,22 @@ class Usher
     @tree.find(request)
   end
 
+  # Recognizes a set of +parameters+ and gets the closest matching Usher::Route::Path or +nil+ if no route exists.
+  #   
+  #   set = Usher.new
+  #   route = set.add_route('/:controller/:action')
+  #   set.route_for_options({:controller => 'test', :action => 'action'}) == path.route => true
   def route_for_options(options)
     Grapher.instance.find_matching_path(options)
   end
   
+  # Generates a completed URL based on a +route+ or set of +params+
+  #   
+  #   set = Usher.new
+  #   route = set.add_named_route(:test_route, '/:controller/:action')
+  #   set.generate_url(nil, {:controller => 'c', :action => 'a'}) == '/c/a' => true
+  #   set.generate_url(:test_route, {:controller => 'c', :action => 'a'}) == '/c/a' => true
+  #   set.generate_url(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   def generate_url(route, params)
     path = case route
     when Symbol
@@ -138,9 +150,9 @@ class Usher
     param_list = case params
     when Hash
       params_hash = params
-      path.dynamic_parts.collect{|k| params_hash.delete(k.name)}
+      path.dynamic_parts.collect{|k| params_hash.delete(k.name) {|el| raise MissingParameterException.new(k.name)} }
     when Array
-      params
+      path.dynamic_parts.size == params.size ? params : raise(MissingParameterException.new("got #{params.size} arguments, expected #{path.dynamic_parts.size}"))
     else
       Array(params)
     end

@@ -58,4 +58,31 @@ describe "Usher URL generation" do
     route_set.generate_url(:sample, {:action => 'action', :format => 'html'}).should == '/sample/action.html'
   end
 
+  it "should generate from parameters" do
+    caf = route_set.add_route('/:controller/:action.:format')
+    ca = route_set.add_route('/:controller/:action')
+    route_set.generate_url(nil, {:controller => 'controller', :action => 'action'}).should == '/controller/action'
+    route_set.generate_url(nil, {:controller => 'controller', :action => 'action', :format => 'html'}).should == '/controller/action.html'
+  end
+
+  it "should use the first route when generating a URL from two ambiguous routes" do
+    route_set.add_route('/:controller/:action')
+    route_set.add_route('/:action/:controller')
+    route_set.generate_url(nil, {:controller => 'controller', :action => 'action'}).should == '/controller/action'
+  end
+
+  it "should accept an array of parameters" do
+    caf = route_set.add_named_route(:name, '/:controller/:action.:format')
+    route_set.generate_url(:name, ['controller', 'action', 'html']).should == '/controller/action.html'
+  end
+
+  it "should require all the parameters (hash) to generate a route" do
+    proc {route_set.generate_url(route_set.add_route('/:controller/:action').primary_path, {:controller => 'controller'})}.should raise_error Usher::MissingParameterException
+  end
+
+  it "should require all the parameters (array) to generate a route" do
+    route_set.add_named_route(:name, '/:controller/:action.:format')
+    proc {route_set.generate_url(:name, ['controller', 'action'])}.should raise_error Usher::MissingParameterException
+  end
+
 end
