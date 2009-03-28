@@ -8,7 +8,7 @@ This is a tree-based router (based on Ilya Grigorik suggestion). Turns out looki
 
 Here are some examples of routes recognized by usher (so far)
 
-  _Route_                  _Matches_
+  *Route*                  *Matches*
   /path/to/something       /path/to/something
   /path/:variable/more     /path/foo/more, /path/bar/more ...
   /show/*tags              /show/hot /show/hot/coffee /show/some/more/hot/coffee ...
