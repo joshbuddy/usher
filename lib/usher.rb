@@ -63,33 +63,43 @@ class Usher
   #  
   # <tt>+path+</tt>::
   #    A path consists a mix of dynamic and static parts delimited by <tt>/</tt>
-  # 
+  #
   #    *Dynamic*
   #
   #    Dynamic parts are prefixed with either :, *.  :variable matches only one part of the path, whereas *variable can match one or
-  #    more parts. Example:
-  #    <b>/path/:variable/path</b> would match
-  #    
-  #    * /path/test/path
-  #    * /path/something_else/path
-  #    * /path/one_more/path
-  #    
-  #    In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key :variable.
-  #    However, /path/test/one_more/path would not be matched. 
-  #    
+  #    more parts. 
+  #
   #    Example:
-  #    <b>/path/*variable/path</b> would match
-  #    
-  #    * /path/one/two/three/path
-  #    * /path/four/five/path
-  #    
+  #    <tt>/path/:variable/path</tt> would match
+  #
+  #    * <tt>/path/test/path</tt>
+  #    * <tt>/path/something_else/path</tt>
+  #    * <tt>/path/one_more/path</tt>
+  #
+  #    In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key <tt>:variable</tt>.
+  #    However, <tt>/path/test/one_more/path</tt> would not be matched. 
+  #
+  #    Example:
+  #    <tt>/path/*variable/path</tt> would match
+  #
+  #    * <tt>/path/one/two/three/path</tt>
+  #    * <tt>/path/four/five/path</tt>
+  #
   #    In the above examples, ['one', 'two', 'three'] and ['four', 'five'] respectively would be bound to the key :variable.
-  #    
+  #
+  #    *Static*
+  #
+  #    Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
+  #
+  #    <b>Optional sections</b>
+  #
+  #    Sections of a route can be marked as optional by surrounding it with brackets. For instance, in the above static example, <tt>/path/something(.html)</tt> would match both <tt>/path/something</tt> and <tt>/path/something.html</tt>.
+  #
   # <tt>+options+</tt>::
   #    --
   #    * :transformers - Transforms a variable before it gets to the conditions and requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
-  #    * :requirements - After transformation, tests the condition using ===. If it returns false, it raises an +Usher::ValidationException+
-  #    * :conditions - Accepts any of the following +:protocol+, +:domain+, +:port+, +:query_string+, +:remote_ip+, +:user_agent+, +:referer+ and +:method+. This can be either a +string+ or a +regexp+.
+  #    * :requirements - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
+  #    * :conditions - Accepts any of the following <tt>:protocol</tt>, <tt>:domain</tt>, <tt>:port</tt>, <tt>:query_string</tt>, <tt>:remote_ip</tt>, <tt>:user_agent</tt>, <tt>:referer</tt> and <tt>:method</tt>. This can be either a <tt>string</tt> or a <tt>regexp</tt>.
   #    * any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = {})
     transformers = options.delete(:transformers) || {}
