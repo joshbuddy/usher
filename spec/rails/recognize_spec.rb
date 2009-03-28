@@ -1,4 +1,4 @@
-require 'lib/compat'
+require File.join(File.dirname(__FILE__), 'compat')
 require 'lib/usher'
 require 'action_controller'
 

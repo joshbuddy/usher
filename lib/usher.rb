@@ -9,7 +9,7 @@ require 'usher/exceptions'
 class Usher
   attr_reader :tree, :named_routes, :route_count, :routes
   
-  SymbolArraySorter = proc {|a,b| a.hash <=> b.hash}
+  SymbolArraySorter = proc {|a,b| a.hash <=> b.hash} #:nodoc:
   
   # Returns whether the route set is empty
   #   
@@ -190,16 +190,10 @@ class Usher
         case v
         when Array
           v.each do |v_part|
-            generated_path << (has_query ? '&' : has_query = true && '?')
-            generated_path << CGI.escape("#{k.to_s}[]")
-            generated_path << '='
-            generated_path << CGI.escape(v_part.to_s)
+            generated_path << (has_query ? '&' : has_query = true && '?') << CGI.escape("#{k.to_s}[]") << '=' << CGI.escape(v_part.to_s)
           end
         else
-          generated_path << (has_query ? '&' : has_query = true && '?')
-          generated_path << CGI.escape(k.to_s)
-          generated_path << '='
-          generated_path << CGI.escape(v.to_s)
+          generated_path << (has_query ? '&' : has_query = true && '?') << CGI.escape(k.to_s) << '=' << CGI.escape(v.to_s)
         end
       end
     end
