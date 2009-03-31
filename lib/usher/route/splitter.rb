@@ -2,7 +2,7 @@ class Usher
   class Route
     class Splitter
       
-      ScanRegex = /((:|\*||\.:|\.)[0-9a-z_]+|\/|\(|\))/
+      ScanRegex = /((:|\*||\.:|\.)[0-9a-z_]+|\/|\(|\)|\|)/
       UrlScanRegex = /\/|\.?\w+/
       
       attr_reader :paths
@@ -10,6 +10,7 @@ class Usher
       def initialize(path, requirements = {}, transformers = {})
         @parts = Splitter.split(path, requirements, transformers)
         @paths = calc_paths(@parts)
+        @paths
       end
 
       def self.url_split(path)
@@ -24,9 +25,9 @@ class Usher
       end
       
       def self.split(path, requirements = {}, transformers = {})
-        parts = []
+        parts = Group.new(:all, nil)
         ss = StringScanner.new(path)
-        groups = [parts]
+        pipe_seen = false
         current_group = parts
         while !ss.eos?
           part = ss.scan(ScanRegex)
@@ -35,13 +36,23 @@ class Usher
             type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
             current_group << Variable.new(type, part, :validator => requirements[part.to_sym], :transformer => transformers[part.to_sym])
           when ?(
-            new_group = []
-            groups << new_group
+            new_group = Group.new(:any, current_group)
             current_group << new_group
             current_group = new_group
-          when ?)
-            groups.pop
-            current_group = groups.last
+          when ?)            
+            current_group = current_group.parent
+          when ?|
+            pipe_seen = true
+            unless current_group.parent.type == :one
+              detached_group = current_group.parent.pop
+              new_group = Group.new(:one, detached_group.parent)
+              detached_group.parent = new_group
+              detached_group.type = :all
+              new_group << detached_group
+              new_group.parent << new_group
+            end
+            current_group.parent << Group.new(:all, current_group.parent)
+            current_group = current_group.parent.last
           when ?/
           else
             current_group << part
@@ -49,33 +60,57 @@ class Usher
         end unless !path || path.empty?
         parts
       end
-
+      
       private
+      
+      def cartiesian_product!(lval, rval)
+        product = []
+        (lval.size * rval.size).times do |index|
+          val = []
+          val.push(*lval[index % lval.size])
+          val.push(*rval[index % rval.size])
+          product << val
+        end
+        lval.replace(product)
+      end
+      
       def calc_paths(parts)
-        paths = []
-        optional_parts = []
-        parts.each_index {|i| optional_parts << i if parts[i].is_a?(Array)}
-        if optional_parts.size.zero?
-          [parts]
-        else
-          (0...(2 << (optional_parts.size - 1))).each do |i|
-            current_paths = [[]]
-            parts.each_index do |part_index|
-              part = parts[part_index]
-              if optional_parts.include?(part_index) && (2 << (optional_parts.index(part_index)-1) & i != 0)
-                new_sub_parts = calc_paths(part)
-                current_paths_size = current_paths.size
-                (new_sub_parts.size - 1).times {|i| current_paths << current_paths[i % current_paths_size].dup }
-                current_paths.each_index do |current_path_idx|
-                  current_paths[current_path_idx].push(*new_sub_parts[current_path_idx % new_sub_parts.size])
-                end
-              elsif !optional_parts.include?(part_index)
-                current_paths.each { |current_path| current_path << part }
-              end
+        if parts.is_a?(Group)
+          paths = [[]]
+          case parts.type
+          when :all
+            parts.each do |p|
+              cartiesian_product!(paths, calc_paths(p))
             end
-            paths.push(*current_paths)
+          when :any
+            parts.each do |p|
+              cartiesian_product!(paths, calc_paths(p))
+            end
+            paths.unshift([])
+          when :one
+            cartiesian_product!(paths, parts.collect do |p|
+              calc_paths(p)
+            end)
           end
+          paths.each{|p| p.compact!; p.flatten! }
           paths
+        else
+          [[parts]]
+        end
+        
+      end
+      
+      class Group < Array
+        attr_accessor :type
+        attr_accessor :parent
+        
+        def inspect
+          "#{type}->#{super}"
+        end
+        
+        def initialize(type, parent)
+          @type = type
+          @parent = parent
         end
       end
       

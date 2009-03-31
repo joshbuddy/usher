@@ -23,10 +23,10 @@ describe "Usher route adding" do
     route_set.add_route('/a/b(/c)(/d(/e))')
     route_set.routes.first.paths.collect{|a| a.parts }.should == [
       ["a", "b"],
+      ["a", "b", "c", "d"], 
+      ["a", "b", "d", "e"], 
       ["a", "b", "c"],
       ["a", "b", "d"],
-      ["a", "b", "d", "e"], 
-      ["a", "b", "c", "d"], 
       ["a", "b", "c", "d", "e"]
     ]
     

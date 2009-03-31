@@ -42,6 +42,10 @@ From the rdoc:
 
    Sections of a route can be marked as optional by surrounding it with brackets. For instance, in the above static example, <tt>/path/something(.html)</tt> would match both <tt>/path/something</tt> and <tt>/path/something.html</tt>.
 
+   <b>One and only one sections</b>
+
+   Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes. For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and <tt>/path/something.html</tt>.
+
 <tt>+options+</tt>::
    --
    * :transformers - Transforms a variable before it gets to the conditions and requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.

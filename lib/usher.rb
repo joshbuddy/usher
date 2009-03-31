@@ -95,9 +95,13 @@ class Usher
   #
   #    Sections of a route can be marked as optional by surrounding it with brackets. For instance, in the above static example, <tt>/path/something(.html)</tt> would match both <tt>/path/something</tt> and <tt>/path/something.html</tt>.
   #
+  #    <b>One and only one sections</b>
+  #
+  #    Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes. For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and <tt>/path/something.html</tt>.
+  #
   # <tt>+options+</tt>::
   #    --
-  #    * :transformers - Transforms a variable before it gets to the conditions and requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
+  #    * :transformers - Transforms a variable before it gets to the requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
   #    * :requirements - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
   #    * :conditions - Accepts any of the following <tt>:protocol</tt>, <tt>:domain</tt>, <tt>:port</tt>, <tt>:query_string</tt>, <tt>:remote_ip</tt>, <tt>:user_agent</tt>, <tt>:referer</tt> and <tt>:method</tt>. This can be either a <tt>string</tt> or a <tt>regexp</tt>.
   #    * any other key is interpreted as a requirement for the variable of its name.
