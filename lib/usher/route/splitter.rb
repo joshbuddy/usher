@@ -63,7 +63,7 @@ class Usher
       
       private
       
-      def cartiesian_product!(lval, rval)
+      def cartesian_product!(lval, rval)
         product = []
         (lval.size * rval.size).times do |index|
           val = []
@@ -80,15 +80,15 @@ class Usher
           case parts.type
           when :all
             parts.each do |p|
-              cartiesian_product!(paths, calc_paths(p))
+              cartesian_product!(paths, calc_paths(p))
             end
           when :any
             parts.each do |p|
-              cartiesian_product!(paths, calc_paths(p))
+              cartesian_product!(paths, calc_paths(p))
             end
             paths.unshift([])
           when :one
-            cartiesian_product!(paths, parts.collect do |p|
+            cartesian_product!(paths, parts.collect do |p|
               calc_paths(p)
             end)
           end
