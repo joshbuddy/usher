@@ -27,7 +27,6 @@ class Usher
       def self.split(path, requirements = {}, transformers = {})
         parts = Group.new(:all, nil)
         ss = StringScanner.new(path)
-        pipe_seen = false
         current_group = parts
         while !ss.eos?
           part = ss.scan(ScanRegex)
@@ -42,7 +41,6 @@ class Usher
           when ?)            
             current_group = current_group.parent
           when ?|
-            pipe_seen = true
             unless current_group.parent.type == :one
               detached_group = current_group.parent.pop
               new_group = Group.new(:one, detached_group.parent)
