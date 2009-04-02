@@ -21,9 +21,9 @@ class Usher
       end
 
       def call(env)
-        (path, params) = @routes.recognize(Request.new(env['REQUEST_URI'], env['REQUEST_METHOD']))
-        env['usher.params'] = params.inject({}){|h,(k,v)| h[k]=v; h }
-        path.route.params.call(env)
+        response = @routes.recognize(Request.new(env['REQUEST_URI'], env['REQUEST_METHOD']))
+        env['usher.params'] = response.params.inject({}){|h,(k,v)| h[k]=v; h }
+        response.path.route.params.call(env)
       end
 
     end

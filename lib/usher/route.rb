@@ -18,7 +18,15 @@ class Usher
       @paths = Splitter.new(@original_path, @requirements, @transformers).paths.collect {|path| Path.new(self, path)}
       @primary_path = @paths.first
     end
-
+    
+    
+    # Sets +options+ on a route
+    #   
+    #   Request = Struct.new(:path)
+    #   set = Usher.new
+    #   route = set.add_route('/test')
+    #   route.to(:controller => 'testing', :action => 'index')
+    #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     def to(options)
       @params = options
       self

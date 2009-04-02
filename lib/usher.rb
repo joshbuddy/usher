@@ -127,9 +127,10 @@ class Usher
 
   # Recognizes a +request+ and returns +nil+ or an Usher::Route::Path
   #   
+  #   Request = Struct.new(:path)
   #   set = Usher.new
   #   route = set.add_route('/test')
-  #   set.name(:test, route)
+  #   set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request)
     @tree.find(request)
   end
@@ -156,6 +157,8 @@ class Usher
       @named_routes[route]
     when nil
       route_for_options(params)
+    when Route
+      route.paths.first
     else
       route
     end
@@ -188,7 +191,7 @@ class Usher
         generated_path << '/' << p.to_s
       end
     end
-    unless params_hash.blank?
+    unless params_hash.empty?
       has_query = generated_path[??]
       params_hash.each do |k,v|
         case v

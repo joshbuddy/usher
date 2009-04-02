@@ -7,6 +7,7 @@ class Usher
   class Node
     
     ConditionalTypes = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]
+    Response = Struct.new(:path, :params)
     
     attr_reader :lookup
     attr_accessor :terminates, :exclusive_type, :parent, :value
@@ -113,7 +114,7 @@ class Usher
         end
       elsif path.size.zero? && !part
         if terminates?
-          [terminates, params]
+          Response.new(terminates, params)
         else
           nil
         end

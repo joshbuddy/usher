@@ -32,17 +32,17 @@ describe "Usher route recognition" do
   
   it "should recognize a format-style variable" do
     target_route = route_set.add_route('/sample.:format', :controller => 'sample', :action => 'action')
-    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == [target_route.paths.first, [[:format , 'html']]]
+    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:format , 'html']])
   end
   
   it "should recognize a format-style literal" do
     target_route = route_set.add_route(':action.html', :controller => 'sample', :action => 'action')
-    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == [target_route.paths.first, [[:action , 'sample']]]
+    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample']])
   end
   
   it "should recognize a format-style variable along side another variable" do
     target_route = route_set.add_route(':action.:format', :controller => 'sample', :action => 'action')
-    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == [target_route.paths.first, [[:action , 'sample'], [:format, 'html']]]
+    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample'], [:format, 'html']])
   end
   
   it "should recognize a specific route when several http-style restrictions are used" do
@@ -65,17 +65,17 @@ describe "Usher route recognition" do
   
   it "should use a transformer (proc) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => proc{|v| v.to_i}})
-    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).last.rassoc(123).first.should == :id
+    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id
   end
 
   it "shouldn't care about mildly weird characters in the URL" do
     route = route_set.add_route('/!asd,qwe/hjk$qwe/:id')
-    route_set.recognize(build_request({:method => 'get', :path => '/!asd,qwe/hjk$qwe/09AZaz$-_+!*\'', :domain => 'admin.host.com'})).last.rassoc('09AZaz$-_+!*\'').first.should == :id
+    route_set.recognize(build_request({:method => 'get', :path => '/!asd,qwe/hjk$qwe/09AZaz$-_+!*\'', :domain => 'admin.host.com'})).params.rassoc('09AZaz$-_+!*\'').first.should == :id
   end
   
   it "should use a transformer (symbol) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => :to_i})
-    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).last.rassoc(123).first.should == :id
+    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id
   end
   
   it "should should raise if malformed variables are used" do

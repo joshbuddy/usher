@@ -1,3 +1,5 @@
+require 'strscan'
+
 class Usher
   class Route
     class Splitter

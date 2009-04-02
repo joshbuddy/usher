@@ -1,3 +1,5 @@
+require 'set'
+
 class Usher
   class Route
     class Path

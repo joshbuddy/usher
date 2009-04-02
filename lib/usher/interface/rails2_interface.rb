@@ -43,9 +43,9 @@ class Usher
       end
       
       def recognize(request)
-        (path, params_list) = @usher.recognize(request)
-        params = params_list.inject({}){|h,(k,v)| h[k]=v; h }
-        request.path_parameters = (params_list.empty? ? path.route.params : path.route.params.merge(params)).with_indifferent_access
+        node = @usher.recognize(request)
+        params = node.params.inject({}){|h,(k,v)| h[k]=v; h }
+        request.path_parameters = (node.params.empty? ? node.path.route.params : node.path.route.params.merge(params)).with_indifferent_access
         "#{request.path_parameters[:controller].camelize}Controller".constantize
       rescue
         raise ActionController::RoutingError, "No route matches #{request.path.inspect} with #{request.inspect}"
