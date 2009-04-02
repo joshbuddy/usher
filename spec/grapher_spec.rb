@@ -24,5 +24,11 @@ describe "Usher grapher" do
     route_set.add_route('/:a/:b')
     route_set.generate_url(nil, {:a => 'A', :b => 'B', :d => 'C'}).should == '/A/B?d=C'
   end
+  
+  it "should do a validity check against the incoming variables when asked to" do
+    route_set.add_route('/:a/:b', :b => /\d+/)
+    route_set.generate_url(nil, {:a => 'A', :b => 'B'}).should == '/A/B'
+    proc{ route_set.generate_url(nil, {:a => 'A', :b => 'B'}, :check_variables => true).should == '/A/B?d=C'}.should raise_error Usher::ValidationException
+  end
 
 end

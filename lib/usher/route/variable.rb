@@ -35,7 +35,7 @@ class Usher
           @validator === val or raise
         end if @validator
       rescue Exception => e
-        raise ValidationException.new(e, "#{val} does not conform to #{@validator}")
+        raise ValidationException.new("#{val} does not conform to #{@validator}, root cause #{e.inspect}")
       end
   
       def ==(o)

@@ -149,7 +149,9 @@ class Usher
   #   set.generate_url(nil, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   #   set.generate_url(:test_route, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   #   set.generate_url(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
-  def generate_url(route, params = {})
+  def generate_url(route, params = {}, options = {})
+    check_variables = options.key?(:check_variables) ? options.delete(:check_variables) : false
+
     path = case route
     when Symbol
       @named_routes[route]
@@ -179,10 +181,13 @@ class Usher
       when Route::Variable
         case p.type
         when :*
-          generated_path << '/' << param_list.shift * '/'
+          param_list.first.each {|dp| p.valid!(dp.to_s) } if check_variables
+          generated_path << '/' << param_list.shift.collect{|dp| dp.to_s} * '/'
         when :'.:'
+          p.valid!(param_list.first.to_s) if check_variables
           (dp = param_list.shift) && generated_path << '.' << dp.to_s
         else
+          p.valid!(param_list.first.to_s) if check_variables
           (dp = param_list.shift) && generated_path << '/' << dp.to_s
         end
       else
