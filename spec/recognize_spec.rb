@@ -78,4 +78,9 @@ describe "Usher route recognition" do
     proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error
   end
   
+  it "should should raise if transformer proc raises (anything)" do
+    route_set.add_route('/products/show/:id', :transformers => {:id => proc{|v| Integer(v)}})
+    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error(Usher::ValidationException)
+  end
+  
 end

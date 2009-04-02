@@ -2,8 +2,8 @@ class Usher
   class Route
     class Splitter
       
-      ScanRegex = /((:|\*||\.:|\.)[0-9a-z_]+|\/|\(|\)|\|)/
-      UrlScanRegex = /\/|\.?\w+/
+      ScanRegex = /((:|\*||\.:|\.)[0-9A-Za-z\$\-_\+!\*',]+|\/|\(|\)|\|)/
+      UrlScanRegex = /\/|\.?[0-9A-Za-z\$\-_\+!\*',]+/
       
       attr_reader :paths
       

@@ -13,6 +13,31 @@ class Usher
       def to_s
         "#{type}#{name}"
       end
+      
+      def transform!(val)
+        return val unless @transformer
+
+        case @transformer
+        when Proc
+          @transformer.call(val)
+        when Symbol
+          val.send(@transformer)
+        end
+      rescue Exception => e
+        raise ValidationException.new("#{val} could not be successfully transformed by #{@transformer}, root cause #{e.inspect}")
+      end
+  
+
+      def valid!(val)
+        case @validator
+        when Proc
+          @validator.call(val)
+        else
+          @validator === val or raise
+        end if @validator
+      rescue Exception => e
+        raise ValidationException.new(e, "#{val} does not conform to #{@validator}")
+      end
   
       def ==(o)
         o && (o.type == @type && o.name == @name && o.validator == @validator)
