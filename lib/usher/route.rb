@@ -3,7 +3,7 @@ $:.unshift File.dirname(__FILE__)
 require 'route/path'
 require 'route/splitter'
 require 'route/variable'
-require 'route/http'
+require 'route/request_method'
 
 class Usher
   class Route

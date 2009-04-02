@@ -71,14 +71,14 @@ class Usher
       route.paths.each do |path|
         parts = path.parts.dup
         ConditionalTypes.each do |type|
-          parts.push(Route::Http.new(type, route.conditions[type])) if route.conditions[type]
+          parts.push(Route::RequestMethod.new(type, route.conditions[type])) if route.conditions[type]
         end
         
         current_node = self
         until parts.size.zero?
           key = parts.shift
           target_node = case key
-          when Route::Http
+          when Route::RequestMethod
             if current_node.exclusive_type == key.type
               current_node.lookup[key.value] ||= Node.new(current_node, key)
             elsif current_node.lookup.empty?
@@ -86,12 +86,12 @@ class Usher
               current_node.lookup[key.value] ||= Node.new(current_node, key)
             else
               parts.unshift(key)
-              current_node.lookup[nil] ||= Node.new(current_node, Route::Http.new(current_node.exclusive_type, nil))
+              current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
           else
             if current_node.exclusive_type
               parts.unshift(key)
-              current_node.lookup[nil] ||= Node.new(current_node, Route::Http.new(current_node.exclusive_type, nil))
+              current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             else
               current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
             end

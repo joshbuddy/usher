@@ -1,6 +1,6 @@
 class Usher
   class Route
-    class Http
+    class RequestMethod
   
       attr_reader :type, :value
   

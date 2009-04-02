@@ -26,7 +26,6 @@ class Usher
       rescue Exception => e
         raise ValidationException.new("#{val} could not be successfully transformed by #{@transformer}, root cause #{e.inspect}")
       end
-  
 
       def valid!(val)
         case @validator
