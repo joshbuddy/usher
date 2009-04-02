@@ -1,8 +1,16 @@
 = Usher 
 
-Tree-based router for Ruby on Rails.
+Tree-based router library. Useful for (specifically) for Rails and Rack, but probably generally useful for anyone interested in doing routing. Based on Ilya Grigorik suggestion, turns out looking up in a hash and following a tree is faster than Krauter's massive regex approach.
 
-This is a tree-based router (based on Ilya Grigorik suggestion). Turns out looking up in a hash and following a tree is faster than Krauter's massive regex approach, so why not? I said, Heck Yes, and here we are.
+== Features
+
+* Understands single and path-globbing variables
+* Arbitrary HTTP header requirements
+* No optimization phase, so routes are always alterable after the fact
+* Understands Proc and Regex transformations, validations
+* Really, really fast
+* Relatively light and happy code-base, should be easy and fun to alter
+* Interface and implementation are separate, encouraging cross-pollination
 
 == Route format
 
@@ -87,15 +95,13 @@ From the rdoc:
 
 * add support for () optional parts
 * Add support for arbitrary HTTP header checks
+* Emit exceptions inline with relevant interfaces
+* More RDoc! (optionally cowbell)
 
 == TODO
 
 * Make it integrate with merb
 * Make it integrate with rails3
 * Create decent DSL for use with rack
-* Emit exceptions inline with relevant interfaces
-* More RDoc! (optionally cowbell)
-
-Looks about 20-50% faster than the router Rails ships with for non-trivial cases.
 
 (Let me show you to your request)
