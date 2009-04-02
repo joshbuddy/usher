@@ -5,7 +5,7 @@ class Usher
     class Path
   
       attr_reader :dynamic_parts, :dynamic_map, :dynamic_indicies, :route, :dynamic_set, :parts
-  
+      
       def initialize(route, parts)
         @route = route
         @parts = parts

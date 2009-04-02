@@ -125,7 +125,7 @@ class Usher
     route
   end
 
-  # Recognizes a +request+ and returns +nil+ or an Usher::Route::Path
+  # Recognizes a +request+ and returns +nil+ or an Usher::Node::Response, which is a struct containing a Usher::Route::Path and an array of arrays containing the extracted parameters.
   #   
   #   Request = Struct.new(:path)
   #   set = Usher.new
