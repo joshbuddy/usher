@@ -1,8 +1,5 @@
-require 'singleton'
-
 class Usher
   class Grapher
-    include Singleton
 
     def initialize
       reset!

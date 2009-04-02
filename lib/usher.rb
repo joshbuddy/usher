@@ -33,7 +33,7 @@ class Usher
     @named_routes = {}
     @routes = []
     @route_count = 0
-    Grapher.instance.reset!
+    @grapher = Grapher.new
   end
   alias clear! reset!
   
@@ -120,7 +120,7 @@ class Usher
     
     @tree.add(route)
     @routes << route
-    Grapher.instance.add_route(route)
+    @grapher.add_route(route)
     @route_count += 1
     route
   end
@@ -141,7 +141,7 @@ class Usher
   #   route = set.add_route('/:controller/:action')
   #   set.route_for_options({:controller => 'test', :action => 'action'}) == path.route => true
   def route_for_options(options)
-    Grapher.instance.find_matching_path(options)
+    @grapher.find_matching_path(options)
   end
   
   # Generates a completed URL based on a +route+ or set of +params+
