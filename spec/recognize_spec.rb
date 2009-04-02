@@ -67,6 +67,11 @@ describe "Usher route recognition" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => proc{|v| v.to_i}})
     route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).last.rassoc(123).first.should == :id
   end
+
+  it "shouldn't care about mildly weird characters in the URL" do
+    route = route_set.add_route('/!asd,qwe/hjk$qwe/:id')
+    route_set.recognize(build_request({:method => 'get', :path => '/!asd,qwe/hjk$qwe/09AZaz$-_+!*\'', :domain => 'admin.host.com'})).last.rassoc('09AZaz$-_+!*\'').first.should == :id
+  end
   
   it "should use a transformer (symbol) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => :to_i})
