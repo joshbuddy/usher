@@ -9,7 +9,7 @@ class Usher
   class Route
     attr_reader :paths, :original_path, :requirements, :conditions, :params, :primary_path
     
-    def initialize(original_path, router, options = {})
+    def initialize(original_path, router, options = {}) # :nodoc:
       @original_path = original_path
       @router = router
       @requirements = options.delete(:requirements)
@@ -20,7 +20,7 @@ class Usher
     end
     
     
-    # Sets +options+ on a route
+    # Sets +options+ on a route. Returns +self+.
     #   
     #   Request = Struct.new(:path)
     #   set = Usher.new
@@ -32,6 +32,11 @@ class Usher
       self
     end
 
+    # Sets route as referenceable from +name+. Returns +self+.
+    #   
+    #   set = Usher.new
+    #   route = set.add_route('/test').name(:route)
+    #   set.generate_url(:route) => '/test'
     def name(name)
       @router.name(name, self)
     end

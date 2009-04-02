@@ -61,50 +61,48 @@ class Usher
 
   # Creates a route from +path+ and +options+
   #  
-  # <tt>+path+</tt>::
-  #    A path consists a mix of dynamic and static parts delimited by <tt>/</tt>
+  # === +path+
+  # A path consists a mix of dynamic and static parts delimited by <tt>/</tt>
   #
-  #    *Dynamic*
+  # ==== Dynamic
+  # Dynamic parts are prefixed with either :, *.  :variable matches only one part of the path, whereas *variable can match one or
+  # more parts. 
   #
-  #    Dynamic parts are prefixed with either :, *.  :variable matches only one part of the path, whereas *variable can match one or
-  #    more parts. 
+  # <b>Example:</b>
+  # <tt>/path/:variable/path</tt> would match
   #
-  #    Example:
-  #    <tt>/path/:variable/path</tt> would match
+  # * <tt>/path/test/path</tt>
+  # * <tt>/path/something_else/path</tt>
+  # * <tt>/path/one_more/path</tt>
   #
-  #    * <tt>/path/test/path</tt>
-  #    * <tt>/path/something_else/path</tt>
-  #    * <tt>/path/one_more/path</tt>
+  # In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key <tt>:variable</tt>.
+  # However, <tt>/path/test/one_more/path</tt> would not be matched. 
   #
-  #    In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key <tt>:variable</tt>.
-  #    However, <tt>/path/test/one_more/path</tt> would not be matched. 
+  # <b>Example:</b>
+  # <tt>/path/*variable/path</tt> would match
   #
-  #    Example:
-  #    <tt>/path/*variable/path</tt> would match
+  # * <tt>/path/one/two/three/path</tt>
+  # * <tt>/path/four/five/path</tt>
   #
-  #    * <tt>/path/one/two/three/path</tt>
-  #    * <tt>/path/four/five/path</tt>
+  # In the above examples, ['one', 'two', 'three'] and ['four', 'five'] respectively would be bound to the key :variable.
   #
-  #    In the above examples, ['one', 'two', 'three'] and ['four', 'five'] respectively would be bound to the key :variable.
+  # ==== Static
   #
-  #    *Static*
+  # Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
   #
-  #    Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
+  # ==== Optional sections
   #
-  #    <b>Optional sections</b>
+  # Sections of a route can be marked as optional by surrounding it with brackets. For instance, in the above static example, <tt>/path/something(.html)</tt> would match both <tt>/path/something</tt> and <tt>/path/something.html</tt>.
   #
-  #    Sections of a route can be marked as optional by surrounding it with brackets. For instance, in the above static example, <tt>/path/something(.html)</tt> would match both <tt>/path/something</tt> and <tt>/path/something.html</tt>.
+  # ==== One and only one sections
   #
-  #    <b>One and only one sections</b>
+  # Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes. For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and <tt>/path/something.html</tt>.
   #
-  #    Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes. For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and <tt>/path/something.html</tt>.
-  #
-  # <tt>+options+</tt>::
-  #    --
-  #    * :transformers - Transforms a variable before it gets to the requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
-  #    * :requirements - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
-  #    * :conditions - Accepts any of the following <tt>:protocol</tt>, <tt>:domain</tt>, <tt>:port</tt>, <tt>:query_string</tt>, <tt>:remote_ip</tt>, <tt>:user_agent</tt>, <tt>:referer</tt> and <tt>:method</tt>. This can be either a <tt>string</tt> or a <tt>regexp</tt>.
-  #    * any other key is interpreted as a requirement for the variable of its name.
+  # === +options+
+  # * +transformers+ - Transforms a variable before it gets to the requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
+  # * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
+  # * +conditions+ - Accepts any of the following <tt>:protocol</tt>, <tt>:domain</tt>, <tt>:port</tt>, <tt>:query_string</tt>, <tt>:remote_ip</tt>, <tt>:user_agent</tt>, <tt>:referer</tt> and <tt>:method</tt>. This can be either a <tt>string</tt> or a regular expression.
+  # * Any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = {})
     transformers = options.delete(:transformers) || {}
     conditions = options.delete(:conditions) || {}
@@ -144,14 +142,14 @@ class Usher
     @grapher.find_matching_path(options)
   end
   
-  # Generates a completed URL based on a +route+ or set of +params+
+  # Generates a completed URL based on a +route+ or set of optional +params+
   #   
   #   set = Usher.new
   #   route = set.add_named_route(:test_route, '/:controller/:action')
   #   set.generate_url(nil, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   #   set.generate_url(:test_route, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   #   set.generate_url(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
-  def generate_url(route, params)
+  def generate_url(route, params = {})
     path = case route
     when Symbol
       @named_routes[route]
