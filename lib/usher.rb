@@ -30,7 +30,7 @@ class Usher
   #   set.reset!
   #   set.empty? => true
   def reset!
-    @tree = Node.root(self)
+    @tree = Node.root(self, @request_methods)
     @named_routes = {}
     @routes = []
     @route_count = 0
@@ -39,8 +39,9 @@ class Usher
   alias clear! reset!
   
   # Creates a route set
-  def initialize(delimiter = '/')
+  def initialize(delimiter = '/', request_methods = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method])
     @splitter = Splitter.delimiter(delimiter)
+    @request_methods = request_methods
     reset!
   end
 

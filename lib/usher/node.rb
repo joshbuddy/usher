@@ -6,11 +6,10 @@ class Usher
 
   class Node
     
-    ConditionalTypes = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]
     Response = Struct.new(:path, :params)
     
     attr_reader :lookup
-    attr_accessor :terminates, :exclusive_type, :parent, :value
+    attr_accessor :terminates, :exclusive_type, :parent, :value, :request_methods
 
     def initialize(parent, value)
       @parent = parent
@@ -24,8 +23,10 @@ class Usher
       @depth ||= @parent && @parent.is_a?(Node) ? @parent.depth + 1 : 0
     end
     
-    def self.root(route_set)
-      self.new(route_set, nil)
+    def self.root(route_set, request_methods)
+      root = self.new(route_set, nil)
+      root.request_methods = request_methods
+      root
     end
 
     def has_globber?
@@ -63,7 +64,7 @@ class Usher
     def add(route)
       route.paths.each do |path|
         parts = path.parts.dup
-        ConditionalTypes.each do |type|
+        request_methods.each do |type|
           parts.push(Route::RequestMethod.new(type, route.conditions[type])) if route.conditions[type]
         end
         
