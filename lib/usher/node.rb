@@ -21,14 +21,7 @@ class Usher
     end
 
     def depth
-      unless @depth
-        @depth = 0
-        p = self
-        while (p = p.parent) && p.is_a?(Node)
-          @depth += 1
-        end
-      end
-      @depth
+      @depth ||= @parent && @parent.is_a?(Node) ? @parent.depth + 1 : 0
     end
     
     def self.root(route_set)
@@ -103,7 +96,7 @@ class Usher
       route
     end
     
-    def find(request, path = Route::Splitter.url_split(request.path), params = [])
+    def find(request, path, params = [])
       part = path.shift unless path.size.zero?
 
       if @exclusive_type

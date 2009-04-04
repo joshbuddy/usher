@@ -4,10 +4,11 @@ require 'usher/node'
 require 'usher/route'
 require 'usher/grapher'
 require 'usher/interface'
+require 'usher/splitter'
 require 'usher/exceptions'
 
 class Usher
-  attr_reader :tree, :named_routes, :route_count, :routes
+  attr_reader :tree, :named_routes, :route_count, :routes, :splitter
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash} #:nodoc:
   
@@ -38,7 +39,8 @@ class Usher
   alias clear! reset!
   
   # Creates a route set
-  def initialize
+  def initialize(delimiter = '/')
+    @splitter = Splitter.delimiter(delimiter)
     reset!
   end
 
@@ -130,7 +132,7 @@ class Usher
   #   route = set.add_route('/test')
   #   set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request)
-    @tree.find(request)
+    @tree.find(request, @splitter.url_split(request.path))
   end
 
   # Recognizes a set of +parameters+ and gets the closest matching Usher::Route::Path or +nil+ if no route exists.

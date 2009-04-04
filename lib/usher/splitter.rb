@@ -1,21 +1,19 @@
 require 'strscan'
 
 class Usher
-  class Route
-    class Splitter
-      
-      ScanRegex = /((:|\*||\.:|\.)[0-9A-Za-z\$\-_\+!\*',]+|\/|\(|\)|\|)/
-      UrlScanRegex = /\/|\.?[0-9A-Za-z\$\-_\+!\*',]+/
-      
-      attr_reader :paths
-      
-      def initialize(path, requirements = {}, transformers = {})
-        @parts = Splitter.split(path, requirements, transformers)
-        @paths = calc_paths(@parts)
-        @paths
-      end
+  class Splitter
+    
+    ScanRegex = /((:|\*||\.:|\.)[0-9A-Za-z\$\-_\+!\*',]+|\/|\(|\)|\|)/
+    UrlScanRegex = /\/|\.?[0-9A-Za-z\$\-_\+!\*',]+/
+    
+    def self.delimiter(delimiter = '/')
+      SplitterInstance.new()
+    end
+    
+    attr_reader :paths
 
-      def self.url_split(path)
+    class SplitterInstance
+      def url_split(path)
         parts = []
         ss = StringScanner.new(path)
           while !ss.eos?
@@ -25,8 +23,8 @@ class Usher
           end if path && !path.empty?
         parts
       end
-      
-      def self.split(path, requirements = {}, transformers = {})
+
+      def split(path, requirements = {}, transformers = {})
         parts = Group.new(:all, nil)
         ss = StringScanner.new(path)
         current_group = parts
@@ -35,7 +33,7 @@ class Usher
           case part[0]
           when ?*, ?:, ?.
             type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
-            current_group << Variable.new(type, part, :validator => requirements[part.to_sym], :transformer => transformers[part.to_sym])
+            current_group << Usher::Route::Variable.new(type, part, :validator => requirements[part.to_sym], :transformer => transformers[part.to_sym])
           when ?(
             new_group = Group.new(:any, current_group)
             current_group << new_group
@@ -58,11 +56,11 @@ class Usher
             current_group << part
           end
         end unless !path || path.empty?
-        parts
+        calc_paths(parts)
       end
-      
+
       private
-      
+
       def cartesian_product!(lval, rval)
         product = []
         (lval.size * rval.size).times do |index|
@@ -73,7 +71,7 @@ class Usher
         end
         lval.replace(product)
       end
-      
+
       def calc_paths(parts)
         if parts.is_a?(Group)
           paths = [[]]
@@ -97,23 +95,23 @@ class Usher
         else
           [[parts]]
         end
-        
+
       end
-      
-      class Group < Array
-        attr_accessor :type
-        attr_accessor :parent
-        
-        def inspect
-          "#{type}->#{super}"
-        end
-        
-        def initialize(type, parent)
-          @type = type
-          @parent = parent
-        end
-      end
-      
     end
+    
+    class Group < Array
+      attr_accessor :type
+      attr_accessor :parent
+      
+      def inspect
+        "#{type}->#{super}"
+      end
+      
+      def initialize(type, parent)
+        @type = type
+        @parent = parent
+      end
+    end
+    
   end
 end

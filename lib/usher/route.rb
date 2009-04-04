@@ -1,7 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'route/path'
-require 'route/splitter'
 require 'route/variable'
 require 'route/request_method'
 
@@ -15,7 +14,7 @@ class Usher
       @requirements = options.delete(:requirements)
       @conditions = options.delete(:conditions)
       @transformers = options.delete(:transformers)
-      @paths = Splitter.new(@original_path, @requirements, @transformers).paths.collect {|path| Path.new(self, path)}
+      @paths = @router.splitter.split(@original_path, @requirements, @transformers).collect {|path| Path.new(self, path)}
       @primary_path = @paths.first
     end
     

@@ -4,25 +4,25 @@ describe "Usher route tokenizing" do
   
   
   it "should split / delimited routes" do
-    Usher::Route::Splitter.new('/test/this/split').paths.first.should == ['test', 'this', 'split']
+    Usher::Splitter.delimiter('/').split('/test/this/split').first.should == ['test', 'this', 'split']
   end
   
   it "should group optional parts with brackets" do
-    Usher::Route::Splitter.new('/test/this(/split)').paths.should == [
+    Usher::Splitter.delimiter('/').split('/test/this(/split)').should == [
       ['test', 'this'],
       ['test', 'this', 'split']
     ]
   end
 
   it "should group exclusive optional parts with brackets and pipes" do
-    Usher::Route::Splitter.new('/test/this(/split|/split2)').paths.should == [
+    Usher::Splitter.delimiter('/').split('/test/this(/split|/split2)').should == [
       ['test', 'this', 'split'],
       ['test', 'this', 'split2']
     ]
   end
 
   it "should group exclusive optional-optional parts with brackets and pipes" do
-    Usher::Route::Splitter.new('/test/this((/split|/split2))').paths.should == [
+    Usher::Splitter.delimiter('/').split('/test/this((/split|/split2))').should == [
       ['test', 'this'],
       ['test', 'this', 'split'],
       ['test', 'this', 'split2']
@@ -30,7 +30,7 @@ describe "Usher route tokenizing" do
   end
 
   it "should group optional parts with brackets (for non overlapping groups)" do
-    Usher::Route::Splitter.new('/test/this(/split)(/split2)').paths == [
+    Usher::Splitter.delimiter('/').split('/test/this(/split)(/split2)') == [
       ["test", "this"],
       ["test", "this", "split"],
       ["test", "this", "split2"],
@@ -39,7 +39,7 @@ describe "Usher route tokenizing" do
   end
 
   it "should group nested-optional parts with brackets" do
-    Usher::Route::Splitter.new('/test/this(/split(.:format))').paths == [
+    Usher::Splitter.delimiter('/').split('/test/this(/split(.:format))') == [
       ["test", "this"],
       ["test", "this", "split"],
       ["test", "this", "split", Usher::Route::Variable.new(:'.:', :format)]
