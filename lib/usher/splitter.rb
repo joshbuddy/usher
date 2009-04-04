@@ -3,22 +3,30 @@ require 'strscan'
 class Usher
   class Splitter
     
-    ScanRegex = /((:|\*||\.:|\.)[0-9A-Za-z\$\-_\+!\*',]+|\/|\(|\)|\|)/
-    UrlScanRegex = /\/|\.?[0-9A-Za-z\$\-_\+!\*',]+/
-    
     def self.delimiter(delimiter = '/')
-      SplitterInstance.new()
+      SplitterInstance.new(
+        delimiter,
+        Regexp.new('((:|\*||\.:|\.)[0-9A-Za-z\$\-_\+!\*\',]+|' + Regexp.quote(delimiter) + '|\(|\)|\|)'),
+        Regexp.new(Regexp.quote(delimiter) + '|\.?[0-9A-Za-z\$\-_\+!\*\',]+')
+      )
     end
     
     attr_reader :paths
 
     class SplitterInstance
+      
+      def initialize(delimiter, split_regex, url_split_regex)
+        @delimiter = delimiter
+        @split_regex = split_regex
+        @url_split_regex = url_split_regex
+      end
+      
       def url_split(path)
         parts = []
         ss = StringScanner.new(path)
           while !ss.eos?
-            if part = ss.scan(UrlScanRegex)
-              parts << part unless part == '/'
+            if part = ss.scan(@url_split_regex)
+              parts << part unless part == @delimiter
             end
           end if path && !path.empty?
         parts
@@ -29,7 +37,7 @@ class Usher
         ss = StringScanner.new(path)
         current_group = parts
         while !ss.eos?
-          part = ss.scan(ScanRegex)
+          part = ss.scan(@split_regex)
           case part[0]
           when ?*, ?:, ?.
             type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
@@ -38,8 +46,8 @@ class Usher
             new_group = Group.new(:any, current_group)
             current_group << new_group
             current_group = new_group
-          when ?)            
-            current_group = current_group.parent
+          when ?)
+            current_group = current_group.parent.type == :one ? current_group.parent.parent : current_group.parent
           when ?|
             unless current_group.parent.type == :one
               detached_group = current_group.parent.pop
@@ -51,7 +59,7 @@ class Usher
             end
             current_group.parent << Group.new(:all, current_group.parent)
             current_group = current_group.parent.last
-          when ?/
+          when @delimiter[0]
           else
             current_group << part
           end

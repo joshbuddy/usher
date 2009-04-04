@@ -4,7 +4,15 @@ describe "Usher route tokenizing" do
   
   
   it "should split / delimited routes" do
-    Usher::Splitter.delimiter('/').split('/test/this/split').first.should == ['test', 'this', 'split']
+    Usher::Splitter.delimiter('/').split('/test/this/split').should == [['test', 'this', 'split']]
+  end
+  
+  it "should split on ' ' delimited routes as well" do
+    Usher::Splitter.delimiter(' ').split('test this split').should == [['test', 'this', 'split']]
+  end
+  
+  it "should split on ' ' delimited routes for more complex routes as well" do
+    Usher::Splitter.delimiter(' ').split('(test|this) split').should == [['test', 'split'], ['this', 'split']]
   end
   
   it "should group optional parts with brackets" do
