@@ -16,6 +16,7 @@ class Usher
       @transformers = options.delete(:transformers)
       @paths = @router.splitter.split(@original_path, @requirements, @transformers).collect {|path| Path.new(self, path)}
       @primary_path = @paths.first
+      @params = []
     end
     
     
@@ -27,7 +28,7 @@ class Usher
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     def to(options)
-      @params = options
+      @params << options
       self
     end
 

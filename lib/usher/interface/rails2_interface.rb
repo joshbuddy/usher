@@ -38,14 +38,14 @@ class Usher
         options[:action] = 'index' unless options[:action]
         
         route = @usher.add_route(path, options)
-        raise "your route must include a controller" unless route.primary_path.dynamic_set.include?(:controller) || route.params.include?(:controller)
+        raise "your route must include a controller" unless route.primary_path.dynamic_set.include?(:controller) || route.params.first.include?(:controller)
         route
       end
       
       def recognize(request)
         node = @usher.recognize(request)
         params = node.params.inject({}){|h,(k,v)| h[k]=v; h }
-        request.path_parameters = (node.params.empty? ? node.path.route.params : node.path.route.params.merge(params)).with_indifferent_access
+        request.path_parameters = (node.params.empty? ? node.path.route.params.first : node.path.route.params.first.merge(params)).with_indifferent_access
         "#{request.path_parameters[:controller].camelize}Controller".constantize
       rescue
         raise ActionController::RoutingError, "No route matches #{request.path.inspect} with #{request.inspect}"

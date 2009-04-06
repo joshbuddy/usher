@@ -117,7 +117,8 @@ class Usher
       end
     end
     
-    route = Route.new(path, self, {:transformers => transformers, :conditions => conditions, :requirements => requirements}).to(options)
+    route = Route.new(path, self, {:transformers => transformers, :conditions => conditions, :requirements => requirements})
+    route.to(options) unless options.empty?
     
     @tree.add(route)
     @routes << route
@@ -132,8 +133,8 @@ class Usher
   #   set = Usher.new
   #   route = set.add_route('/test')
   #   set.recognize(Request.new('/test')).path.route == route => true
-  def recognize(request)
-    @tree.find(request, @splitter.url_split(request.path))
+  def recognize(request, path = request.path)
+    @tree.find(request, @splitter.url_split(path))
   end
 
   # Recognizes a set of +parameters+ and gets the closest matching Usher::Route::Path or +nil+ if no route exists.

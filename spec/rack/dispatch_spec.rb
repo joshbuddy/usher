@@ -28,7 +28,7 @@ describe "Usher (for rack) route dispatching" do
 
   it "should dispatch a simple request" do
     env = {'REQUEST_URI' => '/sample', 'REQUEST_METHOD' => 'get', 'usher.params' => {}}
-    route_set.add('/sample', :controller => 'sample', :action => 'action').to(build_app_mock(env.dup))
+    route_set.add('/sample').to(build_app_mock(env.dup))
     route_set.call(env)
   end
   
