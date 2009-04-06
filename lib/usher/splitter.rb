@@ -3,11 +3,13 @@ require 'strscan'
 class Usher
   class Splitter
     
-    def self.delimiter(delimiter = '/')
+    def self.for_delimiters(delimiters)
+      delimiters_regex = delimiters.collect{|d| Regexp.quote(d)} * '|'
+      
       SplitterInstance.new(
-        delimiter,
-        Regexp.new('((:|\*||\.:|\.)[0-9A-Za-z\$\-_\+!\*\',]+|' + Regexp.quote(delimiter) + '|\(|\)|\|)'),
-        Regexp.new(Regexp.quote(delimiter) + '|\.?[0-9A-Za-z\$\-_\+!\*\',]+')
+        delimiters,
+        Regexp.new('((:|\*)?[0-9A-Za-z\$\-_\+!\*\',]+|' + delimiters_regex + '|\(|\)|\|)'),
+        Regexp.new(delimiters_regex + '|[0-9A-Za-z\$\-_\+!\*\',]+')
       )
     end
     
@@ -15,8 +17,9 @@ class Usher
 
     class SplitterInstance
       
-      def initialize(delimiter, split_regex, url_split_regex)
-        @delimiter = delimiter
+      def initialize(delimiters, split_regex, url_split_regex)
+        @delimiters = delimiters
+        @delimiter_chars = delimiters.collect{|d| d[0]}
         @split_regex = split_regex
         @url_split_regex = url_split_regex
       end
@@ -26,7 +29,12 @@ class Usher
         ss = StringScanner.new(path)
           while !ss.eos?
             if part = ss.scan(@url_split_regex)
-              parts << part unless part == @delimiter
+              parts << case part[0]
+              when *@delimiter_chars
+                part.to_sym
+              else
+                part
+              end
             end
           end if path && !path.empty?
         parts
@@ -39,7 +47,7 @@ class Usher
         while !ss.eos?
           part = ss.scan(@split_regex)
           case part[0]
-          when ?*, ?:, ?.
+          when ?*, ?:
             type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
             current_group << Usher::Route::Variable.new(type, part, :validator => requirements[part.to_sym], :transformer => transformers[part.to_sym])
           when ?(
@@ -59,7 +67,8 @@ class Usher
             end
             current_group.parent << Group.new(:all, current_group.parent)
             current_group = current_group.parent.last
-          when @delimiter[0]
+          when *@delimiter_chars
+            current_group << part.to_sym
           else
             current_group << part
           end

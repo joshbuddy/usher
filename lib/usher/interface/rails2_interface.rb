@@ -34,9 +34,10 @@ class Usher
           add_route('/:controller', options.merge({:action => 'index'}))
           @controller_route_added = true 
         end
-
-        options[:action] = 'index' unless options[:action]
         
+        options[:action] = 'index' unless options[:action]
+
+        path[0, 0] = '/' unless path[0] == ?/
         route = @usher.add_route(path, options)
         raise "your route must include a controller" unless route.primary_path.dynamic_set.include?(:controller) || route.params.first.include?(:controller)
         route
@@ -70,14 +71,16 @@ class Usher
           merged_options = options
           merged_options[:controller] = recall[:controller] unless options.key?(:controller)
           unless options.key?(:action)
-            options[:action] = nil
+            options[:action] = ''
           end
           route_for_options(merged_options)
         end
         case method
         when :generate
           merged_options ||= recall.merge(options)
-          generate_url(route, merged_options)
+          url = generate_url(route, merged_options)
+          url.slice!(-1) if url[-1] == ?/
+          url 
         else
           raise "method #{method} not recognized"
         end

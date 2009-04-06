@@ -36,12 +36,12 @@ describe "Usher route recognition" do
   end
   
   it "should recognize a format-style literal" do
-    target_route = route_set.add_route(':action.html', :controller => 'sample', :action => 'action')
+    target_route = route_set.add_route('/:action.html', :controller => 'sample', :action => 'action')
     route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample']])
   end
   
   it "should recognize a format-style variable along side another variable" do
-    target_route = route_set.add_route(':action.:format', :controller => 'sample', :action => 'action')
+    target_route = route_set.add_route('/:action.:format', :controller => 'sample', :action => 'action')
     route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample'], [:format, 'html']])
   end
   
@@ -57,7 +57,7 @@ describe "Usher route recognition" do
   end
   
   it "should correctly fix that tree if conditionals are used later" do
-    noop_route = route_set.add_route('noop', :controller => 'products', :action => 'noop')
+    noop_route = route_set.add_route('/noop', :controller => 'products', :action => 'noop')
     product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
     noop_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/noop', :domain => 'admin.host.com'})).first).should == true
     product_show_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'})).first).should == true

@@ -39,8 +39,8 @@ class Usher
   alias clear! reset!
   
   # Creates a route set
-  def initialize(delimiter = '/', request_methods = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method])
-    @splitter = Splitter.delimiter(delimiter)
+  def initialize(delimiters = ['/', '.'], request_methods = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method])
+    @splitter = Splitter.for_delimiters(delimiters)
     @request_methods = request_methods
     reset!
   end
@@ -186,16 +186,16 @@ class Usher
         case p.type
         when :*
           param_list.first.each {|dp| p.valid!(dp.to_s) } if check_variables
-          generated_path << '/' << param_list.shift.collect{|dp| dp.to_s} * '/'
+          generated_path << param_list.shift.collect{|dp| dp.to_s} * '/'
         when :'.:'
           p.valid!(param_list.first.to_s) if check_variables
           (dp = param_list.shift) && generated_path << '.' << dp.to_s
         else
           p.valid!(param_list.first.to_s) if check_variables
-          (dp = param_list.shift) && generated_path << '/' << dp.to_s
+          (dp = param_list.shift) && generated_path << dp.to_s
         end
       else
-        generated_path << '/' << p.to_s
+        generated_path << p.to_s
       end
     end
     unless params_hash.empty?
