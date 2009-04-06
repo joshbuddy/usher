@@ -192,9 +192,6 @@ class Usher
         when :*
           param_list.first.each {|dp| p.valid!(dp.to_s) } if check_variables
           generated_path << param_list.shift.collect{|dp| dp.to_s} * '/'
-        when :'.:'
-          p.valid!(param_list.first.to_s) if check_variables
-          (dp = param_list.shift) && generated_path << '.' << dp.to_s
         else
           p.valid!(param_list.first.to_s) if check_variables
           (dp = param_list.shift) && generated_path << dp.to_s

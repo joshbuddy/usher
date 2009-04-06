@@ -124,9 +124,6 @@ class Usher
             params.last.last << part
           when :':'
             params << [next_part.value.name, part]
-          when:'.:'
-            part.slice!(0)
-            params << [next_part.value.name, part]
           end
         end
         next_part.find(request, path, params)
