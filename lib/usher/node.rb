@@ -65,7 +65,7 @@ class Usher
       route.paths.each do |path|
         parts = path.parts.dup
         request_methods.each do |type|
-          parts.push(Route::RequestMethod.new(type, route.conditions[type])) if route.conditions[type]
+          parts.push(Route::RequestMethod.new(type, route.conditions[type])) if route.conditions.key?(type)
         end
         
         current_node = self

@@ -38,7 +38,12 @@ class Usher
   end
   alias clear! reset!
   
-  # Creates a route set
+  # Creates a route set, with optional Array of +delimiters+ and +request_methods+
+  # 
+  # The +delimiters+ must be one character. By default <tt>['/', '.']</tt> are used.
+  # The +request_methods+ are methods that are called against the request object in order to
+  # enforce the +conditions+ segment of the routes. For HTTP routes (and in fact the default), those 
+  # methods are <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]</tt>.
   def initialize(delimiters = ['/', '.'], request_methods = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method])
     @splitter = Splitter.for_delimiters(delimiters)
     @request_methods = request_methods
@@ -104,7 +109,7 @@ class Usher
   # === +options+
   # * +transformers+ - Transforms a variable before it gets to the requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
   # * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
-  # * +conditions+ - Accepts any of the following <tt>:protocol</tt>, <tt>:domain</tt>, <tt>:port</tt>, <tt>:query_string</tt>, <tt>:remote_ip</tt>, <tt>:user_agent</tt>, <tt>:referer</tt> and <tt>:method</tt>. This can be either a <tt>string</tt> or a regular expression.
+  # * +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
   # * Any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = {})
     transformers = options.delete(:transformers) || {}

@@ -63,6 +63,15 @@ describe "Usher route recognition" do
     product_show_route.paths.include?(route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'})).first).should == true
   end
   
+  it "should use conditionals that are boolean" do
+    # hijacking user_agent
+    insecure_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:user_agent => false, :method => 'get'})
+    secure_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:user_agent => true, :method => 'get'})
+    
+    secure_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com', :user_agent => true})).path.route
+    insecure_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com', :user_agent => false})).path.route
+  end
+  
   it "should use a transformer (proc) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => proc{|v| v.to_i}})
     route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id
