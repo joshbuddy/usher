@@ -45,6 +45,7 @@ class Usher
   # enforce the +conditions+ segment of the routes. For HTTP routes (and in fact the default), those 
   # methods are <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]</tt>.
   def initialize(delimiters = ['/', '.'], request_methods = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method])
+    @delimiters = delimiters
     @splitter = Splitter.for_delimiters(delimiters)
     @request_methods = request_methods
     reset!
@@ -160,6 +161,7 @@ class Usher
   #   set.generate_url(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   def generate_url(route, params = {}, options = {})
     check_variables = options.key?(:check_variables) ? options.delete(:check_variables) : false
+    delimiter = options.key?(:delimiter) ? options.delete(:delimiter) : @delimiters.first
 
     path = case route
     when Symbol
@@ -191,7 +193,7 @@ class Usher
         case p.type
         when :*
           param_list.first.each {|dp| p.valid!(dp.to_s) } if check_variables
-          generated_path << param_list.shift.collect{|dp| dp.to_s} * '/'
+          generated_path << param_list.shift.collect{|dp| dp.to_s} * delimiter
         else
           p.valid!(param_list.first.to_s) if check_variables
           (dp = param_list.shift) && generated_path << dp.to_s
