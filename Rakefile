@@ -27,3 +27,10 @@ namespace(:spec) do
   end
 
 end
+
+desc "Run all examples with RCov"
+Spec::Rake::SpecTask.new('spec_with_rcov') do |t|
+  t.spec_files = FileList['spec/**/*.rb']
+  t.rcov = true
+  t.rcov_opts = ['--exclude', 'spec']
+end

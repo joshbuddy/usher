@@ -44,10 +44,10 @@ class Usher
   # The +request_methods+ are methods that are called against the request object in order to
   # enforce the +conditions+ segment of the routes. For HTTP routes (and in fact the default), those 
   # methods are <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]</tt>.
-  def initialize(delimiters = ['/', '.'], request_methods = [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method])
-    @delimiters = delimiters
-    @splitter = Splitter.for_delimiters(delimiters)
-    @request_methods = request_methods
+  def initialize(options = {})
+    @delimiters = options.delete(:options) || ['/', '.']
+    @request_methods = options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
+    @splitter = Splitter.for_delimiters(@delimiters)
     reset!
   end
 

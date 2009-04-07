@@ -72,6 +72,15 @@ describe "Usher route recognition" do
     insecure_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com', :user_agent => false})).path.route
   end
   
+  it "should use conditionals that are arrays" do
+    # hijacking user_agent
+    www_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:subdomains => ['www'], :method => 'get'})
+    admin_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:subdomains => ['admin'], :method => 'get'})
+    
+    admin_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['admin'], :user_agent => true})).path.route
+    www_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['www'], :user_agent => false})).path.route
+  end
+  
   it "should use a transformer (proc) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => proc{|v| v.to_i}})
     route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id
