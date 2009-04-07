@@ -53,5 +53,15 @@ describe "Usher route tokenizing" do
       [:/, "test", :/, "this", :/, "split", '.', Usher::Route::Variable.new(:':', :format)]
     ]
   end
+
+  it "should to_s all different variable types" do
+    Usher::Splitter.for_delimiters(['/', '.']).split('/:split/*splitter').first.collect{|v| v.to_s} == 
+      [ ':split', '*splitter' ]
+  end
+  
+  it "should == variable types" do
+    parts = Usher::Splitter.for_delimiters(['/', '.']).split('/:split/:split').first
+    parts[1].should == parts[3]
+  end
   
 end

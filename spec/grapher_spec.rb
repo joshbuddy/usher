@@ -19,6 +19,11 @@ describe "Usher grapher" do
     route_set.generate_url(nil, {:a => 'A', :b => 'B', :c => 'C'}).should == '/A/B/C'
   end
 
+  it "should fail to generate a route when none matches" do
+    route_set.add_route('/:a/:b')
+    proc {route_set.generate_url(nil, {:c => 'C', :d => 'D'}) }.should raise_error Usher::UnrecognizedException
+  end
+
   it "should find the most specific route and append extra parts on as a query string" do
     route_set.add_route('/:a/:b/:c')
     route_set.add_route('/:a/:b')

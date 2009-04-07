@@ -80,9 +80,18 @@ describe "Usher URL generation" do
     proc {route_set.generate_url(route_set.add_route('/:controller/:action').primary_path, {:controller => 'controller'})}.should raise_error Usher::MissingParameterException
   end
 
+  it "should generate from a route" do
+    route_set.generate_url(route_set.add_route('/:controller/:action'), {:controller => 'controller', :action => 'action'}).should == '/controller/action'
+  end
+
   it "should require all the parameters (array) to generate a route" do
     route_set.add_named_route(:name, '/:controller/:action.:format')
     proc {route_set.generate_url(:name, ['controller', 'action'])}.should raise_error Usher::MissingParameterException
+  end
+
+  it "should generate a route when only one parameter is given" do
+    route_set.add_named_route(:name, '/:controller')
+    route_set.generate_url(:name, 'controller').should == '/controller'
   end
 
 end

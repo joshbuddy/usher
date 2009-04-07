@@ -117,7 +117,7 @@ class Usher
     conditions = options.delete(:conditions) || {}
     requirements = options.delete(:requirements) || {}
     options.delete_if do |k, v|
-      if v.is_a?(Regexp)
+      if v.is_a?(Regexp) || v.is_a?(Proc)
         requirements[k] = v 
         true
       end
@@ -173,7 +173,7 @@ class Usher
     else
       route
     end
-    
+    raise UnrecognizedException.new unless path
     params_hash = {}
     param_list = case params
     when Hash

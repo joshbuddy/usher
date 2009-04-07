@@ -35,6 +35,11 @@ describe "Usher route recognition" do
     route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:format , 'html']])
   end
   
+  it "should recognize a glob-style variable" do
+    target_route = route_set.add_route('/sample/*format', :controller => 'sample', :action => 'action')
+    route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple'})).params.should == [[:format, ['html', 'json', 'apple']]]
+  end
+  
   it "should recognize a format-style literal" do
     target_route = route_set.add_route('/:action.html', :controller => 'sample', :action => 'action')
     route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample']])
@@ -84,6 +89,12 @@ describe "Usher route recognition" do
   it "should use a transformer (proc) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => proc{|v| v.to_i}})
     route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id
+  end
+
+  it "should use a requirement (proc) on incoming variables" do
+    route_set.add_route('/:controller/:action/:id', :id => proc{|v| Integer(v)})
+    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'}))}.should_not raise_error Usher::ValidationException
+    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'}))}.should raise_error Usher::ValidationException
   end
 
   it "shouldn't care about mildly weird characters in the URL" do

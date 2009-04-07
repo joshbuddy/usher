@@ -14,8 +14,9 @@ class Usher
       end
       
       def eql?(o)
-        o.is_a?(Http) && o.type == type && o.value == value
+        o.is_a?(self.class) && o.type == type && o.value == value
       end
+      alias == eql?
     end
   end
 end

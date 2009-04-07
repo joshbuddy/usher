@@ -16,7 +16,6 @@ class Usher
       @value = value
       @lookup = FuzzyHash.new
       @exclusive_type = nil
-      @has_globber = find_parent{|p| p.value && p.value.is_a?(Route::Variable)}
     end
 
     def depth
@@ -29,28 +28,10 @@ class Usher
       root
     end
 
-    def has_globber?
-      @has_globber
-    end
-
     def terminates?
       @terminates
     end
 
-    def find_parent(&blk)
-      if @parent.nil? || !@parent.is_a?(Node)
-        nil
-      elsif yield @parent
-        @parent
-      else #keep searching
-        @parent.find_parent(&blk)
-      end
-    end
-
-    def replace(src, dest)
-      @lookup.replace(src, dest)
-    end
-    
     def pp
       $stdout << " " * depth
       $stdout << "#{depth}: #{value.inspect} #{!!terminates?}\n"
@@ -83,12 +64,7 @@ class Usher
               current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
           else
-            if current_node.exclusive_type
-              parts.unshift(key)
-              current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
-            else
-              current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
-            end
+            current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
           end
           current_node = target_node
         end
@@ -109,8 +85,8 @@ class Usher
       elsif path.size.zero? && !part
         if terminates?
           Response.new(terminates, params)
-        else
-          nil
+        elsif params.last.is_a?(Array) && @lookup[nil]
+          Response.new(@lookup[nil].terminates, params)
         end
       elsif next_part = @lookup[part]
         next_part.find(request, path, params)
@@ -120,16 +96,14 @@ class Usher
           next_part.value.valid!(part)
           case next_part.value.type
           when :*
-            params << [next_part.value.name, []]
-            params.last.last << part
+            params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
+            params.last.last << part unless part.is_a?(Symbol)
+            find(request, path, params)
           when :':'
             params << [next_part.value.name, part]
+            next_part.find(request, path, params)
           end
         end
-        next_part.find(request, path, params)
-      elsif has_globber? && p = find_parent{|p| p.value.is_a?(Route::Variable) && p.value.type == :*}
-        params.last.last << part
-        find(request, path, params)
       else
         nil
       end
