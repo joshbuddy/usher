@@ -6,10 +6,11 @@ class Usher
   module Interface
     class RackInterface
       
-      Request = Struct.new(:path, :method)
+      RequestMethods = [:method, :host, :port, :scheme]
+      Request = Struct.new(:path, *RequestMethods)
       
       def initialize
-        @routes = Usher.new
+        @routes = Usher.new(:request_methods => RequestMethods)
       end
       
       def add(path, options = {})
@@ -21,7 +22,7 @@ class Usher
       end
 
       def call(env)
-        response = @routes.recognize(Request.new(env['REQUEST_URI'], env['REQUEST_METHOD']))
+        response = @routes.recognize(Request.new(env['REQUEST_URI'], env['REQUEST_METHOD'].downcase, env['HTTP_HOST'], env['SERVER_PORT'].to_i, env['rack.url_scheme']))
         env['usher.params'] = response.params.inject({}){|h,(k,v)| h[k]=v; h }
         response.path.route.params.first.call(env)
       end
