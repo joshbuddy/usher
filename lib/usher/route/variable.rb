@@ -2,6 +2,7 @@ class Usher
   class Route
     class Variable
       attr_reader :type, :name, :validator, :transformer
+      attr_accessor :look_ahead
       
       def initialize(type, name, opts = {})
         @type = type

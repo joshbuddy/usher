@@ -100,7 +100,11 @@ class Usher
             params.last.last << part unless part.is_a?(Symbol)
             find(request, path, params)
           when :':'
+            var = next_part.value
             params << [next_part.value.name, part]
+            until (path.first == var.look_ahead) || path.empty?
+              params.last.last << path.shift.to_s 
+            end
             next_part.find(request, path, params)
           end
         end

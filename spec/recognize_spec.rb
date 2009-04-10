@@ -102,6 +102,11 @@ describe "Usher route recognition" do
     route_set.recognize(build_request({:method => 'get', :path => '/!asd,qwe/hjk$qwe/09AZaz$-_+!*\'', :domain => 'admin.host.com'})).params.rassoc('09AZaz$-_+!*\'').first.should == :id
   end
   
+  it "shouldn't care about non-primary delimiters in the path" do
+    route = route_set.add_route('/testing/:id/testing2/:id2/:id3')
+    route_set.recognize(build_request({:method => 'get', :path => '/testing/asd.qwe/testing2/poi.zxc/oiu.asd'})).params.should == [[:id, 'asd.qwe'], [:id2, 'poi.zxc'], [:id3, 'oiu.asd']]
+  end
+  
   it "should use a transformer (symbol) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :transformers => {:id => :to_i})
     route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id

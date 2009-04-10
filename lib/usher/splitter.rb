@@ -73,7 +73,24 @@ class Usher
             current_group << part
           end
         end unless !path || path.empty?
-        calc_paths(parts)
+        paths = calc_paths(parts)
+        paths.each do |path|
+          last_delimiter = nil
+          last_variable = nil
+          path.each do |part|
+            case part
+            when Symbol
+              last_delimiter = part
+            when Usher::Route::Variable
+              if last_variable
+                last_variable.look_ahead = last_delimiter || @delimiters.first.to_sym
+              end
+              last_variable = part
+            end
+          end
+          last_variable.look_ahead = last_delimiter || @delimiters.first.to_sym if last_variable
+        end
+        paths
       end
 
       private
