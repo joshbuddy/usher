@@ -52,7 +52,7 @@ describe "Usher (for rails) route recognition" do
   
   it "should raise based upon an invalid route" do
     route_set.add_named_route(:sample, '/sample', :controller => 'sample', :action => 'test')
-    proc { route_set.recognize(build_request_mock('/test/asdqwe', :post, {})) }.should raise_error(ActionController::RoutingError)
+    proc { route_set.recognize(build_request_mock('/test/asdqwe', :post, {})) }.should raise_error
   end
   
   it "should add /:controller and /:controller/:action if /:controller/:action/:id is added" do

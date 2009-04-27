@@ -43,6 +43,11 @@ describe "Usher URL generation" do
     route_set.generate_url(:sample, {:first => 'maz', :second => 'zoo', :third => 'zanz'}).should == '/sample/maz/zoo?third=zanz'
   end
 
+  it "should generate append extra hash variables to the end (when the first parts are an array)" do
+    route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
+    ['/sample/maz/zoo?four=jane&third=zanz', '/sample/maz/zoo?third=zanz&four=jane'].include?(route_set.generate_url(:sample, ['maz', 'zoo'], :extra_params => {:third => 'zanz', :four => 'jane'})).should == true
+  end
+
   it "should generate append extra hash variables to the end using [] syntax if its an array" do
     route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
     route_set.generate_url(:sample, {:first => 'maz', :second => 'zoo', :third => ['zanz', 'susie']}).should == '/sample/maz/zoo?third%5B%5D=zanz&third%5B%5D=susie'

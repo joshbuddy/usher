@@ -1,5 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
+require 'cgi'
 require 'usher/node'
 require 'usher/route'
 require 'usher/grapher'
@@ -162,7 +163,8 @@ class Usher
   def generate_url(route, params = {}, options = {})
     check_variables = options.key?(:check_variables) ? options.delete(:check_variables) : false
     delimiter = options.key?(:delimiter) ? options.delete(:delimiter) : @delimiters.first
-
+    extra_params = options.key?(:extra_params) ? options.delete(:extra_params) : {}
+    
     path = case route
     when Symbol
       @named_routes[route]
@@ -174,10 +176,10 @@ class Usher
       route
     end
     raise UnrecognizedException.new unless path
-    params_hash = {}
+    params_hash = extra_params
     param_list = case params
     when Hash
-      params_hash = params
+      params_hash.merge!(params)
       path.dynamic_parts.collect{|k| params_hash.delete(k.name) {|el| raise MissingParameterException.new(k.name)} }
     when Array
       path.dynamic_parts.size == params.size ? params : raise(MissingParameterException.new("got #{params.size} arguments, expected #{path.dynamic_parts.size}"))
