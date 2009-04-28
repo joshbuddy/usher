@@ -85,8 +85,13 @@ class Usher
       elsif path.size.zero? && !part
         if terminates?
           Response.new(terminates, params)
+          
         elsif params.last.is_a?(Array) && @lookup[nil]
-          Response.new(@lookup[nil].terminates, params)
+          if @lookup[nil].exclusive_type
+            @lookup[nil].find(request, path, params)
+          else
+            Response.new(@lookup[nil].terminates, params)
+          end
         end
       elsif next_part = @lookup[part]
         next_part.find(request, path, params)
