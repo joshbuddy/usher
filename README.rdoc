@@ -67,7 +67,7 @@ Sections of a route can be marked as "one and only one" by surrounding it with b
 
 == Rack
 
-=== rackup.ru
+=== config.ru
 
   require 'usher'
   app = proc do |env|
@@ -82,8 +82,10 @@ Sections of a route can be marked as "one and only one" by surrounding it with b
     ]
   end
   
-  routes = Usher::Interface.for(:rack)
-  routes.add('/hello/:name').to(app)
+  routes = Usher::Interface.for(:rack) do
+    add('/hello/:name').to(app)
+  end
+
   run routes
 
 ------------
