@@ -99,7 +99,6 @@ class Usher
         if terminates?
           Response.new(terminates, params)
         elsif params.last.is_a?(Array) && @lookup[nil]
-          params.last.last.delete_if{|p| p.is_a?(Symbol)}
           if @lookup[nil].exclusive_type
             @lookup[nil].find(request, path, params)
           else
@@ -121,21 +120,24 @@ class Usher
         end
       elsif next_part = @lookup[part] || next_part = @lookup[nil]
         if next_part.value.is_a?(Route::Variable)
-          part = next_part.value.transform!(part)
-          next_part.value.valid!(part)
           case next_part.value.type
           when :*
             params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
             if next_part.value.look_ahead === part
               path.unshift(part)
-              path.unshift(params.last.last.last) if params.last.last.last.is_a?(Symbol)
-              params.last.last.delete_if{|p| p.is_a?(Symbol)}
+              path.unshift(next_part.parent.value) if next_part.parent.value.is_a?(Symbol)
               next_part.find(request, path, params)
             else
-              params.last.last << part
+              unless part.is_a?(Symbol)
+                part = next_part.value.transform!(part)
+                next_part.value.valid!(part)
+                params.last.last << part
+              end
               find(request, path, params)
             end
           when :':'
+            part = next_part.value.transform!(part)
+            next_part.value.valid!(part)
             var = next_part.value
             params << [next_part.value.name, part]
             until (path.first == var.look_ahead) || path.empty?
