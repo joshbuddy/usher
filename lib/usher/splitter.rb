@@ -8,7 +8,7 @@ class Usher
       
       SplitterInstance.new(
         delimiters,
-        Regexp.new('((:|\*)?[0-9A-Za-z\$\-_\+!\*\',]+|' + delimiters_regex + '|\(|\)|\|)'),
+        Regexp.new('((:|\*)?[0-9A-Za-z\$\-_\+!\*\',]+|' + delimiters_regex + '|\(|\)|\||\{)'),
         Regexp.new(delimiters_regex + '|[0-9A-Za-z\$\-_\+!\*\',]+')
       )
     end
@@ -50,6 +50,20 @@ class Usher
           when ?*, ?:
             type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
             current_group << Usher::Route::Variable.new(type, part, requirements && requirements[part.to_sym], transformers && transformers[part.to_sym])
+          when ?{
+            regex = '{'
+            count = 1
+            until count.zero?
+              regex_part = ss.scan(/\{|\}|[^\{\}]+/)
+              case regex_part[0]
+              when ?{
+                count += 1
+              when ?}
+                count -= 1
+              end
+              regex << regex_part
+            end
+            current_group << Regexp.new(regex[1, regex.size - 2])
           when ?(
             new_group = Group.new(:any, current_group)
             current_group << new_group

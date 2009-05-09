@@ -6,6 +6,11 @@ describe "Usher route tokenizing" do
   it "should split / delimited routes" do
     Usher::Splitter.for_delimiters(['/', '.']).split('/test/this/split').should == [[:/, 'test', :/,'this', :/, 'split']]
   end
+
+  it "should split / delimited routes with a regex in it" do
+    Usher::Splitter.for_delimiters(['/', '.']).
+      split('/test/{this}/split').should == [[:/, 'test', :/, /this/, :/, 'split']]
+  end
   
   it "should split on ' ' delimited routes as well" do
     Usher::Splitter.for_delimiters([' ']).split('test this split').should == [['test', :' ', 'this', :' ', 'split']]

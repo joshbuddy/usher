@@ -47,6 +47,20 @@ describe "Usher route recognition" do
     response.path.route.should == target_route
   end
   
+  it "should recgonize a regex static part" do
+    target_route = route_set.add_route('/test/part/{one|two}')
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/one'})).path.route.should == target_route
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/two'})).path.route.should == target_route
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/three'})).should == nil
+  end
+  
+  it "should recgonize a regex static part containing {}'s" do
+    target_route = route_set.add_route('/test/part/{^o{2,3}$}')
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/oo'})).path.route.should == target_route
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/ooo'})).path.route.should == target_route
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/oooo'})).should == nil
+  end
+  
   it "should recgonize two glob-style variables separated by a static part" do
     target_route = route_set.add_route('/*format/innovate/*onemore')
     response = route_set.recognize(build_request({:method => 'get', :path => '/sample/html/innovate/apple'}))
