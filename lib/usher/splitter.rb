@@ -48,11 +48,12 @@ class Usher
           part = ss.scan(@split_regex)
           case part[0]
           when ?*, ?:
-            type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
+            type = part.slice!(0).chr.to_sym
             current_group << Usher::Route::Variable.new(type, part, requirements && requirements[part.to_sym], transformers && transformers[part.to_sym])
           when ?{
-            regex = '{'
+            pattern = ''
             count = 1
+            variable = ss.scan(/:([^,]+),/)
             until count.zero?
               regex_part = ss.scan(/\{|\}|[^\{\}]+/)
               case regex_part[0]
@@ -61,9 +62,18 @@ class Usher
               when ?}
                 count -= 1
               end
-              regex << regex_part
+              pattern << regex_part
             end
-            current_group << Regexp.new(regex[1, regex.size - 2])
+            pattern.slice!(pattern.size - 1)
+            regex = Regexp.new(pattern)
+            if variable
+              variable_type = variable.slice!(0).chr.to_sym
+              variable_name = variable[0, variable.size - 1].to_sym
+              current_group << Usher::Route::Variable.new(variable_type, variable_name, requirements && requirements[variable_name], transformers && transformers[variable_name], regex)
+            else
+              current_group << regex
+            end
+            
           when ?(
             new_group = Group.new(:any, current_group)
             current_group << new_group

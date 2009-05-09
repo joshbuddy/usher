@@ -69,8 +69,15 @@ class Usher
               current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
           else
-            current_node.upgrade_lookup if !key.is_a?(Route::Variable) && key.is_a?(Regexp)
-            current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
+            if !key.is_a?(Route::Variable)
+              current_node.upgrade_lookup if key.is_a?(Regexp)
+              current_node.lookup[key] ||= Node.new(current_node, key)
+            elsif key.regex_matcher
+              current_node.upgrade_lookup
+              current_node.lookup[key.regex_matcher] ||= Node.new(current_node, key)
+            else
+              current_node.lookup[nil] ||= Node.new(current_node, key)
+            end  
           end
           current_node = target_node
         end
@@ -100,8 +107,19 @@ class Usher
           end
         end
       elsif next_part = @lookup[part]
-        next_part.find(request, path, params)
-      elsif next_part = @lookup[nil]
+        if next_part.value.is_a?(Route::Variable)
+          part = next_part.value.transform!(part)
+          next_part.value.valid!(part)
+          var = next_part.value
+          params << [next_part.value.name, part]
+          until (path.first == var.look_ahead) || path.empty?
+            params.last.last << path.shift.to_s 
+          end
+          next_part.find(request, path, params)
+        else
+          next_part.find(request, path, params)
+        end
+      elsif next_part = @lookup[part] || next_part = @lookup[nil]
         if next_part.value.is_a?(Route::Variable)
           part = next_part.value.transform!(part)
           next_part.value.valid!(part)

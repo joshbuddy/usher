@@ -1,14 +1,15 @@
 class Usher
   class Route
     class Variable
-      attr_reader :type, :name, :validator, :transformer
+      attr_reader :type, :name, :validator, :transformer, :regex_matcher
       attr_accessor :look_ahead
       
-      def initialize(type, name, validator = nil, transformer = nil)
+      def initialize(type, name, validator = nil, transformer = nil, regex_matcher = nil)
         @type = type
         @name = :"#{name}"
         @validator = validator
         @transformer = transformer
+        @regex_matcher = regex_matcher
       end
 
       def to_s
