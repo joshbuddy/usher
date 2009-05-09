@@ -50,7 +50,7 @@ describe "Usher route tokenizing" do
     Usher::Splitter.for_delimiters(['/', '.']).split('/test/this(/split(.:format))') == [
       [:/, "test", :/, "this"],
       [:/, "test", :/, "this", :/, "split"],
-      [:/, "test", :/, "this", :/, "split", '.', Usher::Route::Variable.new(:':', :format)]
+      [:/, "test", :/, "this", :/, "split", :'.', Usher::Route::Variable.new(:':', :format)]
     ]
   end
 

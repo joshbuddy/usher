@@ -4,11 +4,11 @@ class Usher
       attr_reader :type, :name, :validator, :transformer
       attr_accessor :look_ahead
       
-      def initialize(type, name, opts = {})
+      def initialize(type, name, validator = nil, transformer = nil)
         @type = type
         @name = :"#{name}"
-        @validator = opts[:validator]
-        @transformer = opts[:transformer]
+        @validator = validator
+        @transformer = transformer
       end
 
       def to_s

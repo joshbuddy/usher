@@ -40,14 +40,21 @@ describe "Usher route recognition" do
     route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple'})).params.should == [[:format, ['html', 'json', 'apple']]]
   end
   
-  it "should only a glob-style variable" do
+  it "should recgonize only a glob-style variable" do
     target_route = route_set.add_route('/*format')
     response = route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple'}))
     response.params.should == [[:format, ['sample', 'html', 'json', 'apple']]]
     response.path.route.should == target_route
   end
   
-  it "should only a glob-style variable with a condition" do
+  it "should recgonize two glob-style variables separated by a static part" do
+    target_route = route_set.add_route('/*format/innovate/*onemore')
+    response = route_set.recognize(build_request({:method => 'get', :path => '/sample/html/innovate/apple'}))
+    response.params.should == [[:format, ['sample', 'html']], [:onemore, ['apple']]]
+    response.path.route.should == target_route
+  end
+  
+  it "should recgonize only a glob-style variable with a condition" do
     target_route = route_set.add_route('/*format', :conditions => {:domain => 'test-domain'})
     response = route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple', :domain => 'test-domain'}))
     response.params.should == [[:format, ['sample', 'html', 'json', 'apple']]]

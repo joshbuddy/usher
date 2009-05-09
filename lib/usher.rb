@@ -45,9 +45,9 @@ class Usher
   # The +request_methods+ are methods that are called against the request object in order to
   # enforce the +conditions+ segment of the routes. For HTTP routes (and in fact the default), those 
   # methods are <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]</tt>.
-  def initialize(options = {})
-    @delimiters = options.delete(:options) || ['/', '.']
-    @request_methods = options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
+  def initialize(options = nil)
+    @delimiters = options && options.delete(:options) || ['/', '.']
+    @request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
     @splitter = Splitter.for_delimiters(@delimiters)
     reset!
   end
@@ -56,7 +56,7 @@ class Usher
   #   
   #   set = Usher.new
   #   set.add_named_route(:test_route, '/test')
-  def add_named_route(name, path, options = {})
+  def add_named_route(name, path, options = nil)
     add_route(path, options).name(name)
   end
 
@@ -113,19 +113,20 @@ class Usher
   # * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
   # * +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
   # * Any other key is interpreted as a requirement for the variable of its name.
-  def add_route(path, options = {})
-    transformers = options.delete(:transformers) || {}
-    conditions = options.delete(:conditions) || {}
-    requirements = options.delete(:requirements) || {}
-    options.delete_if do |k, v|
-      if v.is_a?(Regexp) || v.is_a?(Proc)
-        requirements[k] = v 
-        true
+  def add_route(path, options = nil)
+    transformers = options && options.delete(:transformers) || {}
+    conditions = options && options.delete(:conditions) || {}
+    requirements = options && options.delete(:requirements) || {}
+    if options
+      options.delete_if do |k, v|
+        if v.is_a?(Regexp) || v.is_a?(Proc)
+          requirements[k] = v 
+          true
+        end
       end
     end
-    
     route = Route.new(path, self, {:transformers => transformers, :conditions => conditions, :requirements => requirements})
-    route.to(options) unless options.empty?
+    route.to(options) if options && !options.empty?
     
     @tree.add(route)
     @routes << route
@@ -160,10 +161,10 @@ class Usher
   #   set.generate_url(nil, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   #   set.generate_url(:test_route, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   #   set.generate_url(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
-  def generate_url(route, params = {}, options = {})
-    check_variables = options.key?(:check_variables) ? options.delete(:check_variables) : false
-    delimiter = options.key?(:delimiter) ? options.delete(:delimiter) : @delimiters.first
-    extra_params = options.key?(:extra_params) ? options.delete(:extra_params) : {}
+  def generate_url(route, params = nil, options = nil)
+    check_variables = options && options.key?(:check_variables) ? options.delete(:check_variables) : false
+    delimiter = options && options.key?(:delimiter) ? options.delete(:delimiter) : @delimiters.first
+    extra_params = options && options.key?(:extra_params) ? options.delete(:extra_params) : {}
     
     path = case route
     when Symbol
@@ -183,6 +184,8 @@ class Usher
       path.dynamic_parts.collect{|k| params_hash.delete(k.name) {|el| raise MissingParameterException.new(k.name)} }
     when Array
       path.dynamic_parts.size == params.size ? params : raise(MissingParameterException.new("got #{params.size} arguments, expected #{path.dynamic_parts.size}"))
+    when nil
+      nil
     else
       Array(params)
     end

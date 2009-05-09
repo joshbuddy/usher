@@ -1,6 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
-require 'fuzzy_hash'
+require '~/Development/fuzzy_hash/lib/fuzzy_hash'
 
 class Usher
 
@@ -14,8 +14,12 @@ class Usher
     def initialize(parent, value)
       @parent = parent
       @value = value
-      @lookup = FuzzyHash.new
+      @lookup = Hash.new
       @exclusive_type = nil
+    end
+
+    def upgrade_lookup
+      @lookup = FuzzyHash.new(@lookup)
     end
 
     def depth
@@ -54,6 +58,7 @@ class Usher
           key = parts.shift
           target_node = case key
           when Route::RequestMethod
+            current_node.upgrade_lookup if key.value.is_a?(Regexp)
             if current_node.exclusive_type == key.type
               current_node.lookup[key.value] ||= Node.new(current_node, key)
             elsif current_node.lookup.empty?
@@ -64,6 +69,7 @@ class Usher
               current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
           else
+            current_node.upgrade_lookup if !key.is_a?(Route::Variable) && key.is_a?(Regexp)
             current_node.lookup[key.is_a?(Route::Variable) ? nil : key] ||= Node.new(current_node, key)
           end
           current_node = target_node
@@ -85,8 +91,8 @@ class Usher
       elsif path.size.zero? && !part
         if terminates?
           Response.new(terminates, params)
-          
         elsif params.last.is_a?(Array) && @lookup[nil]
+          params.last.last.delete_if{|p| p.is_a?(Symbol)}
           if @lookup[nil].exclusive_type
             @lookup[nil].find(request, path, params)
           else
@@ -102,8 +108,15 @@ class Usher
           case next_part.value.type
           when :*
             params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
-            params.last.last << part unless part.is_a?(Symbol)
-            find(request, path, params)
+            if next_part.value.look_ahead === part
+              path.unshift(part)
+              path.unshift(params.last.last.last) if params.last.last.last.is_a?(Symbol)
+              params.last.last.delete_if{|p| p.is_a?(Symbol)}
+              next_part.find(request, path, params)
+            else
+              params.last.last << part
+              find(request, path, params)
+            end
           when :':'
             var = next_part.value
             params << [next_part.value.name, part]

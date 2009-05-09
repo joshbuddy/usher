@@ -8,14 +8,15 @@ class Usher
   class Route
     attr_reader :paths, :original_path, :requirements, :conditions, :params, :primary_path
     
-    def initialize(original_path, router, options = {}) # :nodoc:
+    def initialize(original_path, router, options = nil) # :nodoc:
       @original_path = original_path
       @router = router
-      @requirements = options.delete(:requirements)
-      @conditions = options.delete(:conditions)
-      @transformers = options.delete(:transformers)
+      @requirements = options && options.delete(:requirements)
+      @conditions = options && options.delete(:conditions)
+      @transformers = options && options.delete(:transformers)
       @paths = @router.splitter.split(@original_path, @requirements, @transformers).collect {|path| Path.new(self, path)}
       @primary_path = @paths.first
+      #FIXME params is poorly named. this shouldn't be an array
       @params = []
     end
     
@@ -27,8 +28,8 @@ class Usher
     #   route = set.add_route('/test')
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
-    def to(options)
-      @params << options
+    def to(options = nil, &block)
+      @params << (block_given? ? block : options)
       self
     end
 

@@ -40,7 +40,7 @@ class Usher
         parts
       end
 
-      def split(path, requirements = {}, transformers = {})
+      def split(path, requirements = nil, transformers = nil)
         parts = Group.new(:all, nil)
         ss = StringScanner.new(path)
         current_group = parts
@@ -49,7 +49,7 @@ class Usher
           case part[0]
           when ?*, ?:
             type = (part[1] == ?: ? part.slice!(0,2) : part.slice!(0).chr).to_sym
-            current_group << Usher::Route::Variable.new(type, part, :validator => requirements[part.to_sym], :transformer => transformers[part.to_sym])
+            current_group << Usher::Route::Variable.new(type, part, requirements && requirements[part.to_sym], transformers && transformers[part.to_sym])
           when ?(
             new_group = Group.new(:any, current_group)
             current_group << new_group
@@ -75,20 +75,16 @@ class Usher
         end unless !path || path.empty?
         paths = calc_paths(parts)
         paths.each do |path|
-          last_delimiter = nil
-          last_variable = nil
-          path.each do |part|
-            case part
-            when Symbol
-              last_delimiter = part
-            when Usher::Route::Variable
-              if last_variable
-                last_variable.look_ahead = last_delimiter || @delimiters.first.to_sym
+          path.each_with_index do |part, index|
+            if part.is_a?(Usher::Route::Variable)
+              case part.type
+              when :*
+                part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Symbol) && !p.is_a?(Usher::Route::Variable)} || nil
+              when :':'
+                part.look_ahead = path[index + 1, path.size].find{|p| p.is_a?(Symbol)} || @delimiters.first.to_sym
               end
-              last_variable = part
             end
           end
-          last_variable.look_ahead = last_delimiter || @delimiters.first.to_sym if last_variable
         end
         paths
       end

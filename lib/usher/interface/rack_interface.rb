@@ -14,7 +14,7 @@ class Usher
         instance_eval(&blk) if blk
       end
       
-      def add(path, options = {})
+      def add(path, options = nil)
         @routes.add_route(path, options)
       end
 

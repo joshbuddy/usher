@@ -9,7 +9,7 @@ begin
     s.homepage = "http://github.com/joshbuddy/usher"
     s.authors = ["Joshua Hull"]
     s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
-    s.add_dependency 'joshbuddy-fuzzy_hash', '>=0.0.2'
+    s.add_dependency 'joshbuddy-fuzzy_hash', '>=0.0.3'
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
