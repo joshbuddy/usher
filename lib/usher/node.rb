@@ -107,18 +107,42 @@ class Usher
         end
       elsif next_part = @lookup[part]
         if next_part.value.is_a?(Route::Variable)
-          part = next_part.value.transform!(part)
-          next_part.value.valid!(part)
-          var = next_part.value
-          params << [next_part.value.name, part]
-          until (path.first == var.look_ahead) || path.empty?
-            params.last.last << path.shift.to_s 
+          case next_part.value.type
+          when :*
+            params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
+            loop do
+              if (next_part.value.look_ahead === part || (!part.is_a?(Symbol) && !next_part.value.regex_matcher.match(part)))
+                path.unshift(part)
+                path.unshift(next_part.parent.value) if next_part.parent.value.is_a?(Symbol)
+                break
+              else
+                unless part.is_a?(Symbol)
+                  part = next_part.value.transform!(part)
+                  next_part.value.valid!(part)
+                  params.last.last << part
+                end
+              end
+              if path.size.zero?
+                break
+              else
+                part = path.shift
+              end
+            end
+            next_part.find(request, path, params)
+          when :':'
+            part = next_part.value.transform!(part)
+            next_part.value.valid!(part)
+            var = next_part.value
+            params << [next_part.value.name, part]
+            until (path.first == var.look_ahead) || path.empty?
+              params.last.last << path.shift.to_s 
+            end
+            next_part.find(request, path, params)
           end
-          next_part.find(request, path, params)
         else
           next_part.find(request, path, params)
         end
-      elsif next_part = @lookup[part] || next_part = @lookup[nil]
+      elsif next_part = @lookup[nil]
         if next_part.value.is_a?(Route::Variable)
           case next_part.value.type
           when :*

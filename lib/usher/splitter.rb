@@ -53,7 +53,7 @@ class Usher
           when ?{
             pattern = ''
             count = 1
-            variable = ss.scan(/:([^,]+),/)
+            variable = ss.scan(/[:\*]([^,]+),/)
             until count.zero?
               regex_part = ss.scan(/\{|\}|[^\{\}]+/)
               case regex_part[0]
@@ -73,7 +73,6 @@ class Usher
             else
               current_group << regex
             end
-            
           when ?(
             new_group = Group.new(:any, current_group)
             current_group << new_group
