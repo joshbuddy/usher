@@ -5,6 +5,7 @@ class Usher
     autoload :Rails2Interface, 'interface/rails2_interface'
     autoload :MerbInterface, 'interface/merb_interface'
     autoload :RackInterface, 'interface/rack_interface'
+    autoload :EmailInterface, 'interface/email_interface'
     
     def self.for(type, &blk)
       case type
@@ -14,7 +15,10 @@ class Usher
         MerbInterface.new(&blk)
       when :rack
         RackInterface.new(&blk)
+      when :email
+        EmailInterface.new(&blk)
       end
+      
     end
     
     

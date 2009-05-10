@@ -9,7 +9,7 @@ class Usher
     Response = Struct.new(:path, :params)
     
     attr_reader :lookup
-    attr_accessor :terminates, :exclusive_type, :parent, :value, :request_methods
+    attr_accessor :terminates, :exclusive_type, :parent, :value, :request_methods, :globs_capture_separators
 
     def initialize(parent, value)
       @parent = parent
@@ -26,9 +26,10 @@ class Usher
       @depth ||= @parent && @parent.is_a?(Node) ? @parent.depth + 1 : 0
     end
     
-    def self.root(route_set, request_methods)
+    def self.root(route_set, request_methods, globs_capture_separators)
       root = self.new(route_set, nil)
       root.request_methods = request_methods
+      root.globs_capture_separators = globs_capture_separators
       root
     end
 
@@ -69,6 +70,8 @@ class Usher
               current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
           else
+            key.globs_capture_separators = globs_capture_separators if key.is_a?(Route::Variable)
+            
             if !key.is_a?(Route::Variable)
               current_node.upgrade_lookup if key.is_a?(Regexp)
               current_node.lookup[key] ||= Node.new(current_node, key)
@@ -116,7 +119,7 @@ class Usher
                 path.unshift(next_part.parent.value) if next_part.parent.value.is_a?(Symbol)
                 break
               else
-                unless part.is_a?(Symbol)
+                unless part.is_a?(Symbol) && !next_part.value.globs_capture_separators
                   part = next_part.value.transform!(part)
                   next_part.value.valid!(part)
                   params.last.last << part
@@ -152,7 +155,7 @@ class Usher
               path.unshift(next_part.parent.value) if next_part.parent.value.is_a?(Symbol)
               next_part.find(request, path, params)
             else
-              unless part.is_a?(Symbol)
+              unless part.is_a?(Symbol) && !next_part.value.globs_capture_separators
                 part = next_part.value.transform!(part)
                 next_part.value.valid!(part)
                 params.last.last << part

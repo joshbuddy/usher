@@ -31,7 +31,7 @@ class Usher
   #   set.reset!
   #   set.empty? => true
   def reset!
-    @tree = Node.root(self, @request_methods)
+    @tree = Node.root(self, @request_methods, @globs_capture_separators)
     @named_routes = {}
     @routes = []
     @route_count = 0
@@ -46,9 +46,11 @@ class Usher
   # enforce the +conditions+ segment of the routes. For HTTP routes (and in fact the default), those 
   # methods are <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]</tt>.
   def initialize(options = nil)
-    @delimiters = options && options.delete(:options) || ['/', '.']
+    @globs_capture_separators = options && options.key?(:globs_capture_separators) ? options.delete(:globs_capture_separators) : false
+    @delimiters = options && options.delete(:delimiters) || ['/', '.']
+    @valid_regex = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
     @request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
-    @splitter = Splitter.for_delimiters(@delimiters)
+    @splitter = Splitter.for_delimiters(@delimiters, @valid_regex)
     reset!
   end
 

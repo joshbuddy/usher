@@ -3,13 +3,12 @@ require 'strscan'
 class Usher
   class Splitter
     
-    def self.for_delimiters(delimiters)
+    def self.for_delimiters(delimiters, valid_regex)
       delimiters_regex = delimiters.collect{|d| Regexp.quote(d)} * '|'
-      
       SplitterInstance.new(
         delimiters,
-        Regexp.new('((:|\*)?[0-9A-Za-z\$\-_\+!\*\',]+|' + delimiters_regex + '|\(|\)|\||\{)'),
-        Regexp.new(delimiters_regex + '|[0-9A-Za-z\$\-_\+!\*\',]+')
+        Regexp.new('((:|\*)?' + valid_regex + '|' + delimiters_regex + '|\(|\)|\||\{)'),
+        Regexp.new(delimiters_regex + '|' + valid_regex)
       )
     end
     
