@@ -9,7 +9,7 @@ describe "Usher route tokenizing" do
 
   it "should split / delimited routes with a regex in it" do
     Usher::Splitter.for_delimiters(['/', '.'], '[0-9A-Za-z\$\-_\+!\*\',]+').
-      split('/test/{this}/split').should == [[:/, 'test', :/, /this/, :/, 'split']]
+      split('/test/{this}/split').should == [[:/, 'test', :/, /^this$/, :/, 'split']]
   end
   
   it "should split on ' ' delimited routes as well" do

@@ -43,9 +43,25 @@ However, <tt>/path/test/one_more/path</tt> would not be matched.
 
 In the above examples, ['one', 'two', 'three'] and ['four', 'five'] respectively would be bound to the key :variable.
 
+As well, variables can have a regex matcher.
+
+<b>Example:</b>
+<tt>/product/{:id,\d+}</tt> would match
+
+* <tt>/product/123</tt>
+* <tt>/product/4521</tt>
+
+But not
+* <tt>/product/AE-35</tt>
+
+As well, the same logic applies for * variables as well, where only parts matchable by the supplied regex will
+actually be bound to the variable
+
 ==== Static
 
 Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
+As well, static parts can have a regex pattern in them as well, such as <tt>/path/something.{html|xml}</tt> which would match only
+<tt>/path/something.html</tt> and <tt>/path/something.xml</tt>
 
 ==== Optional sections
 
@@ -53,12 +69,14 @@ Sections of a route can be marked as optional by surrounding it with brackets. F
 
 ==== One and only one sections
 
-Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes. For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and <tt>/path/something.html</tt>.
+Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes.
+For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and
+<tt>/path/something.html</tt>. Generally its more efficent to use one and only sections over using regex.
 
 === +options+
 * +transformers+ - Transforms a variable before it gets to the requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
 * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
-* +conditions+ - Accepts any of the following <tt>:protocol</tt>, <tt>:domain</tt>, <tt>:port</tt>, <tt>:query_string</tt>, <tt>:remote_ip</tt>, <tt>:user_agent</tt>, <tt>:referer</tt> and <tt>:method</tt>. This can be either a <tt>string</tt> or a regular expression.
+* +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
 * Any other key is interpreted as a requirement for the variable of its name.
 
 == Rails

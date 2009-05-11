@@ -50,7 +50,7 @@ class Usher
             type = part.slice!(0).chr.to_sym
             current_group << Usher::Route::Variable.new(type, part, requirements && requirements[part.to_sym], transformers && transformers[part.to_sym])
           when ?{
-            pattern = ''
+            pattern = '^'
             count = 1
             variable = ss.scan(/[:\*]([^,]+),/)
             until count.zero?
@@ -63,7 +63,7 @@ class Usher
               end
               pattern << regex_part
             end
-            pattern.slice!(pattern.size - 1)
+            pattern[pattern.size - 1] = ?$
             regex = Regexp.new(pattern)
             if variable
               variable_type = variable.slice!(0).chr.to_sym

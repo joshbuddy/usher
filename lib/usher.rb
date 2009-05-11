@@ -39,12 +39,18 @@ class Usher
   end
   alias clear! reset!
   
-  # Creates a route set, with optional Array of +delimiters+ and +request_methods+
+  # Creates a route set, with options
   # 
-  # The +delimiters+ must be one character. By default <tt>['/', '.']</tt> are used.
-  # The +request_methods+ are methods that are called against the request object in order to
-  # enforce the +conditions+ segment of the routes. For HTTP routes (and in fact the default), those 
-  # methods are <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method]</tt>.
+  # <tt>:globs_capture_separators</tt>: +true+ or +false+. (default +false+) Specifies whether glob matching will also include separators
+  # that are matched.
+  # 
+  # <tt>:delimiters</tt>: Array of Strings. (default <tt>['/', '.']</tt>). Delimiters used in path separation. Array must be single character strings.
+  # 
+  # <tt>:valid_regex</tt>: String. (default <tt>'[0-9A-Za-z\$\-_\+!\*\',]+'</tt>). String that can be interpolated into regex to match
+  # valid character sequences within path.
+  # 
+  # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
+  # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
     @globs_capture_separators = options && options.key?(:globs_capture_separators) ? options.delete(:globs_capture_separators) : false
     @delimiters = options && options.delete(:delimiters) || ['/', '.']
@@ -98,9 +104,25 @@ class Usher
   #
   # In the above examples, ['one', 'two', 'three'] and ['four', 'five'] respectively would be bound to the key :variable.
   #
+  # As well, variables can have a regex matcher.
+  #
+  # <b>Example:</b>
+  # <tt>/product/{:id,\d+}</tt> would match
+  # 
+  # * <tt>/product/123</tt>
+  # * <tt>/product/4521</tt>
+  # 
+  # But not
+  # * <tt>/product/AE-35</tt>
+  # 
+  # As well, the same logic applies for * variables as well, where only parts matchable by the supplied regex will
+  # actually be bound to the variable
+  #
   # ==== Static
   #
   # Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
+  # As well, static parts can have a regex pattern in them as well, such as <tt>/path/something.{html|xml}</tt> which would match only
+  # <tt>/path/something.html</tt> and <tt>/path/something.xml</tt>
   #
   # ==== Optional sections
   #
@@ -108,7 +130,9 @@ class Usher
   #
   # ==== One and only one sections
   #
-  # Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes. For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and <tt>/path/something.html</tt>.
+  # Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes.
+  # For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and
+  # <tt>/path/something.html</tt>. Generally its more efficent to use one and only sections over using regex.
   #
   # === +options+
   # * +transformers+ - Transforms a variable before it gets to the requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
