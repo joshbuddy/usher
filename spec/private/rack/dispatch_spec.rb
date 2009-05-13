@@ -18,8 +18,6 @@ def build_app_mock(params)
   request
 end
 
-SampleController = Object.new
-
 describe "Usher (for rack) route dispatching" do
 
   before(:each) do

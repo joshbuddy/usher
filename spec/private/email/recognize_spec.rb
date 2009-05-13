@@ -8,8 +8,6 @@ def build_email_mock(email)
   request
 end
 
-SampleController = Object.new
-
 describe "Usher (for email) route recognition" do
 
   before(:each) do

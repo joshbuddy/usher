@@ -9,6 +9,8 @@ class Usher
       RequestMethods = [:method, :host, :port, :scheme]
       Request = Struct.new(:path, *RequestMethods)
       
+      attr_accessor :routes
+      
       def initialize(&blk)
         @routes = Usher.new(:request_methods => RequestMethods)
         instance_eval(&blk) if blk

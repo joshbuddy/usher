@@ -19,24 +19,13 @@ class Usher
       def initialize(delimiters, split_regex, url_split_regex)
         @delimiters = delimiters
         @delimiter_chars = delimiters.collect{|d| d[0]}
+        @delimiter_chars_map = Hash[*@delimiter_chars.map{|c| [c, c.chr.to_sym]}.flatten]
         @split_regex = split_regex
         @url_split_regex = url_split_regex
       end
       
       def url_split(path)
-        parts = []
-        ss = StringScanner.new(path)
-          while !ss.eos?
-            if part = ss.scan(@url_split_regex)
-              parts << case part[0]
-              when *@delimiter_chars
-                part.to_sym
-              else
-                part
-              end
-            end
-          end if path && !path.empty?
-        parts
+        path.scan(@url_split_regex).map { |part| @delimiter_chars_map[part[0]] || part}
       end
 
       def split(path, requirements = nil, transformers = nil)

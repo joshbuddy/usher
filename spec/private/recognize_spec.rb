@@ -10,8 +10,6 @@ def build_request(opts)
   request
 end
 
-SampleController = Object.new
-
 describe "Usher route recognition" do
   
   before(:each) do

@@ -227,12 +227,15 @@ class Usher
           generated_path << param_list.shift.collect{|dp| dp.to_s} * delimiter
         else
           p.valid!(param_list.first.to_s) if check_variables
-          (dp = param_list.shift) && generated_path << dp.to_s
+          if dp = param_list.shift
+            generated_path << dp.to_s
+          end
         end
       else
         generated_path << p.to_s
       end
     end
+    
     unless params_hash.empty?
       has_query = generated_path[??]
       params_hash.each do |k,v|
