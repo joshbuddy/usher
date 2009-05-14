@@ -25,7 +25,9 @@ class Usher
       end
       
       def url_split(path)
-        path.scan(@url_split_regex).map { |part| @delimiter_chars_map[part[0]] || part}
+        parts = path.scan(@url_split_regex)
+        parts.map!{ |part| @delimiter_chars_map[part[0]] || part}
+        parts
       end
 
       def split(path, requirements = nil, transformers = nil)
