@@ -1,6 +1,7 @@
 $:.unshift File.dirname(__FILE__)
 
 require 'cgi'
+require 'uri'
 require 'usher/node'
 require 'usher/route'
 require 'usher/grapher'
@@ -222,11 +223,11 @@ class Usher
         case p.type
         when :*
           param_list.first.each {|dp| p.valid!(dp.to_s) } if check_variables
-          generated_path << param_list.shift.collect{|dp| dp.to_s} * delimiter
+          generated_path << param_list.shift.collect{|dp| URI.escape(dp.to_s)} * delimiter
         else
           p.valid!(param_list.first.to_s) if check_variables
           if dp = param_list.shift
-            generated_path << dp.to_s
+            generated_path << URI.escape(dp.to_s)
           end
         end
       else
