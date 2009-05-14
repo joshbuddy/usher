@@ -141,11 +141,6 @@ describe "Usher route recognition" do
     www_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['www'], :user_agent => false})).path.route
   end
   
-  it "should use a transformer (proc) on incoming variables" do
-    route_set.add_route('/:controller/:action/:id', :transformers => {:id => proc{|v| v.to_i}})
-    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id
-  end
-
   it "should use a requirement (proc) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :id => proc{|v| Integer(v)})
     proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'}))}.should_not raise_error Usher::ValidationException
@@ -162,19 +157,10 @@ describe "Usher route recognition" do
     route_set.recognize(build_request({:method => 'get', :path => '/testing/asd.qwe/testing2/poi.zxc/oiu.asd'})).params.should == [[:id, 'asd.qwe'], [:id2, 'poi.zxc'], [:id3, 'oiu.asd']]
   end
   
-  it "should use a transformer (symbol) on incoming variables" do
-    route_set.add_route('/:controller/:action/:id', :transformers => {:id => :to_i})
-    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'})).params.rassoc(123).first.should == :id
-  end
-  
   it "should should raise if malformed variables are used" do
     route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
     proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error
   end
   
-  it "should should raise if transformer proc raises (anything)" do
-    route_set.add_route('/products/show/:id', :transformers => {:id => proc{|v| Integer(v)}})
-    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error(Usher::ValidationException)
-  end
   
 end

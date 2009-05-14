@@ -135,12 +135,10 @@ class Usher
   # <tt>/path/something.html</tt>. Generally its more efficent to use one and only sections over using regex.
   #
   # === +options+
-  # * +transformers+ - Transforms a variable before it gets to the requirements. Takes either a +proc+ or a +symbol+. If its a +symbol+, calls the method on the incoming parameter. If its a +proc+, its called with the variable.
   # * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
   # * +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
   # * Any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = nil)
-    transformers = options && options.delete(:transformers) || {}
     conditions = options && options.delete(:conditions) || {}
     requirements = options && options.delete(:requirements) || {}
     if options
@@ -151,7 +149,7 @@ class Usher
         end
       end
     end
-    route = Route.new(path, self, {:transformers => transformers, :conditions => conditions, :requirements => requirements})
+    route = Route.new(path, self, {:conditions => conditions, :requirements => requirements})
     route.to(options) if options && !options.empty?
     
     @tree.add(route)

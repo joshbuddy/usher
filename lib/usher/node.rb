@@ -111,7 +111,6 @@ class Usher
                 break
               else
                 unless part.is_a?(Symbol) && !next_part.value.globs_capture_separators
-                  part = next_part.value.transform!(part)
                   next_part.value.valid!(part)
                   params.last.last << part
                 end
@@ -123,7 +122,6 @@ class Usher
               end
             end
           when :':'
-            part = next_part.value.transform!(part)
             next_part.value.valid!(part)
             var = next_part.value
             params << [next_part.value.name, part]

@@ -13,8 +13,7 @@ class Usher
       @router = router
       @requirements = options && options.delete(:requirements)
       @conditions = options && options.delete(:conditions)
-      @transformers = options && options.delete(:transformers)
-      @paths = @router.splitter.split(@original_path, @requirements, @transformers).collect {|path| Path.new(self, path)}
+      @paths = @router.splitter.split(@original_path, @requirements).collect {|path| Path.new(self, path)}
       @primary_path = @paths.first
       #FIXME params is poorly named. this shouldn't be an array
       @params = []

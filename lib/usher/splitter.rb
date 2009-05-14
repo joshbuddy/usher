@@ -30,7 +30,7 @@ class Usher
         parts
       end
 
-      def split(path, requirements = nil, transformers = nil)
+      def split(path, requirements = nil)
         parts = Group.new(:all, nil)
         ss = StringScanner.new(path)
         current_group = parts
@@ -39,7 +39,7 @@ class Usher
           case part[0]
           when ?*, ?:
             type = part.slice!(0).chr.to_sym
-            current_group << Usher::Route::Variable.new(type, part, requirements && requirements[part.to_sym], transformers && transformers[part.to_sym])
+            current_group << Usher::Route::Variable.new(type, part, requirements && requirements[part.to_sym])
           when ?{
             pattern = '^'
             count = 1
@@ -59,7 +59,7 @@ class Usher
             if variable
               variable_type = variable.slice!(0).chr.to_sym
               variable_name = variable[0, variable.size - 1].to_sym
-              current_group << Usher::Route::Variable.new(variable_type, variable_name, requirements && requirements[variable_name], transformers && transformers[variable_name], regex)
+              current_group << Usher::Route::Variable.new(variable_type, variable_name, requirements && requirements[variable_name], regex)
             else
               current_group << regex
             end
