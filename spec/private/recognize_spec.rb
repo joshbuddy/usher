@@ -81,6 +81,12 @@ describe "Usher route recognition" do
     route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again/onemore'})).params.should == [[:test, ['hello', 'again', '123', 'hello', 'again']]]
   end
   
+  it "should recgonize a regex glob variable terminated by a single regex variable" do
+    target_route = route_set.add_route('/test/part/{*test,^(hello|again|\d+)$}/{:party,onemore}')
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again/onemore'})).path.route.should == target_route
+    route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again/onemore'})).params.should == [[:test, ['hello', 'again', '123', 'hello', 'again']], [:party, 'onemore']]
+  end
+
   it "should recgonize two glob-style variables separated by a static part" do
     target_route = route_set.add_route('/*format/innovate/*onemore')
     response = route_set.recognize(build_request({:method => 'get', :path => '/sample/html/innovate/apple'}))
