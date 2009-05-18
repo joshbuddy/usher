@@ -2,7 +2,7 @@ class Usher
   class Route
     class Variable
       attr_reader :type, :name, :validator, :regex_matcher
-      attr_accessor :look_ahead, :globs_capture_separators
+      attr_accessor :look_ahead, :globs_capture_separators, :default_value
       
       def initialize(type, name, validator = nil, regex_matcher = nil, globs_capture_separators = false)
         @type = type

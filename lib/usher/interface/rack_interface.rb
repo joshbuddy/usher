@@ -30,6 +30,10 @@ class Usher
         response.path.route.params.first.call(env)
       end
 
+      def generate(route, params = nil, options = nil)
+        @routes.generate_url(route, params, options)
+      end
+
     end
   end
 end

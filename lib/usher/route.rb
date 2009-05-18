@@ -6,17 +6,24 @@ require 'route/request_method'
 
 class Usher
   class Route
-    attr_reader :paths, :original_path, :requirements, :conditions, :params, :primary_path
+    attr_reader :paths, :original_path, :requirements, :conditions, :params
     
     def initialize(original_path, router, options = nil) # :nodoc:
       @original_path = original_path
       @router = router
       @requirements = options && options.delete(:requirements)
       @conditions = options && options.delete(:conditions)
-      @paths = @router.splitter.split(@original_path, @requirements).collect {|path| Path.new(self, path)}
-      @primary_path = @paths.first
+      @default_values = options && options.delete(:default_values)
+      @paths = @router.splitter.split(@original_path, @requirements, @default_values).collect {|path| Path.new(self, path)}
+      @grapher = Grapher.new
+      @grapher.add_route(self)
+      
       #FIXME params is poorly named. this shouldn't be an array
       @params = []
+    end
+    
+    def find_matching_path(params)
+      @paths.size == 1 ? @paths.first : @grapher.find_matching_path(params)
     end
     
     
@@ -39,6 +46,7 @@ class Usher
     #   set.generate_url(:route) => '/test'
     def name(name)
       @router.name(name, self)
+      self
     end
 
   end

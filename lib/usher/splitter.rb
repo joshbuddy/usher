@@ -30,7 +30,7 @@ class Usher
         parts
       end
 
-      def split(path, requirements = nil)
+      def split(path, requirements = nil, default_values = nil)
         parts = Group.new(:all, nil)
         ss = StringScanner.new(path)
         current_group = parts
@@ -90,6 +90,8 @@ class Usher
         paths.each do |path|
           path.each_with_index do |part, index|
             if part.is_a?(Usher::Route::Variable)
+              part.default_value = default_values[part.name] if default_values
+              
               case part.type
               when :*
                 part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Symbol) && !p.is_a?(Usher::Route::Variable)} || nil

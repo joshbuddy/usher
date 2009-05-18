@@ -39,7 +39,7 @@ class Usher
 
         path[0, 0] = '/' unless path[0] == ?/
         route = @usher.add_route(path, options)
-        raise "your route must include a controller" unless route.primary_path.dynamic_set.include?(:controller) || route.params.first.include?(:controller)
+        raise "your route must include a controller" unless route.paths.first.dynamic_set.include?(:controller) || route.params.first.include?(:controller)
         route
       end
       
@@ -73,7 +73,7 @@ class Usher
           unless options.key?(:action)
             options[:action] = ''
           end
-          route_for_options(merged_options)
+          path_for_options(merged_options)
         end
         case method
         when :generate
@@ -90,8 +90,8 @@ class Usher
         @usher.generate_url(route, params)
       end
       
-      def route_for_options(options)
-        @usher.route_for_options(options)
+      def path_for_options(options)
+        @usher.path_for_options(options)
       end
       
       def named_routes

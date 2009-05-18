@@ -50,7 +50,7 @@ describe "Usher URL generation" do
 
   it "should generate append extra hash variables to the end (when the first parts are an array)" do
     route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
-    ['/sample/maz/zoo?four=jane&third=zanz', '/sample/maz/zoo?third=zanz&four=jane'].include?(route_set.generate_url(:sample, ['maz', 'zoo'], :extra_params => {:third => 'zanz', :four => 'jane'})).should == true
+    ['/sample/maz/zoo?four=jane&third=zanz', '/sample/maz/zoo?third=zanz&four=jane'].include?(route_set.generate_url(:sample, ['maz', 'zoo', {:third => 'zanz', :four => 'jane'}])).should == true
   end
 
   it "should generate append extra hash variables to the end using [] syntax if its an array" do
@@ -87,7 +87,7 @@ describe "Usher URL generation" do
   end
 
   it "should require all the parameters (hash) to generate a route" do
-    proc {route_set.generate_url(route_set.add_route('/:controller/:action').primary_path, {:controller => 'controller'})}.should raise_error Usher::MissingParameterException
+    proc {route_set.generate_url(route_set.add_route('/:controller/:action'), {:controller => 'controller'})}.should raise_error Usher::MissingParameterException
   end
 
   it "should generate from a route" do
@@ -102,6 +102,28 @@ describe "Usher URL generation" do
   it "should generate a route when only one parameter is given" do
     route_set.add_named_route(:name, '/:controller')
     route_set.generate_url(:name, 'controller').should == '/controller'
+  end
+
+  it "should generate the correct route from a route containing optional parts" do
+    route_set.add_named_route(:name, '/:controller(/:action(/:id))')
+    route_set.generate_url(:name, {:controller => 'controller'}).should == '/controller'
+    route_set.generate_url(:name, {:controller => 'controller', :action => 'action'}).should == '/controller/action'
+    route_set.generate_url(:name, {:controller => 'controller', :action => 'action', :id => 'id'}).should == '/controller/action/id'
+  end
+
+  it "should generate a route using defaults for everything but the first parameter" do
+    route_set.add_named_route(:name, '/:one/:two/:three', {:default_values => {:one => 'one', :two => 'two', :three => 'three'}})
+    route_set.generate_url(:name, {:one => "1"}).should == '/1/two/three'
+  end
+
+  it "should generate a route using defaults for everything" do
+    route_set.add_named_route(:name, '/:one/:two/:three', {:default_values => {:one => 'one', :two => 'two', :three => 'three'}})
+    route_set.generate_url(:name).should == '/one/two/three'
+  end
+  
+  it "should generate a route using defaults and optionals using the last parameter" do
+    route_set.add_named_route(:opts_with_defaults, '/:one(/:two(/:three))', {:default_values => {:one => '1', :two => '2', :three => '3'}})
+    route_set.generate_url(:opts_with_defaults, {:three => 'three'}).should == '/1/2/three'
   end
 
 end
