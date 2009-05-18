@@ -181,6 +181,13 @@ class Usher
     @grapher.find_matching_path(options)
   end
   
+  # Generates a completed URL based on a +route+ or set of optional +params+
+  #   
+  #   set = Usher.new
+  #   route = set.add_named_route(:test_route, '/:controller/:action')
+  #   set.generate_url(nil, {:controller => 'c', :action => 'a'}) == '/c/a' => true
+  #   set.generate_url(:test_route, {:controller => 'c', :action => 'a'}) == '/c/a' => true
+  #   set.generate_url(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
   def generate_url(routing_lookup, params = nil, options = nil)
     delimiter = options && options.key?(:delimiter) ? options.delete(:delimiter) : @delimiters.first
     
@@ -243,82 +250,4 @@ class Usher
     end
     result
   end
-  
-  # Generates a completed URL based on a +route+ or set of optional +params+
-  #   
-  #   set = Usher.new
-  #   route = set.add_named_route(:test_route, '/:controller/:action')
-  #   set.generate_url(nil, {:controller => 'c', :action => 'a'}) == '/c/a' => true
-  #   set.generate_url(:test_route, {:controller => 'c', :action => 'a'}) == '/c/a' => true
-  #   set.generate_url(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
-  #def generate_url(routing_object, params = nil, options = nil)
-  #  check_variables = options && options.key?(:check_variables) ? options.delete(:check_variables) : false
-  #  delimiter = options && options.key?(:delimiter) ? options.delete(:delimiter) : @delimiters.first
-  #  extra_params = options && options.key?(:extra_params) ? options.delete(:extra_params) : nil
-  #  
-  #  route = nil
-  #  path = nil
-  #  
-  #  path = case routing_object
-  #  when Symbol
-  #    route = @named_routes[routing_object]
-  #    params.is_a?(Hash) ? route.find_path_for_params(params) : route.paths.first
-  #  when nil
-  #    path_for_options(params)
-  #  when Route
-  #    route
-  #    params.is_a?(Hash) ? route.find_path_for_params(params) : route.paths.first
-  #  else
-  #    route
-  #  end
-  #
-  #  params_hash = extra_params
-  #  param_list = case params
-  #  when Hash
-  #    params_hash ? params_hash.merge!(params) : (params_hash = params)
-  #    path.dynamic_parts.collect{|k| params_hash.delete(k.name) {|el| k.default_value or raise MissingParameterException.new(k.name)} }
-  #  when Array
-  #    path.dynamic_parts.size == params.size ? params : raise(MissingParameterException.new("got #{params.size} arguments, expected #{path.dynamic_parts.size}"))
-  #  when nil
-  #    path.dynamic_parts.collect{|k| k.default_value or raise MissingParameterException.new(k.name)} 
-  #  else
-  #    Array(params)
-  #  end
-  #  raise UnrecognizedException.new unless path
-  #
-  #  generated_path = ''
-  #  
-  #  path.parts.each do |p|
-  #    case p
-  #    when Route::Variable
-  #      case p.type
-  #      when :*
-  #        param_list.first.each {|dp| p.valid!(dp.to_s) } if check_variables
-  #        generated_path << param_list.shift.collect{|dp| URI.escape(dp.to_s)} * delimiter
-  #      else
-  #        p.valid!(param_list.first.to_s) if check_variables
-  #        if dp = param_list.shift
-  #          generated_path << URI.escape(dp.to_s)
-  #        end
-  #      end
-  #    else
-  #      generated_path << p.to_s
-  #    end
-  #  end
-  #  
-  #  if params_hash && !params_hash.empty?
-  #    has_query = generated_path[??]
-  #    params_hash.each do |k,v|
-  #      case v
-  #      when Array
-  #        v.each do |v_part|
-  #          generated_path << (has_query ? '&' : has_query = true && '?') << CGI.escape("#{k.to_s}[]") << '=' << CGI.escape(v_part.to_s)
-  #        end
-  #      else
-  #        generated_path << (has_query ? '&' : has_query = true && '?') << CGI.escape(k.to_s) << '=' << CGI.escape(v.to_s)
-  #      end
-  #    end
-  #  end
-  #  generated_path
-  #end
 end
