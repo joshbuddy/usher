@@ -122,10 +122,10 @@ class Usher
               end
             end
           when :':'
-            next_part.value.valid!(part)
             var = next_part.value
-            params << [next_part.value.name, part]
-            until (path.first == var.look_ahead) || path.empty?
+            var.valid!(part)
+            params << [var.name, part]
+            until (var.look_ahead === path.first) || path.empty?
               params.last.last << path.shift.to_s 
             end
           end
