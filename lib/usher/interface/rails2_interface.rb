@@ -39,7 +39,7 @@ class Usher
 
         path[0, 0] = '/' unless path[0] == ?/
         route = @usher.add_route(path, options)
-        raise "your route must include a controller" unless route.paths.first.dynamic_set.include?(:controller) || route.params.first.include?(:controller)
+        raise "your route must include a controller" unless route.paths.first.dynamic_keys.include?(:controller) || route.params.first.include?(:controller)
         route
       end
       

@@ -126,4 +126,10 @@ describe "Usher URL generation" do
     route_set.generate_url(:opts_with_defaults, {:three => 'three'}).should == '/1/2/three'
   end
 
+  it "should generate a route with optional segments given two nested optional parameters" do
+    route_set.add_named_route(:optionals, '/:controller(/:action(/:id))(.:format)')
+    route_set.generate_url(:optionals, {:controller => "foo", :action => "bar"}).should == '/foo/bar'
+  end
+
+
 end

@@ -1,5 +1,3 @@
-require 'set'
-
 class Usher
   class Grapher
 
@@ -16,9 +14,9 @@ class Usher
 
     def add_route(route)
       route.paths.each do |path|
-        unless path.dynamic_set.size.zero?
-          path.dynamic_set.each do |k|
-            @orders[path.dynamic_set.size][k] << path
+        unless path.dynamic_keys.size.zero?
+          path.dynamic_keys.each do |k|
+            @orders[path.dynamic_keys.size][k] << path
             @key_count[k] += 1
           end
           
@@ -41,17 +39,21 @@ class Usher
     end
 
     def significant_keys
-      @significant_keys ||= Set.new(@key_count.keys)
+      @significant_keys ||= @key_count.keys.uniq
     end
 
     def find_matching_path(params)
       unless params.empty?
-        set = Set.new(params.keys) & significant_keys
+        set = params.keys & significant_keys
+        #Set.new(params.keys) & significant_keys
+        if cached = @cache[set] 
+          return cached
+        end
         set.size.downto(1) do |o|
           set.each do |k|
             @orders[o][k].each { |r| 
               if r.can_generate_from?(set)
-                #@cache[set_a] = r
+                @cache[set] = r
                 return r
               end
             }

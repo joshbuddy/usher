@@ -220,20 +220,21 @@ class Usher
         case part.type
         when :*
           value.each_with_index do |current_value, index|
-            current_value = current_value.to_s
+            current_value = current_value.to_s unless current_value.is_a?(String)
             part.valid!(current_value)
             result << current_value
             result << delimiter if index != value.size - 1
           end
         when :':'
-          value = value.to_s
+          value = value.to_s unless value.is_a?(String)
           part.valid!(value)
-          result << URI.escape(value)
+          result << value
         end
       else
         result << part.to_s
       end
     end
+    result = URI.escape(result)
     
     if params && !params.empty?
       has_query = result[??]

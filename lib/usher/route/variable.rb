@@ -19,14 +19,16 @@ class Usher
       def valid!(val)
         case @validator
         when Proc
-          @validator.call(val)
+          begin
+            @validator.call(val)
+          rescue Exception => e
+            raise ValidationException.new("#{val} does not conform to #{@validator}, root cause #{e.inspect}")
+          end
         else
-          @validator === val or raise
+          @validator === val or raise(ValidationException.new("#{val} does not conform to #{@validator}, root cause #{e.inspect}"))
         end if @validator
-      rescue Exception => e
-        raise ValidationException.new("#{val} does not conform to #{@validator}, root cause #{e.inspect}")
       end
-  
+      
       def ==(o)
         o && (o.type == @type && o.name == @name && o.validator == @validator)
       end
