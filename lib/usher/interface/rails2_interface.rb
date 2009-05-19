@@ -39,17 +39,18 @@ class Usher
 
         path[0, 0] = '/' unless path[0] == ?/
         route = @usher.add_route(path, options)
-        raise "your route must include a controller" unless route.paths.first.dynamic_keys.include?(:controller) || route.params.first.include?(:controller)
+        raise "your route must include a controller" unless route.paths.first.dynamic_keys.include?(:controller) || route.destination.include?(:controller)
         route
       end
       
       def recognize(request)
         node = @usher.recognize(request)
         params = node.params.inject({}){|h,(k,v)| h[k]=v; h }
-        request.path_parameters = (node.params.empty? ? node.path.route.params.first : node.path.route.params.first.merge(params)).with_indifferent_access
+        request.path_parameters = (node.params.empty? ? node.path.route.destination : node.path.route.destination.merge(params)).with_indifferent_access
         "#{request.path_parameters[:controller].camelize}Controller".constantize
-      rescue
-        raise ActionController::RoutingError, "No route matches #{request.path.inspect} with #{request.inspect}"
+      #rescue
+        
+        #raise ActionController::RoutingError, "No route matches #{request.path.inspect} with #{request.inspect}"
       end
       
       def add_named_route(name, route, options = {})

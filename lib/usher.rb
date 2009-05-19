@@ -152,7 +152,7 @@ class Usher
         end
       end
     end
-    route = Route.new(path, self, {:conditions => conditions, :requirements => requirements, :default_values => default_values})
+    route = Route.new(path, self, conditions, requirements, default_values)
     route.to(options) if options && !options.empty?
     
     @tree.add(route)

@@ -29,7 +29,7 @@ class Usher
         params = {}
         response.params.each{ |hk| params[hk.first] = hk.last}
         env['usher.params'] = params
-        response.path.route.params.first.call(env)
+        response.path.route.destination.call(env)
       end
 
       def generate(route, params = nil, options = nil)

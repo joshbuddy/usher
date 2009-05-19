@@ -22,7 +22,7 @@ class Usher
       def act(email)
         response = @routes.recognize(email, email)
         if response.path
-          response.path.route.params.first.call(response.params.inject({}){|h,(k,v)| h[k]=v.to_s; h })
+          response.path.route.destination.call(response.params.inject({}){|h,(k,v)| h[k]=v.to_s; h })
         end
       end
 

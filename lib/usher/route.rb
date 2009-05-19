@@ -6,24 +6,27 @@ require 'route/request_method'
 
 class Usher
   class Route
-    attr_reader :paths, :original_path, :requirements, :conditions, :params
+    attr_reader :paths, :original_path, :requirements, :conditions, :destination
     
-    def initialize(original_path, router, options = nil) # :nodoc:
+    def initialize(original_path, router, conditions, requirements, default_values) # :nodoc:
       @original_path = original_path
       @router = router
-      @requirements = options && options.delete(:requirements)
-      @conditions = options && options.delete(:conditions)
-      @default_values = options && options.delete(:default_values)
+      @requirements = requirements
+      @conditions = conditions
+      @default_values = default_values
       @paths = @router.splitter.split(@original_path, @requirements, @default_values).collect {|path| Path.new(self, path)}
-      @grapher = Grapher.new
-      @grapher.add_route(self)
-      
-      #FIXME params is poorly named. this shouldn't be an array
-      @params = []
     end
     
+    def grapher
+      unless @grapher
+        @grapher = Grapher.new
+        @grapher.add_route(self)
+      end
+      @grapher
+    end
+
     def find_matching_path(params)
-      @paths.size == 1 ? @paths.first : @grapher.find_matching_path(params)
+      @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
     end
     
     
@@ -35,7 +38,7 @@ class Usher
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     def to(options = nil, &block)
-      @params << (block_given? ? block : options)
+      @destination = (block_given? ? block : options)
       self
     end
 
