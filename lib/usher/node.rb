@@ -89,10 +89,10 @@ class Usher
       route
     end
     
-    def find(request, path, params = [])
+    def find(usher, request, path, params = [])
       if exclusive_type
         [lookup[request.send(exclusive_type)], lookup[nil]].each do |n|
-          if n && (ret = n.find(request, path.dup, params.dup))
+          if n && (ret = n.find(usher, request, path.dup, params.dup))
             return ret
           end
         end
@@ -105,15 +105,15 @@ class Usher
           when :*
             params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
             loop do
-              if (next_part.value.look_ahead === part || (!part.is_a?(Symbol) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
+              if (next_part.value.look_ahead === part || (!usher.splitter.delimiter_chars.include?(part[0]) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
                 path.unshift(part)
-                path.unshift(next_part.parent.value) if next_part.parent.value.is_a?(Symbol)
+                path.unshift(next_part.parent.value) if usher.splitter.delimiter_chars.include?(next_part.parent.value[0])
                 break
-              else
-                unless part.is_a?(Symbol) && !next_part.value.globs_capture_separators
-                  next_part.value.valid!(part)
-                  params.last.last << part
-                end
+              elsif next_part.value.globs_capture_separators
+                params.last.last << part
+              elsif !usher.splitter.delimiter_chars.include?(part[0])
+                next_part.value.valid!(part)
+                params.last.last << part
               end
               if path.size.zero?
                 break
@@ -126,11 +126,11 @@ class Usher
             var.valid!(part)
             params << [var.name, part]
             until (var.look_ahead === path.first) || path.empty?
-              params.last.last << path.shift.to_s 
+              params.last.last << path.shift 
             end
           end
         end
-        next_part.find(request, path, params)
+        next_part.find(usher, request, path, params)
       else
         nil
       end

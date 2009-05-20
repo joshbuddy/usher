@@ -22,12 +22,12 @@ describe "Usher route adding" do
   it "should add every kind of optional route possible" do
     route_set.add_route('/a/b(/c)(/d(/e))')
     route_set.routes.first.paths.collect{|a| a.parts }.should == [
-      [:/, "a", :/, "b"],
-      [:/, "a", :/, "b", :/, "c", :/, "d"], 
-      [:/, "a", :/, "b", :/, "d", :/, "e"], 
-      [:/, "a", :/, "b", :/, "c"],
-      [:/, "a", :/, "b", :/, "d"],
-      [:/, "a", :/, "b", :/, "c", :/, "d", :/, "e"]
+      ['/', "a", '/', "b"],
+      ['/', "a", '/', "b", '/', "c", '/', "d"], 
+      ['/', "a", '/', "b", '/', "d", '/', "e"], 
+      ['/', "a", '/', "b", '/', "c"],
+      ['/', "a", '/', "b", '/', "d"],
+      ['/', "a", '/', "b", '/', "c", '/', "d", '/', "e"]
     ]
     
   end
@@ -39,7 +39,7 @@ describe "Usher route adding" do
   it "should calculate depths for nodes" do
     route_set.add_named_route(:route, '/bad/route/three/four')
     route_set.tree.depth.should == 0
-    route_set.tree.lookup[:/].depth.should == 1
+    route_set.tree.lookup['/'].depth.should == 1
   end
 
   it "should pp for nodes" do
@@ -47,19 +47,19 @@ describe "Usher route adding" do
     route_set.tree.depth.should == 0
     old_out = $stdout
     $stdout = (output = StringIO.new)
-    route_set.tree.lookup[:/].lookup['bad'].lookup[:/].pp
+    route_set.tree.lookup['/'].lookup['bad'].lookup['/'].pp
     $stdout = old_out
     output.rewind
     output.read.should == <<-HEREDOC
-   3: :/ false
+   3: "/" false
     route ==> 
     4: "route" false
      / ==> 
-     5: :/ false
+     5: "/" false
       three ==> 
       6: "three" false
        / ==> 
-       7: :/ false
+       7: "/" false
         four ==> 
         8: "four" true
     HEREDOC

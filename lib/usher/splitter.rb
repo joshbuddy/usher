@@ -8,7 +8,7 @@ class Usher
       SplitterInstance.new(
         delimiters,
         Regexp.new('((:|\*)?' + valid_regex + '|' + delimiters_regex + '|\(|\)|\||\{)'),
-        Regexp.new(delimiters_regex + '|' + valid_regex)
+        Regexp.new("[#{delimiters.collect{|d| Regexp.quote(d)}}]|[^#{delimiters.collect{|d| Regexp.quote(d)}}]+")
       )
     end
     
@@ -16,18 +16,17 @@ class Usher
 
     class SplitterInstance
       
+      attr_reader :delimiter_chars
+      
       def initialize(delimiters, split_regex, url_split_regex)
         @delimiters = delimiters
         @delimiter_chars = delimiters.collect{|d| d[0]}
-        @delimiter_chars_map = Hash[*@delimiter_chars.map{|c| [c, c.chr.to_sym]}.flatten]
         @split_regex = split_regex
         @url_split_regex = url_split_regex
       end
       
       def url_split(path)
-        parts = path.scan(@url_split_regex)
-        parts.map!{ |part| @delimiter_chars_map[part[0]] || part}
-        parts
+        path.scan(@url_split_regex)
       end
 
       def split(path, requirements = nil, default_values = nil)
@@ -80,8 +79,6 @@ class Usher
             end
             current_group.parent << Group.new(:all, current_group.parent)
             current_group = current_group.parent.last
-          when *@delimiter_chars
-            current_group << part.to_sym
           else
             current_group << part
           end
@@ -94,9 +91,9 @@ class Usher
               
               case part.type
               when :*
-                part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Symbol) && !p.is_a?(Usher::Route::Variable)} || nil
+                part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !@delimiter_chars.include?(p[0])} || nil
               when :':'
-                part.look_ahead = path[index + 1, path.size].find{|p| p.is_a?(Symbol)} || @delimiters.first.to_sym
+                part.look_ahead = path[index + 1, path.size].find{|p| @delimiter_chars.include?(p[0])} || @delimiters.first
               end
             end
           end
