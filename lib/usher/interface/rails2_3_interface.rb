@@ -11,8 +11,7 @@ class Usher
       end
       
       def add_named_route(name, route, options = {})
-        route = @router.add_route(route, options)
-        route.name = name
+        @router.add_route(route, options).name(name)
       end
 
       def add_route(path, options = {})
@@ -30,13 +29,12 @@ class Usher
 
         path[0, 0] = '/' unless path[0] == ?/
         route = @router.add_route(path, options).to(options)
-        raise "your route must include a controller" unless route.paths.first.dynamic_keys.include?(:controller) || route.destination.include?(:controller)
+        
+        raise "your route must include a controller" unless (route.paths.first.dynamic_keys.include?(:controller) || route.destination.include?(:controller))
         route
       end
       
       def initialize
-        @router = Usher.new
-        @configuration_files = []
         reset!
       end
       
@@ -54,6 +52,10 @@ class Usher
       end
       alias_method :reload, :reload!
 
+      def route_count
+        routes.size
+      end
+
       def routes
         @router.routes
       end
@@ -66,15 +68,18 @@ class Usher
       
       def recognize(request)
         response = @router.recognize(request)
-        request.path_parameters = response.path.route.destination.with_indifferent_access
+        request.path_parameters = (response.params.empty? ? response.path.route.destination : response.path.route.destination.merge(response.params.inject({}){|h,(k,v)| h[k]=v; h })).with_indifferent_access
         response.params.each { |pair| request.path_parameters[pair.first] = pair.last }
         "#{request.path_parameters[:controller].camelize}Controller".constantize
       end
       
       def reset!
-        @router.reset!
+        @router = Usher.new
+        @url_generator = Usher::Generators::URL.new(@router)
+        @configuration_files = []
         @module ||= Module.new
-        @configuration_files.clear
+        @controller_route_added = false
+        @controller_action_route_added = false
       end
       
       def draw
@@ -96,13 +101,35 @@ class Usher
           d.__send__(:include, @module)
         end
       end
-      
-      class RailsRouteInterface
-        
-        def initialize(router)
-          @router = router
+
+      def generate(options, recall = {}, method = :generate, route_name = nil)
+        route = if(route_name)
+          @router.named_routes[route_name]
+        else
+          merged_options = options
+          merged_options[:controller] = recall[:controller] unless options.key?(:controller)
+          unless options.key?(:action)
+            options[:action] = ''
+          end
+          path_for_options(merged_options)
         end
-        
+        case method
+        when :generate
+          merged_options ||= recall.merge(options)
+          url = generate_url(route, merged_options)
+          url.slice!(-1) if url[-1] == ?/
+          url 
+        else
+          raise "method #{method} not recognized"
+        end
+      end
+      
+      def generate_url(route, params)
+        @url_generator.generate(route, params)
+      end
+      
+      def path_for_options(options)
+        @router.path_for_options(options)
       end
       
     end

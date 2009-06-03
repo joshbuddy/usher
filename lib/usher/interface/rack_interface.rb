@@ -13,6 +13,7 @@ class Usher
       
       def initialize(&blk)
         @routes = Usher.new(:request_methods => RequestMethods)
+        @generator = Usher::Generators::URL.new(@routes)
         instance_eval(&blk) if blk
       end
       
@@ -33,7 +34,7 @@ class Usher
       end
 
       def generate(route, params = nil, options = nil)
-        @routes.generate_url(route, params, options)
+        @generator.generate(route, params, options)
       end
 
     end

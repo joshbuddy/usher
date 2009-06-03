@@ -49,9 +49,8 @@ class Usher
         params = node.params.inject({}){|h,(k,v)| h[k]=v; h }
         request.path_parameters = (node.params.empty? ? node.path.route.destination : node.path.route.destination.merge(params)).with_indifferent_access
         "#{request.path_parameters[:controller].camelize}Controller".constantize
-      #rescue
-        
-        #raise ActionController::RoutingError, "No route matches #{request.path.inspect} with #{request.inspect}"
+      rescue
+        raise ActionController::RoutingError, "No route matches #{request.path.inspect} with #{request.inspect}"
       end
       
       def add_named_route(name, route, options = {})

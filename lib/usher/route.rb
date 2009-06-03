@@ -6,7 +6,7 @@ require 'route/request_method'
 
 class Usher
   class Route
-    attr_reader :paths, :original_path, :requirements, :conditions, :destination
+    attr_reader :paths, :original_path, :requirements, :conditions, :destination, :named
     
     def initialize(original_path, router, conditions, requirements, default_values) # :nodoc:
       @original_path = original_path
@@ -48,6 +48,7 @@ class Usher
     #   route = set.add_route('/test').name(:route)
     #   set.generate_url(:route) => '/test'
     def name(name)
+      @named = name
       @router.name(name, self)
       self
     end

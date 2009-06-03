@@ -1,6 +1,6 @@
 $:.unshift File.dirname(__FILE__)
 
-require 'fuzzy_hash'
+require '/Users/josh/Development/fuzzy_hash/lib/fuzzy_hash'
 
 class Usher
 

@@ -19,7 +19,7 @@ end
 
 override_task :routes => :environment do
   routes = ActionController::Routing::Routes.routes.collect do |route|
-    name = route.name.to_s
+    name = route.named.to_s
     verb = route.conditions[:method].to_s.upcase
     path = route.original_path
     reqs = route.requirements.empty? ? "" : route.requirements.inspect
