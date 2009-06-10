@@ -98,7 +98,7 @@ class Usher
         end
       elsif path.size.zero? && terminates?
         Response.new(terminates, params)
-      elsif next_part = lookup[part = path.shift] || lookup[nil]
+      elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])
         case next_part.value
         when Route::Variable
           case next_part.value.type
