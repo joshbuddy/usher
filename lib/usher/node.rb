@@ -96,6 +96,7 @@ class Usher
             return ret
           end
         end
+        return nil
       elsif path.size.zero? && terminates?
         Response.new(terminates, params)
       elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])

@@ -1,17 +1,19 @@
 $:.unshift File.dirname(__FILE__)
 
+require 'rack'
 require 'rack_interface/route'
 
 class Usher
   module Interface
     class RackInterface
       
-      RequestMethods = [:method, :host, :port, :scheme]
+      RequestMethods = [:request_method, :host, :port, :scheme]
       Request = Struct.new(:path, *RequestMethods)
       
       attr_accessor :routes
       
-      def initialize(&blk)
+      def initialize(fallback = nil, &blk)
+        @fallback = fallback
         @routes = Usher.new(:request_methods => RequestMethods)
         @generator = Usher::Generators::URL.new(@routes)
         instance_eval(&blk) if blk
@@ -26,11 +28,14 @@ class Usher
       end
 
       def call(env)
-        response = @routes.recognize(Request.new(env['REQUEST_URI'], env['REQUEST_METHOD'].downcase, env['HTTP_HOST'], env['SERVER_PORT'].to_i, env['rack.url_scheme']))
-        params = {}
-        response.params.each{ |hk| params[hk.first] = hk.last}
-        env['usher.params'] = params
-        response.path.route.destination.call(env)
+        if response = @routes.recognize(Rack::Request.new(env))
+          params = {}
+          response.params.each{ |hk| p hk; params[hk.first] = hk.last}
+          env['usher.params'] = params
+          response.path.route.destination.call(env)
+        elsif @fallback
+          fallback.call(env)
+        end
       end
 
       def generate(route, params = nil, options = nil)

@@ -1,22 +1,8 @@
 require 'lib/usher'
 
+require 'rack'
+
 route_set = Usher::Interface.for(:rack)
-
-def build_request_mock(path, method, params)
-  request = mock "Request"
-  request.should_receive(:path).any_number_of_times.and_return(path)
-  request.should_receive(:method).any_number_of_times.and_return(method)
-  params = params.with_indifferent_access
-  request.should_receive(:path_parameters=).any_number_of_times.with(params)
-  request.should_receive(:path_parameters).any_number_of_times.and_return(params)
-  request
-end
-
-def build_app_mock(params)
-  request = mock "App"
-  request.should_receive(:call).any_number_of_times.with(params)
-  request
-end
 
 describe "Usher (for rack) route dispatching" do
 
@@ -25,9 +11,19 @@ describe "Usher (for rack) route dispatching" do
   end
 
   it "should dispatch a simple request" do
-    env = {'REQUEST_URI' => '/sample', 'REQUEST_METHOD' => 'get', 'usher.params' => {}}
-    route_set.add('/sample').to(build_app_mock(env.dup))
-    route_set.call(env)
+    app = mock 'app'
+    app.should_receive(:call).once.with {|v| v['usher.params'].should == {} }
+    route_set.add('/sample').to(app)
+    route_set.call(Rack::MockRequest.env_for("/sample", :method => 'GET'))
+  end
+  
+  it "should dispatch a POST request" do
+    bad_app = mock 'bad_app'
+    app = mock 'app'
+    app.should_receive(:call).once.with {|v| v['usher.params'].should == {} }
+    route_set.add('/sample').to(bad_app)
+    route_set.add('/sample', :requirements => {:request_method => 'POST'}).to(app)
+    route_set.call(Rack::MockRequest.env_for("/sample", :request_method => 'POST'))
   end
   
 end
