@@ -1,14 +1,13 @@
+require 'rack'
+
 class Usher
   module Interface
     class RackInterface
       
-      RequestMethods = [:method, :host, :port, :scheme]
-      Request = Struct.new(:path, *RequestMethods)
-      
       attr_accessor :routes
       
       def initialize(&blk)
-        @routes = Usher.new(:request_methods => RequestMethods)
+        @routes = Usher.new(:request_methods => [:method, :host, :port, :scheme])
         @generator = Usher::Generators::URL.new(@routes)
         instance_eval(&blk) if blk
       end
@@ -22,7 +21,7 @@ class Usher
       end
 
       def call(env)
-        response = @routes.recognize(Request.new(env['REQUEST_URI'], env['REQUEST_METHOD'].downcase, env['HTTP_HOST'], env['SERVER_PORT'].to_i, env['rack.url_scheme']))
+        response = @routes.recognize(Rack::Request.new(env))
         params = {}
         response.params.each{ |hk| params[hk.first] = hk.last}
         env['usher.params'] = params
