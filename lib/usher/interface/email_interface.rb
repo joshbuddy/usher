@@ -1,7 +1,3 @@
-$:.unshift File.dirname(__FILE__)
-
-require 'rack_interface/route'
-
 class Usher
   module Interface
     class EmailInterface

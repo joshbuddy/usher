@@ -1,16 +1,14 @@
-$:.unshift File.dirname(__FILE__)
-
-require 'cgi'
-require 'uri'
-require 'usher/node'
-require 'usher/route'
-require 'usher/grapher'
-require 'usher/interface'
-require 'usher/splitter'
-require 'usher/exceptions'
-require 'usher/generate'
+require File.join(File.dirname(__FILE__), 'usher', 'node')
+require File.join(File.dirname(__FILE__), 'usher', 'route')
+require File.join(File.dirname(__FILE__), 'usher', 'grapher')
+require File.join(File.dirname(__FILE__), 'usher', 'interface')
+require File.join(File.dirname(__FILE__), 'usher', 'splitter')
+require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 
 class Usher
+
+  autoload :Generators, File.join(File.dirname(__FILE__), 'usher', 'generate')
+
   attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash} #:nodoc:
@@ -142,18 +140,19 @@ class Usher
   # * +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
   # * Any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = nil)
-    conditions = options && options.delete(:conditions) || {}
-    requirements = options && options.delete(:requirements) || {}
-    default_values = options && options.delete(:default_values) || {}
+    conditions = options && options.delete(:conditions) || nil
+    requirements = options && options.delete(:requirements) || nil
+    default_values = options && options.delete(:default_values) || nil
+    generate_with = options && options.delete(:generate_with) || nil
     if options
       options.delete_if do |k, v|
         if v.is_a?(Regexp) || v.is_a?(Proc)
-          requirements[k] = v 
+          (requirements ||= {})[k] = v 
           true
         end
       end
     end
-    route = Route.new(path, self, conditions, requirements, default_values)
+    route = Route.new(path, self, conditions, requirements, default_values, generate_with)
     route.to(options) if options && !options.empty?
     
     @tree.add(route)

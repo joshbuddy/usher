@@ -1,5 +1,3 @@
-$:.unshift File.dirname(__FILE__)
-
 class Usher
   module Interface
     class Rails2_3Interface

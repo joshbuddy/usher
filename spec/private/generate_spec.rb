@@ -1,5 +1,5 @@
 require 'lib/usher'
-
+require 'rack'
 
 describe "Usher URL generation" do
   
@@ -85,6 +85,11 @@ describe "Usher URL generation" do
   it "should accept an array of parameters" do
     caf = @route_set.add_named_route(:name, '/:controller/:action.:format')
     @url_generator.generate(:name, ['controller', 'action', 'html']).should == '/controller/action.html'
+  end
+
+  it "should generate a route with a specific host" do
+    caf = @route_set.add_named_route(:name, '/:controller/:action.:format', :generate_with => {:host => 'www.slashdot.org', :port => 80})
+    @url_generator.generate_full(:name, Rack::Request.new(Rack::MockRequest.env_for("http://localhost:8080")), ['controller', 'action', 'html']).should == 'http://www.slashdot.org/controller/action.html'
   end
 
   it "should require all the parameters (hash) to generate a route" do

@@ -1,6 +1,4 @@
-$:.unshift File.dirname(__FILE__)
-
-require 'rails2_2_interface/mapper'
+require File.join(File.dirname(__FILE__), 'rails2_2_interface', 'mapper')
 
 class Usher
   module Interface

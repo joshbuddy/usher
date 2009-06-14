@@ -1,5 +1,3 @@
-$:.unshift File.dirname(__FILE__)
-
 require 'merb-core'
 require 'merb-core/dispatch/router/behavior'
 

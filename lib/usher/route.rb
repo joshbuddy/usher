@@ -1,20 +1,21 @@
-$:.unshift File.dirname(__FILE__)
-
-require 'route/path'
-require 'route/variable'
-require 'route/request_method'
+require File.join(File.dirname(__FILE__), 'route', 'path')
+require File.join(File.dirname(__FILE__), 'route', 'variable')
+require File.join(File.dirname(__FILE__), 'route', 'request_method')
 
 class Usher
   class Route
-    attr_reader :paths, :original_path, :requirements, :conditions, :destination, :named
+    attr_reader :paths, :original_path, :requirements, :conditions, :destination, :named, :generate_with
     
-    def initialize(original_path, router, conditions, requirements, default_values) # :nodoc:
+    GenerateWith = Struct.new(:scheme, :port, :host)
+    
+    def initialize(original_path, router, conditions, requirements, default_values, generate_with) # :nodoc:
       @original_path = original_path
       @router = router
       @requirements = requirements
       @conditions = conditions
       @default_values = default_values
       @paths = @router.splitter.split(@original_path, @requirements, @default_values).collect {|path| Path.new(self, path)}
+      @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
     end
     
     def grapher

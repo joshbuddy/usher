@@ -1,5 +1,3 @@
-$:.unshift File.dirname(__FILE__)
-
 require 'fuzzy_hash'
 
 class Usher
@@ -51,7 +49,7 @@ class Usher
       route.paths.each do |path|
         parts = path.parts.dup
         request_methods.each do |type|
-          parts.push(Route::RequestMethod.new(type, route.conditions[type])) if route.conditions.key?(type)
+          parts.push(Route::RequestMethod.new(type, route.conditions[type])) if route.conditions && route.conditions.key?(type)
         end
         
         current_node = self
@@ -96,7 +94,6 @@ class Usher
             return ret
           end
         end
-        return nil
       elsif path.size.zero? && terminates?
         Response.new(terminates, params)
       elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])
