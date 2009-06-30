@@ -16,6 +16,10 @@ class Usher
         "#{type}#{name}"
       end
       
+      def greedy?
+        type == :'!'
+      end
+      
       def valid!(val)
         case @validator
         when Proc

@@ -6,13 +6,14 @@ class Usher
     
     Response = Struct.new(:path, :params)
     
-    attr_reader :lookup
+    attr_reader :lookup, :greedy_lookup
     attr_accessor :terminates, :exclusive_type, :parent, :value, :request_methods, :globs_capture_separators
 
     def initialize(parent, value)
       @parent = parent
       @value = value
       @lookup = Hash.new
+      @greedy_lookup = Hash.new
       @exclusive_type = nil
     end
 
@@ -20,8 +21,16 @@ class Usher
       @lookup = FuzzyHash.new(@lookup)
     end
 
+    def upgrade_greedy_lookup
+      @greedy_lookup = FuzzyHash.new(@greedy_lookup)
+    end
+
     def depth
       @depth ||= @parent && @parent.is_a?(Node) ? @parent.depth + 1 : 0
+    end
+    
+    def greedy?
+      !@greedy_lookup.empty?
     end
     
     def self.root(route_set, request_methods, globs_capture_separators)
@@ -69,16 +78,29 @@ class Usher
             end
           else
             key.globs_capture_separators = globs_capture_separators if key.is_a?(Route::Variable)
-            
-            if !key.is_a?(Route::Variable)
+
+            case key
+            when Route::Variable
+              if key.greedy?
+                if key.regex_matcher
+                  current_node.upgrade_greedy_lookup
+                  current_node.greedy_lookup[key.regex_matcher] ||= Node.new(current_node, key)
+                else
+                  current_node.greedy_lookup[nil] ||= Node.new(current_node, key)
+                end  
+              else
+                if key.regex_matcher
+                  current_node.upgrade_lookup
+                  current_node.lookup[key.regex_matcher] ||= Node.new(current_node, key)
+                else
+                  current_node.lookup[nil] ||= Node.new(current_node, key)
+                end  
+              end
+            else
               current_node.upgrade_lookup if key.is_a?(Regexp)
               current_node.lookup[key] ||= Node.new(current_node, key)
-            elsif key.regex_matcher
-              current_node.upgrade_lookup
-              current_node.lookup[key.regex_matcher] ||= Node.new(current_node, key)
-            else
-              current_node.lookup[nil] ||= Node.new(current_node, key)
-            end  
+            end
+            
           end
           current_node = target_node
         end
@@ -96,6 +118,9 @@ class Usher
         end
       elsif path.size.zero? && terminates?
         Response.new(terminates, params)
+      elsif !path.size.zero? && (greedy? && next_path = greedy_lookup[whole_path = path.join('')])
+        params << [next_path.value.name, whole_path.slice!(next_path.value.regex_matcher)]
+        next_path.find(usher, request, whole_path.size.zero? ? whole_path : usher.splitter.url_split(whole_path), params)
       elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])
         case next_part.value
         when Route::Variable

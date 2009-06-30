@@ -42,7 +42,7 @@ class Usher
           when ?{
             pattern = ''
             count = 1
-            variable = ss.scan(/[:\*]([^,]+),/)
+            variable = ss.scan(/[!:\*]([^,]+),/)
             until count.zero?
               regex_part = ss.scan(/\{|\}|[^\{\}]+/)
               case regex_part[0]
