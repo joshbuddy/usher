@@ -13,7 +13,7 @@ class Usher
       
       def reset!
         @usher ||= Usher.new
-        @url_generator ||= Usher::Generators::URL.new(@usher)
+        @url_generator ||= Usher::Util::Generators::URL.new(@usher)
         @module ||= Module.new
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }

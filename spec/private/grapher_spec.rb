@@ -6,7 +6,7 @@ describe "Usher grapher" do
   before(:each) do
     @route_set = Usher.new
     @route_set.reset!
-    @url_generator = Usher::Generators::URL.new(@route_set)
+    @url_generator = Usher::Util::Generators::URL.new(@route_set)
   end
 
   it "should find a simple path" do

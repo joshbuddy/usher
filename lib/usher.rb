@@ -3,14 +3,13 @@ require File.join(File.dirname(__FILE__), 'usher', 'route')
 require File.join(File.dirname(__FILE__), 'usher', 'grapher')
 require File.join(File.dirname(__FILE__), 'usher', 'interface')
 require File.join(File.dirname(__FILE__), 'usher', 'splitter')
-require File.join(File.dirname(__FILE__), 'usher', 'parser')
 require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
+require File.join(File.dirname(__FILE__), 'usher', 'util')
 
 class Usher
 
-  autoload :Generators, File.join(File.dirname(__FILE__), 'usher', 'generate')
 
-  attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters, :parser, :delimiter_chars, :delimiters_regex
+  attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters, :delimiter_chars, :delimiters_regex
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash} #:nodoc:
   
@@ -60,8 +59,11 @@ class Usher
     @valid_regex = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
     @request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
     @splitter = Splitter.for_delimiters(self, @valid_regex)
-    @parser = Parser.for_delimiters(self, @valid_regex)
     reset!
+  end
+
+  def parser
+    @parser ||= Util::Parser.for_delimiters(self, @valid_regex)
   end
 
   # Adds a route referencable by +name+. Sett add_route for format +path+ and +options+.

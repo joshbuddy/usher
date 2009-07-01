@@ -8,7 +8,7 @@ class Usher
       
       def initialize(&blk)
         @routes = Usher.new(:request_methods => [:method, :host, :port, :scheme])
-        @generator = Usher::Generators::URL.new(@routes)
+        @generator = Usher::Util::Generators::URL.new(@routes)
         instance_eval(&blk) if blk
       end
       
