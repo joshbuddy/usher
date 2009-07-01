@@ -14,7 +14,7 @@ class Usher
       @requirements = requirements
       @conditions = conditions
       @default_values = default_values
-      @paths = @router.splitter.split(@original_path, @requirements, @default_values).collect {|path| Path.new(self, path)}
+      @paths = @router.parser.parse(@original_path, @requirements, @default_values).collect {|path| Path.new(self, path)}
       @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
     end
     

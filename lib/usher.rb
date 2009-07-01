@@ -3,13 +3,14 @@ require File.join(File.dirname(__FILE__), 'usher', 'route')
 require File.join(File.dirname(__FILE__), 'usher', 'grapher')
 require File.join(File.dirname(__FILE__), 'usher', 'interface')
 require File.join(File.dirname(__FILE__), 'usher', 'splitter')
+require File.join(File.dirname(__FILE__), 'usher', 'parser')
 require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 
 class Usher
 
   autoload :Generators, File.join(File.dirname(__FILE__), 'usher', 'generate')
 
-  attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters
+  attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters, :parser, :delimiter_chars, :delimiters_regex
   
   SymbolArraySorter = proc {|a,b| a.hash <=> b.hash} #:nodoc:
   
@@ -54,9 +55,12 @@ class Usher
   def initialize(options = nil)
     @globs_capture_separators = options && options.key?(:globs_capture_separators) ? options.delete(:globs_capture_separators) : false
     @delimiters = options && options.delete(:delimiters) || ['/', '.']
+    @delimiter_chars = @delimiters.collect{|d| d[0]}
+    @delimiters_regex = @delimiters.collect{|d| Regexp.quote(d)} * '|'
     @valid_regex = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
     @request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
-    @splitter = Splitter.for_delimiters(@delimiters, @valid_regex)
+    @splitter = Splitter.for_delimiters(self, @valid_regex)
+    @parser = Parser.for_delimiters(self, @valid_regex)
     reset!
   end
 
