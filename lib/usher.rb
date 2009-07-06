@@ -158,7 +158,18 @@ class Usher
         end
       end
     end
-    route = Route.new(path, self, conditions, requirements, default_values, generate_with)
+    
+    path = parser.parse(path, requirements, default_values) if path.is_a?(String)
+    
+    route = Route.new(
+      path,
+      self, 
+      conditions, 
+      requirements, 
+      default_values, 
+      generate_with
+    )
+    
     route.to(options) if options && !options.empty?
     
     @tree.add(route)
