@@ -1,4 +1,4 @@
-require 'fuzzy_hash'
+require 'fuzzyhash'
 
 class Usher
 
@@ -118,8 +118,8 @@ class Usher
         end
       elsif path.size.zero? && terminates?
         Response.new(terminates, params)
-      elsif !path.size.zero? && (greedy? && next_path = greedy_lookup[whole_path = path.join('')])
-        params << [next_path.value.name, whole_path.slice!(next_path.value.regex_matcher)]
+      elsif !path.size.zero? && (greedy? && ((next_path, matched_part) = greedy_lookup.match_with_result(whole_path = path.join(''))))
+        params << [next_path.value.name, whole_path.slice!(0, matched_part.size)]
         next_path.find(usher, request, whole_path.size.zero? ? whole_path : usher.splitter.url_split(whole_path), params)
       elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])
         case next_part.value
