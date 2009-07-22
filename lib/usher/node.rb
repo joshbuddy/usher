@@ -1,4 +1,4 @@
-require 'fuzzyhash'
+require 'fuzzy_hash'
 
 class Usher
 
@@ -109,19 +109,21 @@ class Usher
       route
     end
     
-    def find(usher, request, path, params = [])
+    def find(usher, request, original_path, path, params = [], position = 0)
       if exclusive_type
         [lookup[request.send(exclusive_type)], lookup[nil]].each do |n|
-          if n && (ret = n.find(usher, request, path.dup, params.dup))
+          if n && (ret = n.find(usher, request, original_path, path.dup, params.dup, position))
             return ret
           end
         end
       elsif path.size.zero? && terminates?
         Response.new(terminates, params)
-      elsif !path.size.zero? && (greedy? && ((next_path, matched_part) = greedy_lookup.match_with_result(whole_path = path.join(''))))
+      elsif !path.size.zero? && (greedy? && ((next_path, matched_part) = greedy_lookup.match_with_result(whole_path = original_path[position, original_path.size])))
+        position += matched_part.size
         params << [next_path.value.name, whole_path.slice!(0, matched_part.size)]
-        next_path.find(usher, request, whole_path.size.zero? ? whole_path : usher.splitter.url_split(whole_path), params)
+        next_path.find(usher, request, original_path, whole_path.size.zero? ? whole_path : usher.splitter.url_split(whole_path), params, position)
       elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])
+        position += part.size
         case next_part.value
         when Route::Variable
           case next_part.value.type
@@ -130,7 +132,11 @@ class Usher
             loop do
               if (next_part.value.look_ahead === part || (!usher.delimiter_chars.include?(part[0]) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
                 path.unshift(part)
-                path.unshift(next_part.parent.value) if usher.delimiter_chars.include?(next_part.parent.value[0])
+                position -= part.size
+                if usher.delimiter_chars.include?(next_part.parent.value[0])
+                  path.unshift(next_part.parent.value)
+                  position -= next_part.parent.value.size
+                end
                 break
               elsif next_part.value.globs_capture_separators
                 params.last.last << part
@@ -149,11 +155,13 @@ class Usher
             var.valid!(part)
             params << [var.name, part]
             until (var.look_ahead === path.first) || path.empty?
-              params.last.last << path.shift 
+              next_path_part = path.shift
+              position += next_path_part.size
+              params.last.last << next_path_part
             end
           end
         end
-        next_part.find(usher, request, path, params)
+        next_part.find(usher, request, original_path, path, params, position)
       else
         nil
       end

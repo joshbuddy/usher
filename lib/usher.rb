@@ -186,7 +186,7 @@ class Usher
   #   route = set.add_route('/test')
   #   set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request, path = request.path)
-    @tree.find(self, request, @splitter.url_split(path))
+    @tree.find(self, request, path, @splitter.url_split(path))
   end
 
   # Recognizes a set of +parameters+ and gets the closest matching Usher::Route::Path or +nil+ if no route exists.
