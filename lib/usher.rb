@@ -125,6 +125,15 @@ class Usher
   # As well, the same logic applies for * variables as well, where only parts matchable by the supplied regex will
   # actually be bound to the variable
   #
+  # Variables can also have a greedy regex matcher. These matchers ignore all delimiters, and continue matching for as long as much as their 
+  # regex allows.
+  #
+  # <b>Example:</b>
+  # <tt>/product/{!id,hello/world|hello}</tt> would match
+  # 
+  # * <tt>/product/hello/world</tt>
+  # * <tt>/product/hello</tt>
+  #
   # ==== Static
   #
   # Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
