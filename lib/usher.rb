@@ -31,7 +31,7 @@ class Usher
   #   set.reset!
   #   set.empty? => true
   def reset!
-    @tree = Node.root(self, @request_methods, @globs_capture_separators)
+    @tree = Node.root(self, @request_methods)
     @named_routes = {}
     @routes = []
     @route_count = 0
@@ -41,9 +41,6 @@ class Usher
   
   # Creates a route set, with options
   # 
-  # <tt>:globs_capture_separators</tt>: +true+ or +false+. (default +false+) Specifies whether glob matching will also include separators
-  # that are matched.
-  # 
   # <tt>:delimiters</tt>: Array of Strings. (default <tt>['/', '.']</tt>). Delimiters used in path separation. Array must be single character strings.
   # 
   # <tt>:valid_regex</tt>: String. (default <tt>'[0-9A-Za-z\$\-_\+!\*\',]+'</tt>). String that can be interpolated into regex to match
@@ -52,7 +49,6 @@ class Usher
   # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
   # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
-    @globs_capture_separators = options && options.key?(:globs_capture_separators) ? options.delete(:globs_capture_separators) : false
     @delimiters = options && options.delete(:delimiters) || ['/', '.']
     @delimiter_chars = @delimiters.collect{|d| d[0]}
     @delimiters_regex = @delimiters.collect{|d| Regexp.quote(d)} * '|'

@@ -3,7 +3,7 @@ class Usher
     class EmailInterface
       
       def initialize(&blk)
-        @routes = Usher.new(:delimiters => ['@', '-', '.'], :valid_regex => '[\+a-zA-Z0-9]+', :globs_capture_separators => true)
+        @routes = Usher.new(:delimiters => ['@', '-', '.'], :valid_regex => '[\+a-zA-Z0-9]+')
         instance_eval(&blk) if blk
       end
       

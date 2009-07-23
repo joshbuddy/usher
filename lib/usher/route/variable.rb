@@ -36,8 +36,6 @@ class Usher
     end
     
     class GlobVariable < Variable
-      attr_accessor :globs_capture_separators
-
       def to_s
         "*#{name}"
       end

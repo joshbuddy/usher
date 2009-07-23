@@ -7,7 +7,7 @@ class Usher
     Response = Struct.new(:path, :params)
     
     attr_reader :lookup, :greedy_lookup
-    attr_accessor :terminates, :exclusive_type, :parent, :value, :request_methods, :globs_capture_separators
+    attr_accessor :terminates, :exclusive_type, :parent, :value, :request_methods
 
     def initialize(parent, value)
       @parent = parent
@@ -33,10 +33,9 @@ class Usher
       !@greedy_lookup.empty?
     end
     
-    def self.root(route_set, request_methods, globs_capture_separators)
+    def self.root(route_set, request_methods)
       root = self.new(route_set, nil)
       root.request_methods = request_methods
-      root.globs_capture_separators = globs_capture_separators
       root
     end
 
@@ -77,9 +76,6 @@ class Usher
               current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
           else
-            if key.respond_to?(:'globs_capture_separators=')
-              key.globs_capture_separators = globs_capture_separators              
-            end
             case key
             when Route::GreedyVariable
               if key.regex_matcher
@@ -135,8 +131,6 @@ class Usher
                 position -= next_part.parent.value.size
               end
               break
-            elsif next_part.value.globs_capture_separators
-              params.last.last << part
             elsif !usher.delimiter_chars.include?(part[0])
               next_part.value.valid!(part)
               params.last.last << part
