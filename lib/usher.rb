@@ -165,7 +165,7 @@ class Usher
     end
     
     path = parser.parse(path, requirements, default_values) if path.is_a?(String)
-    
+    path = [path] unless path.first.is_a?(Array)
     route = Route.new(
       path,
       self, 
