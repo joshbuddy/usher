@@ -91,21 +91,19 @@ class Usher
           result = ''
           path.parts.each do |part|
             case part
+            when Route::GlobVariable
+              value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new)
+              value.each_with_index do |current_value, index|
+                current_value = current_value.to_s unless current_value.is_a?(String)
+                part.valid!(current_value)
+                result << current_value
+                result << '/' if index != value.size - 1
+              end
             when Route::Variable
               value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new)
-              case part.type
-              when :*
-                value.each_with_index do |current_value, index|
-                  current_value = current_value.to_s unless current_value.is_a?(String)
-                  part.valid!(current_value)
-                  result << current_value
-                  result << '/' if index != value.size - 1
-                end
-              when :':'
-                value = value.to_s unless value.is_a?(String)
-                part.valid!(value)
-                result << value
-              end
+              value = value.to_s unless value.is_a?(String)
+              part.valid!(value)
+              result << value
             else
               result << part
             end

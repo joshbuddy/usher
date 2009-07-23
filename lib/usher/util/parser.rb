@@ -25,9 +25,12 @@ class Usher
           while !ss.eos?
             part = ss.scan(@split_regex)
             case part[0]
-            when ?*, ?:
-              type = part.slice!(0).chr.to_sym
-              current_group << Usher::Route::Variable.new(type, part, requirements && requirements[part.to_sym])
+            when ?*
+              var_name = part[1, part.size - 1].to_sym
+              current_group << Usher::Route::GlobVariable.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
+            when ?:
+              var_name = part[1, part.size - 1].to_sym
+              current_group << Usher::Route::SingleVariable.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
             when ?{
               pattern = ''
               count = 1
@@ -46,8 +49,14 @@ class Usher
               regex = Regexp.new(pattern)
               if variable
                 variable_type = variable.slice!(0).chr.to_sym
+                variable_class = case variable_type
+                when :'!' then Usher::Route::GreedyVariable
+                when :*   then Usher::Route::GlobVariable
+                when :':' then Usher::Route::SingleVariable
+                end
+                
                 variable_name = variable[0, variable.size - 1].to_sym
-                current_group << Usher::Route::Variable.new(variable_type, variable_name, requirements && requirements[variable_name], regex)
+                current_group << variable_class.new(variable_name, regex, requirements && requirements[variable_name])
               else
                 current_group << regex
               end
@@ -75,15 +84,12 @@ class Usher
           paths = calc_paths(parts)
           paths.each do |path|
             path.each_with_index do |part, index|
-              if part.is_a?(Usher::Route::Variable)
-                part.default_value = default_values[part.name] if default_values
-
-                case part.type
-                when :*
-                  part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !@router.delimiter_chars.include?(p[0])} || nil
-                when :':'
-                  part.look_ahead = path[index + 1, path.size].find{|p| @router.delimiter_chars.include?(p[0])} || @router.delimiters.first
-                end
+              part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
+              case part
+              when Usher::Route::GlobVariable
+                part.look_ahead = path[index + 1, path.size].find{|p| !p.kind_of?(Usher::Route::Variable) && !@router.delimiter_chars.include?(p[0])} || nil
+              when Usher::Route::Variable
+                part.look_ahead = path[index + 1, path.size].find{|p| @router.delimiter_chars.include?(p[0])} || @router.delimiters.first
               end
             end
           end

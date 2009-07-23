@@ -1,7 +1,5 @@
 require 'lib/usher'
 
-
-
 def build_email_mock(email)
   request = mock "Request"
   request.should_receive(:email).any_number_of_times.and_return(email)

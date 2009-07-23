@@ -77,25 +77,24 @@ class Usher
               current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
           else
-            key.globs_capture_separators = globs_capture_separators if key.is_a?(Route::Variable)
-
+            if key.respond_to?(:'globs_capture_separators=')
+              key.globs_capture_separators = globs_capture_separators              
+            end
             case key
-            when Route::Variable
-              if key.greedy?
-                if key.regex_matcher
-                  current_node.upgrade_greedy_lookup
-                  current_node.greedy_lookup[key.regex_matcher] ||= Node.new(current_node, key)
-                else
-                  current_node.greedy_lookup[nil] ||= Node.new(current_node, key)
-                end  
+            when Route::GreedyVariable
+              if key.regex_matcher
+                current_node.upgrade_greedy_lookup
+                current_node.greedy_lookup[key.regex_matcher] ||= Node.new(current_node, key)
               else
-                if key.regex_matcher
-                  current_node.upgrade_lookup
-                  current_node.lookup[key.regex_matcher] ||= Node.new(current_node, key)
-                else
-                  current_node.lookup[nil] ||= Node.new(current_node, key)
-                end  
-              end
+                current_node.greedy_lookup[nil] ||= Node.new(current_node, key)
+              end  
+            when Route::Variable
+              if key.regex_matcher
+                current_node.upgrade_lookup
+                current_node.lookup[key.regex_matcher] ||= Node.new(current_node, key)
+              else
+                current_node.lookup[nil] ||= Node.new(current_node, key)
+              end  
             else
               current_node.upgrade_lookup if key.is_a?(Regexp)
               current_node.lookup[key] ||= Node.new(current_node, key)
@@ -125,40 +124,37 @@ class Usher
       elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])
         position += part.size
         case next_part.value
-        when Route::Variable
-          case next_part.value.type
-          when :*
-            params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
-            loop do
-              if (next_part.value.look_ahead === part || (!usher.delimiter_chars.include?(part[0]) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
-                path.unshift(part)
-                position -= part.size
-                if usher.delimiter_chars.include?(next_part.parent.value[0])
-                  path.unshift(next_part.parent.value)
-                  position -= next_part.parent.value.size
-                end
-                break
-              elsif next_part.value.globs_capture_separators
-                params.last.last << part
-              elsif !usher.delimiter_chars.include?(part[0])
-                next_part.value.valid!(part)
-                params.last.last << part
+        when Route::GlobVariable
+          params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
+          loop do
+            if (next_part.value.look_ahead === part || (!usher.delimiter_chars.include?(part[0]) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
+              path.unshift(part)
+              position -= part.size
+              if usher.delimiter_chars.include?(next_part.parent.value[0])
+                path.unshift(next_part.parent.value)
+                position -= next_part.parent.value.size
               end
-              if path.size.zero?
-                break
-              else
-                part = path.shift
-              end
+              break
+            elsif next_part.value.globs_capture_separators
+              params.last.last << part
+            elsif !usher.delimiter_chars.include?(part[0])
+              next_part.value.valid!(part)
+              params.last.last << part
             end
-          when :':'
-            var = next_part.value
-            var.valid!(part)
-            params << [var.name, part]
-            until (var.look_ahead === path.first) || path.empty?
-              next_path_part = path.shift
-              position += next_path_part.size
-              params.last.last << next_path_part
+            if path.size.zero?
+              break
+            else
+              part = path.shift
             end
+          end
+        when Route::SingleVariable
+          var = next_part.value
+          var.valid!(part)
+          params << [var.name, part]
+          until (var.look_ahead === path.first) || path.empty?
+            next_path_part = path.shift
+            position += next_path_part.size
+            params.last.last << next_path_part
           end
         end
         next_part.find(usher, request, original_path, path, params, position)
