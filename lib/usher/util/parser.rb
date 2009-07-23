@@ -27,10 +27,10 @@ class Usher
             case part[0]
             when ?*
               var_name = part[1, part.size - 1].to_sym
-              current_group << Usher::Route::GlobVariable.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
+              current_group << Usher::Route::Variable::Glob.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
             when ?:
               var_name = part[1, part.size - 1].to_sym
-              current_group << Usher::Route::SingleVariable.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
+              current_group << Usher::Route::Variable::Single.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
             when ?{
               pattern = ''
               count = 1
@@ -50,9 +50,9 @@ class Usher
               if variable
                 variable_type = variable.slice!(0).chr.to_sym
                 variable_class = case variable_type
-                when :'!' then Usher::Route::GreedyVariable
-                when :*   then Usher::Route::GlobVariable
-                when :':' then Usher::Route::SingleVariable
+                when :'!' then Usher::Route::Variable::Greedy
+                when :*   then Usher::Route::Variable::Glob
+                when :':' then Usher::Route::Variable::Single
                 end
                 
                 variable_name = variable[0, variable.size - 1].to_sym
@@ -86,7 +86,7 @@ class Usher
             path.each_with_index do |part, index|
               part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
               case part
-              when Usher::Route::GlobVariable
+              when Usher::Route::Variable::Glob
                 part.look_ahead = path[index + 1, path.size].find{|p| !p.kind_of?(Usher::Route::Variable) && !@router.delimiter_chars.include?(p[0])} || nil
               when Usher::Route::Variable
                 part.look_ahead = path[index + 1, path.size].find{|p| @router.delimiter_chars.include?(p[0])} || @router.delimiters.first

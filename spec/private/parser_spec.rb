@@ -58,7 +58,7 @@ describe "Usher route tokenizing" do
     Usher.new(:delimiters => ['/', '.'], :valid_regex => '[0-9A-Za-z\$\-_\+!\*\',]+').parser.parse('/test/this(/split(.:format))') == [
       ['/', "test", '/', "this"],
       ['/', "test", '/', "this", '/', "split"],
-      ['/', "test", '/', "this", '/', "split", '.', Usher::Route::SingleVariable.new(:format)]
+      ['/', "test", '/', "this", '/', "split", '.', Usher::Route::Variable::Single.new(:format)]
     ]
   end
 

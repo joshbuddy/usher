@@ -77,7 +77,7 @@ class Usher
             end
           else
             case key
-            when Route::GreedyVariable
+            when Route::Variable::Greedy
               if key.regex_matcher
                 current_node.upgrade_greedy_lookup
                 current_node.greedy_lookup[key.regex_matcher] ||= Node.new(current_node, key)
@@ -120,7 +120,7 @@ class Usher
       elsif !path.size.zero? && (next_part = lookup[part = path.shift] || lookup[nil])
         position += part.size
         case next_part.value
-        when Route::GlobVariable
+        when Route::Variable::Glob
           params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
           loop do
             if (next_part.value.look_ahead === part || (!usher.delimiter_chars.include?(part[0]) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
@@ -141,7 +141,7 @@ class Usher
               part = path.shift
             end
           end
-        when Route::SingleVariable
+        when Route::Variable::Single
           var = next_part.value
           var.valid!(part)
           params << [var.name, part]

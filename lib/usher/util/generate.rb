@@ -91,7 +91,7 @@ class Usher
           result = ''
           path.parts.each do |part|
             case part
-            when Route::GlobVariable
+            when Route::Variable::Glob
               value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new)
               value.each_with_index do |current_value, index|
                 current_value = current_value.to_s unless current_value.is_a?(String)

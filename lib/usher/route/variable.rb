@@ -27,21 +27,22 @@ class Usher
       def ==(o)
         o && (o.class == self.class && o.name == @name && o.validator == @validator)
       end
-    end
-    
-    class SingleVariable < Variable
-      def to_s
-        ":#{name}"
+      
+      class Single < Variable
+        def to_s
+          ":#{name}"
+        end
       end
-    end
-    
-    class GlobVariable < Variable
-      def to_s
-        "*#{name}"
+
+      class Glob < Variable
+        def to_s
+          "*#{name}"
+        end
       end
+
+      Greedy = Class.new(Variable)
+      
     end
-    
-    GreedyVariable = Class.new(Variable)
     
   end
 end
