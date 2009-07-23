@@ -77,19 +77,19 @@ class Usher
             end
           else
             case key
-            when Route::Variable::Greedy
-              if key.regex_matcher
-                current_node.upgrade_greedy_lookup
-                current_node.greedy_lookup[key.regex_matcher] ||= Node.new(current_node, key)
-              else
-                current_node.greedy_lookup[nil] ||= Node.new(current_node, key)
-              end  
             when Route::Variable
-              if key.regex_matcher
-                current_node.upgrade_lookup
-                current_node.lookup[key.regex_matcher] ||= Node.new(current_node, key)
+              (upgrade_method, lookup_method) = case key
+              when Route::Variable::Greedy
+                [:upgrade_greedy_lookup, :greedy_lookup]
               else
-                current_node.lookup[nil] ||= Node.new(current_node, key)
+                [:upgrade_lookup, :lookup]
+              end
+              
+              if key.regex_matcher
+                current_node.send(upgrade_method)
+                current_node.send(lookup_method)[key.regex_matcher] ||= Node.new(current_node, key)
+              else
+                current_node.send(lookup_method)[nil] ||= Node.new(current_node, key)
               end  
             else
               current_node.upgrade_lookup if key.is_a?(Regexp)
