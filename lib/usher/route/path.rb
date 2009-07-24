@@ -38,7 +38,6 @@ class Usher
         @dynamic_required_keys ||= dynamic_parts.select{|dp| !dp.default_value}.map{|dp| dp.name}
       end
       
-      
       def dynamic?
         @dynamic
       end

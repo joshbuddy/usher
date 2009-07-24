@@ -5,6 +5,7 @@ Tree-based router library. Useful for (specifically) for Rails and Rack, but pro
 == Features
 
 * Understands single and path-globbing variables
+* Understands arbitrary regex variables
 * Arbitrary HTTP header requirements
 * No optimization phase, so routes are always alterable after the fact
 * Understands Proc and Regex transformations, validations

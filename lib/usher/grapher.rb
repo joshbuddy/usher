@@ -50,12 +50,12 @@ class Usher
         end
         set.size.downto(1) do |o|
           set.each do |k|
-            @orders[o][k].each { |r| 
+            @orders[o][k].each do |r| 
               if r.can_generate_from?(set)
                 @cache[set] = r
                 return r
               end
-            }
+            end
           end
         end
         nil

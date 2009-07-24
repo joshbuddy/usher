@@ -214,6 +214,16 @@ class Usher
     @tree.find(self, request, path, @splitter.url_split(path))
   end
 
+  # Recognizes a +path+ and returns +nil+ or an Usher::Node::Response, which is a struct containing a Usher::Route::Path and an array of arrays containing the extracted parameters. Convenience method for when recognizing on the request object is unneeded.
+  #   
+  #   Request = Struct.new(:path)
+  #   set = Usher.new
+  #   route = set.add_route('/test')
+  #   set.recognize_path('/test').path.route == route => true
+  def recognize_path(path)
+    recognize(nil, path)
+  end
+
   # Recognizes a set of +parameters+ and gets the closest matching Usher::Route::Path or +nil+ if no route exists.
   #   
   #   set = Usher.new
