@@ -10,7 +10,7 @@ Tree-based router library. Useful for (specifically) for Rails and Rack, but pro
 * No optimization phase, so routes are always alterable after the fact
 * Understands Proc and Regex transformations, validations
 * Really, really fast
-* Relatively light and happy code-base, should be easy and fun to alter
+* Relatively light and happy code-base, should be easy and fun to alter (it hovers around 1,000 LOC, 800 for the core)
 * Interface and implementation are separate, encouraging cross-pollination
 
 == Route format
