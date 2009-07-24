@@ -7,13 +7,19 @@ class Usher
       def initialize(route, parts)
         @route = route
         @parts = parts
-        @dynamic_indicies = []
-        @parts.each_index{|i| @dynamic_indicies << i if @parts[i].is_a?(Variable)}
-        @dynamic_parts = @parts.values_at(*@dynamic_indicies)
-        @dynamic_map = {}
-        @dynamic_parts.each{|p| @dynamic_map[p.name] = p }
-        @dynamic_keys = @dynamic_map.keys
-        @dynamic_required_keys = @dynamic_parts.select{|dp| !dp.default_value}.map{|dp| dp.name}
+        if @parts.any?{|p| p.is_a?(Variable)}
+          @dynamic_indicies = []
+          @parts.each_index{|i| @dynamic_indicies << i if @parts[i].is_a?(Variable)}
+          @dynamic_parts = @parts.values_at(*@dynamic_indicies)
+          @dynamic_map = {}
+          @dynamic_parts.each{|p| @dynamic_map[p.name] = p }
+          @dynamic_keys = @dynamic_map.keys
+          @dynamic_required_keys = @dynamic_parts.select{|dp| !dp.default_value}.map{|dp| dp.name}
+        end
+      end
+
+      def dynamic?
+        !@dynamic_indicies.nil?
       end
 
       def can_generate_from?(keys)

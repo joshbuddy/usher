@@ -14,7 +14,7 @@ class Usher
 
     def add_route(route)
       route.paths.each do |path|
-        unless path.dynamic_keys.size.zero?
+        if path.dynamic?
           path.dynamic_keys.each do |k|
             @orders[path.dynamic_keys.size][k] << path
             @key_count[k] += 1
