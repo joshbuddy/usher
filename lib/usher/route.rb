@@ -1,4 +1,5 @@
 require File.join(File.dirname(__FILE__), 'route', 'path')
+require File.join(File.dirname(__FILE__), 'route', 'util')
 require File.join(File.dirname(__FILE__), 'route', 'variable')
 require File.join(File.dirname(__FILE__), 'route', 'request_method')
 

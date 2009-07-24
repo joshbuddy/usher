@@ -150,7 +150,7 @@ class Usher
   # * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
   # * +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
   # * Any other key is interpreted as a requirement for the variable of its name.
-  def add_route(path, options = nil)
+  def add_route(unprocessed_path, options = nil)
     conditions = options && options.delete(:conditions) || nil
     requirements = options && options.delete(:requirements) || nil
     default_values = options && options.delete(:default_values) || nil
@@ -164,10 +164,30 @@ class Usher
       end
     end
     
-    path = parser.parse(path, requirements, default_values) if path.is_a?(String)
-    path = [path] unless path.first.is_a?(Array)
+    unprocessed_path = parser.parse(unprocessed_path, requirements, default_values) if unprocessed_path.is_a?(String)
+    
+    unless unprocessed_path.first.is_a?(Route::Util::Group)
+      group = Usher::Route::Util::Group.new(:all, nil)
+      unprocessed_path.each{|p| group << p}
+      unprocessed_path = group
+    end
+
+    paths = Route::Util.expand_path(unprocessed_path)
+    
+    paths.each do |path|
+      path.each_with_index do |part, index|
+        part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
+        case part
+        when Usher::Route::Variable::Glob
+          part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !delimiter_chars.include?(p[0])} || nil
+        when Usher::Route::Variable
+          part.look_ahead = path[index + 1, path.size].find{|p| delimiter_chars.include?(p[0])} || delimiters.first
+        end
+      end
+    end
+
     route = Route.new(
-      path,
+      paths,
       self, 
       conditions, 
       requirements, 
