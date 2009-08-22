@@ -95,7 +95,6 @@ class Usher
               current_node.upgrade_lookup if key.is_a?(Regexp)
               current_node.lookup[key] ||= Node.new(current_node, key)
             end
-            
           end
           current_node = target_node
         end
@@ -113,7 +112,8 @@ class Usher
         end
       elsif path.size.zero? && terminates?
         Response.new(terminates, params)
-      elsif !path.size.zero? && (greedy? && ((next_path, matched_part) = greedy_lookup.match_with_result(whole_path = original_path[position, original_path.size])))
+      elsif !path.size.zero? && (greedy? && (match_with_result_output = greedy_lookup.match_with_result(whole_path = original_path[position, original_path.size])))
+        next_path, matched_part = match_with_result_output
         position += matched_part.size
         params << [next_path.value.name, whole_path.slice!(0, matched_part.size)]
         next_path.find(usher, request, original_path, whole_path.size.zero? ? whole_path : usher.splitter.url_split(whole_path), params, position)

@@ -4,7 +4,7 @@ class Usher
   class Splitter
     
     def self.for_delimiters(router, valid_regex)
-      SplitterInstance.new(Regexp.new("[#{router.delimiters.collect{|d| Regexp.quote(d)}}]|[^#{router.delimiters.collect{|d| Regexp.quote(d)}}]+"))
+      SplitterInstance.new(Regexp.new("[#{router.delimiters.collect{|d| Regexp.quote(d)}.join}]|[^#{router.delimiters.collect{|d| Regexp.quote(d)}.join}]+"))
     end
 
     class SplitterInstance
