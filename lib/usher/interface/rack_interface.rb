@@ -22,10 +22,16 @@ class Usher
 
       def call(env)
         response = @routes.recognize(Rack::Request.new(env))
-        params = {}
-        response.params.each{ |hk| params[hk.first] = hk.last}
-        env['usher.params'] = params
-        response.path.route.destination.call(env)
+        if response.nil?
+          body = "No route found"
+          headers = {"Content-Type" => "text/plain", "Content-Length" => body.length.to_s}
+          [404, headers, [body]]
+        else
+          params = {}
+          response.params.each{ |hk| params[hk.first] = hk.last}
+          env['usher.params'] = params
+          response.path.route.destination.call(env)
+        end
       end
 
       def generate(route, params = nil, options = nil)
