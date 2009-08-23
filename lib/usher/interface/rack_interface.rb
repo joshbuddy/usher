@@ -13,7 +13,15 @@ class Usher
       end
       
       def add(path, options = nil)
-        @routes.add_route(path, options)
+        match_partially = false
+        if path =~ /(.*?)\*$/
+          path, match_partially = $1, true
+        end
+        
+        route = @routes.add_route(path, options)
+        
+        route.match_partially! if match_partially
+        route
       end
 
       def reset!

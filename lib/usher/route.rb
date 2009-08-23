@@ -53,6 +53,14 @@ class Usher
       @router.name(name, self)
       self
     end
+    
+    def match_partially!
+      @match_partially = true
+    end
+    
+    def partial_match?
+      !!@match_partially
+    end
 
   end
 end
