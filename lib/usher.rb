@@ -7,11 +7,8 @@ require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 require File.join(File.dirname(__FILE__), 'usher', 'util')
 
 class Usher
-
-
-  attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters, :delimiter_chars, :delimiters_regex
   
-  SymbolArraySorter = proc {|a,b| a.hash <=> b.hash} #:nodoc:
+  attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters, :delimiter_chars, :delimiters_regex
   
   # Returns whether the route set is empty
   #   
