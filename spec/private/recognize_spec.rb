@@ -16,16 +16,55 @@ describe "Usher route recognition" do
     route_set.reset!
   end
   
-  it "should recognize a specific domain name" do
-    target_route = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http'})
-    route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https'})
-    route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http'})).path.route.should == target_route
-  end
+  describe 'request conditions' do
   
-  it "should recognize a regex domain name" do
-    target_route = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:domain => /^admin.*$/})
-    route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:domain => 'www.host.com'})
-    route_set.recognize(build_request({:method => 'get', :path => '/sample', :domain => 'admin.host.com'})).path.route.should == target_route
+    it "should recognize a specific domain name" do
+      target_route = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http'})
+      route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https'})
+      route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http'})).path.route.should == target_route
+    end
+  
+    it "should recognize a regex domain name" do
+      target_route = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:domain => /^admin.*$/})
+      route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:domain => 'www.host.com'})
+      route_set.recognize(build_request({:method => 'get', :path => '/sample', :domain => 'admin.host.com'})).path.route.should == target_route
+    end
+
+    it "should recognize a specific route when several http-style restrictions are used" do
+      target_route_http_admin = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http', :domain => 'admin.spec.com'})
+      target_route_http_www = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http', :domain => 'www.spec.com'})
+      target_route_https_msie = route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https', :user_agent => 'MSIE 6.0'})
+      target_route_https_admin = route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https', :domain => 'admin.spec.com'})
+      route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_http_admin
+      route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http', :domain => 'www.spec.com', :user_agent => nil})).path.route.should == target_route_http_www
+      route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => 'MSIE 6.0'})).path.route.should == target_route_https_msie
+      route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_https_admin
+    end
+
+    it "should correctly fix that tree if conditionals are used later" do
+      noop_route = route_set.add_route('/noop', :controller => 'products', :action => 'noop')
+      product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
+      route_set.recognize(build_request({:method => 'get', :path => '/noop', :domain => 'admin.host.com'})).path.route.should == noop_route
+      route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'})).path.route.should == product_show_route
+    end
+
+    it "should use conditionals that are boolean" do
+      # hijacking user_agent
+      insecure_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:user_agent => false, :method => 'get'})
+      secure_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:user_agent => true, :method => 'get'})
+
+      secure_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com', :user_agent => true})).path.route
+      insecure_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com', :user_agent => false})).path.route
+    end
+
+    it "should use conditionals that are arrays" do
+      # hijacking user_agent
+      www_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:subdomains => ['www'], :method => 'get'})
+      admin_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:subdomains => ['admin'], :method => 'get'})
+
+      admin_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['admin'], :user_agent => true})).path.route
+      www_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['www'], :user_agent => false})).path.route
+    end
   end
   
   it "should recognize a format-style variable" do
@@ -137,42 +176,6 @@ describe "Usher route recognition" do
     route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample'], [:format, 'html']], "")
   end
   
-  it "should recognize a specific route when several http-style restrictions are used" do
-    target_route_http_admin = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http', :domain => 'admin.spec.com'})
-    target_route_http_www = route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http', :domain => 'www.spec.com'})
-    target_route_https_msie = route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https', :user_agent => 'MSIE 6.0'})
-    target_route_https_admin = route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https', :domain => 'admin.spec.com'})
-    route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_http_admin
-    route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http', :domain => 'www.spec.com', :user_agent => nil})).path.route.should == target_route_http_www
-    route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => 'MSIE 6.0'})).path.route.should == target_route_https_msie
-    route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_https_admin
-  end
-  
-  it "should correctly fix that tree if conditionals are used later" do
-    noop_route = route_set.add_route('/noop', :controller => 'products', :action => 'noop')
-    product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
-    route_set.recognize(build_request({:method => 'get', :path => '/noop', :domain => 'admin.host.com'})).path.route.should == noop_route
-    route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'})).path.route.should == product_show_route
-  end
-  
-  it "should use conditionals that are boolean" do
-    # hijacking user_agent
-    insecure_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:user_agent => false, :method => 'get'})
-    secure_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:user_agent => true, :method => 'get'})
-    
-    secure_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com', :user_agent => true})).path.route
-    insecure_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com', :user_agent => false})).path.route
-  end
-  
-  it "should use conditionals that are arrays" do
-    # hijacking user_agent
-    www_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:subdomains => ['www'], :method => 'get'})
-    admin_product_show_route = route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:subdomains => ['admin'], :method => 'get'})
-    
-    admin_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['admin'], :user_agent => true})).path.route
-    www_product_show_route.should == route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['www'], :user_agent => false})).path.route
-  end
-  
   it "should use a requirement (proc) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :id => proc{|v| Integer(v)})
     proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'}))}.should_not raise_error Usher::ValidationException
@@ -200,5 +203,14 @@ describe "Usher route recognition" do
       route.match_partially!
       route_set.recognize(build_request(:method => "get", :path => "/foo/bar")).should == Usher::Node::Response.new(route.paths.first, [], "/bar")
     end
+
+    it "should partially match a route and use request conditions" do
+      route = route_set.add_route("/foo", :conditions => {:method => 'get'})
+      route.match_partially!
+
+      route_set.recognize(build_request({:method => 'get', :path => '/foo/bar'})).path.route.should == route
+      route_set.recognize(build_request({:method => 'post', :path => '/foo/bar'})).should.nil?
+    end
+
   end
 end

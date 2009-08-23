@@ -24,7 +24,6 @@ describe "Usher (for rack) route dispatching" do
   end
 
   it "should returns HTTP 404 if route doesn't exist" do
-    app = lambda { |env| "do nothing" }
     status, headers, body = route_set.call(Rack::MockRequest.env_for("/not-existing-url"))
     status.should eql(404)
   end

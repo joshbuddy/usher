@@ -75,26 +75,23 @@ class Usher
               parts.unshift(key)
               current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
             end
-          else
-            case key
-            when Route::Variable
-              (upgrade_method, lookup_method) = case key
-              when Route::Variable::Greedy
-                [:upgrade_greedy_lookup, :greedy_lookup]
-              else
-                [:upgrade_lookup, :lookup]
-              end
-              
-              if key.regex_matcher
-                current_node.send(upgrade_method)
-                current_node.send(lookup_method)[key.regex_matcher] ||= Node.new(current_node, key)
-              else
-                current_node.send(lookup_method)[nil] ||= Node.new(current_node, key)
-              end  
+          when Route::Variable
+            upgrade_method, lookup_method = case key
+            when Route::Variable::Greedy
+              [:upgrade_greedy_lookup, :greedy_lookup]
             else
-              current_node.upgrade_lookup if key.is_a?(Regexp)
-              current_node.lookup[key] ||= Node.new(current_node, key)
+              [:upgrade_lookup, :lookup]
             end
+            
+            if key.regex_matcher
+              current_node.send(upgrade_method)
+              current_node.send(lookup_method)[key.regex_matcher] ||= Node.new(current_node, key)
+            else
+              current_node.send(lookup_method)[nil] ||= Node.new(current_node, key)
+            end  
+          else
+            current_node.upgrade_lookup if key.is_a?(Regexp)
+            current_node.lookup[key] ||= Node.new(current_node, key)
           end
           current_node = target_node
         end
