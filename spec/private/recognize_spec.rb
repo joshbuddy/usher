@@ -69,7 +69,7 @@ describe "Usher route recognition" do
   
   it "should recognize a format-style variable" do
     target_route = route_set.add_route('/sample.:format', :controller => 'sample', :action => 'action')
-    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:format , 'html']], "")
+    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:format , 'html']], nil, "/sample.html")
   end
   
   it "should recognize a glob-style variable" do
@@ -168,12 +168,12 @@ describe "Usher route recognition" do
   
   it "should recognize a format-style literal" do
     target_route = route_set.add_route('/:action.html', :controller => 'sample', :action => 'action')
-    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample']], "")
+    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample']], nil, "/sample.html")
   end
   
   it "should recognize a format-style variable along side another variable" do
     target_route = route_set.add_route('/:action.:format', :controller => 'sample', :action => 'action')
-    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample'], [:format, 'html']], "")
+    route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample'], [:format, 'html']], nil, '/sample.html')
   end
   
   it "should use a requirement (proc) on incoming variables" do
@@ -201,7 +201,7 @@ describe "Usher route recognition" do
     it "should partially match a route" do
       route = route_set.add_route("/foo")
       route.match_partially!
-      route_set.recognize(build_request(:method => "get", :path => "/foo/bar")).should == Usher::Node::Response.new(route.paths.first, [], "/bar")
+      route_set.recognize(build_request(:method => "get", :path => "/foo/bar")).should == Usher::Node::Response.new(route.paths.first, [], "/bar", '/foo')
     end
 
     it "should partially match a route and use request conditions" do

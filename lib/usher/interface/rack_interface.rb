@@ -13,9 +13,11 @@ class Usher
       end
       
       def add(path, options = nil)
-        match_partially = false
-        if path =~ /(.*?)\*$/
-          path, match_partially = $1, true
+        match_partially = if path[-1] == ?*
+          path.slice!(-1)
+          true
+        else
+          false
         end
         
         route = @routes.add_route(path, options)
@@ -36,13 +38,11 @@ class Usher
           headers = {"Content-Type" => "text/plain", "Content-Length" => body.length.to_s}
           [404, headers, [body]]
         else
-          params = {}
-          params.merge!(response.path.route.default_values) if response.path.route.default_values
+          params = response.path.route.default_values || {}
           response.params.each{ |hk| params[hk.first] = hk.last}
           
           # consume the path_info to the script_name response.remaining_path
-          env["PATH_INFO"] =~ %r[(.*?)#{response.remaining_path}$]
-          env["SCRIPT_NAME"] << $1
+          env["SCRIPT_NAME"] = response.matched_path
           env["PATH_INFO"] = response.remaining_path
                     
           env['usher.params'].merge!(params)

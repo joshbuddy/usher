@@ -4,7 +4,7 @@ class Usher
 
   class Node
     
-    Response = Struct.new(:path, :params, :remaining_path)
+    Response = Struct.new(:path, :params, :remaining_path, :matched_path)
     
     attr_reader :lookup, :greedy_lookup
     attr_accessor :terminates, :exclusive_type, :parent, :value, :request_methods
@@ -108,7 +108,12 @@ class Usher
           end
         end
       elsif terminates? && (path.size.zero? || terminates.route.partial_match?)
-        Response.new(terminates, params, original_path[position, original_path.size])
+        if terminates.route.partial_match?
+          Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position])
+        else
+          Response.new(terminates, params, nil, original_path)
+        end
+        
       elsif !path.size.zero? && (greedy? && (match_with_result_output = greedy_lookup.match_with_result(whole_path = original_path[position, original_path.size])))
 				next_path, matched_part = match_with_result_output
         position += matched_part.size
