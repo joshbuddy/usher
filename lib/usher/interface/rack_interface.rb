@@ -29,15 +29,24 @@ class Usher
       end
 
       def call(env)
-        response = @routes.recognize(Rack::Request.new(env))
+        env['usher.params'] ||= {}
+        response = @routes.recognize(request = Rack::Request.new(env), request.path_info)
         if response.nil?
           body = "No route found"
           headers = {"Content-Type" => "text/plain", "Content-Length" => body.length.to_s}
           [404, headers, [body]]
         else
           params = {}
+          params.merge!(response.path.route.default_values) if response.path.route.default_values
           response.params.each{ |hk| params[hk.first] = hk.last}
-          env['usher.params'] = params
+          
+          # consume the path_info to the script_name response.remaining_path
+          env["PATH_INFO"] =~ %r[(.*?)#{response.remaining_path}$]
+          env["SCRIPT_NAME"] << $1
+          env["PATH_INFO"] = response.remaining_path
+                    
+          env['usher.params'].merge!(params)
+          
           response.path.route.destination.call(env)
         end
       end

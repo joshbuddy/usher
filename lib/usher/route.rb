@@ -5,7 +5,7 @@ require File.join(File.dirname(__FILE__), 'route', 'request_method')
 
 class Usher
   class Route
-    attr_reader :paths, :requirements, :conditions, :destination, :named, :generate_with
+    attr_reader :paths, :requirements, :conditions, :destination, :named, :generate_with, :default_values
     
     GenerateWith = Struct.new(:scheme, :port, :host)
     
@@ -56,6 +56,7 @@ class Usher
     
     def match_partially!
       @match_partially = true
+      self
     end
     
     def partial_match?
