@@ -18,6 +18,52 @@ class Usher
           @split_regex = split_regex
         end
 
+        def generate_route(unprocessed_path, conditions, requirements, default_values, generate_with)
+          match_partially = if unprocessed_path.is_a?(String)
+            unprocessed_path = parse(unprocessed_path, requirements, default_values)
+            if unprocessed_path[-1] == ?*
+              unprocessed_path.slice!(-1)
+              true
+            else
+              false
+            end
+          else
+            false
+          end
+          
+          unless unprocessed_path.first.is_a?(Route::Util::Group)
+            group = Usher::Route::Util::Group.new(:all, nil)
+            unprocessed_path.each{|p| group << p}
+            unprocessed_path = group
+          end
+
+          paths = Route::Util.expand_path(unprocessed_path)
+
+          paths.each do |path|
+            path.each_with_index do |part, index|
+              part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
+              case part
+              when Usher::Route::Variable::Glob
+                part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiter_chars.include?(p[0])} || nil
+              when Usher::Route::Variable
+                part.look_ahead = path[index + 1, path.size].find{|p| router.delimiter_chars.include?(p[0])} || router.delimiters.first
+              end
+            end
+          end
+
+          Route.new(
+            paths,
+            router, 
+            conditions, 
+            requirements, 
+            default_values, 
+            generate_with,
+            match_partially
+          )
+          
+        end
+
+
         def parse_and_expand(path, requirements = nil, default_values = nil)
           Usher::Route::Util.expand_path(parse(path, requirements, default_values))
         end
@@ -88,7 +134,11 @@ class Usher
           parts
         end
 
+        private
+        attr_reader :router
+
       end
+      
 
     end
   end

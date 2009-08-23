@@ -13,17 +13,7 @@ class Usher
       end
       
       def add(path, options = nil)
-        match_partially = if path[-1] == ?*
-          path.slice!(-1)
-          true
-        else
-          false
-        end
-        
-        route = @routes.add_route(path, options)
-        
-        route.match_partially! if match_partially
-        route
+        @routes.add_route(path, options)
       end
 
       def reset!

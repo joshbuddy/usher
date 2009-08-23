@@ -9,13 +9,14 @@ class Usher
     
     GenerateWith = Struct.new(:scheme, :port, :host)
     
-    def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with) # :nodoc:
+    def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially) # :nodoc:
       @router = router
       @requirements = requirements
       @conditions = conditions
       @default_values = default_values
       @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
       @paths = parsed_paths.collect {|path| Path.new(self, path)}
+      @match_partially = match_partially
     end
     
     def grapher
@@ -60,7 +61,7 @@ class Usher
     end
     
     def partial_match?
-      !!@match_partially
+      @match_partially
     end
 
   end
