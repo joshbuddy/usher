@@ -28,7 +28,7 @@ class Usher
   #   set.reset!
   #   set.empty? => true
   def reset!
-    @tree = Node.root(self, @request_methods)
+    @tree = Node.root(self, request_methods)
     @named_routes = {}
     @routes = []
     @route_count = 0
@@ -46,17 +46,14 @@ class Usher
   # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
   # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
-    @delimiters = options && options.delete(:delimiters) || ['/', '.']
-    @delimiter_chars = @delimiters.collect{|d| d[0]}
-    @delimiters_regex = @delimiters.collect{|d| Regexp.quote(d)} * '|'
-    @valid_regex = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
-    @request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
-    @splitter = Splitter.for_delimiters(self, @valid_regex)
+    self.delimiters = options && options.delete(:delimiters) || ['/', '.']
+    self.valid_regex = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
+    self.request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
     reset!
   end
 
   def parser
-    @parser ||= Util::Parser.for_delimiters(self, @valid_regex)
+    @parser ||= Util::Parser.for_delimiters(self, valid_regex)
   end
 
   # Adds a route referencable by +name+. Sett add_route for format +path+ and +options+.
@@ -228,6 +225,22 @@ class Usher
   #   set.path_for_options({:controller => 'test', :action => 'action'}) == path.route => true
   def path_for_options(options)
     @grapher.find_matching_path(options)
+  end
+  
+  private
+  
+  attr_accessor :request_methods
+  attr_reader :valid_regex
+  
+  def delimiters=(delimiters)
+    @delimiters = delimiters
+    @delimiter_chars = @delimiters.collect{|d| d[0]}
+    @delimiters_regex = @delimiters.collect{|d| Regexp.quote(d)} * '|'
+  end
+
+  def valid_regex=(valid_regex)
+    @valid_regex = valid_regex
+    @splitter = Splitter.for_delimiters(self, @valid_regex)
   end
   
 end
