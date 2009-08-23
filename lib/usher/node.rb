@@ -78,7 +78,7 @@ class Usher
           else
             case key
             when Route::Variable
-              (upgrade_method, lookup_method) = case key
+              upgrade_method, lookup_method = case key
               when Route::Variable::Greedy
                 [:upgrade_greedy_lookup, :greedy_lookup]
               else
