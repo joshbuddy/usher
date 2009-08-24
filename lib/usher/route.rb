@@ -43,7 +43,7 @@ class Usher
         matching_path = @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
       end
       
-      unless parent_route.nil?
+      if parent_route
         matching_path = parent_route.find_matching_path(params).merge(matching_path)
         matching_path.route = self
       end
