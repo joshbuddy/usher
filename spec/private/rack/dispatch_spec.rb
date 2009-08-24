@@ -20,7 +20,7 @@ describe "Usher (for rack) route dispatching" do
 
     it "should write usher.params" do
       response = route_set.call_with_mock_request
-      @app.env["usher.params"].should eql(Hash.new)
+      @app.env["usher.params"].should == {}
     end
   end
 
@@ -38,7 +38,7 @@ describe "Usher (for rack) route dispatching" do
 
     it "should write usher.params" do
       response = route_set.call_with_mock_request("/sample", :request_method => 'POST')
-      @app.env["usher.params"].should eql(Hash.new)
+      @app.env["usher.params"].should == {}
     end
   end
 
