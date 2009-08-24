@@ -2,16 +2,16 @@ class Usher
   class Route
     class Path
   
-      attr_accessor :route, :parts
+      attr_accessor :route
+      attr_reader :parts
       
       def initialize(route, parts)
-        @route = route
-        @parts = parts
-        @dynamic = @parts.any?{|p| p.is_a?(Variable)}
+        self.route = route
+        self.parts = parts
       end
 
       def dynamic_indicies
-        unless @dynamic_indicies
+        unless dynamic? && @dynamic_indicies
           @dynamic_indicies = []
           parts.each_index{|i| @dynamic_indicies << i if parts[i].is_a?(Variable)}
         end
@@ -19,11 +19,11 @@ class Usher
       end
 
       def dynamic_parts
-        @dynamic_parts ||= parts.values_at(*dynamic_indicies)
+        @dynamic_parts ||= parts.values_at(*dynamic_indicies) if dynamic?
       end
 
       def dynamic_map
-        unless @dynamic_map
+        unless dynamic? && @dynamic_map
           @dynamic_map = {}
           dynamic_parts.each{|p| @dynamic_map[p.name] = p }
         end
@@ -31,11 +31,11 @@ class Usher
       end
       
       def dynamic_keys
-        @dynamic_keys ||= dynamic_map.keys
+        @dynamic_keys ||= dynamic_map.keys if dynamic?
       end
       
       def dynamic_required_keys
-        @dynamic_required_keys ||= dynamic_parts.select{|dp| !dp.default_value}.map{|dp| dp.name}
+        @dynamic_required_keys ||= dynamic_parts.select{|dp| !dp.default_value}.map{|dp| dp.name} if dynamic?
       end
       
       def dynamic?
@@ -48,9 +48,16 @@ class Usher
       
       # Merges paths for use in generation
       def merge(other_path)
-        new_parts   = (parts.dup + other_path.parts.dup).flatten
+        new_parts = parts + other_path.parts
         Path.new(route, new_parts)
       end
+      
+      private 
+      def parts=(parts)
+        @parts = parts
+        @dynamic = @parts.any?{|p| p.is_a?(Variable)}
+      end
+      
     end
   end
 end
