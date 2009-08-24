@@ -72,8 +72,7 @@ class Usher
       end
       
       def reset!
-        @router = Usher.new
-        @url_generator = Usher::Util::Generators::URL.new(@router)
+        @router = Usher.new(:generator => Usher::Util::Generators::URL.new)
         @configuration_files = []
         @module ||= Module.new
         @controller_route_added = false
@@ -123,7 +122,7 @@ class Usher
       end
       
       def generate_url(route, params)
-        @url_generator.generate(route, params)
+        @router.generator.generate(route, params)
       end
       
       def path_for_options(options)

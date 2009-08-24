@@ -12,8 +12,7 @@ class Usher
       end
       
       def reset!
-        @usher ||= Usher.new
-        @url_generator ||= Usher::Util::Generators::URL.new(@usher)
+        @usher ||= Usher.new(:generator => Usher::Util::Generators::URL.new)
         @module ||= Module.new
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
@@ -86,7 +85,7 @@ class Usher
       end
       
       def generate_url(route, params)
-        @url_generator.generate(route, params)
+        @usher.generator.generate(route, params)
       end
       
       def path_for_options(options)

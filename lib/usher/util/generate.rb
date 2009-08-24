@@ -29,9 +29,7 @@ class Usher
     
       class URL
       
-        def initialize(usher)
-          @usher = usher
-        end
+        attr_accessor :usher
 
         def generate_full(routing_lookup, request, params = nil)
           path = path_for_routing_lookup(routing_lookup, params)

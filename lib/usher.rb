@@ -7,7 +7,9 @@ require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 require File.join(File.dirname(__FILE__), 'usher', 'util')
 
 class Usher
-  attr_reader :tree, :named_routes, :routes, :splitter, :delimiters, :delimiter_chars, :delimiters_regex, :parent_route
+  attr_reader :tree, :named_routes, :routes, :splitter, 
+              :delimiters, :delimiter_chars, :delimiters_regex, 
+              :parent_route, :generator
   
   # Returns whether the route set is empty
   #   
@@ -48,6 +50,7 @@ class Usher
   # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
   # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
+    self.generator = options && options.delete(:generator)
     self.delimiters = options && options.delete(:delimiters) || ['/', '.']
     self.valid_regex = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
     self.request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
@@ -58,6 +61,14 @@ class Usher
     @parser ||= Util::Parser.for_delimiters(self, valid_regex)
   end
 
+  def can_generate?
+    !@generator.nil?
+  end
+  
+  def generator
+    @generator
+  end
+  
   # Adds a route referencable by +name+. Sett add_route for format +path+ and +options+.
   #   
   #   set = Usher.new
@@ -209,16 +220,26 @@ class Usher
   
   attr_accessor :request_methods
   attr_reader :valid_regex
+
+  def generator=(generator)
+    if generator
+      @generator = generator
+      @generator.usher = self
+    end
+    @generator
+  end
   
   def delimiters=(delimiters)
     @delimiters = delimiters
     @delimiter_chars = @delimiters.collect{|d| d[0]}
     @delimiters_regex = @delimiters.collect{|d| Regexp.quote(d)} * '|'
+    @delimiters
   end
 
   def valid_regex=(valid_regex)
     @valid_regex = valid_regex
     @splitter = Splitter.for_delimiters(self, @valid_regex)
+    @valid_regex
   end
   
 end
