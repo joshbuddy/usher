@@ -47,9 +47,9 @@ class Usher
           result << (path.route.generate_with && path.route.generate_with.host) ? path.route.generate_with.host : request.host
           port = path.route.generate_with && path.route.generate_with.port || request.port
           if result[4] == ?s
-            result << ':' << port.to_s if port != 443
+            result << ':' << port.to_s unless port == 443
           else
-            result << ':' << port.to_s if port != 80
+            result << ':' << port.to_s unless port == 80
           end
           result
         end
