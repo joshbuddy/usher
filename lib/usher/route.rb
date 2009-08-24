@@ -5,7 +5,8 @@ require File.join(File.dirname(__FILE__), 'route', 'request_method')
 
 class Usher
   class Route
-    attr_reader :paths, :requirements, :conditions, :destination, :named, :generate_with, :default_values
+    attr_reader   :paths, :requirements, :conditions, :destination, :named, :generate_with, :default_values
+    attr_accessor :parent_route
     
     GenerateWith = Struct.new(:scheme, :port, :host)
     
@@ -27,8 +28,27 @@ class Usher
       @grapher
     end
 
+    def dup
+      result = super
+      grapher = Grapher.new
+      grapher.add_route(self)
+      result.instance_variable_set("@grapher", grapher)
+      result
+    end
+
     def find_matching_path(params)
-      @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
+      if params.nil? || params.empty?
+        matching_path = @paths.first
+      else
+        matching_path = @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
+      end
+      
+      unless parent_route.nil?
+        matching_path = parent_route.find_matching_path(params).merge(matching_path)
+        matching_path.route = self
+      end
+      
+      matching_path
     end
     
     
@@ -40,7 +60,12 @@ class Usher
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     def to(options = nil, &block)
-      @destination = (block_given? ? block : options)
+      @destination = if options.respond_to?(:parent_route=)
+        options.parent_route = self
+        options
+      else
+        block_given? ? block : options
+      end
       self
     end
 

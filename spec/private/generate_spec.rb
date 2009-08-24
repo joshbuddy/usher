@@ -93,7 +93,7 @@ describe "Usher URL generation" do
   end
 
   it "should require all the parameters (hash) to generate a route" do
-    proc {@url_generator.generate(@route_set.add_route('/:controller/:action'), {:controller => 'controller'})}.should raise_error Usher::MissingParameterException
+    proc{@url_generator.generate(@route_set.add_route('/:controller/:action'), {:controller => 'controller'})}.should raise_error(Usher::MissingParameterException)
   end
 
   it "should generate from a route" do
@@ -102,7 +102,7 @@ describe "Usher URL generation" do
 
   it "should require all the parameters (array) to generate a route" do
     @route_set.add_named_route(:name, '/:controller/:action.:format')
-    proc {@url_generator.generate(:name, ['controller', 'action'])}.should raise_error Usher::MissingParameterException
+    proc {@url_generator.generate(:name, ['controller', 'action'])}.should raise_error(Usher::MissingParameterException)
   end
 
   it "should generate a route when only one parameter is given" do
@@ -136,6 +136,65 @@ describe "Usher URL generation" do
     @route_set.add_named_route(:optionals, '/:controller(/:action(/:id))(.:format)')
     @url_generator.generate(:optionals, {:controller => "foo", :action => "bar"}).should == '/foo/bar'
   end
-
-
+  
+  describe "nested generation" do
+    before do
+      @route_set2 = Usher.new
+      @route_set3 = Usher.new
+      @route_set4 = Usher.new
+      
+      @url_generator2 = Usher::Util::Generators::URL.new(@route_set2)
+      @url_generator3 = Usher::Util::Generators::URL.new(@route_set3)
+      @url_generator4 = Usher::Util::Generators::URL.new(@route_set4)
+      
+      @route_set.add_named_route(:simple,   "/mount_point").match_partially!.to(@route_set2)
+      @route_set.add_route("/third/:foo", :default_values => {:foo => "foo"}).match_partially!.to(@route_set3)
+      @route_set.add_route("/fourth/:bar").match_partially!.to(@route_set4)
+      
+      @route_set2.add_named_route(:nested_simple,   "/nested/simple",     :controller => "nested",  :action => "simple")
+      @route_set2.add_named_route(:nested_complex,  "/another_nested(/:complex)", :controller => "nested",  :action => "complex")
+      
+      @route_set3.add_named_route(:nested_simple, "/nested/simple", :controller => "nested", :action => "simple")
+      @route_set3.add_named_route(:nested_complex,  "/another_nested(/:complex)", :controller => "nested",  :action => "complex")
+      
+      @route_set4.add_named_route(:nested_simple, "/nested/simple", :controller => "nested", :action => "simple")
+    end
+    
+    it "should generate a route for the simple nested route" do
+      @url_generator2.generate(:nested_simple).should == "/mount_point/nested/simple"
+    end
+    
+    it "should generate a simple route without optional segments" do
+      @url_generator2.generate(:nested_complex).should == "/mount_point/another_nested"
+    end
+    
+    it "should generate a route with optional segements" do
+      @url_generator2.generate(:nested_complex, :complex => "foo").should == "/mount_point/another_nested/foo"
+    end
+    
+    it "should genearte a route with the specified value for the parent route" do
+      @url_generator3.generate(:nested_simple, :foo => "bar").should == "/third/bar/nested/simple"
+    end
+    
+    it "should generate a route with the default value from the parent route" do
+      @url_generator3.generate(:nested_simple).should == "/third/foo/nested/simple"
+    end
+    
+    it "should generate a route with an optional segement in the parent and child" do
+      @url_generator3.generate(:nested_complex, :complex => "complex").should == "/third/foo/another_nested/complex"
+    end
+    
+    it "should generate a route without the optional value from the child" do
+      @url_generator3.generate(:nested_complex).should == "/third/foo/another_nested"
+    end
+    
+    it "should raise an exception when trying to generate a route where the parent variable is not defined and does not have a default value" do
+      lambda do
+        @url_generator4.generate(:nested_simple)
+      end.should raise_error(Usher::MissingParameterException)
+    end
+    
+    
+    
+  end
 end

@@ -2,7 +2,7 @@ class Usher
   class Route
     class Path
   
-      attr_reader :route, :parts
+      attr_accessor :route, :parts
       
       def initialize(route, parts)
         @route = route
@@ -44,6 +44,12 @@ class Usher
 
       def can_generate_from?(keys)
         (dynamic_required_keys - keys).size.zero?
+      end
+      
+      # Merges paths for use in generation
+      def merge(other_path)
+        new_parts   = (parts.dup + other_path.parts.dup).flatten
+        Path.new(route, new_parts)
       end
     end
   end

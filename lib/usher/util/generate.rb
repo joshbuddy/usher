@@ -55,14 +55,14 @@ class Usher
           end
           result
         end
-
-        def path_for_routing_lookup(routing_lookup, params)
+        
+        def path_for_routing_lookup(routing_lookup, params = {})
           path = case routing_lookup
           when Symbol
             route = @usher.named_routes[routing_lookup] 
-            params.is_a?(Hash) ? route.find_matching_path(params) : route.paths.first
+            route.find_matching_path(params || {})
           when Route
-            params.is_a?(Hash) ? routing_lookup.find_matching_path(params) : routing_lookup.paths.first
+            routing_lookup.find_matching_path(params || {})
           when nil
             params.is_a?(Hash) ? @usher.path_for_options(params) : raise
           when Route::Path

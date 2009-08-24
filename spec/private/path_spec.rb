@@ -64,5 +64,27 @@ describe "Usher route adding" do
         8: "four" true
     HEREDOC
   end
+  
+  describe "merging paths" do
+    before do
+      @r1 = route_set.add_route("/foo/bar")
+      @r2 = route_set.add_route("/other(/:baz)")
+      @p1 = @r1.paths.first
+      @p2 = @r2.paths.first
+    end
+    
+    it "should craete a new path object" do
+      @p1.merge(@p2).should_not eql(@p1)
+    end
+    
+    it "should mash the parts together" do
+      @p1.merge(@p2).parts.should == (@p1.parts + @p2.parts).flatten
+    end
+    
+    it "should maintain the route owner" do
+      @p1.merge(@p2).route.should == @p1.route
+    end
+    
+  end
 
 end

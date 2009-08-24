@@ -7,7 +7,7 @@ require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 require File.join(File.dirname(__FILE__), 'usher', 'util')
 
 class Usher
-  
+  attr_accessor :parent_route
   attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters, :delimiter_chars, :delimiters_regex
   
   # Returns whether the route set is empty
@@ -166,6 +166,7 @@ class Usher
     @routes << route
     @grapher.add_route(route)
     @route_count += 1
+    route.parent_route = parent_route if parent_route
     route
   end
 
@@ -196,6 +197,11 @@ class Usher
   #   set.path_for_options({:controller => 'test', :action => 'action'}) == path.route => true
   def path_for_options(options)
     @grapher.find_matching_path(options)
+  end
+  
+  def parent_route=(route)
+    @parent_route = route
+    routes.each{|r| r.parent_route = route}
   end
   
   private

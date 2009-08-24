@@ -15,6 +15,14 @@ class Usher
       def add(path, options = nil)
         @routes.add_route(path, options)
       end
+      
+      def parent_route=(route)
+        @routes.parent_route = route
+      end
+      
+      def parent_route
+        @routes.parent_route
+      end
 
       def reset!
         @routes.reset!
