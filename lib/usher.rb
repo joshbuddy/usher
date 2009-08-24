@@ -7,8 +7,7 @@ require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 require File.join(File.dirname(__FILE__), 'usher', 'util')
 
 class Usher
-  attr_accessor :parent_route
-  attr_reader :tree, :named_routes, :route_count, :routes, :splitter, :delimiters, :delimiter_chars, :delimiters_regex
+  attr_reader :tree, :named_routes, :routes, :splitter, :delimiters, :delimiter_chars, :delimiters_regex, :parent_route
   
   # Returns whether the route set is empty
   #   
@@ -17,9 +16,13 @@ class Usher
   #   set.add_route('/test')
   #   set.empty? => false
   def empty?
-    @route_count.zero?
+    @routes.empty?
   end
-
+  
+  def route_count
+    @routes.size
+  end
+  
   # Resets the route set back to its initial state
   #   
   #   set = Usher.new
@@ -31,7 +34,6 @@ class Usher
     @tree = Node.root(self, request_methods)
     @named_routes = {}
     @routes = []
-    @route_count = 0
     @grapher = Grapher.new
   end
   alias clear! reset!
@@ -165,7 +167,6 @@ class Usher
     @tree.add(route)
     @routes << route
     @grapher.add_route(route)
-    @route_count += 1
     route.parent_route = parent_route if parent_route
     route
   end
