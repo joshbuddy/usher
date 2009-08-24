@@ -4,33 +4,31 @@ class Usher
   module Interface
     class RackInterface
       
-      attr_accessor :routes
-      
       def initialize(&blk)
-        @routes = Usher.new(:request_methods => [:method, :host, :port, :scheme])
-        @generator = Usher::Util::Generators::URL.new(@routes)
+        @router = Usher.new(:request_methods => [:method, :host, :port, :scheme])
+        @generator = Usher::Util::Generators::URL.new(@router)
         instance_eval(&blk) if blk
       end
       
       def add(path, options = nil)
-        @routes.add_route(path, options)
+        @router.add_route(path, options)
       end
       
       def parent_route=(route)
-        @routes.parent_route = route
+        @router.parent_route = route
       end
       
       def parent_route
-        @routes.parent_route
+        @router.parent_route
       end
 
       def reset!
-        @routes.reset!
+        @router.reset!
       end
 
       def call(env)
         env['usher.params'] ||= {}
-        response = @routes.recognize(request = Rack::Request.new(env), request.path_info)
+        response = @router.recognize(request = Rack::Request.new(env), request.path_info)
         if response.nil?
           body = "No route found"
           headers = {"Content-Type" => "text/plain", "Content-Length" => body.length.to_s}
