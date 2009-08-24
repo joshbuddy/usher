@@ -31,8 +31,8 @@ class Usher
     def dup
       result = super
       grapher = Grapher.new
-      grapher.add_route(self)
-      result.instance_variable_set("@grapher", grapher)
+      grapher.add_route(result)
+      result.grapher = grapher
       result
     end
 
@@ -60,11 +60,12 @@ class Usher
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     def to(options = nil, &block)
-      @destination = if options.respond_to?(:parent_route=)
-        options.parent_route = self
-        options
+      raise "cannot set destintaion as block and argument" if block_given? && options
+      @destination = if block_given?
+        block
       else
-        block_given? ? block : options
+        options.parent_route = self if options.respond_to?(:parent_route=)
+        options
       end
       self
     end
@@ -88,6 +89,9 @@ class Usher
     def partial_match?
       @match_partially
     end
+    
+    private
+    attr_writer :grapher
 
   end
 end
