@@ -58,8 +58,9 @@ class Usher
             end
           end
         end
-        nil
       end
+      nil
     end
+    
   end
 end
