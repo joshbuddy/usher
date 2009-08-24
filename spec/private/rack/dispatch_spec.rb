@@ -79,5 +79,36 @@ describe "Usher (for rack) route dispatching" do
       @app.should_receive(:call).once.with{|e| e['usher.params'].should == {:bar => "bar", :foo => "a_different_foo"}}
       route_set.call(Rack::MockRequest.env_for("/foo/bar/some/a_different_foo"))
     end
+    
+    describe "SCRIPT_NAME & PATH_INFO" do
+      it "should update the script name for a fully consumed route" do
+        @app.should_receive(:call).once.with do |e|
+          e['SCRIPT_NAME'].should == "/foo"
+          e['PATH_INFO'].should   == ""
+        end
+        route_set.call(Rack::MockRequest.env_for("/foo"))
+      end
+      
+      it "should update the script name and path info for a partially consumed route" do
+        @app.should_receive(:call).once.with do |e|
+          e['SCRIPT_NAME'].should == "/partial"
+          e['PATH_INFO'].should   == "/bar/baz"
+        end
+        
+        route_set.add("/partial").match_partially!.to(@app)
+        route_set.call(Rack::MockRequest.env_for("/partial/bar/baz"))
+      end
+      
+      it "should consume the path through a mounted usher" do
+        @bad_app.should_receive(:call).once.with do |e|
+          e['SCRIPT_NAME'].should == "/foo/bar/bad"
+          e['PATH_INFO'].should   == "/leftovers"
+        end
+        
+        route_set.call(Rack::MockRequest.env_for("/foo/bar/bad/leftovers"))
+      end
+      
+    end
+    
   end
 end

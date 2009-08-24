@@ -32,8 +32,8 @@ class Usher
           response.params.each{ |hk| params[hk.first] = hk.last}
           
           # consume the path_info to the script_name response.remaining_path
-          env["SCRIPT_NAME"] = response.matched_path
-          env["PATH_INFO"] = response.remaining_path
+          env["SCRIPT_NAME"] << response.matched_path   || ""
+          env["PATH_INFO"] = response.remaining_path    || ""
                     
           env['usher.params'].merge!(params)
           
