@@ -36,18 +36,27 @@ describe "Usher route adding" do
     route_set.add_named_route(:route, '/bad/route', :controller => 'sample').should == route_set.named_routes[:route]
   end
 
+  it "should allow named routes to be added" do
+    route_set.add_named_route(:route, '/bad/route', :controller => 'sample').should == route_set.named_routes[:route]
+    route_set.route_count.should == 1
+    route_set.named_routes.size == 1
+    route_set.delete_named_route(:route, '/bad/route', :controller => 'sample')
+    route_set.route_count.should == 0
+    route_set.named_routes.size == 0
+  end
+
   it "should calculate depths for nodes" do
     route_set.add_named_route(:route, '/bad/route/three/four')
-    route_set.tree.depth.should == 0
-    route_set.tree.lookup['/'].depth.should == 1
+    route_set.root.depth.should == 0
+    route_set.root.lookup['/'].depth.should == 1
   end
 
   it "should pp for nodes" do
     route_set.add_named_route(:route, '/bad/route/three/four')
-    route_set.tree.depth.should == 0
+    route_set.root.depth.should == 0
     old_out = $stdout
     $stdout = (output = StringIO.new)
-    route_set.tree.lookup['/'].lookup['bad'].lookup['/'].pp
+    route_set.root.lookup['/'].lookup['bad'].lookup['/'].pp
     $stdout = old_out
     output.rewind
     output.read.should == <<-HEREDOC

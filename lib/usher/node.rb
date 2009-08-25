@@ -26,7 +26,7 @@ class Usher
     end
 
     def depth
-      @depth ||= @parent && @parent.is_a?(Node) ? @parent.depth + 1 : 0
+      @depth ||= @parent.is_a?(Node) ? @parent.depth + 1 : 0
     end
     
     def greedy?
@@ -55,49 +55,26 @@ class Usher
     
     def add(route)
       route.paths.each do |path|
-        parts = path.parts.dup
-        request_methods.each do |type|
-          parts.push(Route::RequestMethod.new(type, route.conditions[type])) if route.conditions && route.conditions.key?(type)
-        end
-        
-        current_node = self
-        until parts.size.zero?
-          key = parts.shift
-          target_node = case key
-          when Route::RequestMethod
-            current_node.upgrade_lookup if key.value.is_a?(Regexp)
-            if current_node.exclusive_type == key.type
-              current_node.lookup[key.value] ||= Node.new(current_node, key)
-            elsif current_node.lookup.empty?
-              current_node.exclusive_type = key.type
-              current_node.lookup[key.value] ||= Node.new(current_node, key)
-            else
-              parts.unshift(key)
-              current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
-            end
-          when Route::Variable
-            upgrade_method, lookup_method = case key
-            when Route::Variable::Greedy
-              [:upgrade_greedy_lookup, :greedy_lookup]
-            else
-              [:upgrade_lookup, :lookup]
-            end
-            
-            if key.regex_matcher
-              current_node.send(upgrade_method)
-              current_node.send(lookup_method)[key.regex_matcher] ||= Node.new(current_node, key)
-            else
-              current_node.send(lookup_method)[nil] ||= Node.new(current_node, key)
-            end  
-          else
-            current_node.upgrade_lookup if key.is_a?(Regexp)
-            current_node.lookup[key] ||= Node.new(current_node, key)
-          end
-          current_node = target_node
-        end
-        current_node.terminates = path
+        set_path_with_destination(path)
       end
-      route
+    end
+    
+    def delete(route)
+      route.paths.each do |path|
+        set_path_with_destination(path, nil)
+      end
+    end
+    
+    def unique_routes(node = self, routes = [])
+      routes << node.terminates.route if node.terminates
+      node.lookup.values.each do |v|
+        unique_routes(v, routes)
+      end
+      node.greedy_lookup.values.each do |v|
+        unique_routes(v, routes)
+      end
+      routes.uniq!
+      routes
     end
     
     def find(usher, request, original_path, path, params = [], position = 0)
@@ -159,5 +136,51 @@ class Usher
       end
     end
 
+    private
+    def set_path_with_destination(path, destination = path)
+      parts = path.parts.dup
+      request_methods.each do |type|
+        parts.push(Route::RequestMethod.new(type, path.route.conditions[type])) if path.route.conditions && path.route.conditions.key?(type)
+      end
+      
+      current_node = self
+      until parts.size.zero?
+        key = parts.shift
+        target_node = case key
+        when Route::RequestMethod
+          current_node.upgrade_lookup if key.value.is_a?(Regexp)
+          if current_node.exclusive_type == key.type
+            current_node.lookup[key.value] ||= Node.new(current_node, key)
+          elsif current_node.lookup.empty?
+            current_node.exclusive_type = key.type
+            current_node.lookup[key.value] ||= Node.new(current_node, key)
+          else
+            parts.unshift(key)
+            current_node.lookup[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.exclusive_type, nil))
+          end
+        when Route::Variable
+          upgrade_method, lookup_method = case key
+          when Route::Variable::Greedy
+            [:upgrade_greedy_lookup, :greedy_lookup]
+          else
+            [:upgrade_lookup, :lookup]
+          end
+          
+          if key.regex_matcher
+            current_node.send(upgrade_method)
+            current_node.send(lookup_method)[key.regex_matcher] ||= Node.new(current_node, key)
+          else
+            current_node.send(lookup_method)[nil] ||= Node.new(current_node, key)
+          end  
+        else
+          current_node.upgrade_lookup if key.is_a?(Regexp)
+          current_node.lookup[key] ||= Node.new(current_node, key)
+        end
+        current_node = target_node
+      end
+      current_node.terminates = destination
+    end
+    
+    
   end
 end

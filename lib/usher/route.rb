@@ -5,19 +5,17 @@ require File.join(File.dirname(__FILE__), 'route', 'request_method')
 
 class Usher
   class Route
-    attr_reader   :paths, :requirements, :conditions, :destination, :named, :generate_with, :default_values
+    attr_reader   :paths, :requirements, :conditions,
+                  :destination, :named, :generate_with,
+                  :default_values, :match_partially
     attr_accessor :parent_route
     
     GenerateWith = Struct.new(:scheme, :port, :host)
     
-    def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially) # :nodoc:
-      @router = router
-      @requirements = requirements
-      @conditions = conditions
-      @default_values = default_values
-      @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
+    def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially)            
       @paths = parsed_paths.collect {|path| Path.new(self, path)}
-      @match_partially = match_partially
+      @router, @requirements, @conditions, @default_values, @match_partially = router, requirements, conditions, default_values, match_partially
+      @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
     end
     
     def grapher
@@ -30,9 +28,7 @@ class Usher
 
     def dup
       result = super
-      grapher = Grapher.new
-      grapher.add_route(result)
-      result.grapher = grapher
+      result.grapher = nil
       result
     end
 
@@ -50,7 +46,6 @@ class Usher
       
       matching_path
     end
-    
     
     # Sets +options+ on a route. Returns +self+.
     #   
