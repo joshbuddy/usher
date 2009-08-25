@@ -92,23 +92,21 @@ class Usher
             when Route::Variable::Glob
               value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new)
               value.each_with_index do |current_value, index|
-                current_value = current_value.to_s unless current_value.is_a?(String)
                 part.valid!(current_value)
-                result << current_value
+                result << current_value.to_s
                 result << '/' if index != value.size - 1
               end
             when Route::Variable
               value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new)
-              value = value.to_s unless value.is_a?(String)
               part.valid!(value)
-              result << value
+              result << value.to_s
             else
               result << part
             end
           end
           result = Rack::Utils.uri_escape(result)
 
-          if params && !params.empty?
+          unless params.nil? || params.empty?
             has_query = result[??]
             params.each do |k,v|
               case v
@@ -123,7 +121,9 @@ class Usher
           end
           result
         end
+      
       end
+      
     end
   end
 end
