@@ -5,19 +5,26 @@ class Usher
     autoload :MerbInterface, File.join(File.dirname(__FILE__), 'interface', 'merb_interface')
     autoload :RackInterface, File.join(File.dirname(__FILE__), 'interface', 'rack_interface')
     autoload :EmailInterface, File.join(File.dirname(__FILE__), 'interface', 'email_interface')
+    autoload :Rails3Interface, File.join(File.dirname(__FILE__), 'interface', 'rails3_interface')
     
     def self.for(type, &blk)
+      class_for(type).new(&blk)
+    end
+    
+    def self.class_for(type)
       case type
       when :rails2_2
-        Rails2_2Interface.new(&blk)
+        Rails2_2Interface
       when :rails2_3
-        Rails2_3Interface.new(&blk)
+        Rails2_3Interface
       when :merb
-        MerbInterface.new(&blk)
+        MerbInterface
       when :rack
-        RackInterface.new(&blk)
+        RackInterface
       when :email
-        EmailInterface.new(&blk)
+        EmailInterface
+      when :rails3
+        Rails3Interface
       end
       
     end
