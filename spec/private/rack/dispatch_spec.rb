@@ -9,10 +9,14 @@ describe "Usher (for rack) route dispatching" do
   before(:each) do
     route_set.reset!
     @app = MockApp.new("Hello World!")
-    route_set.add('/sample').to(@app)
   end
 
   describe "HTTP GET" do
+    before(:each) do
+      route_set.reset!
+      route_set.add('/sample', :conditions => {:request_method => 'GET'}).to(@app)
+    end
+
     it "should dispatch a request" do
       response = route_set.call_with_mock_request
       response.body.should eql("Hello World!")
@@ -26,18 +30,23 @@ describe "Usher (for rack) route dispatching" do
 
   describe "HTTP POST" do
     before(:each) do
-      bad_app = MockApp.new("You shouldn't get here if you are using POST")
-      route_set.add('/sample').to(bad_app)
-      route_set.add('/sample', :requirements => {:request_method => 'POST'}).to(@app)
+      route_set.reset!
+      route_set.add('/sample', :conditions => {:request_method => 'POST'}).to(@app)
+      route_set.add('/sample').to(MockApp.new("You shouldn't get here if you are using POST"))
     end
 
-    it "should dispatch a request" do
-      response = route_set.call_with_mock_request
+    it "should dispatch a POST request" do
+      response = route_set.call_with_mock_request('/sample', 'POST')
       response.body.should eql("Hello World!")
     end
 
+    it "shouldn't dispatch a GET request" do
+      response = route_set.call_with_mock_request('/sample', 'GET')
+      response.body.should eql("You shouldn't get here if you are using POST")
+    end
+
     it "should write usher.params" do
-      response = route_set.call_with_mock_request("/sample", :request_method => 'POST')
+      response = route_set.call_with_mock_request("/sample", 'POST')
       @app.env["usher.params"].should == {}
     end
   end

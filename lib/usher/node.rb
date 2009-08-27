@@ -145,7 +145,7 @@ class Usher
       end
       
       current_node = self
-      until parts.size.zero?
+      while !parts.size.zero? || current_node.exclusive_type
         key = parts.shift
         target_node = case key
         when Route::RequestMethod
@@ -174,11 +174,13 @@ class Usher
             current_node.send(lookup_method)[nil] ||= Node.new(current_node, key)
           end  
         else
+          
           current_node.upgrade_lookup if key.is_a?(Regexp)
           current_node.lookup[key] ||= Node.new(current_node, key)
         end
         current_node = target_node
       end
+      
       current_node.terminates = destination
     end
     

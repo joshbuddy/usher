@@ -4,6 +4,8 @@ class Usher
   module Interface
     class RackInterface
       
+      attr_reader :router
+      
       class Builder < Rack::Builder
         
         def initialize(&block)
