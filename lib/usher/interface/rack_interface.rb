@@ -5,7 +5,7 @@ class Usher
     class RackInterface
       
       def initialize(&blk)
-        @router = Usher.new(:request_methods => [:method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
+        @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
         instance_eval(&blk) if blk
       end
       
