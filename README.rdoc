@@ -68,6 +68,7 @@ regex allows.
 * <tt>/product/hello/world</tt>
 * <tt>/product/hello</tt>
 
+
 ==== Static
 
 Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
