@@ -84,6 +84,7 @@ class Usher
             return ret
           end
         end
+        nil
       elsif terminates? && (path.size.zero? || terminates.route.partial_match?)
         if terminates.route.partial_match?
           Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position])
