@@ -4,6 +4,20 @@ class Usher
   module Interface
     class RackInterface
       
+      class Builder < Rack::Builder
+        
+        def initialize(&block)
+          @usher = Usher::Interface::RackInterface.new
+          super
+        end
+        
+        def map(path, options = nil, &block)
+          @usher.add(path, options).to(&block)
+          @ins << @usher unless @ins.last == @usher
+        end
+        
+      end
+      
       def initialize(&blk)
         @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
         instance_eval(&blk) if blk
