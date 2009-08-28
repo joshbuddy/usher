@@ -17,6 +17,11 @@ class Usher
         o.is_a?(self.class) && o.type == type && o.value == value
       end
       alias == eql?
+      
+      def trivial?
+        value.nil?
+      end
+      
     end
   end
 end

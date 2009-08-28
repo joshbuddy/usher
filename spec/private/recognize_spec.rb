@@ -31,14 +31,17 @@ describe "Usher route recognition" do
     end
 
     it "should recognize a specific route when several http-style restrictions are used" do
+      target_route_http_admin_generic = route_set.add_route('/sample', :conditions => {:domain => 'admin.spec.com'})
       target_route_http_admin = route_set.add_route('/sample', :conditions => {:protocol => 'http', :domain => 'admin.spec.com'})
       target_route_http_www = route_set.add_route('/sample', :conditions => {:protocol => 'http', :domain => 'www.spec.com'})
-      target_route_https_msie = route_set.add_route('/sample', :conditions => {:protocol => 'https', :user_agent => 'MSIE 6.0'})
+      target_route_https_msie = route_set.add_route('/sample', :conditions => {:protocol => 'https', :domain => 'admin.spec.com', :user_agent => 'MSIE 6.0'})
       target_route_https_admin = route_set.add_route('/sample', :conditions => {:protocol => 'https', :domain => 'admin.spec.com'})
       route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_http_admin
       route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http', :domain => 'www.spec.com', :user_agent => nil})).path.route.should == target_route_http_www
       route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => 'MSIE 6.0'})).path.route.should == target_route_https_msie
       route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_https_admin
+      route_set.recognize(build_request({:method => 'put', :path => '/sample', :protocol => 'wacky', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_http_admin_generic
+      
     end
 
     it "should correctly fix that tree if conditionals are used later" do

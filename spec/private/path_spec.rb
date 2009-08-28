@@ -48,32 +48,9 @@ describe "Usher route adding" do
   it "should calculate depths for nodes" do
     route_set.add_named_route(:route, '/bad/route/three/four')
     route_set.root.depth.should == 0
-    route_set.root.lookup['/'].depth.should == 1
+    route_set.root.normal['/'].depth.should == 1
   end
 
-  it "should pp for nodes" do
-    route_set.add_named_route(:route, '/bad/route/three/four')
-    route_set.root.depth.should == 0
-    old_out = $stdout
-    $stdout = (output = StringIO.new)
-    route_set.root.lookup['/'].lookup['bad'].lookup['/'].pp
-    $stdout = old_out
-    output.rewind
-    output.read.should == <<-HEREDOC
-   3: "/" false
-    route ==> 
-    4: "route" false
-     / ==> 
-     5: "/" false
-      three ==> 
-      6: "three" false
-       / ==> 
-       7: "/" false
-        four ==> 
-        8: "four" true
-    HEREDOC
-  end
-  
   describe "merging paths" do
     before do
       @r1 = route_set.add_route("/foo/bar")
