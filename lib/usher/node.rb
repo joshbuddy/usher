@@ -116,19 +116,16 @@ class Usher
         else
           nil
         end
-      elsif terminates? && (path.size.zero? || terminates.route.partial_match?)
-        if terminates.route.partial_match?
-          Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position])
-        else
+      elsif terminates? && (path.empty? || terminates.route.partial_match?)
+        terminates.route.partial_match? ?
+          Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position]) :
           Response.new(terminates, params, nil, original_path)
-        end
-        
-      elsif !path.size.zero? && (greedy? && (match_with_result_output = greedy.match_with_result(whole_path = original_path[position, original_path.size])))
+      elsif !path.empty? && (greedy? && (match_with_result_output = greedy.match_with_result(whole_path = original_path[position, original_path.size])))
 				next_path, matched_part = match_with_result_output
         position += matched_part.size
         params << [next_path.value.name, whole_path.slice!(0, matched_part.size)]
-        next_path.find(usher, request_object, original_path, whole_path.size.zero? ? whole_path : usher.splitter.url_split(whole_path), params, position)
-      elsif !path.size.zero? && normal && (next_part = normal[part = path.shift] || normal[nil])
+        next_path.find(usher, request_object, original_path, whole_path.empty? ? whole_path : usher.splitter.url_split(whole_path), params, position)
+      elsif !path.empty? && normal && (next_part = normal[part = path.shift] || normal[nil])
         position += part.size
         case next_part.value
         when Route::Variable::Glob
@@ -146,7 +143,7 @@ class Usher
               next_part.value.valid!(part)
               params.last.last << part
             end
-            if path.size.zero?
+            if path.empty?
               break
             else
               part = path.shift
@@ -169,114 +166,99 @@ class Usher
     end
 
     private
+    
+    def set_path_with_destination(path, destination = path)
+      node = path.parts.inject(self){ |node, key| process_path_part(node, key) }
+      node = process_request_parts(node, request_methods_for_path(path))
+
+      while node.request_method_type
+        node = (node.request[nil] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)))
+      end
+
+      node.terminates = destination
+    end
+    
     def request_method_index(type)
       request_methods.index(type)
     end
     
-    
-    def set_path_with_destination(path, destination = path)
-      parts = path.parts.dup
-      
-      request_method_parts = request_methods.collect do |type|
-        Route::RequestMethod.new(type, path.route.conditions && path.route.conditions[type])
-      end
-      
-      current_node = self
-      until parts.empty?
+    def process_request_parts(node, parts)
+      while parts.any?{ |p| !p.trivial? }
         key = parts.shift
-        case key
-        when Route::Variable
-          case key
-          when Route::Variable::Greedy
-            current_node.activate_greedy!
-            if key.regex_matcher
-              current_node.upgrade_greedy!
-              target_node = (current_node.greedy[key.regex_matcher] ||= Node.new(current_node, key))
-            else
-              target_node = (current_node.greedy[nil] ||= Node.new(current_node, key))
-            end  
-          else
-            current_node.activate_normal!
-            if key.regex_matcher
-              current_node.upgrade_normal!
-              target_node = (current_node.normal[key.regex_matcher] ||= Node.new(current_node, key))
-            else
-              target_node = (current_node.normal[nil] ||= Node.new(current_node, key))
-            end
-          end
-        when nil
-          current_node.activate_normal!
-          target_node = (current_node.normal[nil] ||= Node.new(current_node, key))
-        else
-          current_node.activate_normal!
-          current_node.upgrade_normal! if key.is_a?(Regexp)
-          target_node = (current_node.normal[key] ||= Node.new(current_node, key))
-        end
-        current_node = target_node
-      end
-      
-      while request_method_parts.any?{ |p| !p.trivial? }
-        key = request_method_parts.shift
 
         next if key.trivial?
 
-        if current_node.request_method_type.nil?
-          #take over the node
-          
-          current_node.request_method_type = key.type
-          current_node.activate_request!
-          current_node.upgrade_request! if key.value.is_a?(Regexp)
-          
-          target_node = (current_node.request[key.value] ||= Node.new(current_node, key))
-        elsif request_method_index(current_node.request_method_type) < request_method_index(key.type)
-          current_node.activate_request!
+        node.activate_request!
 
-          # just go nil, and keep going
-          request_method_parts.unshift(key)
-          target_node = (current_node.request[key.value] ||= Node.new(current_node, Route::RequestMethod.new(current_node.request_method_type, nil)))
-        elsif request_method_index(current_node.request_method_type) == request_method_index(key.type)
-          current_node.activate_request!
-          current_node.upgrade_request! if key.value.is_a?(Regexp)
-
-          target_node = (current_node.request[key.value] ||= Node.new(current_node, key))
+        node = if node.request_method_type.nil?
+          node.request_method_type = key.type
+          node.upgrade_request! if key.value.is_a?(Regexp)
+          node.request[key.value] ||= Node.new(node, key)
         else
-          current_node.activate_request!
-          previous_node = current_node.parent
-          
-          current_node_entry_key = nil
-          current_node_entry_lookup = nil
-          [previous_node.normal, previous_node.greedy, previous_node.request].compact.each do |l|
-            (current_node_entry_key, current_node) = l.each{|k,v| break [k,v] if current_node == v} 
-            if current_node_entry_key
-              current_node_entry_lookup = l
-              break
+          case request_method_index(node.request_method_type) <=> request_method_index(key.type)
+          when -1
+            parts.unshift(key)
+            node.request[key.value] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil))
+          when 0
+            node.upgrade_request! if key.value.is_a?(Regexp)
+            node.request[key.value] ||= Node.new(node, key)
+          when 1
+            previous_node = node.parent
+            current_node_entry_key = nil
+            current_node_entry_lookup = nil
+            [previous_node.normal, previous_node.greedy, previous_node.request].compact.each do |l|
+              current_node_entry_key = l.each{|k,v| break k if node == v}
+              current_node_entry_lookup = l and break if current_node_entry_key
             end
-          end
 
-          if current_node_entry_lookup.respond_to?(:delete_value)
-            current_node_entry_lookup.delete_value(current_node)
-          else
-            current_node_entry_lookup.delete_if{|k,v| v == current_node}
-          end
-          
-          new_node = Node.new(previous_node, Route::RequestMethod.new(key.type, nil))
-          new_node.activate_request!
-          new_node.request_method_type = key.type
-          current_node_entry_lookup[current_node_entry_key] = new_node
-          current_node.parent = new_node
-          new_node.request[nil] = current_node
-          request_method_parts.unshift(key)
+            current_node_entry_lookup.respond_to?(:delete_value) ? 
+              current_node_entry_lookup.delete_value(node) : current_node_entry_lookup.delete_if{|k,v| v == node}
 
-          target_node = new_node
+            new_node = Node.new(previous_node, Route::RequestMethod.new(key.type, nil))
+            new_node.activate_request!
+            new_node.request_method_type = key.type
+            current_node_entry_lookup[current_node_entry_key] = new_node
+            node.parent = new_node
+            new_node.request[nil] = node
+            parts.unshift(key)
+
+            new_node
+          end
         end
-        current_node = target_node
       end
+      node
+    end      
       
-      while current_node.request_method_type
-        current_node = (current_node.request[nil] ||= Node.new(current_node, Route::RequestMethod.new(current_node.request_method_type, nil)))
+    
+    def process_path_part(node, key)
+      case key
+      when Route::Variable::Greedy
+        node.activate_greedy!
+        if key.regex_matcher
+          node.upgrade_greedy!
+          node.greedy[key.regex_matcher] ||= Node.new(node, key)
+        else
+          node.greedy[nil] ||= Node.new(node, key)
+        end  
+      when Route::Variable
+        node.activate_normal!
+        if key.regex_matcher
+          node.upgrade_normal!
+          node.normal[key.regex_matcher] ||= Node.new(node, key)
+        else
+          node.normal[nil] ||= Node.new(node, key)
+        end
+      else
+        node.activate_normal!
+        node.upgrade_normal! if key.is_a?(Regexp)
+        node.normal[key] ||= Node.new(node, key)
       end
-
-      current_node.terminates = destination
+    end
+    
+    def request_methods_for_path(path)
+      request_methods.collect do |type|
+        Route::RequestMethod.new(type, path.route.conditions && path.route.conditions[type])
+      end
     end
     
   end
