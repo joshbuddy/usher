@@ -238,6 +238,12 @@ describe "Usher route recognition" do
       route_set.recognize(  build_request(:path => "/bar")).should == nil
     end
     
+    it "should not delete routes added to the dup to the original" do
+      @r2.delete_route("/foo")
+      route_set.recognize(        build_request(:path => "/foo")).path.route.destination.should == {:foo => "foo"}
+      @r2.recognize(  build_request(:path => "/foo")).should == nil
+    end
+    
     
     it "should safely dup with nested ushers" do
       r1 = Usher.new

@@ -269,7 +269,7 @@ class Usher
     if options
       options.delete_if do |k, v|
         if v.is_a?(Regexp) || v.is_a?(Proc)
-          (requirements ||= {})[k] = v 
+          (requirements ||= {})[k] = v
           true
         end
       end
