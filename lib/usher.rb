@@ -221,6 +221,20 @@ class Usher
     routes.each{|r| r.parent_route = route}
   end
   
+  def dup
+    replacement = super
+    original = self
+    replacement.instance_eval do
+      reset!
+      original.routes.each do |route|
+        @root.add(route)
+        @routes << route
+      end
+      rebuild_grapher!
+    end
+    replacement
+  end
+  
   private
   
   attr_accessor :request_methods

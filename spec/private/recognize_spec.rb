@@ -181,8 +181,8 @@ describe "Usher route recognition" do
   
   it "should use a requirement (proc) on incoming variables" do
     route_set.add_route('/:controller/:action/:id', :id => proc{|v| Integer(v)})
-    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'}))}.should_not raise_error Usher::ValidationException
-    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'}))}.should raise_error Usher::ValidationException
+    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'}))}.should_not raise_error(Usher::ValidationException)
+    proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/123asd', :domain => 'admin.host.com'}))}.should raise_error(Usher::ValidationException)
   end
 
   it "shouldn't care about mildly weird characters in the URL" do
@@ -215,5 +215,46 @@ describe "Usher route recognition" do
       route_set.recognize(build_request({:method => 'post', :path => '/foo/bar'})).should.nil?
     end
 
+  end
+
+  describe "dup safety" do
+    before do 
+      route_set.add_route("/foo", :foo => "foo")
+      @r2 = route_set.dup
+    end
+    
+    it "should provide a different object" do
+      route_set.should_not eql(@r2)
+    end
+        
+    it "should recognize the originals routes in the dup" do
+      route_set.recognize(build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
+      @r2.recognize(      build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
+    end
+
+    it "should not add routes added to the dup to the original" do
+      @r2.add_route("/bar", :bar => "bar")
+      @r2.recognize(        build_request(:path => "/bar")).path.route.destination.should == {:bar => "bar"}
+      route_set.recognize(  build_request(:path => "/bar")).should == nil
+    end
+    
+    
+    it "should safely dup with nested ushers" do
+      r1 = Usher.new
+      r2 = Usher.new
+      r3 = Usher.new
+      
+      r1.add_route("/mounted"           ).match_partially!.to(r2)
+      r2.add_route("/inner"             ).match_partially!.to(r3)
+      r3.add_route("/baz", :baz => :baz )
+      
+      r1.recognize(build_request(:path => "/mounted/inner")).path.route.destination.should == r2
+      r4 = r1.dup
+      r4.recognize(build_request(:path => "/mounted/inner")).path.route.destination.should == r2
+      r4.add_route("/r3").match_partially!.to(r3)
+      r4.recognize(build_request(:path => "/r3")).path.route.destination.should == r3
+      r1.recognize(build_request(:path => "/r3")).should be_nil
+    end
+    
   end
 end

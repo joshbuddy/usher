@@ -25,6 +25,15 @@ class Usher
         instance_eval(&blk) if blk
       end
       
+      def dup
+        new_one = super
+        original = self
+        new_one.instance_eval do
+          @router = router.dup
+        end
+        new_one
+      end
+      
       def add(path, options = nil)
         @router.add_route(path, options)
       end

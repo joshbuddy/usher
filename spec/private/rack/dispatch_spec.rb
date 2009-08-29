@@ -119,5 +119,55 @@ describe "Usher (for rack) route dispatching" do
       
     end
     
+    describe "dupping" do
+      before do 
+        @app  = mock("app")
+        @u1   = Usher::Interface.for(:rack)
+        @u2   = Usher::Interface.for(:rack)
+        
+        @u1.add("/one", :default_values => {:one => :one}).to(@app)
+        @u1.add("/mount").match_partially!.to(@u2)
+        
+        @u2.add("/app", :default_values => {:foo => :bar}).to(@app)
+        
+      end
+      
+      it "should allow me to dup the router" do
+        @app.should_receive(:call).twice.with{|e| e['usher.params'].should == {:one => :one}}
+        @u1.call(Rack::MockRequest.env_for("/one"))
+        u1_dash = @u1.dup
+        u1_dash.call(Rack::MockRequest.env_for("/one"))
+      end
+      
+      it "should allow me to dup the router and add a new route without polluting the original" do
+        @app.should_receive(:call).with{|e| e['usher.params'].should == {:foo => :bar}}
+        u1_dash = @u1.dup
+        u1_dash.add("/foo", :default_values => {:foo => :bar}).to(@app)
+        u1_dash.call(Rack::MockRequest.env_for("/foo"))
+        @app.should_not_receive(:call)
+        @u1.call(Rack::MockRequest.env_for("/foo"))
+      end
+      
+      it "should allow me to dup the router and nested routers should remain intact" do
+        @app.should_receive(:call).with{|e| e['usher.params'].should == {:foo => :bar}}
+        u1_dash = @u1.dup
+        u1_dash.call(Rack::MockRequest.env_for("/mount/app"))
+      end
+      
+      it "should allow me to dup the router and add more routes" do
+        @app.should_receive(:call).with{|e| e['usher.params'].should == {:another => :bar}}
+        
+        u3 = Usher::Interface.for(:rack)
+        u1_dash = @u1.dup
+        
+        u3.add("/another_bar", :default_values => {:another => :bar}).to(@app)
+        u1_dash.add("/some/mount").match_partially!.to(u3)
+        
+        u1_dash.call(Rack::MockRequest.env_for("/some/mount/another_bar"))
+        
+        @app.should_not_receive(:call)
+        @u1.call(Rack::MockRequest.env_for("/some/mount/another_bar"))
+      end
+    end
   end
 end
