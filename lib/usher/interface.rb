@@ -6,6 +6,7 @@ class Usher
     autoload :RackInterface, File.join(File.dirname(__FILE__), 'interface', 'rack_interface')
     autoload :EmailInterface, File.join(File.dirname(__FILE__), 'interface', 'email_interface')
     autoload :Rails3Interface, File.join(File.dirname(__FILE__), 'interface', 'rails3_interface')
+    autoload :TextInterface, File.join(File.dirname(__FILE__), 'interface', 'text_interface')
     
     def self.for(type, &blk)
       class_for(type).new(&blk)
@@ -25,6 +26,8 @@ class Usher
         EmailInterface
       when :rails3
         Rails3Interface
+      when :text
+        TextInterface
       end
       
     end
