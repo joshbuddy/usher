@@ -2,37 +2,37 @@ require 'lib/usher'
 require 'rack'
 
 describe "Usher URL generation" do
-  
+
   before(:each) do
     @route_set = Usher.new(:generator => Usher::Util::Generators::URL.new)
     @route_set.reset!
   end
-  
+
   it "should generate a simple URL" do
     @route_set.add_named_route(:sample, '/sample', :controller => 'sample', :action => 'action')
     @route_set.generator.generate(:sample, {}).should == '/sample'
   end
-  
+
   it "should generate a simple URL with a single variable" do
     @route_set.add_named_route(:sample, '/sample/:action', :controller => 'sample')
     @route_set.generator.generate(:sample, {:action => 'action'}).should == '/sample/action'
   end
-  
+
   it "should generate a simple URL with a single variable (and escape)" do
     @route_set.add_named_route(:sample, '/sample/:action', :controller => 'sample')
     @route_set.generator.generate(:sample, {:action => 'action time'}).should == '/sample/action%20time'
   end
-  
+
   it "should generate a simple URL with a single variable (thats not a string)" do
     @route_set.add_named_route(:sample, '/sample/:action/:id', :controller => 'sample')
     @route_set.generator.generate(:sample, {:action => 'action', :id => 123}).should == '/sample/action/123'
   end
-  
+
   it "should generate a simple URL with a glob variable" do
     @route_set.add_named_route(:sample, '/sample/*action', :controller => 'sample')
     @route_set.generator.generate(:sample, {:action => ['foo', 'baz']}).should == '/sample/foo/baz'
   end
-  
+
   it "should generate a mutliple vairable URL from a hash" do
     @route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
     @route_set.generator.generate(:sample, {:first => 'zoo', :second => 'maz'}).should == '/sample/zoo/maz'
@@ -125,7 +125,7 @@ describe "Usher URL generation" do
     @route_set.add_named_route(:name, '/:one/:two/:three', {:default_values => {:one => 'one', :two => 'two', :three => 'three'}})
     @route_set.generator.generate(:name).should == '/one/two/three'
   end
-  
+
   it "should generate a route using defaults and optionals using the last parameter" do
     @route_set.add_named_route(:opts_with_defaults, '/:one(/:two(/:three))', {:default_values => {:one => '1', :two => '2', :three => '3'}})
     @route_set.generator.generate(:opts_with_defaults, {:three => 'three'}).should == '/1/2/three'
@@ -135,61 +135,114 @@ describe "Usher URL generation" do
     @route_set.add_named_route(:optionals, '/:controller(/:action(/:id))(.:format)')
     @route_set.generator.generate(:optionals, {:controller => "foo", :action => "bar"}).should == '/foo/bar'
   end
-  
+
   describe "nested generation" do
     before do
       @route_set2 = Usher.new(:generator => Usher::Util::Generators::URL.new)
       @route_set3 = Usher.new(:generator => Usher::Util::Generators::URL.new)
       @route_set4 = Usher.new(:generator => Usher::Util::Generators::URL.new)
-      
+
       @route_set.add_named_route(:simple,   "/mount_point").match_partially!.to(@route_set2)
       @route_set.add_route("/third/:foo", :default_values => {:foo => "foo"}).match_partially!.to(@route_set3)
       @route_set.add_route("/fourth/:bar").match_partially!.to(@route_set4)
-      
+
       @route_set2.add_named_route(:nested_simple,   "/nested/simple",     :controller => "nested",  :action => "simple")
       @route_set2.add_named_route(:nested_complex,  "/another_nested(/:complex)", :controller => "nested",  :action => "complex")
-      
+
       @route_set3.add_named_route(:nested_simple, "/nested/simple", :controller => "nested", :action => "simple")
       @route_set3.add_named_route(:nested_complex,  "/another_nested(/:complex)", :controller => "nested",  :action => "complex")
-      
+
       @route_set4.add_named_route(:nested_simple, "/nested/simple", :controller => "nested", :action => "simple")
     end
-    
+
     it "should generate a route for the simple nested route" do
       @route_set2.generator.generate(:nested_simple).should == "/mount_point/nested/simple"
     end
-    
+
     it "should generate a simple route without optional segments" do
       @route_set2.generator.generate(:nested_complex).should == "/mount_point/another_nested"
     end
-    
+
     it "should generate a route with optional segements" do
       @route_set2.generator.generate(:nested_complex, :complex => "foo").should == "/mount_point/another_nested/foo"
     end
-    
+
     it "should genearte a route with the specified value for the parent route" do
       @route_set3.generator.generate(:nested_simple, :foo => "bar").should == "/third/bar/nested/simple"
     end
-    
+
     it "should generate a route with the default value from the parent route" do
       @route_set3.generator.generate(:nested_simple).should == "/third/foo/nested/simple"
     end
-    
+
     it "should generate a route with an optional segement in the parent and child" do
       @route_set3.generator.generate(:nested_complex, :complex => "complex").should == "/third/foo/another_nested/complex"
     end
-    
+
     it "should generate a route without the optional value from the child" do
       @route_set3.generator.generate(:nested_complex).should == "/third/foo/another_nested"
     end
-    
+
     it "should raise an exception when trying to generate a route where the parent variable is not defined and does not have a default value" do
       lambda do
         @route_set4.generator.generate(:nested_simple)
       end.should raise_error(Usher::MissingParameterException)
     end
-    
-    
-    
   end
+
+  describe "dupped generation" do
+    before(:each) do
+      @r1 = Usher.new(:generator => Usher::Util::Generators::URL.new)
+      @r2 = Usher.new(:generator => Usher::Util::Generators::URL.new)
+      @r3 = Usher.new(:generator => Usher::Util::Generators::URL.new)
+
+      @r1.add_route("/r1", :router => "r1").name(:route)
+      @r2.add_route("/r2", :router => "r2").name(:route)
+      @r3.add_route("/r3", :router => "r3").name(:route)
+    end
+
+    it "should generate dupped routes" do
+      @r1.generator.generate(:route).should == "/r1"
+      r1 = @r1.dup
+      r1.generator.generate(:route).should == "/r1"
+    end
+
+    it "should not generate new routes added to a dup on the original" do
+      r1 = @r1.dup
+      r1.add_route("/new_r1", :router => "r4").name(:new_route)
+      lambda do
+        @r1.generator.generate(:new_route).should be_nil
+      end
+    end
+
+    it "should generate new routes added to a dup" do
+      r1 = @r1.dup
+      r1.add_route("/new_r1", :router => "r4").name(:new_route)
+      r1.generator.generate(:new_route).should == "/new_r1"
+    end
+
+    it "should generate a route for a nested usher" do
+      @r1.add_route("/mounted").match_partially!.to(@r2)
+      @r2.generator.generate(:route).should == "/mounted/r2"
+    end
+
+    it "should generate a route for a dupped nested usher" do
+      r3 = @r3.dup
+      @r1.add_route("/mounted").match_partially!.to(r3)
+      r3.generator.generate(:route).should == "/mounted/r3"
+    end
+
+    it "should generate a route for 2 differently mounted dupped ushers" do
+      r21 = @r2.dup
+      r22 = @r2.dup
+
+      @r1.add_route("/mounted").match_partially!.to(r21)
+      @r1.add_route("/other_mount").match_partially!.to(r22)
+
+      r21.generator.generate(:route).should == "/mounted/r2"
+      r22.generator.generate(:route).should == "/other_mount/r2"
+      @r2.generator.generate(:route).should == "/r2"
+    end
+  end
+
 end
