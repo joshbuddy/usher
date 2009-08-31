@@ -1,4 +1,4 @@
-= Usher 
+= Usher
 
 Tree-based router library. Useful for (specifically) for Rails and Rack, but probably generally useful for anyone interested in doing routing. Based on Ilya Grigorik suggestion, turns out looking up in a hash and following a tree is faster than Krauter's massive regex approach.
 
@@ -19,13 +19,13 @@ Tree-based router library. Useful for (specifically) for Rails and Rack, but pro
 From the rdoc:
 
 Creates a route from +path+ and +options+
- 
+
 === +path+
 A path consists a mix of dynamic and static parts delimited by <tt>/</tt>
 
 ==== Dynamic
 Dynamic parts are prefixed with either :, *.  :variable matches only one part of the path, whereas *variable can match one or
-more parts. 
+more parts.
 
 <b>Example:</b>
 <tt>/path/:variable/path</tt> would match
@@ -35,7 +35,7 @@ more parts.
 * <tt>/path/one_more/path</tt>
 
 In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key <tt>:variable</tt>.
-However, <tt>/path/test/one_more/path</tt> would not be matched. 
+However, <tt>/path/test/one_more/path</tt> would not be matched.
 
 <b>Example:</b>
 <tt>/path/*variable/path</tt> would match
@@ -59,7 +59,7 @@ But not
 As well, the same logic applies for * variables as well, where only parts matchable by the supplied regex will
 actually be bound to the variable
 
-Variables can also have a greedy regex matcher. These matchers ignore all delimiters, and continue matching for as long as much as their 
+Variables can also have a greedy regex matcher. These matchers ignore all delimiters, and continue matching for as long as much as their
 regex allows.
 
 <b>Example:</b>
@@ -110,7 +110,7 @@ For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <t
       [body]        # Response body
     ]
   end
-  
+
   routes = Usher::Interface.for(:rack) do
     add('/hello/:name').to(app)
   end
