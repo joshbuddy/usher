@@ -3,16 +3,22 @@ class Usher
     class TextInterface
       
       def initialize(&blk)
-        @usher = Usher.new(:delimiters => [' '])
+        @usher = Usher.new(:delimiters => [' '], :generator => Usher::Util::Generators::Generic.new)
         instance_eval(&blk) if blk
       end
       
-      def on(text, &blk)
-        @usher.add_route(text).to(:block => blk, :arg_type => :array)
+      def generate(name, params = nil)
+        @usher.generator.generate(name, params)
       end
       
-      def on_with_hash(text, &blk)
-        @usher.add_route(text).to(:block => blk, :arg_type => :hash)
+      def on(text, name = nil, &blk)
+        r = @usher.add_route(text).to(:block => blk, :arg_type => :array)
+        r.name(name) if name
+      end
+      
+      def on_with_hash(text, name = nil, &blk)
+        r = @usher.add_route(text).to(:block => blk, :arg_type => :hash)
+        r.name(name) if name
       end
       
       def run(text)
