@@ -16,6 +16,10 @@ class Usher
         r.name(name) if name
       end
       
+      def unrecognized(&blk)
+        @unrecognize_block = blk
+      end
+      
       def on_with_hash(text, name = nil, &blk)
         r = @usher.add_route(text).to(:block => blk, :arg_type => :hash)
         r.name(name) if name
@@ -31,7 +35,7 @@ class Usher
             response.path.route.destination[:block].call(*response.params.collect{|p| p.last})
           end
         else
-          nil
+          @unrecognize_block ? @unrecognize_block.call(text) : nil
         end
       end
 
