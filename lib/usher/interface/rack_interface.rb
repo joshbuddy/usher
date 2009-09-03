@@ -5,6 +5,11 @@ class Usher
     class RackInterface
 
       attr_reader :router
+      attr_accessor :app
+
+      DEFAULT_APPLICATION = lambda do |env|
+        Rack::Response.new("No route found", 404).finish
+      end
 
       class Builder < Rack::Builder
 
@@ -20,7 +25,8 @@ class Usher
 
       end
 
-      def initialize(&blk)
+      def initialize(app = nil, &blk)
+        @app = app || DEFAULT_APPLICATION
         @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
         instance_eval(&blk) if blk
       end
@@ -36,7 +42,7 @@ class Usher
 
       def add(path, options = nil)
         @router.add_route(path, options)
-      end
+       end
 
       def parent_route=(route)
         @router.parent_route = route
@@ -52,18 +58,8 @@ class Usher
 
       def call(env)
         response = @router.recognize(request = Rack::Request.new(env), request.path_info)
-        if response.nil?
-          body = "No route found"
-          headers = {"Content-Type" => "text/plain", "Content-Length" => body.length.to_s}
-          [404, headers, [body]]
-        else
-          params = response.path.route.default_values || {}
-          response.params.each{ |hk| params[hk.first] = hk.last}
-
-          after_match(env, response)
-
-          response.path.route.destination.call(env)
-        end
+        after_match(env, response) if response
+        determine_respondant(response).call(env)
       end
 
       def generate(route, params = nil, options = nil)
@@ -72,6 +68,8 @@ class Usher
 
       # Allows a hook to be placed for sub classes to make use of between matching
       # and calling the application
+      #
+      # @api plugin
       def after_match(env, response)
         env['usher.params'] ||= {}
         params = response.path.route.default_values || {}
@@ -83,6 +81,19 @@ class Usher
         env["PATH_INFO"] = response.remaining_path    || ""
       end
 
+      # Determines which application to respond with.
+      #
+      #  Within the request when determine respondant is called
+      #  If there is a matching route to an application, that
+      #  application is called, Otherwise the middleware application is called.
+      #
+      # @api private
+      def determine_respondant(response)
+        return app if response.nil?
+        respondant = response.path.route.destination
+        respondant = app unless respondant.respond_to?(:call)
+        respondant
+      end
     end
   end
 end
