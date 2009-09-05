@@ -108,15 +108,7 @@ class Usher
     end
     
     def find(usher, request_object, original_path, path, params = [], position = 0)
-      if request_method_type
-        if (specific_node = request[request_object.send(request_method_type)]) && (ret = specific_node.find(usher, request_object, original_path, path.dup, params.dup, position))
-          ret
-        elsif (general_node = request[nil]) && (ret = general_node.find(usher, request_object, original_path, path.dup, params.dup, position))
-          ret
-        else
-          nil
-        end
-      elsif terminates? && (path.empty? || terminates.route.partial_match?)
+      if terminates? && (path.empty? || terminates.route.partial_match?)
         terminates.route.partial_match? ?
           Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position]) :
           Response.new(terminates, params, nil, original_path)
@@ -130,7 +122,7 @@ class Usher
         case next_part.value
         when Route::Variable::Glob
           params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
-          loop do
+          while true
             if (next_part.value.look_ahead === part || (!usher.delimiter_chars.include?(part[0]) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
               path.unshift(part)
               position -= part.size
@@ -153,13 +145,21 @@ class Usher
           var = next_part.value
           var.valid!(part)
           params << [var.name, part]
-          until (var.look_ahead === path.first) || path.empty?
+          until path.empty? || (var.look_ahead === path.first)
             next_path_part = path.shift
             position += next_path_part.size
             params.last.last << next_path_part
-          end
+          end if var.look_ahead && usher.delimiter_chars.size > 1
         end
         next_part.find(usher, request_object, original_path, path, params, position)
+      elsif request_method_type
+        if (specific_node = request[request_object.send(request_method_type)]) && (ret = specific_node.find(usher, request_object, original_path, path.dup, params.dup, position))
+          ret
+        elsif (general_node = request[nil]) && (ret = general_node.find(usher, request_object, original_path, path.dup, params.dup, position))
+          ret
+        else
+          nil
+        end
       else
         nil
       end

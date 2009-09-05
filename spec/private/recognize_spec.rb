@@ -195,6 +195,14 @@ describe "Usher route recognition" do
     route_set.recognize(build_request({:method => 'get', :path => '/testing/asd.qwe/testing2/poi.zxc/oiu.asd'})).params.should == [[:id, 'asd.qwe'], [:id2, 'poi.zxc'], [:id3, 'oiu.asd']]
   end
   
+  it "should recognize a path with an optional compontnet" do
+    route_set.add_route("/:name(/:surname)", :conditions => {:method => 'get'})
+    result = route_set.recognize(build_request({:method => 'get', :path => "/homer/simpson"}))
+    result.params.should == [[:name, "homer"],[:surname, "simpson"]]
+    result = route_set.recognize(build_request({:method => 'get', :path => '/homer'}))
+    result.params.should == [[:name, "homer"]]
+  end  
+  
   it "should should raise if malformed variables are used" do
     route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
     proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error
@@ -228,8 +236,8 @@ describe "Usher route recognition" do
     end
         
     it "should recognize the originals routes in the dup" do
-      route_set.recognize(build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
-      @r2.recognize(      build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
+      route_set.recognize(  build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
+      @r2.recognize(        build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
     end
 
     it "should not add routes added to the dup to the original" do
@@ -240,8 +248,8 @@ describe "Usher route recognition" do
     
     it "should not delete routes added to the dup to the original" do
       @r2.delete_route("/foo")
-      route_set.recognize(        build_request(:path => "/foo")).path.route.destination.should == {:foo => "foo"}
-      @r2.recognize(  build_request(:path => "/foo")).should == nil
+      route_set.recognize(  build_request(:path => "/foo")).path.route.destination.should == {:foo => "foo"}
+      @r2.recognize(        build_request(:path => "/foo")).should == nil
     end
     
     
