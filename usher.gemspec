@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.5.4"
+  s.version = "0.5.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Hull"]
-  s.date = %q{2009-08-28}
+  s.date = %q{2009-09-05}
   s.description = %q{A general purpose routing library}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
      "lib/usher/interface/rails2_2_interface/mapper.rb",
      "lib/usher/interface/rails2_3_interface.rb",
      "lib/usher/interface/rails3_interface.rb",
+     "lib/usher/interface/text_interface.rb",
      "lib/usher/node.rb",
      "lib/usher/route.rb",
      "lib/usher/route/path.rb",
@@ -44,6 +45,7 @@ Gem::Specification.new do |s|
      "lib/usher/util.rb",
      "lib/usher/util/generate.rb",
      "lib/usher/util/parser.rb",
+     "lib/usher/util/rack-mixins.rb",
      "rails/init.rb",
      "spec/private/email/recognize_spec.rb",
      "spec/private/generate_spec.rb",
