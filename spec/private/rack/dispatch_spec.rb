@@ -55,40 +55,40 @@ describe "Usher (for rack) route dispatching" do
     response = route_set.call_with_mock_request("/not-existing-url")
     response.status.should eql(404)
   end
-  
+
   describe "mounted rack instances" do
     before do
       @bad_app = mock("bad_app")
-      
+
       @usher2 = Usher::Interface.for(:rack)
       @usher2.add("/good" ).to(@app)
       @usher2.add("/bad"  ).match_partially!.to(@bad_app)
       @usher2.add("/some(/:foo)").to(@app)
-      
+
       route_set.add("/foo/:bar", :default_values => {:foo => "foo"}).match_partially!.to(@usher2)
       route_set.add("/foo", :default_values => {:controller => :foo}).to(@app)
     end
-    
+
     it "should match the route without nesting" do
       @app.should_receive(:call).once.with{ |e| e['usher.params'].should == {:controller => :foo}}
       route_set.call(Rack::MockRequest.env_for("/foo"))
     end
-    
+
     it "should route through the first route, and the second to the app" do
       @app.should_receive(:call).once.with{|e| e['usher.params'].should == {:bar => "bar", :foo => "foo"}}
       result = route_set.call(Rack::MockRequest.env_for("/foo/bar/good"))
     end
-    
+
     it "should go through to the bad app" do
       @bad_app.should_receive(:call).once.with{|e| e['usher.params'].should == {:bar => "some_bar", :foo => "foo"}}
       result = route_set.call(Rack::MockRequest.env_for("/foo/some_bar/bad"))
     end
-    
+
     it "should match optional routes paramters" do
       @app.should_receive(:call).once.with{|e| e['usher.params'].should == {:bar => "bar", :foo => "a_different_foo"}}
       route_set.call(Rack::MockRequest.env_for("/foo/bar/some/a_different_foo"))
     end
-    
+
     describe "SCRIPT_NAME & PATH_INFO" do
       it "should update the script name for a fully consumed route" do
         @app.should_receive(:call).once.with do |e|
@@ -97,48 +97,48 @@ describe "Usher (for rack) route dispatching" do
         end
         route_set.call(Rack::MockRequest.env_for("/foo"))
       end
-      
+
       it "should update the script name and path info for a partially consumed route" do
         @app.should_receive(:call).once.with do |e|
           e['SCRIPT_NAME'].should == "/partial"
           e['PATH_INFO'].should   == "/bar/baz"
         end
-        
+
         route_set.add("/partial").match_partially!.to(@app)
         route_set.call(Rack::MockRequest.env_for("/partial/bar/baz"))
       end
-      
+
       it "should consume the path through a mounted usher" do
         @bad_app.should_receive(:call).once.with do |e|
           e['SCRIPT_NAME'].should == "/foo/bar/bad"
           e['PATH_INFO'].should   == "/leftovers"
         end
-        
+
         route_set.call(Rack::MockRequest.env_for("/foo/bar/bad/leftovers"))
       end
-      
+
     end
-    
+
     describe "dupping" do
-      before do 
+      before do
         @app  = mock("app")
         @u1   = Usher::Interface.for(:rack)
         @u2   = Usher::Interface.for(:rack)
-        
+
         @u1.add("/one", :default_values => {:one => :one}).to(@app)
         @u1.add("/mount").match_partially!.to(@u2)
-        
+
         @u2.add("/app", :default_values => {:foo => :bar}).to(@app)
-        
+
       end
-      
+
       it "should allow me to dup the router" do
         @app.should_receive(:call).twice.with{|e| e['usher.params'].should == {:one => :one}}
         @u1.call(Rack::MockRequest.env_for("/one"))
         u1_dash = @u1.dup
         u1_dash.call(Rack::MockRequest.env_for("/one"))
       end
-      
+
       it "should allow me to dup the router and add a new route without polluting the original" do
         @app.should_receive(:call).with{|e| e['usher.params'].should == {:foo => :bar}}
         u1_dash = @u1.dup
@@ -147,27 +147,53 @@ describe "Usher (for rack) route dispatching" do
         @app.should_not_receive(:call)
         @u1.call(Rack::MockRequest.env_for("/foo"))
       end
-      
+
       it "should allow me to dup the router and nested routers should remain intact" do
         @app.should_receive(:call).with{|e| e['usher.params'].should == {:foo => :bar}}
         u1_dash = @u1.dup
         u1_dash.call(Rack::MockRequest.env_for("/mount/app"))
       end
-      
+
       it "should allow me to dup the router and add more routes" do
         @app.should_receive(:call).with{|e| e['usher.params'].should == {:another => :bar}}
-        
+
         u3 = Usher::Interface.for(:rack)
         u1_dash = @u1.dup
-        
+
         u3.add("/another_bar", :default_values => {:another => :bar}).to(@app)
         u1_dash.add("/some/mount").match_partially!.to(u3)
-        
+
         u1_dash.call(Rack::MockRequest.env_for("/some/mount/another_bar"))
-        
+
         @app.should_not_receive(:call)
         @u1.call(Rack::MockRequest.env_for("/some/mount/another_bar"))
       end
+    end
+  end
+  
+  describe "use as middlware" do
+    it "should allow me to set a default application to use" do
+      @app.should_receive(:call).with{|e| e['usher.params'].should == {:middle => :ware}}
+
+      u = Usher::Interface::RackInterface.new(@app)
+      u.add("/foo", :default_values => {:middle => :ware}).name(:foo)
+
+      u.call(Rack::MockRequest.env_for("/foo"))
+    end
+
+    it "should use the default application when no routes match" do
+      env = Rack::MockRequest.env_for("/not_a_route")
+      @app.should_receive(:call).with(env)
+      u = Usher::Interface::RackInterface.new(@app)
+      u.call(env)
+    end
+
+    it "should allow me to set the application after initialization" do
+      @app.should_receive(:call).with{|e| e['usher.params'].should == {:after => :stuff}}
+      u = Usher::Interface.for(:rack)
+      u.app = @app
+      u.add("/foo", :default_values => {:after => :stuff})
+      u.call(Rack::MockRequest.env_for("/foo"))
     end
   end
 end
