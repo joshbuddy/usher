@@ -197,10 +197,10 @@ describe "Usher route recognition" do
   
   it "should recognize a path with an optional compontnet" do
     route_set.add_route("/:name(/:surname)", :conditions => {:method => 'get'})
-    result = route_set.recognize(build_request({:method => 'get', :path => "/homer/simpson"}))
-    result.params.should == [[:name, "homer"],[:surname, "simpson"]]
     result = route_set.recognize(build_request({:method => 'get', :path => '/homer'}))
     result.params.should == [[:name, "homer"]]
+    result = route_set.recognize(build_request({:method => 'get', :path => "/homer/simpson"}))
+    result.params.should == [[:name, "homer"],[:surname, "simpson"]]
   end  
   
   it "should should raise if malformed variables are used" do
