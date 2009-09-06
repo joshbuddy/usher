@@ -62,8 +62,8 @@ class Usher
         determine_respondant(response).call(env)
       end
 
-      def generate(route, params = nil, options = nil)
-        @usher.generator.generate(route, params, options)
+      def generate(route, options = nil)
+        @router.generator.generate(route, options)
       end
 
       # Allows a hook to be placed for sub classes to make use of between matching
