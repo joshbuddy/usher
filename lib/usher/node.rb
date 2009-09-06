@@ -4,7 +4,11 @@ class Usher
 
   class Node
     
-    Response = Struct.new(:path, :params, :remaining_path, :matched_path)
+    class Response < Struct.new(:path, :params, :remaining_path, :matched_path)
+      def partial_match?
+        !remaining_path.nil?
+      end
+    end
     
     attr_reader :normal, :greedy, :request
     attr_accessor :terminates, :request_method_type, :parent, :value, :request_methods
