@@ -90,10 +90,10 @@ describe "Usher (for rack) route dispatching" do
     end
 
     describe "SCRIPT_NAME & PATH_INFO" do
-      it "should update the script name for a fully consumed route" do
+      it "shouldn't update the script name for a fully consumed route" do
         @app.should_receive(:call).once.with do |e|
-          e['SCRIPT_NAME'].should == "/foo"
-          e['PATH_INFO'].should   == ""
+          e['SCRIPT_NAME'].should == ""
+          e['PATH_INFO'].should   == "/foo"
         end
         route_set.call(Rack::MockRequest.env_for("/foo"))
       end

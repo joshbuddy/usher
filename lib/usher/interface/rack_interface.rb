@@ -75,10 +75,12 @@ class Usher
         params = response.path.route.default_values || {}
         response.params.each{|hk| params[hk.first] = hk.last}
         env['usher.params'].merge!(params)
-
+        
         # consume the path_info to the script_name response.remaining_path
-        env["SCRIPT_NAME"] << response.matched_path   || ""
-        env["PATH_INFO"] = response.remaining_path    || ""
+        if response.partial_match? # only consume if its a partial match
+          env["SCRIPT_NAME"] << response.matched_path   || ""
+          env["PATH_INFO"] = response.remaining_path    || ""
+        end
       end
 
       # Determines which application to respond with.

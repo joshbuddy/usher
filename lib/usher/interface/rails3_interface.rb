@@ -26,12 +26,13 @@ class Usher
         @configurations_files << file
       end
       
-      def reload!
+      def reload
         @usher.reset!
         @configurations_files.each do |c|
           Kernel.load(c)
         end
       end
+      alias_method :reload!, :reload
       
       def call(env)
         request = ActionDispatch::Request.new(env)
