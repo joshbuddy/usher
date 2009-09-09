@@ -223,6 +223,13 @@ describe "Usher route recognition" do
       route_set.recognize(build_request({:method => 'post', :path => '/foo/bar'})).should.nil?
     end
 
+    it "should not match partially when a route is not set as partially matched" do
+      route = route_set.add_route("/foo", :foo => :bar)
+      route_set.recognize(build_request(:path => "/foo")).path.route.should == route
+      route_set.recognize(build_request(:path => "/foo/bar")).should be_nil
+    end
+    
+
   end
 
   describe "dup safety" do
