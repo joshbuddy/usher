@@ -97,7 +97,7 @@ class Usher
 
       # Consume the path from path_info to script_name
       def consume_path!(env, response)
-        env["SCRIPT_NAME"] << response.matched_path   || ""
+        env["SCRIPT_NAME"] = (env["SCRIPT_NAME"] + response.matched_path)   || ""
         env["PATH_INFO"] = response.remaining_path    || ""
       end
     end

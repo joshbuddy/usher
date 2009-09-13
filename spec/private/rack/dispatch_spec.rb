@@ -117,6 +117,12 @@ describe "Usher (for rack) route dispatching" do
         route_set.call(Rack::MockRequest.env_for("/foo/bar/bad/leftovers"))
       end
 
+      it "should not modify SCRIPT_NAME in place since thin freezes it" do
+        @app.should_receive(:call).once
+        env = Rack::MockRequest.env_for("/foo/bar/good")
+        env["SCRIPT_NAME"] = "".freeze
+        route_set.call(env)
+      end
     end
 
     describe "dupping" do
