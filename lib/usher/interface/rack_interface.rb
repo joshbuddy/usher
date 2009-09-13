@@ -72,7 +72,7 @@ class Usher
       # @api plugin
       def after_match(env, response)
         env['usher.params'] ||= {}
-        params = response.path.route.default_values.dup || {}
+        params = (response.path.route.default_values && response.path.route.default_values.dup) || {}
         response.params.each{|hk| params[hk.first] = hk.last}
         env['usher.params'].merge!(params)
         
