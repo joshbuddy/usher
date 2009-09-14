@@ -71,10 +71,13 @@ class Usher
       #
       # @api plugin
       def after_match(env, response)
-        env['usher.params'] ||= {}
-        params = (response.path.route.default_values && response.path.route.default_values.dup) || {}
-        response.params.each{|hk| params[hk.first] = hk.last}
-        env['usher.params'].merge!(params)
+        params = response.path.route.default_values ?
+          response.path.route.default_values.merge(Hash[response.params]) :
+          Hash[response.params]
+        
+        env['usher.params'] ?
+          env['usher.params'].merge!(params) :
+          env['usher.params'] = params
         
         # consume the path_info to the script_name
         # response.remaining_path
@@ -89,10 +92,13 @@ class Usher
       #
       # @api private
       def determine_respondant(response)
-        return app if response.nil?
-        respondant = response.path.route.destination
-        respondant = app unless respondant.respond_to?(:call)
-        respondant
+        unless response
+          app
+        else
+          respondant = response.path.route.destination
+          respondant = app unless respondant.respond_to?(:call)
+          respondant
+        end
       end
 
       # Consume the path from path_info to script_name
