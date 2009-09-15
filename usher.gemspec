@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.5.5"
+  s.version = "0.5.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Hull"]
-  s.date = %q{2009-09-05}
+  s.date = %q{2009-09-15}
   s.description = %q{A general purpose routing library}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
@@ -53,6 +53,7 @@ Gem::Specification.new do |s|
      "spec/private/parser_spec.rb",
      "spec/private/path_spec.rb",
      "spec/private/rack/dispatch_spec.rb",
+     "spec/private/rack/generate_spec.rb",
      "spec/private/rails2_2/compat.rb",
      "spec/private/rails2_2/generate_spec.rb",
      "spec/private/rails2_2/path_spec.rb",
@@ -79,6 +80,7 @@ Gem::Specification.new do |s|
      "spec/private/parser_spec.rb",
      "spec/private/path_spec.rb",
      "spec/private/rack/dispatch_spec.rb",
+     "spec/private/rack/generate_spec.rb",
      "spec/private/rails2_2/compat.rb",
      "spec/private/rails2_2/generate_spec.rb",
      "spec/private/rails2_2/path_spec.rb",
