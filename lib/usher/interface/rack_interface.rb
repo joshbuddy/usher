@@ -23,6 +23,22 @@ class Usher
           @ins << @usher unless @ins.last == @usher
         end
 
+        def get(path, options = nil, &block)
+          self.map(path, options.merge!(:conditions => {:request_method => "GET"}), &block)
+        end
+
+        def post(path, options = nil, &block)
+          self.map(path, options.merge!(:conditions => {:request_method => "POST"}), &block)
+        end
+
+        def put(path, options = nil, &block)
+          self.map(path, options.merge!(:conditions => {:request_method => "PUT"}), &block)
+        end
+
+        def delete(path, options = nil, &block)
+          self.map(path, options.merge!(:conditions => {:request_method => "DELETE"}), &block)
+        end
+
       end
 
       def initialize(app = nil, &blk)
@@ -42,7 +58,30 @@ class Usher
 
       def add(path, options = nil)
         @router.add_route(path, options)
-       end
+      end
+
+      # shortcuts for adding routes for HTTP methods, for example:
+      # add("/url", :conditions => {:request_method => "POST"}})
+      # is the same as:
+      # post("/url")
+      #
+      # if you need more complex setup, use method add directly, for example:
+      # add("/url", :conditions => {:request_method => ["POST", "PUT"]}})
+      def get(path, options = {})
+        self.add(path, options.merge!(:conditions => {:request_method => "GET"}))
+      end
+
+      def post(path, options = {})
+        self.add(path, options.merge!(:conditions => {:request_method => "POST"}))
+      end
+
+      def put(path, options = {})
+        self.add(path, options.merge!(:conditions => {:request_method => "PUT"}))
+      end
+
+      def delete(path, options = {})
+        self.add(path, options.merge!(:conditions => {:request_method => "DELETE"}))
+      end
 
       def parent_route=(route)
         @router.parent_route = route
