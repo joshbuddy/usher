@@ -3,16 +3,7 @@ require 'rack'
 class Usher
   module Interface
     class RackInterface
-
-      attr_reader :router
-      attr_accessor :app
-
-      DEFAULT_APPLICATION = lambda do |env|
-        Rack::Response.new("No route found", 404).finish
-      end
-
       class Builder < Rack::Builder
-
         def initialize(&block)
           @usher = Usher::Interface::RackInterface.new
           super
@@ -38,11 +29,13 @@ class Usher
         def delete(path, options = nil, &block)
           self.map(path, options.merge!(:conditions => {:request_method => "DELETE"}), &block)
         end
-
       end
 
+      attr_reader :router
+      attr_accessor :app
+
       def initialize(app = nil, &blk)
-        @app = app || DEFAULT_APPLICATION
+        @app = app || lambda { |env| Rack::Response.new("No route found", 404).finish }
         @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
         instance_eval(&blk) if blk
       end
@@ -58,6 +51,12 @@ class Usher
 
       def add(path, options = nil)
         @router.add_route(path, options)
+      end
+
+      # default { |env| ... }
+      # default DefaultApp
+      def default(app = nil, &block)
+        @app = app ? app : block
       end
 
       # shortcuts for adding routes for HTTP methods, for example:
