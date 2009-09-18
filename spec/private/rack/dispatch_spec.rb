@@ -1,7 +1,7 @@
-require 'lib/usher'
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_helper"))
+require "usher"
 require 'rack'
 
-require File.join(File.dirname(__FILE__), "..", "..", "spec_helper")
 route_set = Usher::Interface.for(:rack)
 route_set.extend(CallWithMockRequestMixin)
 

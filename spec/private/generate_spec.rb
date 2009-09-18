@@ -1,4 +1,5 @@
-require 'lib/usher'
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "spec_helper"))
+require "usher"
 require 'rack'
 
 describe "Usher URL generation" do

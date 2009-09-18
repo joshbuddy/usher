@@ -1,5 +1,6 @@
-require File.join(File.dirname(__FILE__), 'compat')
-require 'lib/usher'
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_helper"))
+require File.expand_path(File.join(File.dirname(__FILE__), 'compat'))
+require "usher"
 require 'action_controller'
 
 route_set = Usher::Interface.for(:rails2_3)
