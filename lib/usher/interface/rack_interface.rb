@@ -95,8 +95,9 @@ class Usher
       end
 
       def call(env)
-        response = @router.recognize(request = Rack::Request.new(env), request.path_info)
-        after_match(env, response) if response
+        request = Rack::Request.new(env)
+        response = @router.recognize(request, request.path_info)
+        after_match(request, response) if response
         determine_respondant(response).call(env)
       end
 
@@ -108,18 +109,18 @@ class Usher
       # and calling the application
       #
       # @api plugin
-      def after_match(env, response)
+      def after_match(request, response)
         params = response.path.route.default_values ?
-          response.path.route.default_values.merge(Hash[response.params]) :
-          Hash[response.params]
+          response.path.route.default_values.merge(Hash[*response.params.flatten]) :
+          Hash[*response.params.flatten]
         
-        env['usher.params'] ?
-          env['usher.params'].merge!(params) :
-          env['usher.params'] = params
+        request.env['usher.params'] ?
+          request.env['usher.params'].merge!(params) :
+          (request.env['usher.params'] = params)
         
         # consume the path_info to the script_name
         # response.remaining_path
-        consume_path!(env, response) if response.partial_match?
+        consume_path!(request, response) if response.partial_match?
       end
 
       # Determines which application to respond with.
@@ -140,9 +141,9 @@ class Usher
       end
 
       # Consume the path from path_info to script_name
-      def consume_path!(env, response)
-        env["SCRIPT_NAME"] = (env["SCRIPT_NAME"] + response.matched_path)   || ""
-        env["PATH_INFO"] = response.remaining_path    || ""
+      def consume_path!(request, response)
+        request.env["SCRIPT_NAME"] = (request.env["SCRIPT_NAME"] + response.matched_path)   || ""
+        request.env["PATH_INFO"] = response.remaining_path    || ""
       end
     end
   end
