@@ -1,6 +1,6 @@
 class Usher
   module Interface
-    class Rails2_3Interface
+    class Rails23Interface
       
       attr_reader :configuration_files
       

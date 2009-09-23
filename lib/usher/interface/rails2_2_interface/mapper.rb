@@ -1,6 +1,6 @@
 class Usher
   module Interface
-    class Rails2_2Interface
+    class Rails22Interface
       
       class Mapper #:doc:
         def initialize(set) #:nodoc:

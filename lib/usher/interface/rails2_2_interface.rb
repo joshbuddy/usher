@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), 'rails2_2_interface', 'mapper')
 
 class Usher
   module Interface
-    class Rails2_2Interface
+    class Rails22Interface
       
       attr_reader :usher
       attr_accessor :configuration_file

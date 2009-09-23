@@ -57,7 +57,7 @@ class Usher
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     def to(options = nil, &block)
-      raise "cannot set destintaion as block and argument" if block_given? && options
+      raise "cannot set destination as block and argument" if block_given? && options
       @destination = if block_given?
         block
       else
