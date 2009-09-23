@@ -22,14 +22,13 @@ describe "Usher route adding" do
   it "should add every kind of optional route possible" do
     route_set.add_route('/a/b(/c)(/d(/e))')
     route_set.routes.first.paths.collect{|a| a.parts }.should == [
-      ['/', "a", '/', "b"],
-      ['/', "a", '/', "b", '/', "c", '/', "d"], 
-      ['/', "a", '/', "b", '/', "d", '/', "e"], 
-      ['/', "a", '/', "b", '/', "c"],
-      ['/', "a", '/', "b", '/', "d"],
-      ['/', "a", '/', "b", '/', "c", '/', "d", '/', "e"]
+      ["/", "a", "/", "b"],
+      ["/", "a", "/", "b", "/", "c"],
+      ["/", "a", "/", "b", "/", "d"],
+      ["/", "a", "/", "b", "/", "c", "/", "d"],
+      ["/", "a", "/", "b", "/", "d", "/", "e"],
+      ["/", "a", "/", "b", "/", "c", "/", "d", "/", "e"]
     ]
-    
   end
 
   it "should allow named routes to be added" do

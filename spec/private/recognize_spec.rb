@@ -208,6 +208,14 @@ describe "Usher route recognition" do
     proc {route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error
   end
   
+  it "should recognize multiple optional parts" do
+    target_route = route_set.add_route('/test(/this)(/too)')
+    route_set.recognize_path('/test').path.route.should == target_route
+    route_set.recognize_path('/test/this').path.route.should == target_route
+    route_set.recognize_path('/test/too').path.route.should == target_route
+    route_set.recognize_path('/test/this/too').path.route.should == target_route
+  end
+  
   describe "partial recognition" do
     it "should partially match a route" do
       route = route_set.add_route("/foo")

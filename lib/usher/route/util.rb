@@ -22,7 +22,7 @@ class Usher
         (lval.size * rval.size).times do |index|
           val = []
           val.push(*lval[index % lval.size])
-          val.push(*rval[index % rval.size])
+          val.push(*rval[index / lval.size])
           product << val
         end
         lval.replace(product)
