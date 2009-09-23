@@ -9,7 +9,7 @@ require File.join(File.dirname(__FILE__), 'usher', 'util')
 class Usher
   attr_reader :root, :named_routes, :routes, :splitter,
               :delimiters, :delimiter_chars, :delimiters_regex,
-              :parent_route, :generator
+              :parent_route, :generator, :grapher
 
   # Returns whether the route set is empty
   #
