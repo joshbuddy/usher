@@ -15,6 +15,7 @@ begin
     s.add_dependency 'fuzzyhash', '>=0.0.6'
     s.rubyforge_project = 'joshbuddy-usher'
   end
+  Jeweler::GemcutterTasks.new
   Jeweler::RubyforgeTasks.new do |rubyforge|
     rubyforge.doc_task = "rdoc"
     rubyforge.remote_doc_path = ''
