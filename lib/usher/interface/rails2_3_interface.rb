@@ -72,7 +72,7 @@ class Usher
       end
       
       def reset!
-        @router = Usher.new(:generator => Usher::Util::Generators::URL.new)
+        @router = Usher.new(:generator => Usher::Util::Generators::URL.new, :request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains])
         @configuration_files = []
         @module ||= Module.new
         @controller_route_added = false

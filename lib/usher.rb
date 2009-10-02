@@ -53,7 +53,7 @@ class Usher
     self.generator = options && options.delete(:generator)
     self.delimiters = options && options.delete(:delimiters) || ['/', '.']
     self.valid_regex = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
-    self.request_methods = options && options.delete(:request_methods) || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
+    self.request_methods = options && options.delete(:request_methods)
     reset!
   end
 

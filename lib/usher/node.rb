@@ -173,7 +173,7 @@ class Usher
     
     def set_path_with_destination(path, destination = path)
       node = path.parts.inject(self){ |node, key| process_path_part(node, key) }
-      node = process_request_parts(node, request_methods_for_path(path))
+      node = process_request_parts(node, request_methods_for_path(path)) if request_methods
 
       while node.request_method_type
         node = (node.request[nil] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)))

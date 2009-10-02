@@ -12,7 +12,7 @@ class Usher
       end
       
       def reset!
-        @usher ||= Usher.new(:generator => Usher::Util::Generators::URL.new)
+        @usher ||= Usher.new(:generator => Usher::Util::Generators::URL.new, :request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains])
         @module ||= Module.new
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
