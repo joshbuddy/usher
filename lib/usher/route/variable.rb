@@ -2,7 +2,7 @@ class Usher
   class Route
     class Variable
       attr_reader :type, :name, :validator, :regex_matcher
-      attr_accessor :look_ahead, :default_value
+      attr_accessor :look_ahead, :default_value, :look_ahead_priority
       
       def initialize(name, regex_matcher = nil, validator = nil)
         @name = name.to_s.to_sym

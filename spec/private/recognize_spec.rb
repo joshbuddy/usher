@@ -194,6 +194,19 @@ describe "Usher route recognition" do
     @route_set.recognize(build_request({:method => 'get', :path => '/testing/asd.qwe/testing2/poi.zxc/oiu.asd'})).params.should == [[:id, 'asd.qwe'], [:id2, 'poi.zxc'], [:id3, 'oiu.asd']]
   end
   
+  it "should pick the path when there are mutliple conflicting delimiters" do
+    @route_set.add_route('/:id1(.:format)')
+    @route_set.add_route('/:id1/one(.:format)')
+    @route_set.add_route('/:id1/one/:id2(.:format)')
+    
+    @route_set.recognize(build_request({:path => '/id1'})).params.should == [[:id1, 'id1']]
+    @route_set.recognize(build_request({:path => '/id1.html'})).params.should == [[:id1, 'id1'], [:format, 'html']]
+    @route_set.recognize(build_request({:path => '/id1/one'})).params.should == [[:id1, 'id1']]
+    @route_set.recognize(build_request({:path => '/id1/one.html'})).params.should == [[:id1, 'id1'], [:format, 'html']]
+    @route_set.recognize(build_request({:path => '/id1/one/id2'})).params.should == [[:id1, 'id1'], [:id2, 'id2']]
+    @route_set.recognize(build_request({:path => '/id1/one/id2.html'})).params.should == [[:id1, 'id1'], [:id2, 'id2'], [:format, 'html']]
+  end
+  
   it "should recognize a path with an optional compontnet" do
     @route_set.add_route("/:name(/:surname)", :conditions => {:method => 'get'})
     result = @route_set.recognize(build_request({:method => 'get', :path => '/homer'}))
