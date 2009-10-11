@@ -10,19 +10,19 @@ def build_request(opts)
 end
 
 describe "Usher route recognition" do
-  
+
   before(:each) do
     @route_set = Usher.new(:request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains])
   end
-  
+
   describe 'request conditions' do
-  
+
     it "should recognize a specific domain name" do
       target_route = @route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http'})
       @route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https'})
       @route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http'})).path.route.should == target_route
     end
-  
+
     it "should recognize a regex domain name" do
       target_route = @route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:domain => /^admin.*$/})
       @route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:domain => 'www.host.com'})
@@ -40,7 +40,7 @@ describe "Usher route recognition" do
       @route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => 'MSIE 6.0'})).path.route.should == target_route_https_msie
       @route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'https', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_https_admin
       @route_set.recognize(build_request({:method => 'put', :path => '/sample', :protocol => 'wacky', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_http_admin_generic
-      
+
     end
 
     it "should correctly fix that tree if conditionals are used later" do
@@ -68,44 +68,44 @@ describe "Usher route recognition" do
       www_product_show_route.should == @route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :subdomains => ['www'], :user_agent => false})).path.route
     end
   end
-  
+
   it "should recognize a format-style variable" do
     target_route = @route_set.add_route('/sample.:format', :controller => 'sample', :action => 'action')
     @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:format , 'html']], nil, "/sample.html")
   end
-  
+
   it "should recognize a glob-style variable" do
     target_route = @route_set.add_route('/sample/*format', :controller => 'sample', :action => 'action')
     @route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple'})).params.should == [[:format, ['html', 'json', 'apple']]]
   end
-  
+
   it "should recgonize only a glob-style variable" do
     target_route = @route_set.add_route('/*format')
     response = @route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple'}))
     response.params.should == [[:format, ['sample', 'html', 'json', 'apple']]]
     response.path.route.should == target_route
   end
-  
+
   it "should recgonize a regex static part" do
     target_route = @route_set.add_route('/test/part/{one|two}')
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/one'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/two'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/three'})).should == nil
   end
-  
+
   it "shouldn't accept a nil variable" do
     target_route = @route_set.add_route('/:one')
     @route_set.recognize(build_request({:method => 'get', :path => '/one'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/'})).should == nil
   end
-  
+
   it "should recgonize a regex static part containing {}'s" do
     target_route = @route_set.add_route('/test/part/{^o{2,3}$}')
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/oo'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/ooo'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/oooo'})).should == nil
   end
-  
+
   it "should recgonize a regex single variable" do
     target_route = @route_set.add_route('/test/part/{:test,hello|again}')
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello'})).path.route.should == target_route
@@ -114,20 +114,20 @@ describe "Usher route recognition" do
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/again'})).params.should == [[:test, 'again']]
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/world'})).should == nil
   end
-  
+
   it "should recgonize a regex glob variable" do
     target_route = @route_set.add_route('/test/part/{*test,^(hello|again|\d+)$}')
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again'})).params.should == [[:test, ['hello', 'again', '123', 'hello', 'again']]]
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/agaim/123/hello/again'})).should == nil
   end
-  
+
   it "should recgonize a regex glob variable terminated by a static part" do
     target_route = @route_set.add_route('/test/part/{*test,^(hello|again|\d+)$}/onemore')
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again/onemore'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again/onemore'})).params.should == [[:test, ['hello', 'again', '123', 'hello', 'again']]]
   end
-  
+
   it "should recgonize a regex glob variable terminated by a single regex variable" do
     target_route = @route_set.add_route('/test/part/{*test,^(hello|again|\d+)$}/{:party,onemore}')
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/hello/again/123/hello/again/onemore'})).path.route.should == target_route
@@ -160,24 +160,24 @@ describe "Usher route recognition" do
     response.params.should == [[:format, ['sample', 'html']], [:onemore, ['apple']]]
     response.path.route.should == target_route
   end
-  
+
   it "should recgonize only a glob-style variable with a condition" do
     target_route = @route_set.add_route('/*format', :conditions => {:domain => 'test-domain'})
     response = @route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple', :domain => 'test-domain'}))
     response.params.should == [[:format, ['sample', 'html', 'json', 'apple']]]
     response.path.route.should == target_route
   end
-  
+
   it "should recognize a format-style literal" do
     target_route = @route_set.add_route('/:action.html', :controller => 'sample', :action => 'action')
     @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample']], nil, "/sample.html")
   end
-  
+
   it "should recognize a format-style variable along side another variable" do
     target_route = @route_set.add_route('/:action.:format', :controller => 'sample', :action => 'action')
     @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample'], [:format, 'html']], nil, '/sample.html')
   end
-  
+
   it "should use a requirement (proc) on incoming variables" do
     @route_set.add_route('/:controller/:action/:id', :id => proc{|v| Integer(v)})
     proc {@route_set.recognize(build_request({:method => 'get', :path => '/products/show/123', :domain => 'admin.host.com'}))}.should_not raise_error(Usher::ValidationException)
@@ -188,17 +188,17 @@ describe "Usher route recognition" do
     route = @route_set.add_route('/!asd,qwe/hjk$qwe/:id')
     @route_set.recognize(build_request({:method => 'get', :path => '/!asd,qwe/hjk$qwe/09AZaz$-_+!*\'', :domain => 'admin.host.com'})).params.rassoc('09AZaz$-_+!*\'').first.should == :id
   end
-  
+
   it "shouldn't care about non-primary delimiters in the path" do
     route = @route_set.add_route('/testing/:id/testing2/:id2/:id3')
     @route_set.recognize(build_request({:method => 'get', :path => '/testing/asd.qwe/testing2/poi.zxc/oiu.asd'})).params.should == [[:id, 'asd.qwe'], [:id2, 'poi.zxc'], [:id3, 'oiu.asd']]
   end
-  
+
   it "should pick the path when there are mutliple conflicting delimiters" do
     @route_set.add_route('/:id1(.:format)')
     @route_set.add_route('/:id1/one(.:format)')
     @route_set.add_route('/:id1/one/:id2(.:format)')
-    
+
     @route_set.recognize(build_request({:path => '/id1'})).params.should == [[:id1, 'id1']]
     @route_set.recognize(build_request({:path => '/id1.html'})).params.should == [[:id1, 'id1'], [:format, 'html']]
     @route_set.recognize(build_request({:path => '/id1/one'})).params.should == [[:id1, 'id1']]
@@ -206,20 +206,20 @@ describe "Usher route recognition" do
     @route_set.recognize(build_request({:path => '/id1/one/id2'})).params.should == [[:id1, 'id1'], [:id2, 'id2']]
     @route_set.recognize(build_request({:path => '/id1/one/id2.html'})).params.should == [[:id1, 'id1'], [:id2, 'id2'], [:format, 'html']]
   end
-  
+
   it "should recognize a path with an optional compontnet" do
     @route_set.add_route("/:name(/:surname)", :conditions => {:method => 'get'})
     result = @route_set.recognize(build_request({:method => 'get', :path => '/homer'}))
     result.params.should == [[:name, "homer"]]
     result = @route_set.recognize(build_request({:method => 'get', :path => "/homer/simpson"}))
     result.params.should == [[:name, "homer"],[:surname, "simpson"]]
-  end  
-  
+  end
+
   it "should should raise if malformed variables are used" do
     @route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
     proc {@route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error
   end
-  
+
   it "should recognize multiple optional parts" do
     target_route = @route_set.add_route('/test(/this)(/too)')
     @route_set.recognize_path('/test').path.route.should == target_route
@@ -227,13 +227,20 @@ describe "Usher route recognition" do
     @route_set.recognize_path('/test/too').path.route.should == target_route
     @route_set.recognize_path('/test/this/too').path.route.should == target_route
   end
-  
+
   it "should match between two routes where one is more specific from request conditions" do
     route_with_post = @route_set.add_route("/foo", :conditions => {:method => 'post'})
     route = @route_set.add_route("/foo")
-    
+
     @route_set.recognize(build_request({:method => 'post', :path => '/foo'})).path.route.should == route_with_post
     @route_set.recognize(build_request({:method => 'get', :path => '/foo'})).path.route.should == route
+  end
+
+  it "should only match the specified path of the route when a condition is specified" do
+    @route_set.add_route("/", :conditions => {:method => "get"})
+    @route_set.add_route("/foo")
+
+    @route_set.recognize(build_request(:method => "get", :path => "/asdf")).should be_nil
   end
 
   describe "partial recognition" do
@@ -256,20 +263,19 @@ describe "Usher route recognition" do
       @route_set.recognize(build_request(:path => "/foo")).path.route.should == route
       @route_set.recognize(build_request(:path => "/foo/bar")).should be_nil
     end
-    
 
   end
 
   describe "dup safety" do
-    before do 
+    before do
       @route_set.add_route("/foo", :foo => "foo")
       @r2 = @route_set.dup
     end
-    
+
     it "should provide a different object" do
       @route_set.should_not eql(@r2)
     end
-        
+
     it "should recognize the originals routes in the dup" do
       @route_set.recognize(  build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
       @r2.recognize(        build_request(:path => "/foo")).path.route.destination.should == {:foo =>"foo"}
@@ -280,23 +286,23 @@ describe "Usher route recognition" do
       @r2.recognize(        build_request(:path => "/bar")).path.route.destination.should == {:bar => "bar"}
       @route_set.recognize(  build_request(:path => "/bar")).should == nil
     end
-    
+
     it "should not delete routes added to the dup to the original" do
       @r2.delete_route("/foo")
       @route_set.recognize(  build_request(:path => "/foo")).path.route.destination.should == {:foo => "foo"}
       @r2.recognize(        build_request(:path => "/foo")).should == nil
     end
-    
-    
+
+
     it "should safely dup with nested ushers" do
       r1 = Usher.new
       r2 = Usher.new
       r3 = Usher.new
-      
+
       r1.add_route("/mounted"           ).match_partially!.to(r2)
       r2.add_route("/inner"             ).match_partially!.to(r3)
       r3.add_route("/baz", :baz => :baz )
-      
+
       r1.recognize(build_request(:path => "/mounted/inner")).path.route.destination.should == r2
       r4 = r1.dup
       r4.recognize(build_request(:path => "/mounted/inner")).path.route.destination.should == r2
@@ -304,6 +310,6 @@ describe "Usher route recognition" do
       r4.recognize(build_request(:path => "/r3")).path.route.destination.should == r3
       r1.recognize(build_request(:path => "/r3")).should be_nil
     end
-    
+
   end
 end

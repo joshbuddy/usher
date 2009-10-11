@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Hull"]
-  s.date = %q{2009-10-09}
+  s.date = %q{2009-10-11}
   s.description = %q{A general purpose routing library}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
@@ -44,7 +44,6 @@ Gem::Specification.new do |s|
      "lib/usher/splitter.rb",
      "lib/usher/util.rb",
      "lib/usher/util/generate.rb",
-     "lib/usher/util/graph.rb",
      "lib/usher/util/parser.rb",
      "lib/usher/util/rack-mixins.rb",
      "rails/init.rb",
