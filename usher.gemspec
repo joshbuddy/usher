@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.5.8"
+  s.version = "0.5.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Hull"]
@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
      "lib/usher/splitter.rb",
      "lib/usher/util.rb",
      "lib/usher/util/generate.rb",
+     "lib/usher/util/graph.rb",
      "lib/usher/util/parser.rb",
      "lib/usher/util/rack-mixins.rb",
      "rails/init.rb",
