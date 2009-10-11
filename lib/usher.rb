@@ -283,6 +283,10 @@ class Usher
       end
     end
 
+    if conditions
+      conditions.keys.all?{|k| request_methods.include?(k)} or raise
+    end
+
     route = parser.generate_route(path, conditions, requirements, default_values, generate_with)
     route.to(options) if options && !options.empty?
     route

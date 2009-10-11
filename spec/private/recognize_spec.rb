@@ -93,6 +93,13 @@ describe "Usher route recognition" do
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/three'})).should == nil
   end
 
+  it "should recgonize a two identical regex static parts distinguished by request methods" do
+    get_route = @route_set.add_route('/{:val,test}', :conditions => {:method => 'get'})
+    post_route = @route_set.add_route('/{:val,test}', :conditions => {:method => 'post'})
+    @route_set.recognize(build_request({:method => 'get', :path => '/test'})).path.route.should == get_route
+    @route_set.recognize(build_request({:method => 'post', :path => '/test'})).path.route.should == post_route
+  end
+
   it "shouldn't accept a nil variable" do
     target_route = @route_set.add_route('/:one')
     @route_set.recognize(build_request({:method => 'get', :path => '/one'})).path.route.should == target_route

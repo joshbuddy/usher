@@ -12,7 +12,7 @@ begin
     s.homepage = "http://github.com/joshbuddy/usher"
     s.authors = ["Joshua Hull"]
     s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
-    s.add_dependency 'fuzzyhash', '>=0.0.6'
+    s.add_dependency 'fuzzyhash', '>=0.0.9'
     s.rubyforge_project = 'joshbuddy-usher'
   end
   Jeweler::GemcutterTasks.new
