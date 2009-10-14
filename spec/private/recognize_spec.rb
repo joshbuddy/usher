@@ -17,6 +17,11 @@ describe "Usher route recognition" do
 
   describe 'request conditions' do
 
+    it "should ignore an unrecognized route" do
+      target_route = @route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http'}).unrecognizable!
+      @route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http'})).should be_nil
+    end
+
     it "should recognize a specific domain name" do
       target_route = @route_set.add_route('/sample', :controller => 'sample', :action => 'action', :conditions => {:protocol => 'http'})
       @route_set.add_route('/sample', :controller => 'sample', :action => 'action2', :conditions => {:protocol => 'https'})
@@ -94,10 +99,10 @@ describe "Usher route recognition" do
   end
 
   it "should recgonize a two identical regex static parts distinguished by request methods" do
-    get_route = @route_set.add_route('/{:val,test}', :conditions => {:method => 'get'})
-    post_route = @route_set.add_route('/{:val,test}', :conditions => {:method => 'post'})
-    @route_set.recognize(build_request({:method => 'get', :path => '/test'})).path.route.should == get_route
-    @route_set.recognize(build_request({:method => 'post', :path => '/test'})).path.route.should == post_route
+    get_route = @route_set.add_route('/test1/{:val,test}', :conditions => {:method => 'get'})
+    post_route = @route_set.add_route('/test1/{:val,test}', :conditions => {:method => 'post'})
+    @route_set.recognize(build_request({:method => 'get', :path => '/test1/test'})).path.route.should == get_route
+    @route_set.recognize(build_request({:method => 'post', :path => '/test1/test'})).path.route.should == post_route
   end
 
   it "shouldn't accept a nil variable" do

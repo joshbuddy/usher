@@ -61,7 +61,7 @@ class Usher
     end
 
     def terminates?
-      @terminates
+      @terminates && @terminates.route.recognizable?
     end
 
     def pp

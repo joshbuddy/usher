@@ -5,16 +5,15 @@ require File.join(File.dirname(__FILE__), 'route', 'request_method')
 
 class Usher
   class Route
-    attr_reader   :paths, :requirements, :conditions,
-                  :destination, :named, :generate_with,
-                  :default_values, :match_partially
-    attr_accessor :parent_route, :router
+    attr_reader   :paths, :requirements, :conditions, :named, :generate_with, :default_values, :match_partially, :destination
+    attr_accessor :parent_route, :router, :recognizable
 
     GenerateWith = Struct.new(:scheme, :port, :host)
 
     def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially)
-      @paths = parsed_paths.collect {|path| Path.new(self, path)}
       @router, @requirements, @conditions, @default_values, @match_partially = router, requirements, conditions, default_values, match_partially
+      @recognizable = true
+      @paths = parsed_paths.collect {|path| Path.new(self, path)}
       @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
     end
 
@@ -25,7 +24,21 @@ class Usher
       end
       @grapher
     end
+    
+    def unrecognizable!
+      self.recognizable = false
+      self
+    end
 
+    def recognizable!
+      self.recognizable = true
+      self
+    end
+
+    def recognizable?
+      self.recognizable
+    end
+    
     def dup
       result = super
       result.instance_eval do
