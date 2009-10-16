@@ -73,4 +73,8 @@ describe "Usher route tokenizing" do
     parts[1].should == parts[3]
   end
   
+  it "should let me escape reserved characters" do
+    Usher.new.parser.parse_and_expand('/my\/thing/is\*lovingyou').should == [["/", "my/thing", "/", "is*lovingyou"]]
+  end
+  
 end

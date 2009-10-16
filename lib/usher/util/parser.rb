@@ -82,8 +82,18 @@ class Usher
           parts = Usher::Route::Util::Group.new(:all, nil)
           ss = StringScanner.new(path)
           current_group = parts
+          part = nil
           while !ss.eos?
-            part = ss.scan(@split_regex)
+            part ?
+              (part << ss.scan(@split_regex)) :
+              (part = ss.scan(@split_regex))
+
+            if !ss.eos? && ss.peek(1) == '\\'
+              ss.getch
+              part << ss.getch
+              redo
+            end
+
             case part[0]
             when ?*
               var_name = part[1, part.size - 1].to_sym
@@ -140,6 +150,7 @@ class Usher
             else
               current_group << part
             end
+            part = nil
           end unless !path || path.empty?
           parts
         end
