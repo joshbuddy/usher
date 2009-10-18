@@ -1,22 +1,40 @@
-require 'strscan'
-
 class Usher
   class Splitter
-    
-    def self.for_delimiters(router, valid_regex)
-      SplitterInstance.new(Regexp.new("[#{router.delimiters.collect{|d| Regexp.quote(d)}.join}]|[^#{router.delimiters.collect{|d| Regexp.quote(d)}.join}]+"))
+
+    def self.for_delimiters(delimiters)      
+      SplitterInstance.new(delimiters)
     end
 
     class SplitterInstance
     
-      def initialize(url_split_regex)
-        @url_split_regex = url_split_regex
+      def initialize(delimiters)
+        @delimiters = delimiters
       end
-      
+
       def url_split(path)
-        path.scan(@url_split_regex)
+        scanner = StringScanner.new(path)
+        result = []
+        while ! scanner.eos?
+          result << scanner.scan(delimiters_regexp)
+          result << scanner.scan_before(delimiters_regexp) unless scanner.eos?
+        end
+        result.compact
       end
-    end
-    
+
+      alias split url_split
+
+    protected
+
+      def delimiters_regexp
+        if @delimiters_regexp.nil?
+          # TODO: extract a class (Usher::Delimiters ?) which will handle all the operations with delimiters, including regexp generation
+          tokens = @delimiters.collect{|d| Regexp.quote(d)} + ['$']
+          @delimiters_regexp = Regexp.new(tokens * '|')
+        end
+        
+        @delimiters_regexp
+      end
+
+    end    
   end
 end

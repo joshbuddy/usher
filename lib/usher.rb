@@ -266,7 +266,7 @@ class Usher
 
   def valid_regex=(valid_regex)
     @valid_regex = valid_regex
-    @splitter = Splitter.for_delimiters(self, @valid_regex)
+    @splitter = Splitter.for_delimiters(self.delimiters)
     @valid_regex
   end
 
