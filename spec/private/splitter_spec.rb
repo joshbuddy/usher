@@ -25,4 +25,10 @@ describe Usher::Splitter, "#split" do
       Usher::Splitter.for_delimiters(['.', '/']).split('one/two.three/').should == ['one', '/', 'two', '.', 'three', '/']
     end
   end
+
+  describe "when delimiters are consecutive" do
+    it "should split correctly" do
+      Usher::Splitter.for_delimiters(['/', '%21']).split('/cheese/%21parmesan').should == ['/', 'cheese', '/', '%21', 'parmesan']
+    end
+  end
 end

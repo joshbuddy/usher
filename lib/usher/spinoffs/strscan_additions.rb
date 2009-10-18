@@ -17,10 +17,15 @@ class StringScanner
   #
   def scan_before(pattern)
     return nil unless self.exist?(pattern)
+
     pattern_size = self.matched_size
     result = self.scan_until(pattern)
-    pattern_size.times { result.chop! }
+
     self.pos = self.pos - pattern_size
+    (result.length == pattern_size) ?
+      (result = '') :
+      (result = result[0..(result.length - pattern_size - 1)])    
+
     result
   end
 end

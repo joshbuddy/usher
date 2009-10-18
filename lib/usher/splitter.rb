@@ -16,7 +16,8 @@ class Usher
         result = []
         while ! scanner.eos?
           result << scanner.scan(delimiters_regexp)
-          result << scanner.scan_before(delimiters_regexp) unless scanner.eos?
+          part = scanner.scan_before(delimiters_regexp)
+          result << part unless part.empty?
         end
         result.compact
       end
