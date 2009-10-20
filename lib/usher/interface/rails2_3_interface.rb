@@ -71,16 +71,19 @@ class Usher
         "#{request.path_parameters[:controller].camelize}Controller".constantize
       end
       
-      def reset!
-        @router = Usher.new(:generator => Usher::Util::Generators::URL.new, :request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains])
+      def reset!(options={})
+        options[:generator] = options[:generator] || Usher::Util::Generators::URL.new
+        options[:request_methods] = options[:request_methods] || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
+                
+        @router = Usher.new(options)
         @configuration_files = []
         @module ||= Module.new
         @controller_route_added = false
         @controller_action_route_added = false
       end
       
-      def draw
-        reset!
+      def draw(options={})
+        reset!(options)
         yield ActionController::Routing::RouteSet::Mapper.new(self)
         install_helpers
       end
