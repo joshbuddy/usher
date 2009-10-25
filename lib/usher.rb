@@ -6,6 +6,7 @@ require File.join(File.dirname(__FILE__), 'usher', 'splitter')
 require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 require File.join(File.dirname(__FILE__), 'usher', 'util')
 require File.join(File.dirname(__FILE__), 'usher', 'spinoffs', 'strscan_additions')
+require File.join(File.dirname(__FILE__), 'usher', 'delimiters')
 
 class Usher
   attr_reader :root, :named_routes, :routes, :splitter,
@@ -52,7 +53,8 @@ class Usher
   # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
     self.generator       = options && options.delete(:generator)
-    self.delimiters      = options && options.delete(:delimiters) || ['/', '.']
+    delimiters_array     = options && options.delete(:delimiters) || ['/', '.']
+    self.delimiters      = Delimiters.new(delimiters_array)
     self.valid_regex     = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
     self.request_methods = options && options.delete(:request_methods)
     reset!
