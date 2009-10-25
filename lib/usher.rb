@@ -50,11 +50,11 @@ class Usher
   #
   # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
   # Array of methods called against the request object for the purposes of matching route requirements.
-  def initialize(options = {})
-    self.generator = options.delete(:generator)
-    self.delimiters = options.delete(:delimiters) || ['/', '.']
-    self.valid_regex = options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
-    self.request_methods = options.delete(:request_methods)
+  def initialize(options = nil)
+    self.generator       = options && options.delete(:generator)
+    self.delimiters      = options && options.delete(:delimiters) || ['/', '.']
+    self.valid_regex     = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
+    self.request_methods = options && options.delete(:request_methods)
     reset!
   end
 
