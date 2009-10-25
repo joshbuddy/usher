@@ -5,6 +5,7 @@ require File.join(File.dirname(__FILE__), 'usher', 'interface')
 require File.join(File.dirname(__FILE__), 'usher', 'splitter')
 require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
 require File.join(File.dirname(__FILE__), 'usher', 'util')
+require File.join(File.dirname(__FILE__), 'usher', 'spinoffs', 'strscan_additions')
 
 class Usher
   attr_reader :root, :named_routes, :routes, :splitter,
@@ -265,7 +266,7 @@ class Usher
 
   def valid_regex=(valid_regex)
     @valid_regex = valid_regex
-    @splitter = Splitter.for_delimiters(self, @valid_regex)
+    @splitter = Splitter.for_delimiters(self.delimiters)
     @valid_regex
   end
 

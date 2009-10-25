@@ -23,6 +23,10 @@ describe "Usher route tokenizing" do
   it "should split on ' ' delimited routes for more complex routes as well" do
     Usher.new(:delimiters => [' '], :valid_regex => '[0-9A-Za-z\$\-_\+!\*\',]+').parser.parse_and_expand('(test|this) split').should == [['test', ' ', 'split'], ['this', ' ', 'split']]
   end
+
+  it "should correctly handle multichar delimiters as well" do
+    Usher.new(:delimiters => ['%28', '%29'], :valid_regex => '[0-9A-Za-z\$\-_\+!\*\',]+').parser.parse_and_expand('cheese%28parmesan%29').should == [['cheese', '%28', 'parmesan', '%29']]    
+  end
   
   it "should group optional parts with brackets" do
     Usher.new(:delimiters => ['/', '.'], :valid_regex => '[0-9A-Za-z\$\-_\+!\*\',]+').parser.parse_and_expand('/test/this(/split)').should == [

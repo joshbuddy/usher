@@ -84,6 +84,23 @@ describe "Usher route recognition" do
     @route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple'})).params.should == [[:format, ['html', 'json', 'apple']]]
   end
 
+  it "should recognize variables between multi-char delimiters" do
+    @route_set = Usher.new(:delimiters => ['%28', '%29', '/', '.'])
+    target_route = @route_set.add_route('/cheese%28:kind%29', :controller => 'sample', :action => 'action')
+
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/cheese%28parmesan%29'}))
+    response.path.route.should == target_route
+    response.params.should == [[:kind , 'parmesan']]
+  end
+
+  it "should recognize route with consecutive delimiters" do
+    @route_set = Usher.new(:delimiters => ['%21', '/'])
+    target_route = @route_set.add_route('/cheese/%21parmesan', :controller => 'sample', :action => 'action')
+
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/cheese/%21parmesan'}))
+    response.path.route.should == target_route
+  end
+
   it "should recgonize only a glob-style variable" do
     target_route = @route_set.add_route('/*format')
     response = @route_set.recognize(build_request({:method => 'get', :path => '/sample/html/json/apple'}))
