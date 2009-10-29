@@ -55,7 +55,7 @@ class Usher
                   part.look_ahead = nil
                   part.look_ahead_priority = true
                 else
-                  part.look_ahead = find_next_delimiter(path[index + 1, path.size], router.delimiters) || router.delimiters.unescaped.first
+                  part.look_ahead = router.delimiters.first_in(path[index + 1, path.size]) || router.delimiters.unescaped.first
                 end
               end
             end
@@ -160,10 +160,6 @@ class Usher
       private
 
         attr_reader :router
-
-        def find_next_delimiter(string, delimiters)
-          delimiters.unescaped.find { |delimiter| string.index(delimiter) } # TODO: KNP here?
-        end
       end
     end
   end
