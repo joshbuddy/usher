@@ -48,7 +48,7 @@ class Usher
                   part.look_ahead = nil
                   part.look_ahead_priority = true
                 else
-                  part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiter_chars.include?(p[0])} || nil
+                  part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
                 end
               when Usher::Route::Variable
                 if part.look_ahead && !part.look_ahead_priority

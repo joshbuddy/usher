@@ -10,7 +10,7 @@ require File.join(File.dirname(__FILE__), 'usher', 'delimiters')
 
 class Usher
   attr_reader :root, :named_routes, :routes, :splitter,
-              :delimiters, :delimiter_chars, :delimiters_regex,
+              :delimiters, :delimiters_regex,
               :parent_route, :generator, :grapher
 
   # Returns whether the route set is empty
@@ -261,7 +261,6 @@ class Usher
 
   def delimiters=(delimiters)
     @delimiters = delimiters
-    @delimiter_chars = @delimiters.collect{|d| d[0]}
     @delimiters_regex = @delimiters.collect{|d| Regexp.quote(d)} * '|'
     @delimiters
   end
