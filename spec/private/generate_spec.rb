@@ -189,6 +189,33 @@ describe "Usher URL generation" do
         @route_set4.generator.generate(:nested_simple)
       end.should raise_error(Usher::MissingParameterException)
     end
+
+    describe "generate_base_url" do
+      it "should generate a base url for a non nested router" do
+        @route_set.generator.generate_base_url.should == "/"
+      end
+
+      it "should generate a base url for a nested router" do
+        @route_set2.generator.generate_base_url.should == "/mount_point"
+      end
+
+      it "should generate a base url with parameters" do
+        @route_set4.generator.generate_base_url(:bar => "the_bar").should == "/fourth/the_bar"
+      end
+
+      it "should generate a base url with a default route" do
+        @route_set.generator.generate_base_url(:default => "/foo").should == "/foo"
+      end
+
+      it "should generate a base url with a default that is not a /" do
+        @route_set.generator.generate_base_url(:deafult => ":").should == ":"
+      end
+
+      it "should generate a base url with a default of a blank string" do
+        @route_set.generator.generate_base_url(:default => "").should == ""
+        @route_set.generator.generate_base_url(:default => nil).should == ""
+      end
+    end
   end
 
   describe "dupped generation" do
