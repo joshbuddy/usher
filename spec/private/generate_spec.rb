@@ -208,7 +208,7 @@ describe "Usher URL generation" do
       end
 
       it "should generate a base url with a default that is not a /" do
-        @route_set.generator.generate_base_url(:deafult => ":").should == ":"
+        @route_set.generator.generate_base_url(:default => ":").should == ":"
       end
 
       it "should generate a base url with a default of a blank string" do

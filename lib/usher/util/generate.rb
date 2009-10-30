@@ -59,7 +59,7 @@ class Usher
           generate_path(path_for_routing_lookup(routing_lookup, params), params)
         end
 
-        def generate_path(path, params = nil)
+        def generate_path(path, params = nil, generate_extra = true)
           params = Array(params) if params.is_a?(String)
           if params.is_a?(Array)
             given_size = params.size
@@ -69,7 +69,7 @@ class Usher
           end
 
           result = Rack::Utils.uri_escape(generate_path_for_base_params(path, params))
-          unless params.nil? || params.empty?
+          unless !generate_extra || params.nil? || params.empty?
             extra_params = generate_extra_params(params, result[??])
             result << extra_params
           end
@@ -114,6 +114,16 @@ class Usher
                 end
               END_EVAL
             end
+          end
+        end
+
+        def generate_base_url(params = nil)
+          if usher.parent_route
+            usher.parent_route.router.generator.generate_path(usher.parent_route.paths.first, params, false)
+          elsif params && params.key?(:default)
+            params[:default].to_s
+          else
+            '/'
           end
         end
 
