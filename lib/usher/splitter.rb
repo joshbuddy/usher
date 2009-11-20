@@ -1,8 +1,9 @@
 class Usher
   class Splitter
 
-    def self.for_delimiters(delimiters)      
-      delimiters.any?{|d| d.size > 1} ? 
+    def self.for_delimiters(delimiters_array)
+      delimiters = Delimiters.new(delimiters_array)
+      delimiters_array.any?{|d| d.size > 1} ?
         MultiCharacterSplitterInstance.new(delimiters) :
         SingleCharacterSplitterInstance.new(delimiters)
     end
@@ -35,9 +36,9 @@ class Usher
       protected
 
       def delimiters_regexp
-        Regexp.new("(#{@delimiters.collect{|d| Regexp.quote(d)}.join('|')})")
+        Regexp.new("(#{@delimiters.unescaped.collect{|d| Regexp.quote(d)}.join('|')})")
       end
-
+      
     end    
   end
 end

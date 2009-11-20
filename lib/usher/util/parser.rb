@@ -12,10 +12,10 @@ class Usher
       end
 
       class ParserInstance
-
         def initialize(router, split_regex)
           @router = router
           @split_regex = split_regex
+          @delimiters_regex = Regexp.new(router.delimiters_regex)
         end
 
         def generate_route(unprocessed_path, conditions, requirements, default_values, generate_with)
@@ -48,14 +48,14 @@ class Usher
                   part.look_ahead = nil
                   part.look_ahead_priority = true
                 else
-                  part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiter_chars.include?(p[0])} || nil
+                  part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
                 end
               when Usher::Route::Variable
                 if part.look_ahead && !part.look_ahead_priority
                   part.look_ahead = nil
                   part.look_ahead_priority = true
                 else
-                  part.look_ahead = path[index + 1, path.size].find{|p| router.delimiter_chars.include?(p[0])} || router.delimiters.first
+                  part.look_ahead = router.delimiters.first_in(path[index + 1, path.size]) || router.delimiters.unescaped.first
                 end
               end
             end
@@ -73,25 +73,25 @@ class Usher
           
         end
 
-
         def parse_and_expand(path, requirements = nil, default_values = nil)
           Usher::Route::Util.expand_path(parse(path, requirements, default_values))
         end
 
         def parse(path, requirements = nil, default_values = nil)
           parts = Usher::Route::Util::Group.new(:all, nil)
-          ss = StringScanner.new(path)
+          scanner = StringScanner.new(path)
+
           current_group = parts
           part = nil
-          while !ss.eos?
+          while !scanner.eos?
             part ?
-              (part << ss.scan(@split_regex)) :
-              (part = ss.scan(@split_regex))
+              (part << scanner.scan(@split_regex)) :
+              (part = scanner.scan(@split_regex))
 
-            if !ss.eos? && ss.peek(1) == '\\'
-              ss.getch
-              part << ss.getch
-              redo
+            if scanner.match?(/\\/) and !scanner.match?(@delimiters_regex)
+              scanner.skip(/\\/)
+              part << scanner.getch
+              next
             end
 
             case part[0]
@@ -104,9 +104,9 @@ class Usher
             when ?{
               pattern = ''
               count = 1
-              variable = ss.scan(/[!:\*]([^,]+),/)
+              variable = scanner.scan(/[!:\*]([^,]+),/)
               until count.zero?
-                regex_part = ss.scan(/\{|\}|[^\{\}]+/)
+                regex_part = scanner.scan(/\{|\}|[^\{\}]+/)
                 case regex_part[0]
                 when ?{
                   count += 1
@@ -147,6 +147,8 @@ class Usher
               end
               current_group.parent << Usher::Route::Util::Group.new(:all, current_group.parent)
               current_group = current_group.parent.last
+            when ?\\
+              current_group << part[1..-1]
             else
               current_group << part
             end
@@ -155,12 +157,10 @@ class Usher
           parts
         end
 
-        private
+      private
+
         attr_reader :router
-
       end
-      
-
     end
   end
 end

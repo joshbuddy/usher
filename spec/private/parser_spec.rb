@@ -80,5 +80,24 @@ describe "Usher route tokenizing" do
   it "should let me escape reserved characters" do
     Usher.new.parser.parse_and_expand('/my\/thing/is\*lovingyou').should == [["/", "my/thing", "/", "is*lovingyou"]]
   end
-  
+
+  it "should let me use escaped characters as delimiters" do
+    Usher.new(:delimiters => ['/', '\(', '\)']).parser.parse_and_expand('/cheese\(:kind\)').should == [['/', 'cheese', '(', Usher::Route::Variable::Single.new(:kind), ')']]
+  end
+
+  describe "#generate_route" do
+    describe "when delimiters contain escaped characters" do
+      before :each do
+        @parser = Usher.new(:delimiters => ['/', '\(', '\)']).parser
+      end
+
+      it "should correctly generate route with a variable" do
+        route = @parser.generate_route('/cheese\(:kind\)', nil, nil, nil, nil)        
+        variable = route.paths[0].parts[3]
+        
+        variable.should be_kind_of(Usher::Route::Variable::Single)        
+        variable.look_ahead.should == ')'
+      end
+    end
+  end
 end

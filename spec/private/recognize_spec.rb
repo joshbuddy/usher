@@ -93,12 +93,24 @@ describe "Usher route recognition" do
     response.params.should == [[:kind , 'parmesan']]
   end
 
-  it "should recognize route with consecutive delimiters" do
-    @route_set = Usher.new(:delimiters => ['%21', '/'])
-    target_route = @route_set.add_route('/cheese/%21parmesan', :controller => 'sample', :action => 'action')
+  it "should recognize route with escaped characters as delimiters" do
+    @route_set = Usher.new(:delimiters => ['/', '.', '\\(', '\\)'])
 
-    response = @route_set.recognize(build_request({:method => 'get', :path => '/cheese/%21parmesan'}))
+    target_route = @route_set.add_route('/cheese\\(:kind\\)', :controller => 'sample', :action => 'action')
+
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/cheese(parmesan)'}))
+    response.should_not be_nil
     response.path.route.should == target_route
+    response.params.should == [[:kind , 'parmesan']]
+  end
+
+  it "should recognize route with consecutive delimiters" do
+    @route_set = Usher.new(:delimiters => ['!', '/'])
+    target_route = @route_set.add_route('/cheese/!:kind', :controller => 'sample', :action => 'action')
+
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/cheese/!parmesan'}))
+    response.path.route.should == target_route
+    response.params.should == [[:kind , 'parmesan']]
   end
 
   it "should recgonize only a glob-style variable" do

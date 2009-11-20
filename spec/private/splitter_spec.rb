@@ -28,7 +28,13 @@ describe Usher::Splitter, "#split" do
 
   describe "when delimiters are consecutive" do
     it "should split correctly" do
-      Usher::Splitter.for_delimiters(['/', '%21']).split('/cheese/%21parmesan').should == ['/', 'cheese', '/', '%21', 'parmesan']
+      Usher::Splitter.for_delimiters(['/', '!']).split('/cheese/!parmesan').should == ['/', 'cheese', '/', '!', 'parmesan']
+    end
+  end
+
+  describe "when delimiters contain escaped characters" do
+    it "should split correctly" do
+      Usher::Splitter.for_delimiters(['/', '\(', '\)']).split('/cheese(parmesan)').should == ['/', 'cheese', '(', 'parmesan', ')']
     end
   end
 end
