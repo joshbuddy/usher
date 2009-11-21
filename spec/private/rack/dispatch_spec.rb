@@ -26,6 +26,12 @@ describe "Usher (for rack) route dispatching" do
       response = route_set.call_with_mock_request
       @app.env["usher.params"].should == {}
     end
+
+    it "should be ok with a glob route of an odd number of segments" do
+      route_set.add("/{*foo,.*}").to(@app)
+      response = route_set.call_with_mock_request("/foo/bar/baz")
+      @app.env["usher.params"].should == {:foo => ["foo", "bar", "baz"]}
+    end
   end
 
   describe "HTTP POST" do
@@ -176,7 +182,7 @@ describe "Usher (for rack) route dispatching" do
       end
     end
   end
-  
+
   describe "use as middlware" do
     it "should allow me to set a default application to use" do
       @app.should_receive(:call).with{|e| e['usher.params'].should == {:middle => :ware}}

@@ -110,14 +110,16 @@ class Usher
       #
       # @api plugin
       def after_match(request, response)
+        frp = []
+        response.params.each{|(k,v)| frp << k; frp << v} # flatten once
         params = response.path.route.default_values ?
-          response.path.route.default_values.merge(Hash[*response.params.flatten]) :
-          Hash[*response.params.flatten]
-        
+          response.path.route.default_values.merge(Hash[*frp]) :
+          Hash[*frp]
+
         request.env['usher.params'] ?
           request.env['usher.params'].merge!(params) :
           (request.env['usher.params'] = params)
-        
+
         # consume the path_info to the script_name
         # response.remaining_path
         consume_path!(request, response) if response.partial_match?
