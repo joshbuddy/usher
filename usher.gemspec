@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.5.10"
+  s.version = "0.5.11"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Joshua Hull"]
-  s.date = %q{2009-10-30}
+  s.date = %q{2009-11-20}
   s.description = %q{A general purpose routing library}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION.yml",
      "lib/usher.rb",
+     "lib/usher/delimiters.rb",
      "lib/usher/exceptions.rb",
      "lib/usher/grapher.rb",
      "lib/usher/interface.rb",
@@ -45,9 +46,11 @@ Gem::Specification.new do |s|
      "lib/usher/splitter.rb",
      "lib/usher/util.rb",
      "lib/usher/util/generate.rb",
+     "lib/usher/util/graph.rb",
      "lib/usher/util/parser.rb",
      "lib/usher/util/rack-mixins.rb",
      "rails/init.rb",
+     "spec/private/delimiters_spec.rb",
      "spec/private/email/recognize_spec.rb",
      "spec/private/generate_spec.rb",
      "spec/private/grapher_spec.rb",
@@ -77,7 +80,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{A general purpose routing library}
   s.test_files = [
-    "spec/private/email/recognize_spec.rb",
+    "spec/private/delimiters_spec.rb",
+     "spec/private/email/recognize_spec.rb",
      "spec/private/generate_spec.rb",
      "spec/private/grapher_spec.rb",
      "spec/private/parser_spec.rb",
