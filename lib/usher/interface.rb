@@ -11,21 +11,32 @@ end
 class Usher
   module Interface
     # Get root directory of interfaces of path to specified interface
-    def self.interface_directory
+    def self.interfaces_directory
       File.join(File.dirname(__FILE__), "interface")
+    end
+
+    def self.interface_directory(name)
+      File.join(self.interfaces_directory, "#{name}_interface")
     end
 
     # path to file
     def self.interface_path(name)
-      File.join(self.interface_directory, "#{name}_interface.rb")
+      File.join(self.interfaces_directory, "#{name}_interface.rb")
+    end
+
+    def self.interface_const(name)
+      snake_cased = "#{name}_interface".extend(CamelCaseMixin)
+      Usher::Interface.const_get(snake_cased.camel_case)
     end
 
     # Usher::Interface.for(:rack, &block)
     def self.for(name, &block)
       if File.exist?(self.interface_path(name))
         require self.interface_path(name)
-        snake_cased = "#{name}_interface".extend(CamelCaseMixin)
-        Usher::Interface.const_get(snake_cased.camel_case).new(&block)
+        Dir["#{self.interface_directory(name)}/*.rb"].each(&self.method(:require))
+        const = self.interface_const(name)
+        Usher::Route.send(:include, const::Route) if defined?(const::Route)
+        const.new(&block)
       else
         raise ArgumentError, "Interface #{name} doesn't exist. Choose one of: #{self.interfaces.inspect}"
       end
@@ -35,7 +46,7 @@ class Usher
     # Usher::Interface.interfaces
     # => [:email_interface, :merb_interface, :rack_interface, :rails2_2_interface, :rails2_3_interface, :rails3_interface, :text_interface]
     def self.interfaces
-      Dir["#{self.interface_directory}/*.rb"].map do |interface|
+      Dir["#{self.interfaces_directory}/*.rb"].map do |interface|
         File.basename(interface).sub("_interface.rb", "").to_sym
       end
     end
