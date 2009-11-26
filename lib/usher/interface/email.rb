@@ -1,6 +1,6 @@
 class Usher
   module Interface
-    class EmailInterface
+    class Email
       
       def initialize(&blk)
         @routes = Usher.new(:delimiters => ['@', '-', '.'], :valid_regex => '[\+a-zA-Z0-9]+')

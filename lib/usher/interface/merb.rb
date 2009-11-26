@@ -3,7 +3,7 @@ require 'merb-core/dispatch/router/behavior'
 
 class Usher
   module Interface
-    class MerbInterface
+    class Merb
       
       # merb does everything with class methods.
 

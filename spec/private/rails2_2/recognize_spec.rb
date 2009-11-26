@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'compat'))
 require "usher"
 require 'action_controller'
 
-route_set = Usher::Interface.for(:rails2_2)
+route_set = Usher::Interface.for(:rails22)
 
 def build_request_mock(path, method, params)
   request = mock "Request"

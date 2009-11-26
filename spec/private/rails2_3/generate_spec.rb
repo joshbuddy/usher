@@ -2,7 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_hel
 require File.expand_path(File.join(File.dirname(__FILE__), 'compat'))
 require "usher"
 
-route_set = Usher::Interface.for(:rails2_3)
+route_set = Usher::Interface.for(:rails23)
 
 describe "Usher (for rails 2.3) URL generation" do
   

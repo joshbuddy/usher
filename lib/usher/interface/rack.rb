@@ -2,10 +2,10 @@ require 'rack'
 
 class Usher
   module Interface
-    class RackInterface
-      class Builder < Rack::Builder
+    class Rack
+      class Builder < ::Rack::Builder
         def initialize(&block)
-          @usher = Usher::Interface::RackInterface.new
+          @usher = Usher::Interface::Rack.new
           super
         end
 
@@ -35,7 +35,7 @@ class Usher
       attr_accessor :app
 
       def initialize(app = nil, &blk)
-        @app = app || lambda { |env| Rack::Response.new("No route found", 404).finish }
+        @app = app || lambda { |env| ::Rack::Response.new("No route found", 404).finish }
         @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
         instance_eval(&blk) if blk
       end
@@ -95,7 +95,7 @@ class Usher
       end
 
       def call(env)
-        request = Rack::Request.new(env)
+        request = ::Rack::Request.new(env)
         response = @router.recognize(request, request.path_info)
         after_match(request, response) if response
         determine_respondant(response).call(env)

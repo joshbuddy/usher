@@ -1,6 +1,6 @@
 class Usher
   module Interface
-    class RackInterface
+    class Rack
       module Route
         # add("/index.html").redirect("/")
         def redirect(path, status = 302)

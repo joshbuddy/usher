@@ -1,54 +1,30 @@
-# From Extlib
-module CamelCaseMixin
-  def camel_case
-    return self if self !~ /_/ && self =~ /[A-Z]+.*/
-    split('_').map{|e| e.capitalize}.join
-  end
-end
-
-# TODO: refactoring: I suggest to use usher/interfaces/rack.rb instead of
-# usher/interface/rack_interface.rb, it will enable me to simplify this code
 class Usher
   module Interface
-    # Get root directory of interfaces of path to specified interface
-    def self.interfaces_directory
-      File.join(File.dirname(__FILE__), "interface")
+
+    InterfaceRegistry = {}
+
+    def self.register(name, cls)
+      InterfaceRegistry[name] = cls
     end
 
-    def self.interface_directory(name)
-      File.join(self.interfaces_directory, "#{name}_interface")
-    end
-
-    # path to file
-    def self.interface_path(name)
-      File.join(self.interfaces_directory, "#{name}_interface.rb")
-    end
-
-    def self.interface_const(name)
-      snake_cased = "#{name}_interface".extend(CamelCaseMixin)
-      Usher::Interface.const_get(snake_cased.camel_case)
-    end
+    register(:email,    File.join(File.dirname(__FILE__), 'interface', 'email'))
+    register(:merb,     File.join(File.dirname(__FILE__), 'interface', 'merb'))
+    register(:rails22,  File.join(File.dirname(__FILE__), 'interface', 'rails22'))
+    register(:rails23,  File.join(File.dirname(__FILE__), 'interface', 'rails23'))
+    register(:rack,     File.join(File.dirname(__FILE__), 'interface', 'rack'))
+    register(:rails3,   File.join(File.dirname(__FILE__), 'interface', 'rails3'))
+    register(:text,     File.join(File.dirname(__FILE__), 'interface', 'text'))
 
     # Usher::Interface.for(:rack, &block)
     def self.for(name, &block)
-      if File.exist?(self.interface_path(name))
-        require self.interface_path(name)
-        Dir["#{self.interface_directory(name)}/*.rb"].each(&self.method(:require))
-        const = self.interface_const(name)
-        Usher::Route.send(:include, const::Route) if defined?(const::Route)
-        const.new(&block)
-      else
-        raise ArgumentError, "Interface #{name} doesn't exist. Choose one of: #{self.interfaces.inspect}"
-      end
+      name = name.to_sym
+      raise unless InterfaceRegistry[name]
+      require InterfaceRegistry[name]
+      const = Usher::Interface.const_get(File.basename(InterfaceRegistry[name]).to_s.split(/_/).map{|e| e.capitalize}.join)
+      const.new(&block)
+    rescue 
+      raise ArgumentError, "Interface #{name} doesn't exist. Choose one of: #{InterfaceRegistry.keys.inspect}"
     end
 
-    # Array of symbols
-    # Usher::Interface.interfaces
-    # => [:email_interface, :merb_interface, :rack_interface, :rails2_2_interface, :rails2_3_interface, :rails3_interface, :text_interface]
-    def self.interfaces
-      Dir["#{self.interfaces_directory}/*.rb"].map do |interface|
-        File.basename(interface).sub("_interface.rb", "").to_sym
-      end
-    end
   end
 end

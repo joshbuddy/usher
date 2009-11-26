@@ -181,7 +181,8 @@ describe "Usher (for rack) route dispatching" do
     it "should allow me to set a default application to use" do
       @app.should_receive(:call).with{|e| e['usher.params'].should == {:middle => :ware}}
 
-      u = Usher::Interface::RackInterface.new(@app)
+      u = Usher::Interface.for(:rack)
+      u.app = @app
       u.add("/foo", :default_values => {:middle => :ware}).name(:foo)
 
       u.call(Rack::MockRequest.env_for("/foo"))
@@ -190,7 +191,8 @@ describe "Usher (for rack) route dispatching" do
     it "should use the default application when no routes match" do
       env = Rack::MockRequest.env_for("/not_a_route")
       @app.should_receive(:call).with(env)
-      u = Usher::Interface::RackInterface.new(@app)
+      u = Usher::Interface.for(:rack)
+      u.app = @app
       u.call(env)
     end
 

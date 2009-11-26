@@ -1,6 +1,6 @@
 class Usher
   module Interface
-    class TextInterface
+    class Text
       
       def initialize(&blk)
         @usher = Usher.new(:delimiters => [' '], :generator => Usher::Util::Generators::Generic.new)

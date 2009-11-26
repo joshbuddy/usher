@@ -1,6 +1,6 @@
 class Usher
   module Interface
-    class Rails3Interface
+    class Rails3
     
       @@instance = nil
     
