@@ -6,22 +6,37 @@ class Usher
       
       def initialize(name, regex_matcher = nil, validator = nil)
         @name = name.to_s.to_sym
-        @validator = validator
+        @validator = validator || regex_matcher
         @regex_matcher = regex_matcher
-      end
-      private :initialize
-      
-      def valid!(val)
+        
         case @validator
         when Proc
+          self.extend(ProcValidator)
+        when nil
+          # do nothing
+        else
+          self.extend(CaseEqualsValidator)
+        end
+      end
+      private :initialize
+
+      def valid!(val)
+      end
+      
+      module ProcValidator
+        def valid!(val)
           begin
             @validator.call(val)
           rescue Exception => e
-            raise ValidationException.new("#{val} does not conform to #{@g}, root cause #{e.inspect}")
+            raise ValidationException.new("#{val} does not conform to #{@validator}, root cause #{e.inspect}")
           end
-        else
-          @validator === val or raise(ValidationException.new("#{val} does not conform to #{@validator}, root cause #{e.inspect}"))
-        end if @validator
+        end
+      end
+
+      module CaseEqualsValidator
+        def valid!(val)
+          @validator === val or raise(ValidationException.new("#{val} does not conform to #{@validator}"))
+        end
       end
       
       def ==(o)
@@ -40,7 +55,11 @@ class Usher
         end
       end
 
-      Greedy = Class.new(Variable)
+      class Greedy < Variable
+        def to_s
+          "!#{name}"
+        end
+      end
       
     end
     
