@@ -1,4 +1,5 @@
-require 'rack'
+require "rack"
+require_relative "rack/route"
 
 class Usher
   module Interface

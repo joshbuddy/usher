@@ -18,12 +18,13 @@ class Usher
     # Usher::Interface.for(:rack, &block)
     def self.for(name, &block)
       name = name.to_sym
-      raise unless InterfaceRegistry[name]
-      require InterfaceRegistry[name]
-      const = Usher::Interface.const_get(File.basename(InterfaceRegistry[name]).to_s.split(/_/).map{|e| e.capitalize}.join)
-      const.new(&block)
-    rescue 
-      raise ArgumentError, "Interface #{name} doesn't exist. Choose one of: #{InterfaceRegistry.keys.inspect}"
+      if InterfaceRegistry[name]
+        require InterfaceRegistry[name]
+        const = Usher::Interface.const_get(File.basename(InterfaceRegistry[name]).to_s.split(/_/).map{|e| e.capitalize}.join)
+        const.new(&block)
+      else
+        raise ArgumentError, "Interface #{name.inspect} doesn't exist. Choose one of: #{InterfaceRegistry.keys.inspect}"
+      end
     end
 
   end
