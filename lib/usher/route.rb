@@ -1,7 +1,7 @@
-require File.join(File.dirname(__FILE__), 'route', 'path')
-require File.join(File.dirname(__FILE__), 'route', 'util')
-require File.join(File.dirname(__FILE__), 'route', 'variable')
-require File.join(File.dirname(__FILE__), 'route', 'request_method')
+require File.join('usher', 'route', 'path')
+require File.join('usher', 'route', 'util')
+require File.join('usher', 'route', 'variable')
+require File.join('usher', 'route', 'request_method')
 
 class Usher
   class Route

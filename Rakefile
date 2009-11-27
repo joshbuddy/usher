@@ -1,7 +1,4 @@
-libdir = File.expand_path("lib")
-$:.unshift(libdir) unless $:.include?(libdir)
-
-require 'usher'
+require File.expand_path(File.join(File.dirname(__FILE__), 'lib', 'usher'))
 
 begin
   require 'jeweler'

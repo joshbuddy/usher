@@ -1,12 +1,15 @@
-require File.join(File.dirname(__FILE__), 'usher', 'node')
-require File.join(File.dirname(__FILE__), 'usher', 'route')
-require File.join(File.dirname(__FILE__), 'usher', 'grapher')
-require File.join(File.dirname(__FILE__), 'usher', 'interface')
-require File.join(File.dirname(__FILE__), 'usher', 'splitter')
-require File.join(File.dirname(__FILE__), 'usher', 'exceptions')
-require File.join(File.dirname(__FILE__), 'usher', 'util')
-require File.join(File.dirname(__FILE__), 'usher', 'spinoffs', 'strscan_additions')
-require File.join(File.dirname(__FILE__), 'usher', 'delimiters')
+require 'dirge'
+
+$: << File.expand_path(File.dirname(__FILE__))
+require File.join('usher', 'node')
+require File.join('usher', 'route')
+require File.join('usher', 'grapher')
+require File.join('usher', 'interface')
+require File.join('usher', 'splitter')
+require File.join('usher', 'exceptions')
+require File.join('usher', 'util')
+require File.join('usher', 'spinoffs', 'strscan_additions')
+require File.join('usher', 'delimiters')
 
 class Usher
   attr_reader :root, :named_routes, :routes, :splitter,

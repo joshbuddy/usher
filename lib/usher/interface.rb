@@ -7,13 +7,13 @@ class Usher
       InterfaceRegistry[name] = cls
     end
 
-    register(:email,    File.join(File.dirname(__FILE__), 'interface', 'email'))
-    register(:merb,     File.join(File.dirname(__FILE__), 'interface', 'merb'))
-    register(:rails22,  File.join(File.dirname(__FILE__), 'interface', 'rails22'))
-    register(:rails23,  File.join(File.dirname(__FILE__), 'interface', 'rails23'))
-    register(:rack,     File.join(File.dirname(__FILE__), 'interface', 'rack'))
-    register(:rails3,   File.join(File.dirname(__FILE__), 'interface', 'rails3'))
-    register(:text,     File.join(File.dirname(__FILE__), 'interface', 'text'))
+    register(:email,    File.join(~'interface', 'email'))
+    register(:merb,     File.join(~'interface', 'merb'))
+    register(:rails22,  File.join(~'interface', 'rails22'))
+    register(:rails23,  File.join(~'interface', 'rails23'))
+    register(:rack,     File.join(~'interface', 'rack'))
+    register(:rails3,   File.join(~'interface', 'rails3'))
+    register(:text,     File.join(~'interface', 'text'))
 
     # Usher::Interface.for(:rack, &block)
     def self.for(name, &block)
