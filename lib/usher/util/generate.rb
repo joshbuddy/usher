@@ -39,7 +39,7 @@ class Usher
       class URL < Generic
 
         def initialize
-          require ~'rack-mixins'
+          require File.join('usher', 'util', 'rack-mixins')
         end
 
         def generate_full(routing_lookup, request, params = nil)

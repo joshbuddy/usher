@@ -1,5 +1,5 @@
 require "rack"
-require_relative "rack/route"
+require File.join(File.dirname(__FILE__), 'rack', 'route')
 
 class Usher
   module Interface

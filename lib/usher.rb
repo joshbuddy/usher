@@ -1,5 +1,3 @@
-require 'dirge'
-
 $: << File.expand_path(File.dirname(__FILE__))
 require File.join('usher', 'node')
 require File.join('usher', 'route')
