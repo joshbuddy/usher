@@ -9,7 +9,8 @@ begin
     s.homepage = "http://github.com/joshbuddy/usher"
     s.authors = ["Joshua Hull", 'Jakub Šťastný', 'Daniel Neighman', 'Daniel Vartanov'].sort
     s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
-    s.add_dependency 'fuzzyhash', '>=0.0.9'
+    s.add_dependency 'fuzzyhash', '>=0.0.10'
+    s.add_dependency 'dirge', '>=0.0.3'
     s.rubyforge_project = 'joshbuddy-usher'
   end
   Jeweler::GemcutterTasks.new

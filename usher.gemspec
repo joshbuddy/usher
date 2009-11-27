@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version = "0.5.11"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Joshua Hull"]
-  s.date = %q{2009-11-26}
+  s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub \305\240\305\245astn\303\275", "Joshua Hull"]
+  s.date = %q{2009-11-27}
   s.description = %q{A general purpose routing library}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
@@ -109,12 +109,15 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<fuzzyhash>, [">= 0.0.9"])
+      s.add_runtime_dependency(%q<fuzzyhash>, [">= 0.0.10"])
+      s.add_runtime_dependency(%q<dirge>, [">= 0.0.3"])
     else
-      s.add_dependency(%q<fuzzyhash>, [">= 0.0.9"])
+      s.add_dependency(%q<fuzzyhash>, [">= 0.0.10"])
+      s.add_dependency(%q<dirge>, [">= 0.0.3"])
     end
   else
-    s.add_dependency(%q<fuzzyhash>, [">= 0.0.9"])
+    s.add_dependency(%q<fuzzyhash>, [">= 0.0.10"])
+    s.add_dependency(%q<dirge>, [">= 0.0.3"])
   end
 end
 
