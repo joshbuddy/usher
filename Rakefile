@@ -10,7 +10,7 @@ begin
     s.description = s.summary = "A general purpose routing library"
     s.email = "joshbuddy@gmail.com"
     s.homepage = "http://github.com/joshbuddy/usher"
-    s.authors = ["Joshua Hull"]
+    s.authors = ["Joshua Hull", 'Jakub Šťastný', 'Daniel Neighman', 'Daniel Vartanov'].sort
     s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
     s.add_dependency 'fuzzyhash', '>=0.0.9'
     s.rubyforge_project = 'joshbuddy-usher'
