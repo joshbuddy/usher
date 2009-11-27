@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require File.expand_path(File.join(File.dirname(__FILE__), 'lib', 'usher'))
 
 begin
@@ -10,6 +12,7 @@ begin
     s.authors = ["Joshua Hull", 'Jakub Šťastný', 'Daniel Neighman', 'Daniel Vartanov'].sort
     s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
     s.add_dependency 'fuzzyhash', '>=0.0.9'
+    s.add_dependency 'dirge'
     s.rubyforge_project = 'joshbuddy-usher'
   end
   Jeweler::GemcutterTasks.new
