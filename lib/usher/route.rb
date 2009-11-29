@@ -1,6 +1,7 @@
 require File.join('usher', 'route', 'path')
 require File.join('usher', 'route', 'util')
 require File.join('usher', 'route', 'variable')
+require File.join('usher', 'route', 'static')
 require File.join('usher', 'route', 'request_method')
 
 class Usher

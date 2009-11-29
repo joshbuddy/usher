@@ -119,14 +119,29 @@ class Usher
       elsif !path.empty? && (greedy? && (match_with_result_output = greedy.match_with_result(whole_path = original_path[position, original_path.size])))
 				next_path, matched_part = match_with_result_output
         position += matched_part.size
-        params << [next_path.value.name, whole_path.slice!(0, matched_part.size)]
+        whole_path.slice!(0, matched_part.size)
+        params << [next_path.value.name, matched_part] if next_path.value.is_a?(Route::Variable)
         next_path.find(usher, request_object, original_path, whole_path.empty? ? whole_path : usher.splitter.url_split(whole_path), params, position)
       elsif !path.empty? && normal && (next_part = normal[path.first] || normal[nil])
         part = path.shift
         position += part.size
         case next_part.value
+        when String
+          # do nothing
+        when Route::Variable::Single
+          # get the variable
+          var = next_part.value
+          # do a validity check
+          var.valid!(part)
+          # because its a variable, we need to add it to the params array
+          params << [var.name, part]
+          until path.empty? || (var.look_ahead === path.first)                # variables have a look ahead notion, 
+            next_path_part = path.shift                                       # and until they are satified,
+            position += next_path_part.size                                   # keep appending to the value in params
+            params.last.last << next_path_part
+          end if var.look_ahead && usher.delimiters.size > 1
         when Route::Variable::Glob
-          params << [next_part.value.name, []] unless params.last && params.last.first == next_part.value.name
+          params << [next_part.value.name, []]
           while true
             if (next_part.value.look_ahead === part || (!usher.delimiters.unescaped.include?(part) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
               path.unshift(part)
@@ -146,15 +161,6 @@ class Usher
               part = path.shift
             end
           end
-        when Route::Variable::Single
-          var = next_part.value
-          var.valid!(part)
-          params << [var.name, part]
-          until path.empty? || (var.look_ahead === path.first)
-            next_path_part = path.shift
-            position += next_path_part.size
-            params.last.last << next_path_part
-          end if var.look_ahead && usher.delimiters.size > 1
         end
         next_part.find(usher, request_object, original_path, path, params, position)
       elsif request_method_type
@@ -253,6 +259,10 @@ class Usher
         else
           node.normal[nil] ||= Node.new(node, key)
         end
+      when Route::Static::Greedy
+        node.activate_greedy!
+        node.upgrade_greedy!
+        node.greedy[key] ||= Node.new(node, key)
       else
         node.activate_normal!
         node.upgrade_normal! if key.is_a?(Regexp)

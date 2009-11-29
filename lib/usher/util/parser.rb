@@ -39,25 +39,30 @@ class Usher
 
           paths = Route::Util.expand_path(unprocessed_path)
 
-          paths.each do |path|
-            path.each_with_index do |part, index|
-              part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
-              case part
-              when Usher::Route::Variable::Glob
-                if part.look_ahead && !part.look_ahead_priority
-                  part.look_ahead = nil
-                  part.look_ahead_priority = true
-                else
-                  part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
-                end
-              when Usher::Route::Variable
-                if part.look_ahead && !part.look_ahead_priority
-                  part.look_ahead = nil
-                  part.look_ahead_priority = true
-                else
-                  part.look_ahead = router.delimiters.first_in(path[index + 1, path.size]) || router.delimiters.unescaped.first
+          paths.map! do |path|
+            if path.all?{|part| String === part}
+              path #parse "{~#{path.join}}"
+            else
+              path.each_with_index do |part, index|
+                part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
+                case part
+                when Usher::Route::Variable::Glob
+                  if part.look_ahead && !part.look_ahead_priority
+                    part.look_ahead = nil
+                    part.look_ahead_priority = true
+                  else
+                    part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
+                  end
+                when Usher::Route::Variable
+                  if part.look_ahead && !part.look_ahead_priority
+                    part.look_ahead = nil
+                    part.look_ahead_priority = true
+                  else
+                    part.look_ahead = router.delimiters.first_in(path[index + 1, path.size]) || router.delimiters.unescaped.first
+                  end
                 end
               end
+              path
             end
           end
 
@@ -104,6 +109,7 @@ class Usher
             when ?{
               pattern = ''
               count = 1
+              simple = scanner.scan(/~/)
               variable = scanner.scan(/[!:\*]([^,]+),/)
               until count.zero?
                 regex_part = scanner.scan(/\{|\}|[^\{\}]+/)
@@ -124,9 +130,10 @@ class Usher
                 when :*   then Usher::Route::Variable::Glob
                 when :':' then Usher::Route::Variable::Single
                 end
-                
                 variable_name = variable[0, variable.size - 1].to_sym
                 current_group << variable_class.new(variable_name, regex, requirements && requirements[variable_name])
+              elsif simple
+                current_group << Usher::Route::Static::Greedy.new(pattern)
               else
                 current_group << regex
               end

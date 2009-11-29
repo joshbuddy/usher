@@ -54,8 +54,7 @@ class Usher
   # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
     self.generator       = options && options.delete(:generator)
-    delimiters_array     = options && options.delete(:delimiters) || ['/', '.']
-    self.delimiters      = Delimiters.new(delimiters_array)
+    self.delimiters      = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
     self.valid_regex     = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
     self.request_methods = options && options.delete(:request_methods)
     reset!
