@@ -137,6 +137,16 @@ describe "Usher URL generation" do
     @route_set.generator.generate(:optionals, {:controller => "foo", :action => "bar"}).should == '/foo/bar'
   end
 
+  describe "when named route was added with string key" do
+    before :each do
+      @route_set.add_named_route 'items', '/items', :controller => 'items', :action => 'index'
+    end
+
+    it "should generate named by given symbolic key" do
+      @route_set.generator.generate(:items).should == '/items'
+    end
+  end
+
   describe "nested generation" do
     before do
       @route_set2 = Usher.new(:generator => Usher::Util::Generators::URL.new)
@@ -272,5 +282,4 @@ describe "Usher URL generation" do
       @r2.generator.generate(:route).should == "/r2"
     end
   end
-
 end

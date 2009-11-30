@@ -95,7 +95,7 @@ class Usher
   #   route = set.add_route('/test')
   #   set.name(:test, route)
   def name(name, route)
-    @named_routes[name] = route
+    @named_routes[name.to_sym] = route
     route
   end
 
