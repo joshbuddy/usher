@@ -7,7 +7,7 @@ class Usher
           @set = set
         end
 
-        def connect(path, options = nil)
+        def connect(path, options = {})
           @set.add_route(path, options)
         end
 
