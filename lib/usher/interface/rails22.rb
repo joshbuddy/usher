@@ -10,9 +10,12 @@ class Usher
       def initialize
         reset!
       end
-      
-      def reset!
-        @usher ||= Usher.new(:generator => Usher::Util::Generators::URL.new, :request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains])
+
+      def reset!(options={})
+        options[:generator] = options[:generator] || Usher::Util::Generators::URL.new
+        options[:request_methods] = options[:request_methods] || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
+
+        @usher = Usher.new(options)
         @module ||= Module.new
         @module.instance_methods.each do |selector|
           @module.class_eval { remove_method selector }
@@ -32,7 +35,7 @@ class Usher
           add_route('/:controller', options.merge({:action => 'index'}))
           @controller_route_added = true 
         end
-        
+
         options[:action] = 'index' unless options[:action]
 
         path[0, 0] = '/' unless path[0] == ?/
@@ -109,15 +112,15 @@ class Usher
         reload
       end
 
-      def draw
-        reset!
+      def draw(options={})
+        reset!(options)
         yield Mapper.new(self)
         install_helpers
       end
 
       def install_helpers(destinations = [ActionController::Base, ActionView::Base], regenerate_code = false)
         #*_url and hash_for_*_url
-        Array(destinations).each do |d| d.module_eval { include Helpers } 
+        Array(destinations).each do |d| d.module_eval { include Helpers }
           @usher.named_routes.keys.each do |name|
             @module.module_eval <<-end_eval # We use module_eval to avoid leaks
               def #{name}_url(options = {})
@@ -127,6 +130,10 @@ class Usher
           end
           d.__send__(:include, @module)
         end
+      end
+
+      def routes
+        @usher.routes
       end
       
     end
