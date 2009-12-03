@@ -56,6 +56,25 @@ describe "Usher (for rack) route dispatching" do
     response.status.should eql(404)
   end
 
+  describe "shortcuts" do
+    describe "get" do
+      before(:each) do
+        route_set.reset!
+        route_set.get('/sample').to(@app)
+      end
+
+      it "should dispatch a GET request" do
+        response = route_set.call_with_mock_request("/sample", "GET")
+        response.body.should eql("Hello World!")
+      end
+
+      it "should dispatch a HEAD request" do
+        response = route_set.call_with_mock_request("/sample", "HEAD")
+        response.body.should eql("Hello World!")
+      end
+    end
+  end
+
   describe "mounted rack instances" do
     before do
       @bad_app = mock("bad_app")
