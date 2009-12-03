@@ -10,7 +10,7 @@ u.add_route('/simple/:v1/:v2/:v3/:v4/:v5/:v6/:v7/:v8')                          
 u.add_route('/with_condition/:cond1/:cond2', :requirements => {:cond1 => /^\d+$/, :cond2 => /^[a-z]+$/})   .name(:two_conditions)
 u.add_route('/with_condition/{:cond1,^\d+$}/{:cond2,^[a-z]+$}')                                            .name(:two_implicit_conditions)
 
-TIMES = 100_00
+TIMES = 50_000
 
 RBench.run(TIMES) do
   
