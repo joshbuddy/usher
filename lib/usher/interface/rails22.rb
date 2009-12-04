@@ -119,16 +119,9 @@ class Usher
       end
 
       def install_helpers(destinations = [ActionController::Base, ActionView::Base], regenerate_code = false)
-        #*_url and hash_for_*_url
-        Array(destinations).each do |d| d.module_eval { include Helpers }
-          @usher.named_routes.keys.each do |name|
-            @module.module_eval <<-end_eval # We use module_eval to avoid leaks
-              def #{name}_url(options = {})
-                ActionController::Routing::UsherRoutes.generate(options, {}, :generate, :#{name})
-              end
-            end_eval
-          end
-          d.__send__(:include, @module)
+        Array(destinations).each do |destination|
+          destination.module_eval { include Helpers }
+          destination.__send__(:include, @usher.generator.generation_module)
         end
       end
 
