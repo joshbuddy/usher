@@ -142,8 +142,114 @@ describe "Usher URL generation" do
       @route_set.add_named_route 'items', '/items', :controller => 'items', :action => 'index'
     end
 
-    it "should generate named by given symbolic key" do
+    it "should generate a named route by given symbolic key" do
       @route_set.generator.generate(:items).should == '/items'
+    end
+  end
+
+  describe "#generate_start" do
+    before :all do
+      UrlParts = Usher::Util::Generators::URL::UrlParts
+      @url_parts_stub = UrlParts.new :some_path, :some_request
+      UrlParts.stub! :new => @url_parts_stub
+    end
+
+    describe "when url does not end with /" do
+      before :each do
+        @url_parts_stub.stub! :url => 'http://localhost'
+      end
+
+      it "should just return an url given by UrlParts" do
+        @route_set.generator.generate_start(:some_path, :some_request).should == 'http://localhost'
+      end
+    end
+
+    describe "when url ends with /" do
+      before :each do
+        @url_parts_stub.stub! :url => 'http://localhost/'
+      end
+
+      it "should strip trailing slash" do
+        @route_set.generator.generate_start(:some_path, :some_request).should == 'http://localhost'
+      end
+    end
+  end
+
+  describe "#generate_full" do
+    shared_examples_for "correct routes generator" do
+      describe "when request is a Rack::Request (Rails >= 2.3)" do
+        before :each do          
+          @route_set.add_named_route :items, '/items'
+          @request = Rack::Request.new(Rack::MockRequest.env_for(@url))
+        end
+
+        it "should generate an URL correctly" do
+          @route_set.generator.generate_full(:items, @request).should == @url + '/items'
+        end
+      end
+
+      describe "when request is a AbstractRequest (Rails <= 2.2)" do
+        before :each do          
+          @route_set.add_named_route :items, '/items'
+
+          @request = Struct.new(:url, :protocol, :host, :port).new(@url.dup, "#{@scheme}://", @host, @port)
+        end
+
+        it "should generate an URL correctly" do
+          @route_set.generator.generate_full(:items, @request).should == @url + '/items'
+        end
+      end
+
+      describe "when data is provided in @generated_with" do
+        before :each do
+          @route_set.add_named_route :items, '/items', :generate_with => { :scheme => @scheme, :host => @host, :port => @port }
+          @request = Rack::Request.new(Rack::MockRequest.env_for('ftp://something-another:9393'))
+        end
+
+        it "should generate an URL correctly" do
+          @route_set.generator.generate_full(:items, @request).should == @url + '/items'
+        end
+      end
+    end
+
+    describe "when protocol is http" do
+      describe "whem port is 80" do
+        before :each do
+          @scheme, @host, @port = 'http', 'localhost', 80
+          @url = 'http://localhost'
+        end
+
+        it_should_behave_like "correct routes generator"
+      end
+
+      describe "when port is custom" do
+        before :each do
+          @scheme, @host, @port = 'http', 'localhost', 8080
+          @url = 'http://localhost:8080'
+        end
+
+        it_should_behave_like "correct routes generator"
+      end
+    end
+
+    describe "when protocol is https" do
+      describe "whem port is 443 (standard)" do
+        before :each do
+          @scheme, @host, @port = 'https', 'localhost', 443
+          @url = 'https://localhost'
+        end
+
+        it_should_behave_like "correct routes generator"
+      end
+
+      describe "when port is custom" do
+        before :each do
+          @scheme, @host, @port = 'https', 'localhost', 8443
+          @url = 'https://localhost:8443'
+        end
+
+        it_should_behave_like "correct routes generator"
+      end
     end
   end
 

@@ -38,13 +38,60 @@ class Usher
 
       class URL < Generic
 
+        class UrlParts < Struct.new(:path, :request)
+          def scheme
+            @scheme ||= generate_with(:scheme) || (request.respond_to?(:scheme) and request.scheme)
+          end
+
+          def protocol
+            return @protocol unless @protocol.nil?            
+
+            @protocol = scheme ? "#{scheme}://" : request.protocol
+          end
+
+          def host
+            @host ||= generate_with(:host) || request.host
+          end
+
+          def port
+            @port ||= generate_with(:port) || request.port
+          end
+
+          def port_string
+            return @port_string unless @port_string.nil?
+
+            @port_string ||= standard_port? ? '' : ":#{port}"
+          end
+
+          def url            
+            path.route.generate_with.nil? || path.route.generate_with.empty? ?
+              request.url :
+              protocol + host + port_string
+          end
+
+        protected
+
+          def generate_with(property)
+            path.route.generate_with and path.route.generate_with[property]
+          end
+
+          def standard_port?
+            ssl? ? port == 443 : port == 80
+          end
+
+          def ssl?
+            protocol[4] == ?s
+          end
+        end
+
         def initialize
           require File.join('usher', 'util', 'rack-mixins')
         end
 
         def generate_full(routing_lookup, request, params = nil)
           path = path_for_routing_lookup(routing_lookup, params)
-          result = generate_start(path, request)
+
+          result = generate_start(path, request)          
           result << generate_path(path, params)
         end
 
@@ -105,12 +152,12 @@ class Usher
 
             usher.named_routes.each do |name, route|
               @generation_module.module_eval <<-END_EVAL
-                def #{name}_url(name, request, params = nil)
-                  @@generator.generate_full(name, request, options)
+                def #{name}_url(options={})
+                  @@generator.generate_full('#{name}'.to_sym, request, options)
                 end
 
-                def #{name}_path(name, params = nil)
-                  @@generator.generate(name, options)
+                def #{name}_path(options={})
+                  @@generator.generate('#{name}'.to_sym, options)
                 end
               END_EVAL
             end
@@ -127,20 +174,14 @@ class Usher
           end
         end
 
-        def generate_start(path, request)
-          result = (path.route.generate_with && path.route.generate_with.scheme || request.scheme).dup
-          result << '://'
-          result << (path.route.generate_with && path.route.generate_with.host) ? path.route.generate_with.host : request.host
-          port = path.route.generate_with && path.route.generate_with.port || request.port
-          if result[4] == ?s
-            result << ':' << port.to_s unless port == 443
-          else
-            result << ':' << port.to_s unless port == 80
-          end
-          result
+        def generate_start(path, request)          
+          url_parts = UrlParts.new(path, request)
+          url = url_parts.url
+
+          (url[-1] == ?/) ? url[0..-2] : url
         end
 
-        def path_for_routing_lookup(routing_lookup, params = {})
+        def path_for_routing_lookup(routing_lookup, params = {})                    
           path = case routing_lookup
           when Symbol
             route = @usher.named_routes[routing_lookup]
