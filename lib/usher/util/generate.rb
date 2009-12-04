@@ -104,13 +104,20 @@ class Usher
 
         def generate_path(path, params = nil, generate_extra = true)
           params = Array(params) if params.is_a?(String)
-          if params.is_a?(Array)
+          case params
+          when nil
+            params = path && path.route.default_values
+          when Hash
+            params = path.route.default_values.merge(params) if path && path.route.default_values
+          when String, Array
+            params = Array(params)
             given_size = params.size
             extra_params = params.last.is_a?(Hash) ? params.pop : nil
-            params = Hash[*path.dynamic_parts.inject([]){|a, dynamic_part| a.concat([dynamic_part.name, params.shift || raise(MissingParameterException.new("got #{given_size}, expected #{path.dynamic_parts.size} parameters"))]); a}]
+            params = Hash[*path.dynamic_parts.inject(path.route.default_values ? path.route.default_values.to_a : []){|a, dynamic_part| a.concat([dynamic_part.name, params.shift || raise(MissingParameterException.new("got #{given_size}, expected #{path.dynamic_parts.size} parameters"))]); a}]
             params.merge!(extra_params) if extra_params
           end
-
+          
+          
           result = Rack::Utils.uri_escape(generate_path_for_base_params(path, params))
           unless !generate_extra || params.nil? || params.empty?
             extra_params = generate_extra_params(params, result[??])

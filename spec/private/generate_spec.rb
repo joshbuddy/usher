@@ -137,6 +137,11 @@ describe "Usher URL generation" do
     @route_set.generator.generate(:optionals, {:controller => "foo", :action => "bar"}).should == '/foo/bar'
   end
 
+  it "should generate a route with default values that aren't represented in the path" do
+    @route_set.add_named_route(:default_values_not_in_path, '/:controller', :default_values => {:page => 1})
+    @route_set.generator.generate(:default_values_not_in_path, {:controller => "foo"}).should == '/foo?page=1'
+  end
+
   describe "when named route was added with string key" do
     before :each do
       @route_set.add_named_route 'items', '/items', :controller => 'items', :action => 'index'
