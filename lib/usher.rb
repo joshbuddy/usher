@@ -168,6 +168,7 @@ class Usher
   # === +options+
   # * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
   # * +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
+  # * +default_values+ - Provides values for variables in your route for generation. If you're using URL generation, then any values supplied here that aren't included in your path will be appended to the query string.
   # * Any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = nil)
     route = get_route(path, options)
