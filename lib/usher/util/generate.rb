@@ -44,9 +44,7 @@ class Usher
           end
 
           def protocol
-            return @protocol unless @protocol.nil?            
-
-            @protocol = scheme ? "#{scheme}://" : request.protocol
+            @protocol ||= scheme ? "#{scheme}://" : request.protocol
           end
 
           def host
@@ -58,8 +56,6 @@ class Usher
           end
 
           def port_string
-            return @port_string unless @port_string.nil?
-
             @port_string ||= standard_port? ? '' : ":#{port}"
           end
 
@@ -80,7 +76,7 @@ class Usher
           end
 
           def ssl?
-            protocol[4] == ?s
+            protocol[0..4] == 'https'
           end
         end
 
