@@ -179,65 +179,69 @@ class Usher
     private
     
     def set_path_with_destination(path, destination = path)
-      node = path.parts.inject(self){ |node, key| process_path_part(node, key) }
-      node = process_request_parts(node, request_methods_for_path(path)) if request_methods
-
-      while node.request_method_type
-        node = (node.request[nil] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)))
+      nodes = [path.parts.inject(self){ |node, key| process_path_part(node, key) }]
+      nodes = process_request_parts(nodes, request_methods_for_path(path)) if request_methods
+      
+      nodes.each do |node|
+        while node.request_method_type
+          node = (node.request[nil] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)))
+        end
+        node.terminates = destination
       end
-
-      node.terminates = destination
     end
     
     def request_method_index(type)
       request_methods.index(type)
     end
     
-    def process_request_parts(node, parts)
+    def process_request_parts(nodes, parts)
       while parts.any?{ |p| !p.trivial? }
         key = parts.shift
 
         next if key.trivial?
+        
+        nodes.map! do |node|
+        
+          node.activate_request!
 
-        node.activate_request!
-
-        node = if node.request_method_type.nil?
-          node.request_method_type = key.type
-          node.upgrade_request! if key.value.is_a?(Regexp)
-          node.request[key.value] ||= Node.new(node, key)
-        else
-          case request_method_index(node.request_method_type) <=> request_method_index(key.type)
-          when -1
-            parts.unshift(key)
-            node.request[key.value] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil))
-          when 0
+          if node.request_method_type.nil?
+            node.request_method_type = key.type
             node.upgrade_request! if key.value.is_a?(Regexp)
-            node.request[key.value] ||= Node.new(node, key)
-          when 1
-            previous_node = node.parent
-            current_node_entry_key = nil
-            current_node_entry_lookup = nil
-            [previous_node.normal, previous_node.greedy, previous_node.request].compact.each do |l|
-              current_node_entry_key = l.each{|k,v| break k if node == v}
-              current_node_entry_lookup = l and break if current_node_entry_key
+            Array(key.value).map{|k| node.request[k] ||= Node.new(node, key) }
+          else
+            case request_method_index(node.request_method_type) <=> request_method_index(key.type)
+            when -1
+              parts.unshift(key)
+              Array(key.value).map{|k| node.request[k] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)) }
+            when 0
+              node.upgrade_request! if key.value.is_a?(Regexp)
+              Array(key.value).map{|k| node.request[k] ||= Node.new(node, key) }
+            when 1
+              previous_node = node.parent
+              current_node_entry_key = nil
+              current_node_entry_lookup = nil
+              [previous_node.normal, previous_node.greedy, previous_node.request].compact.each do |l|
+                current_node_entry_key = l.each{|k,v| break k if node == v}
+                current_node_entry_lookup = l and break if current_node_entry_key
+              end
+
+              current_node_entry_lookup.respond_to?(:delete_value) ? 
+                current_node_entry_lookup.delete_value(node) : current_node_entry_lookup.delete_if{|k,v| v == node}
+
+              new_node = Node.new(previous_node, Route::RequestMethod.new(key.type, nil))
+              new_node.activate_request!
+              new_node.request_method_type = key.type
+              current_node_entry_lookup[current_node_entry_key] = new_node
+              node.parent = new_node
+              new_node.request[nil] = node
+              parts.unshift(key)
+              new_node
             end
-
-            current_node_entry_lookup.respond_to?(:delete_value) ? 
-              current_node_entry_lookup.delete_value(node) : current_node_entry_lookup.delete_if{|k,v| v == node}
-
-            new_node = Node.new(previous_node, Route::RequestMethod.new(key.type, nil))
-            new_node.activate_request!
-            new_node.request_method_type = key.type
-            current_node_entry_lookup[current_node_entry_key] = new_node
-            node.parent = new_node
-            new_node.request[nil] = node
-            parts.unshift(key)
-
-            new_node
           end
         end
+        nodes.flatten!
       end
-      node
+      nodes
     end      
       
     

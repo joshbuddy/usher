@@ -71,8 +71,7 @@ class Usher
       # it returns route, and because you may want to work with the route,
       # for example give it a name, we returns the route with GET request
       def get(path, options = {})
-        self.add(path, options.merge!(:conditions => {:request_method => "HEAD"}))
-        self.add(path, options.merge!(:conditions => {:request_method => "GET"}))
+        self.add(path, options.merge!(:conditions => {:request_method => ["HEAD", "GET"]}))
       end
 
       def post(path, options = {})
