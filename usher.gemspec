@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.5.11"
+  s.version = "0.5.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub \305\240\305\245astn\303\275", "Joshua Hull"]
-  s.date = %q{2009-11-27}
+  s.date = %q{2009-12-04}
   s.description = %q{A general purpose routing library}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
     "lib/usher/interface/rack.rb",
     "lib/usher/interface/rack/mapper.rb",
     "lib/usher/interface/rack/route.rb",
+    "lib/usher/interface/rails20.rb",
     "lib/usher/interface/rails22.rb",
     "lib/usher/interface/rails22/mapper.rb",
     "lib/usher/interface/rails23.rb",
@@ -41,6 +42,7 @@ Gem::Specification.new do |s|
     "lib/usher/route.rb",
     "lib/usher/route/path.rb",
     "lib/usher/route/request_method.rb",
+    "lib/usher/route/static.rb",
     "lib/usher/route/util.rb",
     "lib/usher/route/variable.rb",
     "lib/usher/spinoffs/strscan_additions.rb",
@@ -54,11 +56,13 @@ Gem::Specification.new do |s|
     "spec/private/delimiters_spec.rb",
     "spec/private/email/recognize_spec.rb",
     "spec/private/generate_spec.rb",
+    "spec/private/generate_with_spec.rb",
     "spec/private/grapher_spec.rb",
     "spec/private/parser_spec.rb",
     "spec/private/path_spec.rb",
     "spec/private/rack/dispatch_spec.rb",
     "spec/private/rack/generate_spec.rb",
+    "spec/private/rack/route_spec.rb",
     "spec/private/rails2_2/compat.rb",
     "spec/private/rails2_2/generate_spec.rb",
     "spec/private/rails2_2/path_spec.rb",
@@ -71,6 +75,7 @@ Gem::Specification.new do |s|
     "spec/private/request_method_spec.rb",
     "spec/private/splitter_spec.rb",
     "spec/private/string_scanner_spec.rb",
+    "spec/private/url_parts_spec.rb",
     "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
@@ -84,11 +89,13 @@ Gem::Specification.new do |s|
     "spec/private/delimiters_spec.rb",
     "spec/private/email/recognize_spec.rb",
     "spec/private/generate_spec.rb",
+    "spec/private/generate_with_spec.rb",
     "spec/private/grapher_spec.rb",
     "spec/private/parser_spec.rb",
     "spec/private/path_spec.rb",
     "spec/private/rack/dispatch_spec.rb",
     "spec/private/rack/generate_spec.rb",
+    "spec/private/rack/route_spec.rb",
     "spec/private/rails2_2/compat.rb",
     "spec/private/rails2_2/generate_spec.rb",
     "spec/private/rails2_2/path_spec.rb",
@@ -101,6 +108,7 @@ Gem::Specification.new do |s|
     "spec/private/request_method_spec.rb",
     "spec/private/splitter_spec.rb",
     "spec/private/string_scanner_spec.rb",
+    "spec/private/url_parts_spec.rb",
     "spec/spec_helper.rb"
   ]
 
@@ -109,15 +117,12 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<fuzzyhash>, [">= 0.0.10"])
-      s.add_runtime_dependency(%q<dirge>, [">= 0.0.3"])
+      s.add_runtime_dependency(%q<fuzzyhash>, [">= 0.0.9"])
     else
-      s.add_dependency(%q<fuzzyhash>, [">= 0.0.10"])
-      s.add_dependency(%q<dirge>, [">= 0.0.3"])
+      s.add_dependency(%q<fuzzyhash>, [">= 0.0.9"])
     end
   else
-    s.add_dependency(%q<fuzzyhash>, [">= 0.0.10"])
-    s.add_dependency(%q<dirge>, [">= 0.0.3"])
+    s.add_dependency(%q<fuzzyhash>, [">= 0.0.9"])
   end
 end
 
