@@ -10,7 +10,7 @@ u.add_route('/dynamic/:variable')
 u.add_route('/rails/:controller/:action/:id')
 u.add_route('/greedy/{!:greed,.*}')
 
-TIMES = 50000
+TIMES = 50_000
 
 RBench.run(TIMES) do
   

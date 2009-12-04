@@ -15,7 +15,10 @@ class Usher
           @ins << @usher unless @ins.last == @usher
         end
 
+        # it returns route, and because you may want to work with the route,
+        # for example give it a name, we returns the route with GET request
         def get(path, options = nil, &block)
+          self.map(path, options.merge!(:conditions => {:request_method => "HEAD"}), &block)
           self.map(path, options.merge!(:conditions => {:request_method => "GET"}), &block)
         end
 
@@ -64,11 +67,11 @@ class Usher
       # add("/url", :conditions => {:request_method => "POST"}})
       # is the same as:
       # post("/url")
-      #
-      # if you need more complex setup, use method add directly, for example:
-      # add("/url", :conditions => {:request_method => ["POST", "PUT"]}})
+
+      # it returns route, and because you may want to work with the route,
+      # for example give it a name, we returns the route with GET request
       def get(path, options = {})
-        self.add(path, options.merge!(:conditions => {:request_method => "GET"}))
+        self.add(path, options.merge!(:conditions => {:request_method => ["HEAD", "GET"]}))
       end
 
       def post(path, options = {})
