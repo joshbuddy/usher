@@ -9,7 +9,11 @@ class Usher
     attr_reader   :paths, :requirements, :conditions, :named, :generate_with, :default_values, :match_partially, :destination
     attr_accessor :parent_route, :router, :recognizable
 
-    GenerateWith = Struct.new(:scheme, :port, :host)
+    class GenerateWith < Struct.new(:scheme, :port, :host)
+      def empty?
+        scheme.nil? and port.nil? and host.nil?
+      end
+    end
 
     def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially)
       @router, @requirements, @conditions, @default_values, @match_partially = router, requirements, conditions, default_values, match_partially
