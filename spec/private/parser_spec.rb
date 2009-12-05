@@ -92,7 +92,7 @@ describe "Usher route tokenizing" do
       end
 
       it "should correctly generate route with a variable" do
-        route = @parser.generate_route('/cheese\(:kind\)', nil, nil, nil, nil)        
+        route = @parser.generate_route('/cheese\(:kind\)', nil, nil, nil, nil, nil)        
         variable = route.paths[0].parts[3]
         
         variable.should be_kind_of(Usher::Route::Variable::Single)        

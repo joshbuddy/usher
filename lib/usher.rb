@@ -11,8 +11,10 @@ require File.join('usher', 'delimiters')
 
 class Usher
   attr_reader :root, :named_routes, :routes, :splitter,
-              :delimiters, :delimiters_regex,
+              :delimiters, :delimiters_regex, :priority_lookups,
               :parent_route, :generator, :grapher
+
+  alias_method :priority_lookups?, :priority_lookups
 
   # Returns whether the route set is empty
   #
@@ -40,6 +42,7 @@ class Usher
     @named_routes = {}
     @routes = []
     @grapher = Grapher.new
+    @priority_lookups = false
   end
   alias clear! reset!
 
@@ -272,11 +275,16 @@ class Usher
     @valid_regex
   end
 
+  def enable_priority_lookups!
+    @priority_lookups = true
+  end
+
   def get_route(path, options = nil)
     conditions = options && options.delete(:conditions) || nil
     requirements = options && options.delete(:requirements) || nil
     default_values = options && options.delete(:default_values) || nil
     generate_with = options && options.delete(:generate_with) || nil
+    priority = options && options.delete(:priority) || nil
     if options
       options.delete_if do |k, v|
         if v.is_a?(Regexp) || v.is_a?(Proc)
@@ -290,7 +298,11 @@ class Usher
       conditions.keys.all?{|k| request_methods.include?(k)} or raise
     end
 
-    route = parser.generate_route(path, conditions, requirements, default_values, generate_with)
+    if priority
+      enable_priority_lookups!
+    end
+
+    route = parser.generate_route(path, conditions, requirements, default_values, generate_with, priority)
     route.to(options) if options && !options.empty?
     route
   end

@@ -276,6 +276,22 @@ describe "Usher route recognition" do
     @route_set.recognize(build_request({:method => 'get', :path => '/foo'})).path.route.should == route
   end
 
+  it "should match between two routes where one has a higher priroty" do
+    route_lower = @route_set.add_route("/foo", :conditions => {:protocol => 'https'}, :priority => 1)
+    route_higher = @route_set.add_route("/foo", :conditions => {:method => 'post'}, :priority => 2)
+
+    @route_set.recognize(build_request({:method => 'post', :protocol => 'https', :path => '/foo'})).path.route.should == route_higher
+
+    @route_set.clear!
+
+    route_higher = @route_set.add_route("/foo", :conditions => {:protocol => 'https'}, :priority => 2)
+    route_lower = @route_set.add_route("/foo", :conditions => {:method => 'post'}, :priority => 1)
+
+    @route_set.recognize(build_request({:method => 'post', :protocol => 'https', :path => '/foo'})).path.route.should == route_higher
+
+    @route_set.clear!
+  end
+
   it "should only match the specified path of the route when a condition is specified" do
     @route_set.add_route("/", :conditions => {:method => "get"})
     @route_set.add_route("/foo")

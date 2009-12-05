@@ -18,7 +18,7 @@ class Usher
           @delimiters_regex = Regexp.new(router.delimiters_regex)
         end
 
-        def generate_route(unprocessed_path, conditions, requirements, default_values, generate_with)
+        def generate_route(unprocessed_path, conditions, requirements, default_values, generate_with, priority)
           match_partially = if unprocessed_path.is_a?(String)
             unprocessed_path = parse(unprocessed_path, requirements, default_values)
             if unprocessed_path[-1] == ?*
@@ -73,7 +73,8 @@ class Usher
             requirements, 
             default_values, 
             generate_with,
-            match_partially
+            match_partially,
+            priority
           )
           
         end

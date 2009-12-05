@@ -164,12 +164,20 @@ class Usher
         end
         next_part.find(usher, request_object, original_path, path, params, position)
       elsif request_method_type
-        if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(usher, request_object, original_path, path.dup, params.dup, position)
-          ret
-        elsif general_node = request[nil] and ret = general_node.find(usher, request_object, original_path, path.dup, params.dup, position)
-          ret
+        return_value = if (specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(usher, request_object, original_path, path.dup, params.dup, position))
+          usher.priority_lookups? ? [ret] : ret
+        end
+        
+        if usher.priority_lookups? || return_value.nil? and general_node = request[nil] and ret = general_node.find(usher, request_object, original_path, path.dup, params.dup, position)
+          return_value = usher.priority_lookups? && return_value ? [return_value, ret] : ret
+        end
+        
+        unless usher.priority_lookups?
+          return_value
         else
-          nil
+          return_value = Array(return_value).flatten.compact
+          return_value.sort!{|r1, r2| r1.path.route.priority <=> r2.path.route.priority}
+          return_value.last
         end
       else
         nil
@@ -199,11 +207,8 @@ class Usher
         key = parts.shift
 
         next if key.trivial?
-        
         nodes.map! do |node|
-        
           node.activate_request!
-
           if node.request_method_type.nil?
             node.request_method_type = key.type
             node.upgrade_request! if key.value.is_a?(Regexp)
@@ -212,7 +217,7 @@ class Usher
             case request_method_index(node.request_method_type) <=> request_method_index(key.type)
             when -1
               parts.unshift(key)
-              Array(key.value).map{|k| node.request[k] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)) }
+              Array(key.value).map{|k| node.request[nil] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)) }
             when 0
               node.upgrade_request! if key.value.is_a?(Regexp)
               Array(key.value).map{|k| node.request[k] ||= Node.new(node, key) }
