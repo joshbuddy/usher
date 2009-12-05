@@ -47,7 +47,18 @@ describe "Usher route recognition" do
       @route_set.recognize(build_request({:method => 'put', :path => '/sample', :protocol => 'wacky', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_http_admin_generic
 
     end
-
+    
+    it "should recognize an empty path" do
+      @route_set.add_route('').to(:test)
+      @route_set.recognize(build_request({:path => ''})).path.route.destination.should == :test
+    end
+    
+    it "should recognize an optionally empty path" do
+      @route_set.add_route('(/)').to(:test)
+      @route_set.recognize(build_request({:path => ''})).path.route.destination.should == :test
+      @route_set.recognize(build_request({:path => '/'})).path.route.destination.should == :test
+    end
+    
     it "should correctly fix that tree if conditionals are used later" do
       noop_route = @route_set.add_route('/noop', :controller => 'products', :action => 'noop')
       product_show_route = @route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
@@ -368,4 +379,5 @@ describe "Usher route recognition" do
     end
 
   end
+  
 end
