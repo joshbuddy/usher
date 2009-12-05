@@ -39,6 +39,7 @@ class Usher
 
             def route!(base = self.class)
               if match = self.class.router.recognize(@request)
+                @block_params = match.params.map{|p| p.last}
                 @params = @params ? @params.merge(match.params_as_hash) : match.params_as_hash
                 route_eval(&match.destination)
               elsif base.superclass.respond_to?(:routes)
