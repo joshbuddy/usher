@@ -8,6 +8,14 @@ class Usher
       def partial_match?
         !remaining_path.nil?
       end
+      
+      def params_as_hash
+        params.inject({}){|hash, pair| hash[pair.first] = pair.last; hash}
+      end
+      
+      def destination
+        path && path.route.destination
+      end
     end
     
     attr_reader :normal, :greedy, :request

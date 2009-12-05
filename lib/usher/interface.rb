@@ -15,14 +15,15 @@ class Usher
     register(:rack,     File.join(File.dirname(__FILE__), 'interface', 'rack'))
     register(:rails3,   File.join(File.dirname(__FILE__), 'interface', 'rails3'))
     register(:text,     File.join(File.dirname(__FILE__), 'interface', 'text'))
+    register(:sinatra,  File.join(File.dirname(__FILE__), 'interface', 'sinatra'))
 
     # Usher::Interface.for(:rack, &block)
-    def self.for(name, &block)
+    def self.for(name, *args, &block)
       name = name.to_sym
       if InterfaceRegistry[name]
         require InterfaceRegistry[name]
         const = Usher::Interface.const_get(File.basename(InterfaceRegistry[name]).to_s.split(/_/).map{|e| e.capitalize}.join)
-        const.new(&block)
+        const.new(*args, &block)
       else
         raise ArgumentError, "Interface #{name.inspect} doesn't exist. Choose one of: #{InterfaceRegistry.keys.inspect}"
       end
