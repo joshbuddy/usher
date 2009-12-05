@@ -19,16 +19,18 @@ class Usher
         end
 
         def generate_route(unprocessed_path, conditions, requirements, default_values, generate_with, priority)
-          match_partially = if unprocessed_path.is_a?(String)
-            unprocessed_path = parse(unprocessed_path, requirements, default_values)
+          match_partially = false
+          case unprocessed_path
+          when String
             if unprocessed_path[-1] == ?*
               unprocessed_path.slice!(-1)
-              true
-            else
-              false
+              match_partially = true
             end
+            unprocessed_path = parse(unprocessed_path, requirements, default_values)
+          when Regexp
+            unprocessed_path = [Route::Static::Greedy.new(unprocessed_path)]
           else
-            false
+            match_partially = false
           end
           
           unless unprocessed_path.first.is_a?(Route::Util::Group)
@@ -36,33 +38,27 @@ class Usher
             unprocessed_path.each{|p| group << p}
             unprocessed_path = group
           end
-
           paths = Route::Util.expand_path(unprocessed_path)
 
-          paths.map! do |path|
-            if path.all?{|part| String === part}
-              path #parse "{~#{path.join}}"
-            else
-              path.each_with_index do |part, index|
-                part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
-                case part
-                when Usher::Route::Variable::Glob
-                  if part.look_ahead && !part.look_ahead_priority
-                    part.look_ahead = nil
-                    part.look_ahead_priority = true
-                  else
-                    part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
-                  end
-                when Usher::Route::Variable
-                  if part.look_ahead && !part.look_ahead_priority
-                    part.look_ahead = nil
-                    part.look_ahead_priority = true
-                  else
-                    part.look_ahead = router.delimiters.first_in(path[index + 1, path.size]) || router.delimiters.unescaped.first
-                  end
+          paths.each do |path|
+            path.each_with_index do |part, index|
+              part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
+              case part
+              when Usher::Route::Variable::Glob
+                if part.look_ahead && !part.look_ahead_priority
+                  part.look_ahead = nil
+                  part.look_ahead_priority = true
+                else
+                  part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
+                end
+              when Usher::Route::Variable
+                if part.look_ahead && !part.look_ahead_priority
+                  part.look_ahead = nil
+                  part.look_ahead_priority = true
+                else
+                  part.look_ahead = router.delimiters.first_in(path[index + 1, path.size]) || router.delimiters.unescaped.first
                 end
               end
-              path
             end
           end
 
@@ -76,7 +72,6 @@ class Usher
             match_partially,
             priority
           )
-          
         end
 
         def parse_and_expand(path, requirements = nil, default_values = nil)
@@ -134,7 +129,7 @@ class Usher
                 variable_name = variable[0, variable.size - 1].to_sym
                 current_group << variable_class.new(variable_name, regex, requirements && requirements[variable_name])
               elsif simple
-                current_group << Usher::Route::Static::Greedy.new(pattern)
+                current_group << Usher::Route::Static::Greedy.new(Regexp.new(pattern))
               else
                 current_group << regex
               end

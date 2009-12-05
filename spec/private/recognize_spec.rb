@@ -59,6 +59,12 @@ describe "Usher route recognition" do
       @route_set.recognize(build_request({:path => '/'})).path.route.destination.should == :test
     end
     
+    it "should allow adding a pure regex" do
+      @route_set.add_route(/\/test\/(testing|gold)/).to(:test)
+      @route_set.recognize(build_request({:path => '/test/testing'})).path.route.destination.should == :test
+      @route_set.recognize(build_request({:path => '/test/gold'})).path.route.destination.should == :test
+    end
+
     it "should correctly fix that tree if conditionals are used later" do
       noop_route = @route_set.add_route('/noop', :controller => 'products', :action => 'noop')
       product_show_route = @route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})

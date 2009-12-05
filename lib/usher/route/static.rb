@@ -1,7 +1,7 @@
 class Usher
   class Route
     class Static
-      class Greedy < String
+      class Greedy < Regexp
         
       end
     end
