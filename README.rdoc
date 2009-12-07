@@ -119,6 +119,12 @@ For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <t
 
   run routes
 
+------------
+
+  >> curl http://127.0.0.1:3000/hello/samueltanders
+  << Hi there samueltanders
+
+
 == Sinatra
 
 In Sinatra, you get the extra method, +generate+, which lets you generate a url. Name your routes with <tt>:name</tt> when you define them.
@@ -132,11 +138,6 @@ In Sinatra, you get the extra method, +generate+, which lets you generate a url.
   get '/hi', :name => :hi do
     "Hello World! #{generate(:hi)}"
   end
-
-------------
-
-  >> curl http://127.0.0.1:3000/hello/samueltanders
-  << Hi there samueltanders
 
 == DONE
 
