@@ -84,6 +84,10 @@ describe "Usher (for rack) route dispatching" do
       @usher2.add("/bad"  ).match_partially!.to(@bad_app)
       @usher2.add("/some(/:foo)").to(@app)
 
+      @usher3 = Usher::Interface.for(:rack)
+      @usher3.add("(/)" ).to(@app)
+
+      route_set.add("/baz", :default_values => {:baz => "baz"}).match_partially!.to(@usher3)
       route_set.add("/foo/:bar", :default_values => {:foo => "foo"}).match_partially!.to(@usher2)
       route_set.add("/foo", :default_values => {:controller => :foo}).to(@app)
     end
@@ -91,6 +95,16 @@ describe "Usher (for rack) route dispatching" do
     it "should match the route without nesting" do
       @app.should_receive(:call).once.with{ |e| e['usher.params'].should == {:controller => :foo}}
       route_set.call(Rack::MockRequest.env_for("/foo"))
+    end
+
+    it "should match the route where the last part is optional" do
+      @app.should_receive(:call).once.with{ |e| e['usher.params'].should == {:baz => 'baz'}}
+      route_set.call(Rack::MockRequest.env_for("/baz/"))
+    end
+
+    it "should match the route where the last part is empty" do
+      @app.should_receive(:call).once.with{ |e| e['usher.params'].should == {:baz => 'baz'}}
+      route_set.call(Rack::MockRequest.env_for("/baz"))
     end
 
     it "should route through the first route, and the second to the app" do
