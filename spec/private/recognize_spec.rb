@@ -90,6 +90,13 @@ describe "Usher route recognition" do
     end
   end
 
+  it "should recognize path with a trailing slash" do
+    target_route = @route_set.add_route('/path', :controller => 'sample', :action => 'action')
+
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/path/'}))
+    response.path.route.should == target_route
+  end
+
   it "should recognize a format-style variable" do
     target_route = @route_set.add_route('/sample.:format', :controller => 'sample', :action => 'action')
     @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:format , 'html']], nil, "/sample.html")
