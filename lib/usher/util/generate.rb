@@ -144,8 +144,8 @@ class Usher
 
             @generation_module.module_eval <<-END_EVAL
               def respond_to?(method_name)
-                if match = Regexp.new('^(.*?)_(path|url)$').match(method_name.to_s)
-                  @@generator.usher.named_routes.key?(match.group(1))
+                if method_name =~ /^(.*?)_(path|url)$/
+                  @@generator.usher.named_routes.key?($1)
                 else
                   super
                 end
@@ -184,7 +184,7 @@ class Usher
           (url[-1] == ?/) ? url[0..-2] : url
         end
 
-        def path_for_routing_lookup(routing_lookup, params = {})                    
+        def path_for_routing_lookup(routing_lookup, params = {})
           path = case routing_lookup
           when Symbol
             route = @usher.named_routes[routing_lookup]
