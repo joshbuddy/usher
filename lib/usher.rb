@@ -55,6 +55,16 @@ class Usher
   #
   # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
   # Array of methods called against the request object for the purposes of matching route requirements.
+  #
+  # <tt>:generator</tt>: +nil+ or Generator instance. (default: +nil+) Take a look at <tt>Usher::Util::Generators for examples.</tt>.
+  #
+  # <tt>:ignore_trailing_delimiters</tt>: +true+ or +false+. (default: +false+) Ignore trailing delimiters in recognizing paths.
+  #
+  # <tt>:consider_destination_keys</tt>: +true+ or +false+. (default: +false+) When generating, and using hash destinations, you can have
+  # Usher use the destination hash to match incoming params.
+  #
+  # Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
+  # :action => 'action', it would pick that route to use for generation.
   def initialize(options = nil)
     self.generator                   = options && options.delete(:generator)
     self.delimiters                  = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
