@@ -28,11 +28,11 @@ describe Usher::Util::Generators::URL::UrlParts do
   include PathAndRequestHelper
 
   before :all do
-    UrlParts = Usher::Util::Generators::URL::UrlParts
+    ::UrlParts = Usher::Util::Generators::URL::UrlParts
   end
 
   describe "#url" do
-    describe "when generate_with is provided" do      
+    describe "when generate_with is provided" do
       before :each do
         @path = stub_path_with 'https', 'overridden', 9443
         @request = rack_request_for 'http://localhost'
@@ -105,7 +105,7 @@ describe Usher::Util::Generators::URL::UrlParts do
         @request = mock 'request'
       end
 
-      it "should just extract the url" do        
+      it "should just extract the url" do
         @request.should_receive(:url).and_return('http://localhost')
 
         url_parts = UrlParts.new(@path, @request)

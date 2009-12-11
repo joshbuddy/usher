@@ -3,7 +3,7 @@ require "usher"
 
 describe Usher::Route::GenerateWith, "#empty?" do
   before :all do
-    GenerateWith = Usher::Route::GenerateWith
+    ::GenerateWith = Usher::Route::GenerateWith
   end
 
   describe "when all fields are nil" do
