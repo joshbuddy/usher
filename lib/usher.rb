@@ -41,7 +41,7 @@ class Usher
     @root = Node.root(self, request_methods)
     @named_routes = {}
     @routes = []
-    @grapher = Grapher.new
+    @grapher = Grapher.new(self)
     @priority_lookups = false
   end
   alias clear! reset!
@@ -56,18 +56,23 @@ class Usher
   # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
   # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
-    self.generator                  = options && options.delete(:generator)
-    self.delimiters                 = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
-    self.valid_regex                = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
-    self.request_methods            = options && options.delete(:request_methods)
-    self.ignore_trailing_delimiters = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
+    self.generator                   = options && options.delete(:generator)
+    self.delimiters                  = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
+    self.valid_regex                 = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
+    self.request_methods             = options && options.delete(:request_methods)
+    self.ignore_trailing_delimiters  = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
+    self.consider_destination_keys   = options && options.key?(:consider_destination_keys) ? options.delete(:consider_destination_keys) : false
     reset!
   end
 
   def ignore_trailing_delimiters?
     @ignore_trailing_delimiters
   end
-
+  
+  def consider_destination_keys?
+    @consider_destination_keys
+  end
+  
   def parser
     @parser ||= Util::Parser.for_delimiters(self, valid_regex)
   end
@@ -258,7 +263,7 @@ class Usher
 
   private
 
-  attr_accessor :request_methods, :ignore_trailing_delimiters
+  attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys
   attr_reader :valid_regex
 
   def generator=(generator)
@@ -314,7 +319,7 @@ class Usher
   end
 
   def rebuild_grapher!
-    @grapher = Grapher.new
+    @grapher = Grapher.new(self)
     @routes.each{|r| @grapher.add_route(r)}
   end
 end

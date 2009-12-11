@@ -10,6 +10,10 @@ class Usher
         self.parts = parts
       end
 
+      def destination_keys
+        
+      end
+
       def dynamic_indicies
         unless dynamic? && @dynamic_indicies
           @dynamic_indicies = []
@@ -43,7 +47,11 @@ class Usher
       end
 
       def can_generate_from?(keys)
-        (dynamic_required_keys - keys).size.zero?
+        if dynamic?
+          (dynamic_required_keys - keys).size.zero? ? keys : nil
+        elsif route.router.consider_destination_keys?
+          (route.destination.keys - keys).size.zero?
+        end
       end
       
       # Merges paths for use in generation

@@ -91,6 +91,8 @@ describe "Usher route recognition" do
   end
 
   it "should recognize path with a trailing slash" do
+    @route_set = Usher.new(:request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains], :ignore_trailing_delimiters => true)
+    
     target_route = @route_set.add_route('/path', :controller => 'sample', :action => 'action')
 
     response = @route_set.recognize(build_request({:method => 'get', :path => '/path/'}))
