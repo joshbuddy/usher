@@ -1,3 +1,5 @@
+require 'active_support'
+
 class Usher
   module Util
     class Generators
@@ -37,6 +39,8 @@ class Usher
       end
 
       class URL < Generic
+
+        # TODO: Find a proper place for these auxilliary classes -Daniel V.-
 
         class UrlParts < Struct.new(:path, :request)
           def scheme
@@ -78,7 +82,69 @@ class Usher
           def ssl?
             protocol[0..4] == 'https'
           end
-        end
+        end # UrlParts
+
+        # TODO Actually process rather should not be called as 'parsing'. Find a better name. -Daniel V-
+        class ParamsParser < Struct.new(:path)
+
+          def parse!(params)
+            parsed_params = parse params
+            check_completeness parsed_params
+            parsed_params
+          end
+
+        protected
+
+          def parse(params)
+            case params
+              when Array
+                parse_as_array params
+              when String
+                parse_as_array [params]
+              when nil
+                default_values
+              when Hash
+                parse_as_hash(params)
+            else
+              parse_as_hash :id => params.id
+            end
+          end
+
+          def check_completeness(params)
+            unless dynamic_parts.empty?
+              uncovered_parts = dynamic_parts - params.keys
+              raise MissingParameterException.new("Following dynamic parts are uncovered with either given or default values: #{uncovered_parts.inspect}") unless uncovered_parts.empty?
+            end
+          end
+
+          def default_values
+            path && path.route.default_values ? path.route.default_values : {}
+          end
+
+          def dynamic_parts
+            path && path.dynamic_parts ? path.dynamic_parts.map(&:name) : []
+          end
+
+          def parse_as_array(params)
+            extra_params = params.last.is_a?(Hash) ? params.pop : nil
+
+            result = {}
+
+            dynamic_parts.each do |dynamic_part|
+              result[dynamic_part] = params.shift || default_values[dynamic_part]
+            end
+
+            result.merge!(extra_params) if extra_params
+            result.delete_if { |key, value| value.nil? }
+
+            result
+          end
+
+          def parse_as_hash(params)
+            default_values.merge(params)
+          end
+        end # ParamsParser
+
 
         def initialize
           require File.join('usher', 'util', 'rack-mixins')
@@ -103,21 +169,9 @@ class Usher
         end
 
         def generate_path(path, params = nil, generate_extra = true)
-          params = Array(params) if params.is_a?(String)
-          case params
-          when nil
-            params = path && path.route.default_values
-          when Hash
-            params = path.route.default_values.merge(params) if path && path.route.default_values
-          when String, Array
-            params = Array(params)
-            given_size = params.size
-            extra_params = params.last.is_a?(Hash) ? params.pop : nil
-            params = Hash[*path.dynamic_parts.inject(path.route.default_values ? path.route.default_values.to_a : []){|a, dynamic_part| a.concat([dynamic_part.name, params.shift || raise(MissingParameterException.new("got #{given_size}, expected #{path.dynamic_parts.size} parameters"))]); a}]
-            params.merge!(extra_params) if extra_params
-          end
-          
-          
+          params_parser = ParamsParser.new(path)
+          params = params_parser.parse!(params)
+
           result = Rack::Utils.uri_escape(generate_path_for_base_params(path, params))
           unless !generate_extra || params.nil? || params.empty?
             extra_params = generate_extra_params(params, result[??])

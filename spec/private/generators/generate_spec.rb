@@ -1,4 +1,4 @@
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "spec_helper"))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', "spec_helper"))
 require "usher"
 require 'rack'
 
@@ -154,6 +154,19 @@ describe "Usher URL generation" do
 
     it "should generate a named route by given symbolic key" do
       @route_set.generator.generate(:items).should == '/items'
+    end
+  end
+
+  describe "when a model given as params" do
+    before :each do
+      model_class = Struct.new(:id)
+      @item = model_class.new
+      @item.id = rand(100000)
+    end
+
+    it "should handle it as an :id option" do
+      @route_set.add_named_route :item, '/items/:id', :controller => 'items', :action => 'show'
+      @route_set.generator.generate(:item, @item).should == "/items/#{@item.id}"
     end
   end
 
