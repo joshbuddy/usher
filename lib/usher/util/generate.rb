@@ -174,6 +174,9 @@ class Usher
 
           result = Rack::Utils.uri_escape(generate_path_for_base_params(path, params))
           unless !generate_extra || params.nil? || params.empty?
+            if usher.consider_destination_keys? && path.route.destination_keys
+              params.delete_if{|k, v| path.route.destination_keys.include?(k)}
+            end
             extra_params = generate_extra_params(params, result[??])
             result << extra_params
           end

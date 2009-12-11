@@ -142,9 +142,19 @@ describe "Usher URL generation" do
     @route_set.generator.generate(:default_values_not_in_path, {:controller => "foo"}).should == '/foo?page=1'
   end
 
-  it "should generate direct unnamed paths" do
-    @route_set.add_route('/profiles', :controller => 'profiles', :action => 'edit')
-    @route_set.generator.generate(nil, :controller => 'profiles', :action => 'edit').should == '/profiles'
+  describe "with consider_destination_keys enabled" do
+    
+    before(:each) do
+      @route_set = Usher.new(:generator => Usher::Util::Generators::URL.new, :consider_destination_keys => true)
+      @route_set.reset!
+    end
+
+    it "should generate direct unnamed paths" do
+      @route_set.add_route('/profiles', :controller => 'profiles', :action => 'edit')
+      @route_set.add_route('/users', :controller => 'users', :action => 'index')
+      @route_set.generator.generate(nil, :controller => 'profiles', :action => 'edit').should == '/profiles'
+      @route_set.generator.generate(nil, :controller => 'users', :action => 'index').should == '/users'
+    end
   end
 
   describe "when named route was added with string key" do
@@ -279,11 +289,12 @@ describe "Usher URL generation" do
   describe "#path_for_routing_lookup" do
     describe "when direct route exists" do
       before :each do
+        @route_set = Usher.new(:generator => Usher::Util::Generators::URL.new, :consider_destination_keys => true)
         @route = @route_set.add_named_route(:direct_path, '/some-neat-name', :controller => 'foo', :action => 'bar')
       end
 
       it "should return exactly this route" do
-        @route_set.generator.path_for_routing_lookup(nil, :controller => 'foo', :action => 'bar').should == @route
+        @route_set.generator.path_for_routing_lookup(nil, :controller => 'foo', :action => 'bar').should == @route.paths.first
       end
     end
   end
