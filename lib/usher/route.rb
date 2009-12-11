@@ -67,6 +67,8 @@ class Usher
       matching_path
     end
 
+    CompoundDestination = Struct.new(:args, :block, :options)
+
     # Sets +options+ on a route. Returns +self+.
     #
     #   Request = Struct.new(:path)
@@ -74,14 +76,22 @@ class Usher
     #   route = set.add_route('/test')
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
-    def to(options = nil, &block)
-      raise "cannot set destination as block and argument" if block_given? && options
-      @destination = if block_given?
-        block
+    def to(*args, &block)
+      if !args.empty? && block
+        @destination = CompoundDestination.new(args, block, args.last.is_a?(Hash) ? args.pop : {})
+      elsif block.nil?
+        case args.size
+        when 0 
+          raise "destination should be set as something"
+        when 1
+          @destination = args.first
+        else
+          @destination = CompoundDestination.new(args, nil, args.last.is_a?(Hash) ? args.pop : {})
+        end
       else
-        options.parent_route = self if options.respond_to?(:parent_route=)
-        options
+        @destination = block
       end
+      args.first.parent_route = self if args.first.respond_to?(:parent_route=)
       self
     end
 
