@@ -56,11 +56,16 @@ class Usher
   # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
   # Array of methods called against the request object for the purposes of matching route requirements.
   def initialize(options = nil)
-    self.generator       = options && options.delete(:generator)
-    self.delimiters      = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
-    self.valid_regex     = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
-    self.request_methods = options && options.delete(:request_methods)
+    self.generator                  = options && options.delete(:generator)
+    self.delimiters                 = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
+    self.valid_regex                = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
+    self.request_methods            = options && options.delete(:request_methods)
+    self.ignore_trailing_delimiters = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
     reset!
+  end
+
+  def ignore_trailing_delimiters?
+    @ignore_trailing_delimiters
   end
 
   def parser
@@ -253,7 +258,7 @@ class Usher
 
   private
 
-  attr_accessor :request_methods
+  attr_accessor :request_methods, :ignore_trailing_delimiters
   attr_reader :valid_regex
 
   def generator=(generator)
