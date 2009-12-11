@@ -1,7 +1,7 @@
 class Usher
   class Grapher
 
-    attr_reader :routes
+    attr_reader :routes, :router, :orders, :key_count, :cache
 
     def initialize(router)
       @router = router
@@ -17,7 +17,7 @@ class Usher
     end
 
     def add_route(route)#, required_keys, optional_keys)
-      @routes << route
+      routes << route
     end
 
     def process_routes
@@ -26,8 +26,8 @@ class Usher
         route.paths.each do |path|
           if path.dynamic?
             path.dynamic_keys.each do |k|
-              @orders[path.dynamic_keys.size][k] << path
-              @key_count[k] += 1
+              orders[path.dynamic_keys.size][k] << path
+              key_count[k] += 1
             end
 
             dynamic_parts_with_defaults    = path.dynamic_parts.select{|part| part.default_value }.map{|dp| dp.name}
@@ -40,17 +40,17 @@ class Usher
               end
 
               current_set.each do |k|
-                @orders[current_set.size][k] << path
-                @key_count[k] += 1
+                orders[current_set.size][k] << path
+                key_count[k] += 1
               end
             end
 
           end
 
-          if @router.consider_destination_keys?
+          if router.consider_destination_keys?
             path.route.destination_keys.each do |k|
-              @orders[path.route.destination_keys.size][k] << path
-              @key_count[k] += 1
+              orders[path.route.destination_keys.size][k] << path
+              key_count[k] += 1
             end
           end
         end
@@ -59,23 +59,23 @@ class Usher
     end
 
     def significant_keys
-      @significant_keys ||= @key_count.keys.uniq
+      @significant_keys ||= key_count.keys.uniq
     end
 
     def find_matching_path(params)
       unless params.empty?
         process_routes
         set = params.keys & significant_keys
-        if cached = @cache[set] 
+        if cached = cache[set] 
           return cached
         end
         set.size.downto(1) do |o|
           set.each do |k|
-            @orders[o][k].each do |r| 
+            orders[o][k].each do |r| 
               if r.can_generate_from_keys?(set)
-                @cache[set] = r
+                cache[set] = r
                 return r
-              elsif @router.consider_destination_keys? && r.can_generate_from_params?(params)
+              elsif router.consider_destination_keys? && r.can_generate_from_params?(params)
                 return r
               end
             end
