@@ -26,6 +26,8 @@ class Usher
     @routes.empty?
   end
 
+  # Returns the number of routes
+  #
   def route_count
     @routes.size
   end
