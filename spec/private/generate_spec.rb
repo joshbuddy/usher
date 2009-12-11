@@ -150,11 +150,13 @@ describe "Usher URL generation" do
     end
 
     it "should generate direct unnamed paths" do
-    
       @route_set.add_route('/profiles', :controller => 'profiles', :action => 'edit')
+      @route_set.add_route('/users', :controller => 'users', :action => 'index')
       @route_set.generator.generate(nil, :controller => 'profiles', :action => 'edit').should == '/profiles'
+      @route_set.generator.generate(nil, :controller => 'users', :action => 'index').should == '/users'
     end
   end
+
   describe "when named route was added with string key" do
     before :each do
       @route_set.add_named_route 'items', '/items', :controller => 'items', :action => 'index'

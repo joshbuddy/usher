@@ -72,8 +72,10 @@ class Usher
         set.size.downto(1) do |o|
           set.each do |k|
             @orders[o][k].each do |r| 
-              if r.can_generate_from?(set)
+              if r.can_generate_from_keys?(set)
                 @cache[set] = r
+                return r
+              elsif @router.consider_destination_keys? && r.can_generate_from_params?(params)
                 return r
               end
             end
