@@ -16,7 +16,7 @@ class Usher
       @routes = []
     end
 
-    def add_route(route)#, required_keys, optional_keys)
+    def add_route(route)
       routes << route
     end
 
