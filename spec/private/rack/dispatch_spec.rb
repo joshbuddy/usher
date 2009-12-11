@@ -85,7 +85,9 @@ describe "Usher (for rack) route dispatching" do
       @usher2.add("/some(/:foo)").to(@app)
 
       @usher3 = Usher::Interface.for(:rack)
-      @usher3.add("(/)" ).to(@app)
+      @usher3.add("(/)", :default_values => {:optional_root => true} ).to(@app)
+
+      @usher2.add("/optional_mount").match_partially!.to(@usher3)
 
       route_set.add("/baz", :default_values => {:baz => "baz"}).match_partially!.to(@usher3)
       route_set.add("/foo/:bar", :default_values => {:foo => "foo"}).match_partially!.to(@usher2)
@@ -98,12 +100,33 @@ describe "Usher (for rack) route dispatching" do
     end
 
     it "should match the route where the last part is optional" do
-      @app.should_receive(:call).once.with{ |e| e['usher.params'].should == {:baz => 'baz'}}
+      @app.should_receive(:call).once.with do |e|
+        e['usher.params'].should == {
+          :optional_root  => true,
+          :baz            => 'baz'
+        }
+      end
       route_set.call(Rack::MockRequest.env_for("/baz/"))
     end
 
+    it "should match when a mounted apps root route is optional" do
+      @app.should_receive(:call).once.with do |e|
+        e['usher.params'].should == {
+          :optional_root => true,
+          :foo           => "foo",
+          :bar           => "bar"
+        }
+      end
+      route_set.call(Rack::MockRequest.env_for("/foo/bar/optional_mount"))
+    end
+
     it "should match the route where the last part is empty" do
-      @app.should_receive(:call).once.with{ |e| e['usher.params'].should == {:baz => 'baz'}}
+      @app.should_receive(:call).once.with do |e|
+        e['usher.params'].should == {
+          :baz            => 'baz',
+          :optional_root  => true
+        }
+      end
       route_set.call(Rack::MockRequest.env_for("/baz"))
     end
 
@@ -209,7 +232,7 @@ describe "Usher (for rack) route dispatching" do
       end
     end
   end
-  
+
   describe "use as middlware" do
     it "should allow me to set a default application to use" do
       @app.should_receive(:call).with{|e| e['usher.params'].should == {:middle => :ware}}
