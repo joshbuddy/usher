@@ -23,7 +23,14 @@ class Usher
     end
 
     def destination_keys
-      @destination_keys ||= destination.is_a?(Hash) ? destination.keys : nil
+      @destination_keys ||= case
+      when Hash
+        destination.keys
+      when CompoundDestination
+        destination.options.keys
+      else
+        nil
+      end
     end
 
     def grapher
