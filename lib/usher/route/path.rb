@@ -42,8 +42,17 @@ class Usher
         @dynamic
       end
 
-      def can_generate_from?(keys)
-        (dynamic_required_keys - keys).size.zero?
+      def can_generate_from_keys?(keys)
+        if dynamic?
+          (dynamic_required_keys - keys).size.zero? ? keys : nil
+        end
+      end
+      
+      def can_generate_from_params?(params)
+        if route.router.consider_destination_keys?
+          route.destination.to_a - params.to_a
+          (route.destination.to_a - params.to_a).size.zero?
+        end
       end
       
       # Merges paths for use in generation

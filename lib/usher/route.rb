@@ -22,9 +22,20 @@ class Usher
       @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
     end
 
+    def destination_keys
+      @destination_keys ||= case
+      when Hash
+        destination.keys
+      when CompoundDestination
+        destination.options.keys
+      else
+        nil
+      end
+    end
+
     def grapher
       unless @grapher
-        @grapher = Grapher.new
+        @grapher = Grapher.new(router)
         @grapher.add_route(self)
       end
       @grapher
@@ -53,12 +64,17 @@ class Usher
     end
 
     def find_matching_path(params)
-      if params.nil? || params.empty?
-        matching_path = @paths.first
+      #if router.find_matching_paths_based_on_destination_keys?
+      matching_path = if params.nil? || params.empty?
+        @paths.first
       else
-        matching_path = @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
+        @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
       end
-
+      
+      if matching_path.nil? and router.find_matching_paths_based_on_destination_keys?
+        # do something
+      end
+      
       if parent_route
         matching_path = parent_route.find_matching_path(params).merge(matching_path)
         matching_path.route = self
