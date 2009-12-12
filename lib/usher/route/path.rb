@@ -10,10 +10,6 @@ class Usher
         self.parts = parts
       end
 
-      def destination_keys
-        
-      end
-
       def dynamic_indicies
         unless dynamic? && @dynamic_indicies
           @dynamic_indicies = []
