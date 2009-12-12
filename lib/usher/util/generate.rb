@@ -88,14 +88,6 @@ class Usher
         class ParamsParser < Struct.new(:path)
 
           def parse!(params)
-            parsed_params = parse params
-            check_completeness parsed_params
-            parsed_params
-          end
-
-        protected
-
-          def parse(params)
             case params
               when Array
                 parse_as_array params
@@ -109,6 +101,8 @@ class Usher
               parse_as_hash :id => params.id
             end
           end
+
+        protected
 
           def check_completeness(params)
             unless dynamic_parts.empty?
@@ -136,6 +130,8 @@ class Usher
 
             result.merge!(extra_params) if extra_params
             result.delete_if { |key, value| value.nil? }
+
+            check_completeness result
 
             result
           end
@@ -165,6 +161,7 @@ class Usher
         #   set.generator.generate(:test_route, {:controller => 'c', :action => 'a'}) == '/c/a' => true
         #   set.generator.generate(route.primary_path, {:controller => 'c', :action => 'a'}) == '/c/a' => true
         def generate(routing_lookup, params = nil)
+          params = { :id => params.id } unless [Array, Hash, String, Symbol, NilClass].include? params.class  # TODO: looks like a cheap hack. Invent something smarter.
           generate_path(path_for_routing_lookup(routing_lookup, params), params)
         end
 

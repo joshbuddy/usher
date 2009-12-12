@@ -105,16 +105,6 @@ describe ParamsParser do
         @params_parser = ParamsParser.new(@path)
       end
 
-      describe "when params is a Hash" do
-        before :each do
-          @params = { :one => 'bir', :two => 'eki' }
-        end
-
-        it "should raise MissingParameterException" do
-          lambda { @params_parser.parse!(@params) }.should raise_error(Usher::MissingParameterException)
-        end
-      end
-
       describe "when params is an Array" do
         before :each do
           @params = ['bir', 'eki']
