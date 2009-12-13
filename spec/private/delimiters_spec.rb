@@ -1,17 +1,17 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "spec_helper"))
 require 'usher'
 
-describe Delimiters do
+describe Usher::Delimiters do
   describe "#unescaped" do
     it "should unescape delimiters correctly" do
-      Delimiters.new(['/', '\)', '\\\\']).unescaped.should == ['/', ')', '\\']
+      Usher::Delimiters.new(['/', '\)', '\\\\']).unescaped.should == ['/', ')', '\\']
     end
   end
 
   describe "#first_in" do
     describe "when there is a complex path with a lot of delimiters occurrences" do
       before :each do
-        @delimiters = Delimiters.new ['@', '.', '/']
+        @delimiters = Usher::Delimiters.new ['@', '.', '/']
         @paths = ['var', '.', 'var', '/', 'var', '@']
       end
 
@@ -24,7 +24,7 @@ describe Delimiters do
 
     describe "when there are delimiters with escaped charaters" do
       before :each do
-        @delimiters = Delimiters.new ['\\(', '\\)']
+        @delimiters = Usher::Delimiters.new ['\\(', '\\)']
         @paths = ['var', '(', 'var', ')']
       end
 
@@ -35,7 +35,7 @@ describe Delimiters do
 
     describe "when there is no occurence of delimiters in path" do
       before :each do
-        @delimiters = Delimiters.new ['-', '/']
+        @delimiters = Usher::Delimiters.new ['-', '/']
         @paths = ['e', '@', 'ma', '.', 'il']
       end
 
