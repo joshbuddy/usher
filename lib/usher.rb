@@ -6,7 +6,6 @@ require File.join('usher', 'interface')
 require File.join('usher', 'splitter')
 require File.join('usher', 'exceptions')
 require File.join('usher', 'util')
-require File.join('usher', 'spinoffs', 'strscan_additions')
 require File.join('usher', 'delimiters')
 
 class Usher
