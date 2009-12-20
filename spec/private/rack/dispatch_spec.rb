@@ -238,7 +238,7 @@ describe "Usher (for rack) route dispatching" do
       @app.should_receive(:call).with{|e| e['usher.params'].should == {:middle => :ware}}
 
       u = Usher::Interface.for(:rack)
-      u.app = @app
+      u.default @app
       u.add("/foo", :default_values => {:middle => :ware}).name(:foo)
 
       u.call(Rack::MockRequest.env_for("/foo"))
@@ -248,14 +248,14 @@ describe "Usher (for rack) route dispatching" do
       env = Rack::MockRequest.env_for("/not_a_route")
       @app.should_receive(:call).with(env)
       u = Usher::Interface.for(:rack)
-      u.app = @app
+      u.default @app
       u.call(env)
     end
 
     it "should allow me to set the application after initialization" do
       @app.should_receive(:call).with{|e| e['usher.params'].should == {:after => :stuff}}
       u = Usher::Interface.for(:rack)
-      u.app = @app
+      u.default @app
       u.add("/foo", :default_values => {:after => :stuff})
       u.call(Rack::MockRequest.env_for("/foo"))
     end

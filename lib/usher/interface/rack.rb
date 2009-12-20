@@ -36,10 +36,9 @@ class Usher
       end
 
       attr_reader :router
-      attr_accessor :app
 
       def initialize(app = nil, &blk)
-        @app = app || lambda { |env| ::Rack::Response.new("No route found", 404).finish }
+        @_app = app || lambda { |env| ::Rack::Response.new("No route found", 404).finish }
         @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
         instance_eval(&blk) if blk
       end
@@ -60,7 +59,7 @@ class Usher
       # default { |env| ... }
       # default DefaultApp
       def default(app = nil, &block)
-        @app = app ? app : block
+        @_app = app ? app : block
       end
 
       # shortcuts for adding routes for HTTP methods, for example:
@@ -135,13 +134,7 @@ class Usher
       #
       # @api private
       def determine_respondant(response)
-        unless response
-          app
-        else
-          respondant = response.path.route.destination
-          respondant = app unless respondant.respond_to?(:call)
-          respondant
-        end
+        response && response.destination || _app
       end
 
       # Consume the path from path_info to script_name
@@ -149,6 +142,14 @@ class Usher
         request.env["SCRIPT_NAME"] = (request.env["SCRIPT_NAME"] + response.matched_path)   || ""
         request.env["PATH_INFO"] = response.remaining_path    || ""
       end
+      
+      def default_app
+        _app
+      end
+      
+      private
+      attr_reader :_app
+      
     end
   end
 end
