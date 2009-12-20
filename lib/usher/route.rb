@@ -83,21 +83,38 @@ class Usher
       matching_path
     end
 
-    # Sets +options+ on a route. Returns +self+.
+    CompoundDestination = Struct.new(:args, :block, :options)
+
+    # Sets destination on a route. Returns +self+.
+    #
+    # This method acceps varargs. If you pass in more than one variable, it will be returned to you wrapped in a +CompoundDestination+.
+    # If you send it varargs and the last member is a Hash, it will pop off the hash, and will be stored under <tt>#options</tt>.
+    # Otherwise, if you use send a single variable, or call it with a block, these will be returned to you by <tt>#destination</tt>.
     #
     #   Request = Struct.new(:path)
     #   set = Usher.new
     #   route = set.add_route('/test')
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
-    def to(options = nil, &block)
-      raise "cannot set destination as block and argument" if block_given? && options
-      @destination = if block_given?
-        block
+    #
+    #   
+    #
+    def to(*args, &block)
+      if !args.empty? && block
+        @destination = CompoundDestination.new(args, block, args.last.is_a?(Hash) ? args.pop : {})
+      elsif block.nil?
+        case args.size
+        when 0 
+          raise "destination should be set as something"
+        when 1
+          @destination = args.first
+        else
+          @destination = CompoundDestination.new(args, nil, args.last.is_a?(Hash) ? args.pop : {})
+        end
       else
-        options.parent_route = self if options.respond_to?(:parent_route=)
-        options
+        @destination = block
       end
+      args.first.parent_route = self if args.first.respond_to?(:parent_route=)
       self
     end
 
