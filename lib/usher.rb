@@ -1,4 +1,4 @@
-$: << File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH << File.expand_path(File.dirname(__FILE__))
 require File.join('usher', 'node')
 require File.join('usher', 'route')
 require File.join('usher', 'grapher')
