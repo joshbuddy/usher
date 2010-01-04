@@ -272,6 +272,14 @@ class Usher
     replacement
   end
 
+  def inspect
+    "#<Usher:0x%x route_count=%d delimiters=%s request_methods=%s ignore_trailing_delimiters? %s consider_destination_keys? %s can_generate? %s priority_lookups? %s>" % [self.object_id, route_count, self.delimiters.inspect, request_methods.inspect, ignore_trailing_delimiters.inspect, consider_destination_keys.inspect, can_generate?.inspect, priority_lookups.inspect]
+  end
+
+  def to_s
+    inspect
+  end
+
   private
 
   attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys
@@ -333,4 +341,5 @@ class Usher
     @grapher = Grapher.new(self)
     @routes.each{|r| @grapher.add_route(r)}
   end
+  
 end

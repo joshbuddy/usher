@@ -33,6 +33,14 @@ class Usher
       end
     end
 
+    def inspect
+      "#<Usher:Route:0x%x @paths=[%s]>" % [self.object_id, paths.collect{|p| p.parts.join}.join(', ')]
+    end
+
+    def to_s
+      inspect
+    end
+
     def grapher
       unless @grapher
         @grapher = Grapher.new(router)
