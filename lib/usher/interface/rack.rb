@@ -55,7 +55,8 @@ class Usher
       def add(path, options = nil)
         @router.add_route(path, options)
       end
-
+      alias_method :path, :add
+      
       # default { |env| ... }
       # default DefaultApp
       def default(app = nil, &block)
