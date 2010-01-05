@@ -37,10 +37,15 @@ class Usher
 
       attr_reader :router
 
-      def initialize(app = nil, &blk)
+      def initialize(app = nil, options = nil, &blk)
         @_app = app || lambda { |env| ::Rack::Response.new("No route found", 404).finish }
         @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
+        @use_destinations = options && options.key?(:use_destinations) ? options[:use_destinations] : true
         instance_eval(&blk) if blk
+      end
+
+      def use_destinations?
+        @use_destinations
       end
 
       def dup
@@ -114,9 +119,13 @@ class Usher
       #
       # @api plugin
       def after_match(request, response)
-        params = response.path.route.default_values ?
-          response.path.route.default_values.merge(Hash[*response.params.flatten]) :
-          Hash[*response.params.flatten]
+        params = response.path.route.default_values ? response.path.route.default_values.merge(response.params_as_hash) : response.params_as_hash
+        
+        request.env['usher.destination'] ||= []
+        request.env['usher.matched_path'] ||= []
+        
+        request.env['usher.destination'] << response.destination
+        request.env['usher.matched_path'] << response.path
         
         request.env['usher.params'] ?
           request.env['usher.params'].merge!(params) :
@@ -135,7 +144,7 @@ class Usher
       #
       # @api private
       def determine_respondant(response)
-        response && response.destination || _app
+        use_destinations? && response && response.destination || _app
       end
 
       # Consume the path from path_info to script_name
