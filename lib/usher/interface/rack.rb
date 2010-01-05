@@ -4,6 +4,24 @@ require File.join(File.dirname(__FILE__), 'rack', 'route')
 class Usher
   module Interface
     class Rack
+      
+      ENV_KEY_RESPONSE = 'usher.response'
+      ENV_KEY_PARAMS = 'usher.params'
+      
+      class Middleware
+        
+        def initialize(app, router)
+          @app = app
+          @router = router
+        end
+        
+        def call(env)
+          @router.call(env)
+          @app.call(env)
+        end
+        
+      end
+      
       class Builder < ::Rack::Builder
         def initialize(&block)
           @usher = Usher::Interface::Rack.new
@@ -121,15 +139,12 @@ class Usher
       def after_match(request, response)
         params = response.path.route.default_values ? response.path.route.default_values.merge(response.params_as_hash) : response.params_as_hash
         
-        request.env['usher.destination'] ||= []
-        request.env['usher.matched_path'] ||= []
-        
-        request.env['usher.destination'] << response.destination
-        request.env['usher.matched_path'] << response.path
-        
-        request.env['usher.params'] ?
-          request.env['usher.params'].merge!(params) :
-          (request.env['usher.params'] = params)
+        request.env[ENV_KEY_RESPONSE] ||= []
+        request.env[ENV_KEY_RESPONSE] << response
+
+        request.env[ENV_KEY_PARAMS] ?
+          request.env[ENV_KEY_PARAMS].merge!(params) :
+          (request.env[ENV_KEY_PARAMS] = params)
         
         # consume the path_info to the script_name
         # response.remaining_path
