@@ -57,7 +57,7 @@ class Usher
 
       def initialize(app = nil, options = nil, &blk)
         @_app = app || lambda { |env| ::Rack::Response.new("No route found", 404).finish }
-        @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new)
+        @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new, :allow_identical_variable_names => false)
         @use_destinations = options && options.key?(:use_destinations) ? options[:use_destinations] : true
         instance_eval(&blk) if blk
       end

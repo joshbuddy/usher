@@ -67,15 +67,20 @@ class Usher
   # Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
   # :action => 'action', it would pick that route to use for generation.
   def initialize(options = nil)
-    self.generator                   = options && options.delete(:generator)
-    self.delimiters                  = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
-    self.valid_regex                 = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
-    self.request_methods             = options && options.delete(:request_methods)
-    self.ignore_trailing_delimiters  = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
-    self.consider_destination_keys   = options && options.key?(:consider_destination_keys) ? options.delete(:consider_destination_keys) : false
+    self.generator                      = options && options.delete(:generator)
+    self.delimiters                     = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
+    self.valid_regex                    = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
+    self.request_methods                = options && options.delete(:request_methods)
+    self.ignore_trailing_delimiters     = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
+    self.consider_destination_keys      = options && options.key?(:consider_destination_keys) ? options.delete(:consider_destination_keys) : false
+    self.allow_identical_variable_names = options && options.key?(:allow_identical_variable_names) ? options.delete(:allow_identical_variable_names) : true
     reset!
   end
 
+  def allow_identical_variable_names?
+    @allow_identical_variable_names
+  end
+  
   def ignore_trailing_delimiters?
     @ignore_trailing_delimiters
   end
@@ -282,7 +287,7 @@ class Usher
 
   private
 
-  attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys
+  attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys, :allow_identical_variable_names
   attr_reader :valid_regex
 
   def generator=(generator)
@@ -333,6 +338,7 @@ class Usher
     end
 
     route = parser.generate_route(path, conditions, requirements, default_values, generate_with, priority)
+    raise(MultipleParameterException.new) if !allow_identical_variable_names? and route.paths.first.dynamic? and route.paths.first.dynamic_keys.uniq.size != route.paths.first.dynamic_keys.size
     route.to(options) if options && !options.empty?
     route
   end
