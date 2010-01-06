@@ -31,7 +31,7 @@ class Usher
       end
       
       def dynamic_keys
-        @dynamic_keys ||= dynamic_map.keys if dynamic?
+        @dynamic_keys ||= dynamic_parts.map{|dp| dp.name} if dynamic?
       end
       
       def dynamic_required_keys
