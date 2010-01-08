@@ -228,7 +228,7 @@ class Usher
   #   route = set.add_route('/test')
   #   set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request, path = request.path)
-    @root.find(self, request, path, @splitter.url_split(path))
+    @root.find(self, request, path, @splitter.split(path))
   end
 
   # Recognizes a +path+ and returns +nil+ or an Usher::Node::Response, which is a struct containing a Usher::Route::Path and an array of arrays containing the extracted parameters. Convenience method for when recognizing on the request object is unneeded.

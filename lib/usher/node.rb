@@ -129,7 +129,7 @@ class Usher
         position += matched_part.size
         whole_path.slice!(0, matched_part.size)
         params << [next_path.value.name, matched_part] if next_path.value.is_a?(Route::Variable)
-        next_path.find(usher, request_object, original_path, whole_path.empty? ? whole_path : usher.splitter.url_split(whole_path), params, position)
+        next_path.find(usher, request_object, original_path, whole_path.empty? ? whole_path : usher.splitter.split(whole_path), params, position)
       elsif !path.empty? and normal and next_part = normal[path.first] || normal[nil]
         part = path.shift
         position += part.size
