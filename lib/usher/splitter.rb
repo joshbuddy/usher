@@ -27,7 +27,7 @@ class Usher
 
       def split(path)
         split_path = path.split(delimiters_regexp)
-        split_path.reject!{|s| s.size.zero? }
+        split_path.reject!{|s| s.empty? }
         split_path
       end
 
