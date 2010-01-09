@@ -9,7 +9,11 @@ class Usher
         self.route = route
         self.parts = parts
       end
-
+      
+      def convert_params_array(ary)
+        ary.empty? ? ary : dynamic_keys.zip(ary)
+      end
+      
       def dynamic_indicies
         unless dynamic? && @dynamic_indicies
           @dynamic_indicies = []

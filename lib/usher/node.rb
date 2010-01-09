@@ -122,13 +122,13 @@ class Usher
     def find(usher, request_object, original_path, path, params = [], position = 0)
       if terminates? && (path.empty? || terminates.route.partial_match? || (usher.ignore_trailing_delimiters? && path.all?{|p| usher.delimiters.include?(p)}))
         terminates.route.partial_match? ?
-          Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position]) :
-          Response.new(terminates, params, nil, original_path)
+          Response.new(terminates, terminates.convert_params_array(params), original_path[position, original_path.size], original_path[0, position]) :
+          Response.new(terminates, terminates.convert_params_array(params), nil, original_path)
       elsif !path.empty? and greedy and match_with_result_output = greedy.match_with_result(whole_path = original_path[position, original_path.size])
 				next_path, matched_part = match_with_result_output
         position += matched_part.size
         whole_path.slice!(0, matched_part.size)
-        params << [next_path.value.name, matched_part] if next_path.value.is_a?(Route::Variable)
+        params << matched_part if next_path.value.is_a?(Route::Variable)
         next_path.find(usher, request_object, original_path, whole_path.empty? ? whole_path : usher.splitter.split(whole_path), params, position)
       elsif !path.empty? and normal and next_part = normal[path.first] || normal[nil]
         part = path.shift
@@ -142,14 +142,14 @@ class Usher
           # do a validity check
           var.valid!(part)
           # because its a variable, we need to add it to the params array
-          params << [var.name, part]
+          params << part
           until path.empty? || (var.look_ahead === path.first)                # variables have a look ahead notion, 
             next_path_part = path.shift                                       # and until they are satified,
             position += next_path_part.size                                   # keep appending to the value in params
-            params.last.last << next_path_part
+            params.last << next_path_part
           end if var.look_ahead && usher.delimiters.size > 1
         when Route::Variable::Glob
-          params << [next_part.value.name, []]
+          params << []
           while true
             if (next_part.value.look_ahead === part || (!usher.delimiters.unescaped.include?(part) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
               path.unshift(part)
@@ -161,7 +161,7 @@ class Usher
               break
             elsif !usher.delimiters.unescaped.include?(part)
               next_part.value.valid!(part)
-              params.last.last << part
+              params.last << part
             end
             if path.empty?
               break
