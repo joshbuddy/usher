@@ -24,12 +24,12 @@ class Usher
 
     def destination_keys
       @destination_keys ||= case
-      when Hash
-        destination.keys
-      when CompoundDestination
-        destination.options.keys
-      else
-        nil
+        when Hash
+          destination.keys
+        when CompoundDestination
+          destination.options.keys
+        else
+          nil
       end
     end
 
@@ -48,7 +48,7 @@ class Usher
       end
       @grapher
     end
-    
+
     def unrecognizable!
       self.recognizable = false
       self
@@ -62,7 +62,7 @@ class Usher
     def recognizable?
       self.recognizable
     end
-    
+
     def dup
       result = super
       result.instance_eval do
@@ -78,11 +78,11 @@ class Usher
       else
         @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
       end
-      
+
       if matching_path.nil? and router.find_matching_paths_based_on_destination_keys?
         # do something
       end
-      
+
       if parent_route
         matching_path = parent_route.find_matching_path(params).merge(matching_path)
         matching_path.route = self
@@ -105,19 +105,19 @@ class Usher
     #   route.to(:controller => 'testing', :action => 'index')
     #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     #
-    #   
+    #
     #
     def to(*args, &block)
       if !args.empty? && block
         @destination = CompoundDestination.new(args, block, args.last.is_a?(Hash) ? args.pop : {})
       elsif block.nil?
         case args.size
-        when 0 
-          raise "destination should be set as something"
-        when 1
-          @destination = args.first
-        else
-          @destination = CompoundDestination.new(args, nil, args.last.is_a?(Hash) ? args.pop : {})
+          when 0
+            raise "destination should be set as something"
+          when 1
+            @destination = args.first
+          else
+            @destination = CompoundDestination.new(args, nil, args.last.is_a?(Hash) ? args.pop : {})
         end
       else
         @destination = block
@@ -147,7 +147,7 @@ class Usher
     end
 
     private
-    attr_writer :grapher
+      attr_writer :grapher
 
   end
 end

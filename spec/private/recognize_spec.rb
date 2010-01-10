@@ -47,18 +47,18 @@ describe "Usher route recognition" do
       @route_set.recognize(build_request({:method => 'put', :path => '/sample', :protocol => 'wacky', :domain => 'admin.spec.com', :user_agent => nil})).path.route.should == target_route_http_admin_generic
 
     end
-    
+
     it "should recognize an empty path" do
       @route_set.add_route('').to(:test)
       @route_set.recognize(build_request({:path => ''})).path.route.destination.should == :test
     end
-    
+
     it "should recognize an optionally empty path" do
       @route_set.add_route('(/)').to(:test)
       @route_set.recognize(build_request({:path => ''})).path.route.destination.should == :test
       @route_set.recognize(build_request({:path => '/'})).path.route.destination.should == :test
     end
-    
+
     it "should allow adding a pure regex" do
       @route_set.add_route(/\/test\/(testing|gold)/).to(:test)
       @route_set.recognize(build_request({:path => '/test/testing'})).path.route.destination.should == :test
@@ -92,7 +92,7 @@ describe "Usher route recognition" do
 
   it "should recognize path with a trailing slash" do
     @route_set = Usher.new(:request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains], :ignore_trailing_delimiters => true)
-    
+
     target_route = @route_set.add_route('/path', :controller => 'sample', :action => 'action')
 
     response = @route_set.recognize(build_request({:method => 'get', :path => '/path/'}))
@@ -101,7 +101,7 @@ describe "Usher route recognition" do
 
   it "should recognize a format-style variable" do
     target_route = @route_set.add_route('/sample.:format', :controller => 'sample', :action => 'action')
-    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:format , 'html']], nil, "/sample.html")
+    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, ['html'], nil, "/sample.html")
   end
 
   it "should recognize a glob-style variable" do
@@ -236,12 +236,12 @@ describe "Usher route recognition" do
 
   it "should recognize a format-style literal" do
     target_route = @route_set.add_route('/:action.html', :controller => 'sample', :action => 'action')
-    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample']], nil, "/sample.html")
+    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, ['sample'], nil, "/sample.html")
   end
 
   it "should recognize a format-style variable along side another variable" do
     target_route = @route_set.add_route('/:action.:format', :controller => 'sample', :action => 'action')
-    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, [[:action , 'sample'], [:format, 'html']], nil, '/sample.html')
+    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, ['sample', 'html'], nil, '/sample.html')
   end
 
   it "should use a requirement (proc) on incoming variables" do
@@ -401,5 +401,5 @@ describe "Usher route recognition" do
     end
 
   end
-  
+
 end
