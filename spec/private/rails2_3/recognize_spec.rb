@@ -10,7 +10,7 @@ def build_request_mock(path, method, params)
   request.should_receive(:path).any_number_of_times.and_return(path)
   request.should_receive(:method).any_number_of_times.and_return(method)
   params = params.with_indifferent_access
-  request.should_receive(:path_parameters=).any_number_of_times.with(params)
+  request.should_receive(:path_parameters=).any_number_of_times.with(hash_including(params))
   request.should_receive(:path_parameters).any_number_of_times.and_return(params)
   request
 end
@@ -45,36 +45,36 @@ describe "Usher (for rails 2.3) route recognition" do
     route_set.add_route('/sample/test', :controller => 'sample', :action => 'action')
     route_set.recognize(build_request_mock('/sample/test', 'get', {:controller => 'sample', :action => 'action'})).should == SampleController
   end
-  
+
   it "should raise based upon an invalid param" do
     route_set.add_named_route(:sample, '/sample/:action', :controller => 'sample', :requirements => {:action => /\d+/})
     proc { route_set.recognize(build_request_mock('/sample/asdqwe', :post, {})) }.should raise_error
   end
-  
+
   it "should raise based upon an invalid route" do
     route_set.add_named_route(:sample, '/sample', :controller => 'sample', :action => 'test')
     proc { route_set.recognize(build_request_mock('/test/asdqwe', :post, {})) }.should raise_error
   end
-  
+
   it "should add /:controller and /:controller/:action if /:controller/:action/:id is added" do
     route_set.add_route('/:controller/:action/:id')
     route_set.route_count.should == 3
   end
-  
+
   it "should correctly recognize a format (dynamic path path with . delimiter)" do
     route_set.add_route('/:controller/:action/:id.:format')
     route_set.recognize(build_request_mock('/sample/test/123.html', 'get', {:controller => 'sample', :action => 'test', :id => '123', :format => 'html'})).should == SampleController
   end
-  
+
   it "should support root nodes" do
     route_set.add_route('/', :controller => 'sample')
     route_set.recognize(build_request_mock('/', :get, {:controller => 'sample', :action => 'index'})).should == SampleController
   end
-  
+
   it "should default action to 'index' when controller (and not index) is specified" do
     route_set.add_route('/:controller/:action')
     route_set.recognize(build_request_mock('/sample', :get, {:controller => 'sample', :action => 'index'})).should == SampleController
   end
-  
-  
+
+
 end

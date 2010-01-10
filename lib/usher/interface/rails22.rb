@@ -46,7 +46,7 @@ class Usher
       
       def recognize(request)
         node = @usher.recognize(request)
-        params = node.params.inject({}){|h,(k,v)| h[k]=v; h }
+        params = node.params_as_hash
         request.path_parameters = (node.params.empty? ? node.path.route.destination : node.path.route.destination.merge(params)).with_indifferent_access
         "#{request.path_parameters[:controller].camelize}Controller".constantize
       rescue

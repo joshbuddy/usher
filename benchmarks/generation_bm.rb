@@ -15,7 +15,7 @@ u.add_route('/blog', :default_values => {:page => 1})                           
 TIMES = 50_000
 
 RBench.run(TIMES) do
-  
+
   group "named" do
     report "simple" do
       u.generator.generate(:simple)
@@ -54,24 +54,24 @@ RBench.run(TIMES) do
     end
 
   end
-    
+
   group "defaults" do
     report "default variable" do
       u.generator.generate(:default_value)
     end
-    
+
     report "default variable not represented in path" do
       u.generator.generate(:default_value_not_as_variable)
     end
-    
-    
+
+
   end
 
   group "unnamed" do
     report "one variable" do
       u.generator.generate(nil, :variable => 'variable')
     end
-    
+
     report "three variable" do
       u.generator.generate(nil, :var1 => 'var1', :var2 => 'var2', :var3 => 'var3')
     end
@@ -83,12 +83,12 @@ RBench.run(TIMES) do
     report "three variable + five extras" do
       u.generator.generate(nil, :var1 => 'var1', :var2 => 'var2', :var3 => 'var3', :var4 => 'var4', :var5 => 'var5', :var6 => 'var6', :var7 => 'var7', :var8 => 'var8')
     end
-    
+
     report "eight variable" do
       u.generator.generate(nil, :v1 => 'var1', :v2 => 'var2', :v3 => 'var3', :v4 => 'var4', :v5 => 'var5', :v6 => 'var6', :v7 => 'var7', :v8 => 'var8')
     end
   end
-  
+
   group "conditions" do
     report "two conditions" do
       u.generator.generate(:two_conditions, :cond1 => '123', :cond2 => 'qweasd')

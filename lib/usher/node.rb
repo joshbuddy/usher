@@ -13,9 +13,9 @@ class Usher
       def partial_match?
         !remaining_path.nil?
       end
-
+      
       def params_as_hash
-        @params_as_hash ||= params.inject({}){|hash, pair| hash[pair.first] = pair.last; hash}
+        @params_as_hash ||= params_as_array.inject({}){|hash, val| hash[path.dynamic_keys[hash.size]] = val; hash}
       end
 
       def destination
