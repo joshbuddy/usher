@@ -6,7 +6,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
     s.name = "usher"
-    s.description = s.summary = "A general purpose routing library"
+    s.description = s.summary = "Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure"
     s.email = "joshbuddy@gmail.com"
     s.homepage = "http://github.com/joshbuddy/usher"
     s.authors = ["Joshua Hull", 'Jakub Šťastný', 'Daniel Neighman', 'Daniel Vartanov'].sort
