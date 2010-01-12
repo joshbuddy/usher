@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.6.3"
+  s.version = "0.6.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub \305\240\305\245astn\303\275", "Joshua Hull"]
-  s.date = %q{2010-01-09}
-  s.description = %q{A general purpose routing library}
+  s.date = %q{2010-01-12}
+  s.description = %q{Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -40,6 +40,8 @@ Gem::Specification.new do |s|
     "lib/usher/interface/sinatra.rb",
     "lib/usher/interface/text.rb",
     "lib/usher/node.rb",
+    "lib/usher/node/response.rb",
+    "lib/usher/node/root.rb",
     "lib/usher/route.rb",
     "lib/usher/route/path.rb",
     "lib/usher/route/request_method.rb",
@@ -50,6 +52,7 @@ Gem::Specification.new do |s|
     "lib/usher/util.rb",
     "lib/usher/util/generate.rb",
     "lib/usher/util/graph.rb",
+    "lib/usher/util/mapper.rb",
     "lib/usher/util/parser.rb",
     "lib/usher/util/rack-mixins.rb",
     "rails/init.rb",
@@ -84,7 +87,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{joshbuddy-usher}
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{A general purpose routing library}
+  s.summary = %q{Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure}
   s.test_files = [
     "spec/private/delimiters_spec.rb",
     "spec/private/destination_spec.rb",
