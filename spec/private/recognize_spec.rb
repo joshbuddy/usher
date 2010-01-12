@@ -336,7 +336,11 @@ describe "Usher route recognition" do
     it "should partially match a route" do
       route = @route_set.add_route("/foo")
       route.match_partially!
-      @route_set.recognize(build_request(:method => "get", :path => "/foo/bar")).should == Usher::Node::Response.new(route.paths.first, [], "/bar", '/foo')
+      response = @route_set.recognize(build_request(:method => "get", :path => "/foo/bar"))
+      response.partial_match?.should be_true
+      response.params.should == []
+      response.remaining_path.should == '/bar'
+      response.matched_path.should == '/foo'
     end
 
     it "should partially match a route and use request conditions" do

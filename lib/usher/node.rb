@@ -72,7 +72,7 @@ class Usher
       end if request
     end
 
-    def find(usher, request_object, original_path, path, params = [], position = 0)
+    def find(usher, request_object, original_path, path, params = nil, position = 0)
       if terminates? && (path.empty? || terminates.route.partial_match? || (usher.ignore_trailing_delimiters? && path.all?{|p| usher.delimiters.include?(p)}))
         terminates.route.partial_match? ?
           Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position]) :
@@ -81,7 +81,7 @@ class Usher
         next_path, matched_part = match_with_result_output
         position += matched_part.size
         whole_path.slice!(0, matched_part.size)
-        params << matched_part if next_path.value.is_a?(Route::Variable)
+        (params ||= []) << matched_part if next_path.value.is_a?(Route::Variable)
         next_path.find(usher, request_object, original_path, whole_path.empty? ? whole_path : usher.splitter.split(whole_path), params, position)
       elsif !path.empty? and normal and next_part = normal[path.first] || normal[nil]
         part = path.shift
@@ -95,14 +95,14 @@ class Usher
             # do a validity check
             var.valid!(part)
             # because its a variable, we need to add it to the params array
-            params << part
+            (params ||= []) << part
             until path.empty? || (var.look_ahead === path.first)                # variables have a look ahead notion,
               next_path_part = path.shift                                       # and until they are satified,
               position += next_path_part.size                                   # keep appending to the value in params
               params.last << next_path_part
             end if var.look_ahead && usher.delimiters.size > 1
           when Route::Variable::Glob
-            params << []
+            (params ||= []) << []
             while true
               if (next_part.value.look_ahead === part || (!usher.delimiters.unescaped.include?(part) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
                 path.unshift(part)
@@ -125,11 +125,11 @@ class Usher
         end
         next_part.find(usher, request_object, original_path, path, params, position)
       elsif request_method_type
-        return_value = if (specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(usher, request_object, original_path, path.dup, params.dup, position))
+        return_value = if (specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(usher, request_object, original_path, path.dup, params && params.dup, position))
           usher.priority_lookups? ? [ret] : ret
         end
 
-        if usher.priority_lookups? || return_value.nil? and general_node = request[nil] and ret = general_node.find(usher, request_object, original_path, path.dup, params.dup, position)
+        if usher.priority_lookups? || return_value.nil? and general_node = request[nil] and ret = general_node.find(usher, request_object, original_path, path.dup, params && params.dup, position)
           return_value = usher.priority_lookups? && return_value ? [return_value, ret] : ret
         end
 

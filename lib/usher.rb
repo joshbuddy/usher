@@ -66,6 +66,8 @@ class Usher
   # <tt>:consider_destination_keys</tt>: +true+ or +false+. (default: +false+) When generating, and using hash destinations, you can have
   # Usher use the destination hash to match incoming params.
   #
+  # <tt>:allow_identical_variable_names</tt>: +true+ or +false+. (default: +true+) When adding routes, allow identical variable names to be used.
+  #
   # Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
   # :action => 'action', it would pick that route to use for generation.
   def initialize(options = nil)
