@@ -75,6 +75,21 @@ describe "Usher (for rack) route dispatching" do
     end
   end
 
+  describe "non rack app destinations" do
+    it "should route to a default application when using a hash" do
+      $captures = []
+      @default_app = lambda do |e|
+        $captures << :default
+        Rack::Response.new("Default").finish
+      end
+      @router = Usher::Interface.for(:rack)
+      @router.default(@default_app)
+      @router.add("/default").to(:action => "default")
+      response = @router.call(Rack::MockRequest.env_for("/default"))
+      $captures.should == [:default]
+    end
+  end
+
   describe "mounted rack instances" do
     before do
       @bad_app = mock("bad_app")

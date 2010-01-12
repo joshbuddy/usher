@@ -4,24 +4,24 @@ require File.join(File.dirname(__FILE__), 'rack', 'route')
 class Usher
   module Interface
     class Rack
-      
+
       ENV_KEY_RESPONSE = 'usher.response'
       ENV_KEY_PARAMS = 'usher.params'
-      
+
       class Middleware
-        
+
         def initialize(app, router)
           @app = app
           @router = router
         end
-        
+
         def call(env)
           @router.call(env)
           @app.call(env)
         end
-        
+
       end
-      
+
       class Builder < ::Rack::Builder
         def initialize(&block)
           @usher = Usher::Interface::Rack.new
@@ -79,7 +79,7 @@ class Usher
         @router.add_route(path, options)
       end
       alias_method :path, :add
-      
+
       # default { |env| ... }
       # default DefaultApp
       def default(app = nil, &block)
@@ -138,14 +138,14 @@ class Usher
       # @api plugin
       def after_match(request, response)
         params = response.path.route.default_values ? response.path.route.default_values.merge(response.params_as_hash) : response.params_as_hash
-        
+
         request.env[ENV_KEY_RESPONSE] ||= []
         request.env[ENV_KEY_RESPONSE] << response
 
         request.env[ENV_KEY_PARAMS] ?
           request.env[ENV_KEY_PARAMS].merge!(params) :
           (request.env[ENV_KEY_PARAMS] = params)
-        
+
         # consume the path_info to the script_name
         # response.remaining_path
         consume_path!(request, response) if response.partial_match?
@@ -159,7 +159,11 @@ class Usher
       #
       # @api private
       def determine_respondant(response)
-        use_destinations? && response && response.destination || _app
+        if use_destinations? && response && response.destination && response.destination.respond_to?(:call)
+          response.destination
+        else
+          _app
+        end
       end
 
       # Consume the path from path_info to script_name
@@ -167,14 +171,14 @@ class Usher
         request.env["SCRIPT_NAME"] = (request.env["SCRIPT_NAME"] + response.matched_path)   || ""
         request.env["PATH_INFO"] = response.remaining_path    || ""
       end
-      
+
       def default_app
         _app
       end
-      
+
       private
       attr_reader :_app
-      
+
     end
   end
 end
