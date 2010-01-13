@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.6.4"
+  s.version = "0.6.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub \305\240\305\245astn\303\275", "Joshua Hull"]
-  s.date = %q{2010-01-12}
+  s.date = %q{2010-01-13}
   s.description = %q{Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
