@@ -92,82 +92,67 @@ class Usher
       end if request
     end
 
-    def single_variable(part, next_part, params, path, position)
-      # get the variable
-      variable = next_part.value
-      # do a validity check
-      variable.valid!(part)
-      # because its a variable, we need to add it to the params array
-      parameter_value = part
-      if variable.look_ahead
-        until path.empty? || (variable.look_ahead === path.first)           # variables have a look ahead notion,
-          next_path_part = path.shift                                       # and until they are satified,
-          position += next_path_part.size                                   # keep appending to the value in params
-          parameter_value << next_path_part
-        end
-      end
-      params << parameter_value
-      position
-    end
-
-    def glob_variable(part, next_part, params, path, position)
-      params << []
-      loop do
-        if (next_part.value.look_ahead === part || (!route_set.delimiters.unescaped.include?(part) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
-          path.unshift(part)
-          position -= part.size
-          if route_set.delimiters.unescaped.include?(next_part.parent.value)
-            path.unshift(next_part.parent.value)
-            position -= next_part.parent.value.size
-          end
-          break
-        elsif !route_set.delimiters.unescaped.include?(part)
-          next_part.value.valid!(part)
-          params.last << part
-        end
-        if path.empty?
-          break
-        else
-          part = path.shift
-        end
-      end
-      position
-    end
-    
-    def find(request_object, original_path, path, params = [], position = 0)
+    def find(request_object, original_path, path, params = [])
       # terminates or is partial
       if terminates? && (path.empty? || terminates.route.partial_match? || (route_set.ignore_trailing_delimiters? && path.all?{|p| route_set.delimiters.include?(p)}))
         if terminates.cached_response
           terminates.cached_response
         else
           terminates.route.partial_match? ?
-            Response.new(terminates, params, original_path[position, original_path.size], original_path[0, position]) :
+            Response.new(terminates, params, path.join, original_path[0, original_path.size - path.join.size]) :
             Response.new(terminates, params, nil, original_path)
         end
       # terminates or is partial
-      elsif !path.empty? and greedy and match_with_result_output = greedy.match_with_result(whole_path = original_path[position, original_path.size])
+      elsif !path.empty? and greedy and match_with_result_output = greedy.match_with_result(whole_path = path.join)
         next_path, matched_part = match_with_result_output
-        position += matched_part.size
         whole_path.slice!(0, matched_part.size)
         params << matched_part if next_path.value.is_a?(Route::Variable)
-        next_path.find(request_object, original_path, whole_path.empty? ? whole_path : route_set.splitter.split(whole_path), params, position)
+        next_path.find(request_object, original_path, whole_path.empty? ? whole_path : route_set.splitter.split(whole_path), params)
       elsif !path.empty? and normal and next_part = normal[path.first] || normal[nil]
         part = path.shift
-        position += part.size
         case next_part.value
         when String
         when Route::Variable::Single
-          position = single_variable(part, next_part, params, path, position)
+          # get the variable
+          variable = next_part.value
+          # do a validity check
+          variable.valid!(part)
+          # because its a variable, we need to add it to the params array
+          parameter_value = part
+          if variable.look_ahead
+            until path.empty? || (variable.look_ahead === path.first)           # variables have a look ahead notion,
+              next_path_part = path.shift                                       # and until they are satified,
+              parameter_value << next_path_part
+            end
+          end
+          params << parameter_value
         when Route::Variable::Glob
-          position = glob_variable(part, next_part, params, path, position)
+          params << []
+          loop do
+            if (next_part.value.look_ahead === part || (!route_set.delimiters.unescaped.include?(part) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
+              path.unshift(part)
+              if route_set.delimiters.unescaped.include?(next_part.parent.value)
+                path.unshift(next_part.parent.value)
+              end
+              break
+            elsif !route_set.delimiters.unescaped.include?(part)
+              next_part.value.valid!(part)
+              params.last << part
+            end
+            if path.empty?
+              break
+            else
+              part = path.shift
+            end
+          end
         end
-        next_part.find(request_object, original_path, path, params, position)
+        next_part.find(request_object, original_path, path, params)
       elsif request_method_type
-        return_value = if (specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup, position))
+        return_value = if (specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup))
           route_set.priority_lookups? ? [ret] : ret
         end
 
-        if route_set.priority_lookups? || return_value.nil? and general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup, position)
+        if route_set.priority_lookups? || return_value.nil? and general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup)
           return_value = route_set.priority_lookups? && return_value ? [return_value, ret] : ret
         end
 
