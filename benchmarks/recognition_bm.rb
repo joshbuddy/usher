@@ -30,6 +30,10 @@ RBench.run(TIMES) do
     u.recognize_path('/dynamic/anything')
   end
 
+  report "8 levels, 3 dynamic" do
+    u.recognize_path('/rails/controller/action/id')
+  end
+
   report "4 levels, 1 greedy" do
     u.recognize_path('/greedy/controller/action/id').params_as_hash
   end
