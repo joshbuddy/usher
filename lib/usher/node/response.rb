@@ -3,7 +3,7 @@ class Usher
     class Response < Struct.new(:path, :params_as_array, :remaining_path, :matched_path)
 
       def params
-        @params ||= params_as_array.nil? ? [] : path.convert_params_array(params_as_array)
+        @params ||= path.convert_params_array(params_as_array)
       end
 
       def partial_match?
@@ -11,7 +11,7 @@ class Usher
       end
 
       def params_as_hash
-        @params_as_hash ||= params_as_array.nil? ? {} : params_as_array.inject({}){|hash, val| hash[path.dynamic_keys[hash.size]] = val; hash}
+        @params_as_hash ||= params_as_array.inject({}){|hash, val| hash[path.dynamic_keys[hash.size]] = val; hash}
       end
 
       def destination
