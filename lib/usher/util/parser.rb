@@ -123,9 +123,9 @@ class Usher
             if variable
               variable_type = variable.slice!(0).chr.to_sym
               variable_class = case variable_type
-              when :'!' : Usher::Route::Variable::Greedy
-              when :*   : Usher::Route::Variable::Glob
-              when :':' : Usher::Route::Variable::Single
+              when :'!' then Usher::Route::Variable::Greedy
+              when :*   then Usher::Route::Variable::Glob
+              when :':' then Usher::Route::Variable::Single
               end
               variable_name = variable[0, variable.size - 1].to_sym
               current_group << variable_class.new(variable_name, regex, requirements && requirements[variable_name])
