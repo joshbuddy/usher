@@ -7,6 +7,10 @@ class Usher
         self.request_methods = request_methods
       end
       
+      def route_set
+        parent
+      end
+      
       def add(route)
         route.paths.each do |path|
           set_path_with_destination(path)

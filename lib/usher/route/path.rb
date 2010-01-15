@@ -2,7 +2,7 @@ class Usher
   class Route
     class Path
 
-      attr_accessor :route
+      attr_accessor :route, :cached_response
       attr_reader :parts
 
       def initialize(route, parts)
