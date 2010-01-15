@@ -1,0 +1,9 @@
+= Changelog
+
+== From 0.6.5 to 0.6.6
+
+* Faster recognition (~10%)
+* Nicer exception message when generating a route and raising a MissingParameterException
+* Nodes now support #ancestors and #root methods.
+* Cache responses on non-dynamic paths.
+* Started a changelog.
