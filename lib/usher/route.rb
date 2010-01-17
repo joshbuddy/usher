@@ -18,7 +18,7 @@ class Usher
     def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially, priority)
       @router, @requirements, @conditions, @default_values, @match_partially, @priority = router, requirements, conditions, default_values, match_partially, priority
       @recognizable = true
-      @paths = parsed_paths.collect {|path| Path.new(self, path)}
+      @paths = parsed_paths.collect {|path| Path.create(self, path)}
       @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
     end
 
