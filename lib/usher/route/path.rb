@@ -54,7 +54,6 @@ class Usher
 
       def can_generate_from_params?(params)
         if route.router.consider_destination_keys?
-          route.destination.to_a - params.to_a
           (route.destination.to_a - params.to_a).size.zero?
         end
       end
@@ -66,10 +65,10 @@ class Usher
       end
 
       private
-        def parts=(parts)
-          @parts = parts
-          @dynamic = @parts.any?{|p| p.is_a?(Variable)}
-        end
+      def parts=(parts)
+        @parts = parts
+        @dynamic = @parts.any?{|p| p.is_a?(Variable)}
+      end
 
     end
   end
