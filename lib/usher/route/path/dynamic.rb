@@ -2,14 +2,15 @@ class Usher
   class Route
     class Path
       class Dynamic < Path
-        attr_accessor :route
-        attr_reader :parts
-
+        
         def initialize(route, parts)
-          self.route = route
-          self.parts = parts
+          super(route, parts)
         end
 
+        def cached_response=(r)
+          raise
+        end
+        
         def dynamic_indicies
           unless @dynamic_indicies
             @dynamic_indicies = []
@@ -48,10 +49,6 @@ class Usher
           end
         end
 
-        private
-        def parts=(parts)
-          @parts = parts
-        end
       end
     end
   end

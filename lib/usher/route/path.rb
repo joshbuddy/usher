@@ -4,7 +4,7 @@ class Usher
   class Route
     class Path
 
-      attr_accessor :route, :cached_response
+      attr_accessor :cached_response, :route
       attr_reader :parts
 
       def self.create(route, parts)
@@ -16,32 +16,12 @@ class Usher
       end
 
       def initialize(route, parts)
-        self.route = route
-        self.parts = parts
+        @route = route
+        @parts = parts
       end
 
       def convert_params_array(ary)
         ary.empty? ? ary : dynamic_keys.zip(ary)
-      end
-
-      def dynamic_indicies
-        nil
-      end
-
-      def dynamic_parts
-        nil
-      end
-
-      def dynamic_map
-        nil
-      end
-
-      def dynamic_keys
-        nil
-      end
-
-      def dynamic_required_keys
-        nil
       end
 
       def dynamic?
@@ -62,11 +42,6 @@ class Usher
       def merge(other_path)
         new_parts = parts + other_path.parts
         Path.create(route, new_parts)
-      end
-
-      private
-      def parts=(parts)
-        @parts = parts
       end
 
     end
