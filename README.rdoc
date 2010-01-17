@@ -14,6 +14,16 @@ Tree-based router library. Useful for (specifically) for Rails and Rack, but pro
 * Interface and implementation are separate, encouraging cross-pollination
 * Works in 1.9!
 
+== Projects using Usher to some extent
+
+* http://github.com/Tass/CRUDtree - RESTful resource mapper
+* http://github.com/botanicus/rango - Web framework
+* http://github.com/hassox/pancake - Web framework
+* http://github.com/eddanger/junior - Web framework
+* http://github.com/lifo/cramp - Web framework
+
+Any probably more!
+
 == Route format
 
 From the rdoc:
@@ -138,18 +148,5 @@ In Sinatra, you get the extra method, +generate+, which lets you generate a url.
   get '/hi', :name => :hi do
     "Hello World! #{generate(:hi)}"
   end
-
-== DONE
-
-* add support for () optional parts
-* Add support for arbitrary HTTP header checks
-* Emit exceptions inline with relevant interfaces
-* More RDoc! (optionally cowbell)
-
-== TODO
-
-* Make it integrate with merb
-* Make it integrate with rails3
-* Create decent DSL for use with rack
 
 (Let me show you to your request)
