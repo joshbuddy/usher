@@ -14,13 +14,15 @@ Tree-based router library. Useful for (specifically) for Rails and Rack, but pro
 * Interface and implementation are separate, encouraging cross-pollination
 * Works in 1.9!
 
-== Projects using Usher to some extent
+== Projects using or other references to Usher
 
 * http://github.com/Tass/CRUDtree - RESTful resource mapper
+* http://github.com/padrino/padrino-framework - Web framework
 * http://github.com/botanicus/rango - Web framework
 * http://github.com/hassox/pancake - Web framework
 * http://github.com/eddanger/junior - Web framework
 * http://github.com/lifo/cramp - Web framework
+* http://yehudakatz.com/2009/08/26/how-to-build-sinatra-on-rails-3/ - How to Build Sinatra on Rails 3
 
 Any probably more!
 
