@@ -95,7 +95,7 @@ class Usher
     def find(request_object, original_path, path, params = [])
       # terminates or is partial
       if terminates? && (path.empty? || terminates.route.partial_match? || (route_set.ignore_trailing_delimiters? && path.all?{|p| route_set.delimiters.include?(p)}))
-        if !terminates.dynamic? && terminates.cached_response
+        if terminates.cached_response
           terminates.cached_response
         else
           terminates.route.partial_match? ?

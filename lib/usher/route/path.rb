@@ -2,12 +2,12 @@ class Usher
   class Route
     class Path
 
-      attr_accessor :cached_response, :route
+      attr_accessor :route, :cached_response
       attr_reader :parts
 
       def initialize(route, parts)
-        @route = route
-        @parts = parts
+        self.route = route
+        self.parts = parts
       end
 
       def convert_params_array(ary)
