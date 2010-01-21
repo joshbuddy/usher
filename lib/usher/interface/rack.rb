@@ -7,7 +7,8 @@ class Usher
 
       ENV_KEY_RESPONSE = 'usher.response'
       ENV_KEY_PARAMS = 'usher.params'
-
+      ENV_KEY_DEFAULT_ROUTER = 'usher.router'
+      
       class Middleware
 
         def initialize(app, router)
@@ -53,12 +54,13 @@ class Usher
         end
       end
 
-      attr_reader :router
+      attr_reader :router, :router_key
 
       def initialize(app = nil, options = nil, &blk)
         @_app = app || lambda { |env| ::Rack::Response.new("No route found", 404).finish }
         @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new, :allow_identical_variable_names => false)
         @use_destinations = options && options.key?(:use_destinations) ? options[:use_destinations] : true
+        @router_key = options && options[:router_key] || ENV_KEY_DEFAULT_ROUTER
         instance_eval(&blk) if blk
       end
 
@@ -122,6 +124,7 @@ class Usher
       end
 
       def call(env)
+        env[router_key] = self
         request = ::Rack::Request.new(env)
         response = @router.recognize(request, request.path_info)
         after_match(request, response) if response
@@ -161,6 +164,8 @@ class Usher
       def determine_respondant(response)
         if use_destinations? && response && response.destination && response.destination.respond_to?(:call)
           response.destination
+        elsif use_destinations? && response && response.destination && response.destination.respond_to?(:args) && response.destination.args.first.respond_to?(:call)
+          response.args.first
         else
           _app
         end
