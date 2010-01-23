@@ -9,6 +9,10 @@ class Usher
       ENV_KEY_PARAMS = 'usher.params'
       ENV_KEY_DEFAULT_ROUTER = 'usher.router'
       
+      
+      # Middleware for using Usher's rack interface to recognize the request, then, pass on to the next application.
+      # Values are stored in <tt>env</tt> normally.
+      #
       class Middleware
 
         def initialize(app, router)
@@ -22,7 +26,10 @@ class Usher
         end
 
       end
-
+      
+      # Replacement for <tt>Rack::Builder</tt> which using Usher to map requests instead of a simple Hash.
+      # As well, add convenience methods for the request methods.
+      #
       class Builder < ::Rack::Builder
         def initialize(&block)
           @usher = Usher::Interface::Rack.new
@@ -56,18 +63,31 @@ class Usher
 
       attr_reader :router, :router_key
 
+      # Constructor for Rack interface for Usher. 
+      # <tt>app</tt> - the default application to route to if no matching route is found. The default is a 404 response.
+      # <tt>options</tt> - options to configure the router
+      # * <tt>use_destinations</tt> - option to disable using the destinations passed into routes. (Default <tt>true</tt>)
+      # * <tt>router_key</tt> - Key in which to put router into env. (Default <tt>usher.router</tt>)
+      # * <tt>request_methods</tt> - Request methods on <tt>Rack::Request</tt> to use in determining recognition. (Default <tt>[:request_method, :host, :port, :scheme]</tt>)
+      # * <tt>generator</tt> - Route generator to use. (Default <tt>Usher::Util::Generators::URL.new</tt>)
+      # * <tt>allow_identical_variable_names</tt> - Option to prevent routes with identical variable names to be added. eg, /:variable/:variable would raise an exception if this option is not enabled. (Default <tt>false</tt>)
       def initialize(app = nil, options = nil, &blk)
-        @_app = app || lambda { |env| ::Rack::Response.new("No route found", 404).finish }
-        @router = Usher.new(:request_methods => [:request_method, :host, :port, :scheme], :generator => Usher::Util::Generators::URL.new, :allow_identical_variable_names => false)
+        @_app = app || proc{|env| ::Rack::Response.new("No route found", 404).finish }
         @use_destinations = options && options.key?(:use_destinations) ? options[:use_destinations] : true
         @router_key = options && options[:router_key] || ENV_KEY_DEFAULT_ROUTER
+        request_methods = options && options[:request_methods] || [:request_method, :host, :port, :scheme]
+        generator = options && options[:generator] || Usher::Util::Generators::URL.new
+        allow_identical_variable_names = options && options.key(:allow_identical_variable_names) ? options[:allow_identical_variable_names] : false
+        @router = Usher.new(:request_methods => request_methods, :generator => generator, :allow_identical_variable_names => allow_identical_variable_names)
         instance_eval(&blk) if blk
       end
-
+      
+      # Returns whether the route set has use_destinations? enabled.
       def use_destinations?
         @use_destinations
       end
 
+      # Creates a deep copy of the current route set.
       def dup
         new_one = super
         original = self
