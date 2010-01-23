@@ -96,12 +96,16 @@ class Usher
         end
         new_one
       end
-
+      
+      # Adds a route to the route set with a +path+ and optional +options+.
+      # See <tt>Usher#add_route</tt> for more details about the format of the route and options accepted here.
       def add(path, options = nil)
         @router.add_route(path, options)
       end
       alias_method :path, :add
 
+      # Sets the default application when route matching is unsuccessful. Accepts either an application +app+ or a block to call.
+      #
       # default { |env| ... }
       # default DefaultApp
       def default(app = nil, &block)
@@ -115,20 +119,30 @@ class Usher
 
       # it returns route, and because you may want to work with the route,
       # for example give it a name, we returns the route with GET request
+
+      # Convenience method for adding a route that only matches request method +GET+.
+      def only_get(path, options = {})
+        add(path, options.merge!(:conditions => {:request_method => ["GET"]}))
+      end
+
+      # Convenience method for adding a route that only matches request methods +GET+ and +HEAD+.
       def get(path, options = {})
-        self.add(path, options.merge!(:conditions => {:request_method => ["HEAD", "GET"]}))
+        add(path, options.merge!(:conditions => {:request_method => ["HEAD", "GET"]}))
       end
 
+      # Convenience method for adding a route that only matches request method +POST+.
       def post(path, options = {})
-        self.add(path, options.merge!(:conditions => {:request_method => "POST"}))
+        add(path, options.merge!(:conditions => {:request_method => "POST"}))
       end
 
+      # Convenience method for adding a route that only matches request method +PUT+.
       def put(path, options = {})
-        self.add(path, options.merge!(:conditions => {:request_method => "PUT"}))
+        add(path, options.merge!(:conditions => {:request_method => "PUT"}))
       end
 
+      # Convenience method for adding a route that only matches request method +DELETE+.
       def delete(path, options = {})
-        self.add(path, options.merge!(:conditions => {:request_method => "DELETE"}))
+        add(path, options.merge!(:conditions => {:request_method => "DELETE"}))
       end
 
       def parent_route=(route)
