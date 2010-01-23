@@ -92,45 +92,45 @@ class Usher
         Array(destinations).each do |d| d.module_eval { include Helpers }
           @router.named_routes.keys.each do |name|
             @module.module_eval <<-end_eval # We use module_eval to avoid leaks
-            def #{name}_url(options = {})
-              ActionController::Routing::UsherRoutes.generate(options, {}, :generate, :#{name})
-                                                              end
-                                                              end_eval
-                                                              end
-                                                              d.__send__(:include, @module)
-                                                              end
-                                                              end
+              def #{name}_url(options = {})
+                ActionController::Routing::UsherRoutes.generate(options, {}, :generate, :#{name})
+              end
+            end_eval
+          end
+          d.__send__(:include, @module)
+        end
+      end
 
-                                                              def generate(options, recall = {}, method = :generate, route_name = nil)
-                                                                route = if(route_name)
-                                                                  @router.named_routes[route_name]
-                                                                else
-                                                                  merged_options = options
-                                                                  merged_options[:controller] = recall[:controller] unless options.key?(:controller)
-                                                                  unless options.key?(:action)
-                                                                    options[:action] = ''
-                                                                  end
-                                                                  path_for_options(merged_options)
-                                                                end
-                                                                case method
-                                                                  when :generate
-                                                                    merged_options ||= recall.merge(options)
-                                                                    url = generate_url(route, merged_options)
-                                                                    url.slice!(-1) if url[-1] == ?/
-                                                                    url
-                                                                  else
-                                                                    raise "method #{method} not recognized"
-                                                                end
-                                                              end
+      def generate(options, recall = {}, method = :generate, route_name = nil)
+        route = if(route_name)
+          @router.named_routes[route_name]
+        else
+          merged_options = options
+          merged_options[:controller] = recall[:controller] unless options.key?(:controller)
+          unless options.key?(:action)
+            options[:action] = ''
+          end
+          path_for_options(merged_options)
+        end
+        case method
+          when :generate
+            merged_options ||= recall.merge(options)
+            url = generate_url(route, merged_options)
+            url.slice!(-1) if url[-1] == ?/
+            url
+          else
+            raise "method #{method} not recognized"
+        end
+      end
 
-                                                              def generate_url(route, params)
-                                                                @router.generator.generate(route, params)
-                                                              end
+      def generate_url(route, params)
+        @router.generator.generate(route, params)
+      end
 
-                                                              def path_for_options(options)
-                                                                @router.path_for_options(options)
-                                                              end
+      def path_for_options(options)
+        @router.path_for_options(options)
+      end
 
-                                                              end
-                                                              end
-                                                              end
+    end
+  end
+end
