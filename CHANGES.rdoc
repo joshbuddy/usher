@@ -1,5 +1,11 @@
 = Changelog
 
+== From 0.6.6 to 0.6.7
+
+* Added Usher::Interfaces::Rack#only_get. Convenience method for adding routes which respond to only get and not both head and get.
+* Made Usher::Interfaces::Rack take lots of configuration options and updated docs to reflect that. (As well as numerous other improved bits of docs.)
+* When route goes through Rack interface, insert Router into env. (right now its usher.router by default)
+
 == From 0.6.5 to 0.6.6
 
 * Faster recognition (~10%)
