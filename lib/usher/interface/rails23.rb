@@ -9,10 +9,11 @@ class Usher
       end
 
       def add_named_route(name, route, options = {})
-        @router.add_route(route, options).name(name)
+        add_route(route, options).name(name)
       end
 
       def add_route(path, options = {})
+        path.gsub!(/(\..*?(?!\)))$/, '(\1)')
         if !@controller_action_route_added && path =~ %r{^/?:controller/:action/:id$}
           add_route('/:controller/:action', options.dup)
           @controller_action_route_added = true
@@ -73,7 +74,6 @@ class Usher
       def reset!(options={})
         options[:generator] = options[:generator] || Usher::Util::Generators::URL.new
         options[:request_methods] = options[:request_methods] || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
-        options[:force_extensions_to_be_optional] = true
         @router = Usher.new(options)
         @configuration_files = []
         @module ||= Module.new

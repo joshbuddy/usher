@@ -21,25 +21,26 @@ class Usher
 
       def generate_route(unprocessed_path, conditions, requirements, default_values, generate_with, priority)
         match_partially = false
+        processed_path = unprocessed_path
         case unprocessed_path
         when String
           if unprocessed_path[-1] == ?*
             unprocessed_path.slice!(-1)
             match_partially = true
           end
-          unprocessed_path = parse(unprocessed_path, requirements, default_values)
+          processed_path = parse(unprocessed_path, requirements, default_values)
         when Regexp
-          unprocessed_path = [Route::Static::Greedy.new(unprocessed_path)]
+          processed_path = [Route::Static::Greedy.new(unprocessed_path)]
         else
           match_partially = false
         end
         
-        unless unprocessed_path.first.is_a?(Route::Util::Group)
+        unless processed_path.first.is_a?(Route::Util::Group)
           group = Usher::Route::Util::Group.new(:all, nil)
-          unprocessed_path.each{|p| group << p}
-          unprocessed_path = group
+          processed_path.each{|p| group << p}
+          processed_path = group
         end
-        paths = Route::Util.expand_path(unprocessed_path)
+        paths = Route::Util.expand_path(processed_path)
 
         paths.each do |path|
           path.each_with_index do |part, index|
@@ -64,6 +65,7 @@ class Usher
         end
 
         Route.new(
+          unprocessed_path,
           paths,
           router, 
           conditions, 

@@ -6,7 +6,7 @@ require File.join('usher', 'route', 'request_method')
 
 class Usher
   class Route
-    attr_reader   :paths, :requirements, :conditions, :named, :generate_with, :default_values, :match_partially, :destination, :priority
+    attr_reader   :original_path, :paths, :requirements, :conditions, :named, :generate_with, :default_values, :match_partially, :destination, :priority
     attr_accessor :parent_route, :router, :recognizable
 
     class GenerateWith < Struct.new(:scheme, :port, :host)
@@ -15,8 +15,9 @@ class Usher
       end
     end
 
-    def initialize(parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially, priority)
-      @router, @requirements, @conditions, @default_values, @match_partially, @priority = router, requirements, conditions, default_values, match_partially, priority
+    def initialize(original_path, parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially, priority)
+      p original_path
+      @original_path, @router, @requirements, @conditions, @default_values, @match_partially, @priority = original_path, router, requirements, conditions, default_values, match_partially, priority
       @recognizable = true
       @paths = parsed_paths.collect {|path| Path.new(self, path)}
       @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
