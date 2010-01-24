@@ -137,8 +137,8 @@ class Usher
             extra_params = params.last.is_a?(Hash) ? params.pop : nil
             raise MissingParameterException.new("got #{params.size}, expected #{path.dynamic_parts.size} parameters") unless path.dynamic_parts.size == params.size
           end
-          
-          result = Rack::Utils.uri_escape(generate_path_for_base_params(path, params))
+          result = generate_path_for_base_params(path, params)
+          Rack::Utils.uri_escape!(result)
           
           params = extra_params if extra_params
           

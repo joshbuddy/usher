@@ -10,12 +10,14 @@ class Usher
 
     class SingleCharacterSplitterInstance
     
+      attr_reader :url_split_regex
+    
       def initialize(delimiters)
-        @url_split_regex = Regexp.new("[#{delimiters.collect{|d| Regexp.quote(d)}.join}]|[^#{delimiters.collect{|d| Regexp.quote(d)}.join}]+")
+        @url_split_regex = Regexp.new("[^#{delimiters.collect{|d| Regexp.quote(d)}.join}]+|[#{delimiters.collect{|d| Regexp.quote(d)}.join}]")
       end
       
       def split(path)
-        path.scan(@url_split_regex)
+        path.scan(url_split_regex)
       end
     end
     
