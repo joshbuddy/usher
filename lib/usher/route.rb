@@ -16,7 +16,6 @@ class Usher
     end
 
     def initialize(original_path, parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially, priority)
-      p original_path
       @original_path, @router, @requirements, @conditions, @default_values, @match_partially, @priority = original_path, router, requirements, conditions, default_values, match_partially, priority
       @recognizable = true
       @paths = parsed_paths.collect {|path| Path.new(self, path)}
