@@ -67,7 +67,7 @@ class Usher
 
       def recognize(request)
         response = @router.recognize(request)
-        request.path_parameters.merge!(response.params_as_hash)
+        request.path_parameters.merge!(response.destination)
         "#{request.path_parameters[:controller].camelize}Controller".constantize
       end
 
