@@ -67,13 +67,13 @@ class Usher
       def recognize(request)
         response = @router.recognize(request)
         request.path_parameters.merge!(response.params_as_hash)
-        "#{request.path_parameters[:controller].camelize}Controller".constantize
+        "#{response.destination[:controller].camelize}Controller".constantize
       end
 
       def reset!(options={})
         options[:generator] = options[:generator] || Usher::Util::Generators::URL.new
         options[:request_methods] = options[:request_methods] || [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]
-
+        options[:force_extensions_to_be_optional] = true
         @router = Usher.new(options)
         @configuration_files = []
         @module ||= Module.new
@@ -93,11 +93,20 @@ class Usher
           @router.named_routes.keys.each do |name|
             @module.module_eval <<-end_eval # We use module_eval to avoid leaks
               def #{name}_url(options = {})
-                ActionController::Routing::UsherRoutes.generate(options, {}, :generate, :#{name})
+                ActionController::Routing::Routes.generate(options, {}, :generate, :#{name})
+              end
+              def #{name}_path(options = {})
+                ActionController::Routing::Routes.generate(options, {}, :generate, :#{name})
               end
             end_eval
           end
           d.__send__(:include, @module)
+          @router.named_routes.instance_eval "
+            def helpers
+              { }
+            end
+          "
+          @router.named_routes.helpers.__send__(:extend, @module)
         end
       end
 

@@ -71,18 +71,23 @@ class Usher
   # Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
   # :action => 'action', it would pick that route to use for generation.
   def initialize(options = nil)
-    self.generator                      = options && options.delete(:generator)
-    self.delimiters                     = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
-    self.valid_regex                    = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
-    self.request_methods                = options && options.delete(:request_methods)
-    self.ignore_trailing_delimiters     = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
-    self.consider_destination_keys      = options && options.key?(:consider_destination_keys) ? options.delete(:consider_destination_keys) : false
-    self.allow_identical_variable_names = options && options.key?(:allow_identical_variable_names) ? options.delete(:allow_identical_variable_names) : true
+    self.generator                       = options && options.delete(:generator)
+    self.delimiters                      = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
+    self.valid_regex                     = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
+    self.request_methods                 = options && options.delete(:request_methods)
+    self.ignore_trailing_delimiters      = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
+    self.consider_destination_keys       = options && options.key?(:consider_destination_keys) ? options.delete(:consider_destination_keys) : false
+    self.allow_identical_variable_names  = options && options.key?(:allow_identical_variable_names) ? options.delete(:allow_identical_variable_names) : true
+    self.force_extensions_to_be_optional = options && options.key?(:force_extensions_to_be_optional) ? options.delete(:force_extensions_to_be_optional) : false
     reset!
   end
 
   def allow_identical_variable_names?
     @allow_identical_variable_names
+  end
+  
+  def force_extensions_to_be_optional?
+    @force_extensions_to_be_optional
   end
   
   def ignore_trailing_delimiters?
@@ -205,6 +210,9 @@ class Usher
   # * +priority+ - If there are two routes which equally match, the route with the highest priority will match first.
   # * Any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = nil)
+    if force_extensions_to_be_optional?
+      path.gsub!(/(\..*?(?!\)))$/, '(\1)')
+    end
     route = get_route(path, options)
     @root.add(route)
     @routes << route
@@ -295,7 +303,7 @@ class Usher
 
   private
 
-  attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys, :allow_identical_variable_names
+  attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys, :allow_identical_variable_names, :force_extensions_to_be_optional
   attr_reader :valid_regex
 
   def generator=(generator)
