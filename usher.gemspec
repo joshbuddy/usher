@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{usher}
-  s.version = "0.6.7"
+  s.version = "0.6.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub \305\240\305\245astn\303\275", "Joshua Hull"]
-  s.date = %q{2010-01-24}
+  s.date = %q{2010-03-03}
   s.description = %q{Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure}
   s.email = %q{joshbuddy@gmail.com}
   s.extra_rdoc_files = [
@@ -56,7 +56,7 @@ Gem::Specification.new do |s|
     "lib/usher/util/mapper.rb",
     "lib/usher/util/parser.rb",
     "lib/usher/util/rack-mixins.rb",
-    "rails/init.rb",
+    "lib/usher/util/rails.rb",
     "spec/private/delimiters_spec.rb",
     "spec/private/destination_spec.rb",
     "spec/private/email/recognize_spec.rb",
