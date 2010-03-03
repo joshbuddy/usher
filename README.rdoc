@@ -108,6 +108,10 @@ For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <t
 
   script/plugin install git://github.com/joshbuddy/usher.git
 
+In your config/initializers/usher.rb (create if it doesn't exist) add:
+
+  Usher::Util::Rails.activate
+
 == Rack
 
 === config.ru
