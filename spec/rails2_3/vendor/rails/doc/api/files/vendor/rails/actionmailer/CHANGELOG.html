@@ -1,0 +1,752 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: CHANGELOG</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>CHANGELOG</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>vendor/rails/actionmailer/CHANGELOG
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Mon Jul 20 10:39:26 -0500 2009</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+*2.3.3 (July 20, 2009)*
+</p>
+<ul>
+<li>No changes, just a version bump.
+
+</li>
+</ul>
+<p>
+*2.3.2 [Final] (March 15, 2009)*
+</p>
+<ul>
+<li>Fixed that ActionMailer should send correctly formatted Return-Path in MAIL
+FROM for SMTP 1842 [Matt Jones]
+
+</li>
+<li>Fixed RFC-2045 quoted-printable bug 1421 [squadette]
+
+</li>
+<li>Fixed that no body charset would be set when there are attachments present
+740 [Paweł Kondzior]
+
+</li>
+</ul>
+<p>
+*2.2.1 [RC2] (November 14th, 2008)*
+</p>
+<ul>
+<li>Turn on STARTTLS if it is available in Net::SMTP (added in Ruby 1.8.7) and
+the SMTP server supports it (This is required for Gmail&#8216;s SMTP
+server) 1336 [Grant Hollingworth]
+
+</li>
+</ul>
+<p>
+*2.2.0 [RC1] (October 24th, 2008)*
+</p>
+<ul>
+<li>Add layout functionality to mailers [Pratik Naik]
+
+<p>
+Mailer layouts behaves just like controller layouts, except layout names
+need to have &#8216;_mailer&#8217; postfix for them to be automatically
+picked up.
+</p>
+</li>
+</ul>
+<p>
+*2.1.0 (May 31st, 2008)*
+</p>
+<ul>
+<li>Fixed that a return-path header would be ignored 7572 [joost]
+
+</li>
+<li>Less verbose mail logging: just recipients for :info log level; the whole
+email for :debug only. 8000 [iaddict, Tarmo Tänav]
+
+</li>
+<li>Updated TMail to version 1.2.1 [Mikel Lindsaar]
+
+</li>
+<li>Fixed that you don&#8216;t have to call super in
+ActionMailer::TestCase#setup 10406 [jamesgolick]
+
+</li>
+</ul>
+<p>
+*2.0.2* (December 16th, 2007)
+</p>
+<ul>
+<li>Included in <a href="../../../../classes/Rails.html">Rails</a> 2.0.2
+
+</li>
+</ul>
+<p>
+*2.0.1* (December 7th, 2007)
+</p>
+<ul>
+<li>Update ActionMailer so it treats ActionView the same way that
+ActionController does. Closes 10244 [Rick Olson]
+
+<ul>
+<li>Pass the template_root as an array as ActionView&#8216;s view_path
+
+</li>
+<li>Request templates with the &quot;#{mailer_name}/#{action}&quot; as opposed
+to just &quot;#{action}&quot;
+
+</li>
+</ul>
+</li>
+<li>Fixed that partials would be broken when using text.plain.erb as the
+extension 10130 [java]
+
+</li>
+<li>Update README to use new smtp settings configuration API. Closes 10060
+[psq]
+
+</li>
+<li>Allow ActionMailer subclasses to individually set their delivery method (so
+two subclasses can have different delivery methods) 10033 [Zach Dennis]
+
+</li>
+<li>Update TMail to v1.1.0. Use an updated version of TMail if available.
+[Mikel Lindsaar]
+
+</li>
+<li>Introduce a new base test class for testing Mailers. ActionMailer::TestCase
+[Michael Koziarski]
+
+</li>
+<li>Fix silent failure of rxml templates. 9879 [jstewart]
+
+</li>
+<li>Fix attachment decoding when using the TMail C extension. 7861
+[orangechicken]
+
+</li>
+<li>Increase mail delivery test coverage. 8692 [Kamal Fariz Mahyuddin]
+
+</li>
+<li>Register alternative template engines using
+ActionMailer::Base.register_template_extension(&#8216;haml&#8217;). 7534
+[cwd, Josh Peek]
+
+</li>
+<li>Only load <a
+href="../../../../classes/ActionController/UrlWriter.html">ActionController::UrlWriter</a>
+if ActionController is present [Rick Olson]
+
+</li>
+<li>Make sure parsed emails recognized attachments nested inside multipart
+parts. 6714 [Jamis Buck]
+
+</li>
+<li>Allow mailer actions named send by using <em>send</em> internally. 6467
+[iGEL]
+
+</li>
+<li>Add assert_emails and assert_no_emails to test the number of emails
+delivered. 6479 [Jonathan Viney]
+
+<pre>
+  # Assert total number of emails delivered:
+  assert_emails 0
+  ContactMailer.deliver_contact
+  assert_emails 1
+
+  # Assert number of emails delivered within a block:
+  assert_emails 1 do
+    post :signup, :name =&gt; 'Jonathan'
+  end
+</pre>
+</li>
+</ul>
+<p>
+*1.3.3* (March 12th, 2007)
+</p>
+<ul>
+<li>Depend on Action Pack 1.13.3
+
+</li>
+</ul>
+<p>
+*1.3.2* (February 5th, 2007)
+</p>
+<ul>
+<li>Deprecate server_settings renaming it to smtp_settings, add
+sendmail_settings to allow you to override the arguments to and location of
+the sendmail executable. [Michael Koziarski]
+
+</li>
+</ul>
+<p>
+*1.3.1* (January 16th, 2007)
+</p>
+<ul>
+<li>Depend on Action Pack 1.13.1
+
+</li>
+</ul>
+<p>
+*1.3.0* (January 16th, 2007)
+</p>
+<ul>
+<li>Make mime version default to 1.0. closes 2323 [ror@andreas-s.net]
+
+</li>
+<li>Make sure quoted-printable text is decoded correctly when only portions of
+the text are encoded. closes 3154. [jon@siliconcircus.com]
+
+</li>
+<li>Make sure DOS newlines in quoted-printable text are normalized to unix
+newlines before unquoting. closes 4166 and 4452. [Jamis Buck]
+
+</li>
+<li>Fixed that iconv decoding should catch InvalidEncoding 3153
+[jon@siliconcircus.com]
+
+</li>
+<li>Tighten rescue clauses. 5985 [james@grayproductions.net]
+
+</li>
+<li>Automatically included <a
+href="../../../../classes/ActionController/UrlWriter.html">ActionController::UrlWriter</a>,
+such that URL generation can happen within ActionMailer controllers. [David
+Heinemeier Hansson]
+
+</li>
+<li>Replace Reloadable with Reloadable::Deprecated. [Nicholas Seckar]
+
+</li>
+<li>Mailer template root applies to a class and its subclasses rather than
+acting globally. 5555 [somekool@gmail.com]
+
+</li>
+<li>Resolve action naming collision. 5520 [ssinghi@kreeti.com]
+
+</li>
+<li><a href="../../../../classes/ActionMailer/Base.html">ActionMailer::Base</a>
+documentation rewrite. Closes 4991 [Kevin Clark, Marcel Molina Jr.]
+
+</li>
+<li>Replace alias method chaining with Module#alias_method_chain. [Marcel
+Molina Jr.]
+
+</li>
+<li>Replace Ruby&#8216;s deprecated append_features in favor of included.
+[Marcel Molina Jr.]
+
+</li>
+<li>Correct spurious documentation example code which results in a SyntaxError.
+[Marcel Molina Jr.]
+
+</li>
+</ul>
+<p>
+*1.2.1* (April 6th, 2006)
+</p>
+<ul>
+<li>Be part of <a href="../../../../classes/Rails.html">Rails</a> 1.1.1
+
+</li>
+</ul>
+<p>
+*1.2.0* (March 27th, 2006)
+</p>
+<ul>
+<li>Nil charset caused subject line to be improperly quoted in implicitly
+multipart messages 2662 [ehalvorsen+rails@runbox.com]
+
+</li>
+<li>Parse content-type apart before using it so that sub-parts of the header
+can be set correctly 2918 [Jamis Buck]
+
+</li>
+<li>Make custom headers work in subparts 4034 [elan@bluemandrill.com]
+
+</li>
+<li>Template paths with dot chars in them no longer mess up implicit template
+selection for multipart messages 3332 [Chad Fowler]
+
+</li>
+<li>Make sure anything with content-disposition of &quot;attachment&quot; is
+passed to the attachment presenter when parsing an email body [Jamis Buck]
+
+</li>
+<li>Make sure TMail#attachments includes anything with content-disposition of
+&quot;attachment&quot;, regardless of content-type [Jamis Buck]
+
+</li>
+</ul>
+<p>
+*1.1.5* (December 13th, 2005)
+</p>
+<ul>
+<li>Become part of <a href="../../../../classes/Rails.html">Rails</a> 1.0
+
+</li>
+</ul>
+<p>
+*1.1.4* (December 7th, 2005)
+</p>
+<ul>
+<li>Rename Version constant to VERSION. 2802 [Marcel Molina Jr.]
+
+</li>
+<li>Stricter matching for implicitly multipart filenames excludes files ending
+in unsupported extensions (such as foo.rhtml.bak) and without a two-part
+content type (such as foo.text.rhtml or foo.text.really.plain.rhtml). 2398
+[Dave Burt &lt;dave@burt.id.au&gt;, Jeremy Kemper]
+
+</li>
+</ul>
+<p>
+*1.1.3* (November 7th, 2005)
+</p>
+<ul>
+<li>Allow Mailers to have custom initialize methods that set default instance
+variables for all mail actions 2563 [mrj@bigpond.net.au]
+
+</li>
+</ul>
+<p>
+*1.1.2* (October 26th, 2005)
+</p>
+<ul>
+<li>Upgraded to Action Pack 1.10.2
+
+</li>
+</ul>
+<p>
+*1.1.1* (October 19th, 2005)
+</p>
+<ul>
+<li>Upgraded to Action Pack 1.10.1
+
+</li>
+</ul>
+<p>
+*1.1.0* (October 16th, 2005)
+</p>
+<ul>
+<li>Update and extend documentation (rdoc)
+
+</li>
+<li>Minero Aoki made TMail available to <a
+href="../../../../classes/Rails.html">Rails</a>/ActionMailer under the MIT
+license (instead of LGPL) [RubyConf &#8216;05]
+
+</li>
+<li>Austin Ziegler made Text::Simple available to <a
+href="../../../../classes/Rails.html">Rails</a>/ActionMailer under a
+MIT-like licens [See rails ML, subject &quot;Text::Format Licence
+Exception&quot; on Oct 15, 2005]
+
+</li>
+<li>Fix vendor require paths to prevent files being required twice
+
+</li>
+<li>Don&#8216;t add charset to content-type header for a part that contains
+subparts (for AOL compatibility) 2013 [John Long]
+
+</li>
+<li>Preserve underscores when unquoting message bodies 1930
+
+</li>
+<li>Encode multibyte characters correctly 1894
+
+</li>
+<li>Multipart messages specify a MIME-Version header automatically 2003 [John
+Long]
+
+</li>
+<li>Add a unified render method to ActionMailer (delegates to
+ActionView::Base#render)
+
+</li>
+<li>Move mailer initialization to a separate (overridable) method, so that
+subclasses may alter the various defaults 1727
+
+</li>
+<li>Look at content-location header (if available) to determine filename of
+attachments 1670
+
+</li>
+<li>ActionMailer::Base.deliver(email) had been accidentally removed, but was
+documented in the <a href="../../../../classes/Rails.html">Rails</a> book
+1849
+
+</li>
+<li>Fix problem with sendmail delivery where headers should be delimited by \n
+characters instead of \r\n, which confuses some mail readers 1742 [Kent
+Sibilev]
+
+</li>
+</ul>
+<p>
+*1.0.1* (11 July, 2005)
+</p>
+<ul>
+<li>Bind to Action Pack 1.9.1
+
+</li>
+</ul>
+<p>
+*1.0.0* (6 July, 2005)
+</p>
+<ul>
+<li>Avoid adding nil header values 1392
+
+</li>
+<li>Better multipart support with implicit multipart/alternative and sorting of
+subparts [John Long]
+
+</li>
+<li>Allow for nested parts in multipart mails 1570 [Flurin Egger]
+
+</li>
+<li>Normalize line endings in outgoing mail bodies to &quot;\n&quot; 1536 [John
+Long]
+
+</li>
+<li>Allow template to be explicitly specified 1448 [tuxie@dekadance.se]
+
+</li>
+<li>Allow specific &quot;multipart/xxx&quot; content-type to be set on
+multipart messages 1412 [Flurin Egger]
+
+</li>
+<li>Unquoted @ characters in headers are now accepted in spite of RFC 822 1206
+
+</li>
+<li>Helper support (borrowed from ActionPack)
+
+</li>
+<li>Silently ignore Errno::EINVAL errors when converting text.
+
+</li>
+<li>Don&#8216;t cause an error when parsing an encoded attachment name 1340
+[lon@speedymac.com]
+
+</li>
+<li>Nested multipart message parts are correctly processed in TMail::Mail#body
+
+</li>
+<li>BCC headers are removed when sending via SMTP 1402
+
+</li>
+<li>Added &#8216;content_type&#8217; accessor, to allow content type to be set
+on a per-message basis. content_type defaults to &quot;text/plain&quot;.
+
+</li>
+<li>Silently ignore Iconv::IllegalSequence errors when converting text 1341
+[lon@speedymac.com]
+
+</li>
+<li>Support attachments and multipart messages.
+
+</li>
+<li>Added new accessors for the various mail properties.
+
+</li>
+<li>Fix to only perform the charset conversion if a &#8216;from&#8217; and a
+&#8216;to&#8217; charset are given (make no assumptions about what the
+charset was) 1276 [Jamis Buck]
+
+</li>
+<li>Fix attachments and content-type problems 1276 [Jamis Buck]
+
+</li>
+<li>Fixed the TMail#body method to look at the content-transfer-encoding header
+and unquote the body according to the rules it specifies 1265 [Jamis Buck]
+
+</li>
+<li>Added unquoting even if the iconv lib can&#8216;t be loaded&#8212;in that
+case, only the charset conversion is skipped 1265 [Jamis Buck]
+
+</li>
+<li>Added automatic decoding of base64 bodies 1214 [Jamis Buck]
+
+</li>
+<li>Added that delivery errors are caught in a way so the mail is still
+returned whether the delivery was successful or not
+
+</li>
+<li>Fixed that email address like &quot;Jamis Buck, M.D.&quot;
+&lt;wild.medicine@example.net&gt; would cause the quoter to generate emails
+resulting in &quot;bad address&quot; errors from the mail server 1220
+[Jamis Buck]
+
+</li>
+</ul>
+<p>
+*0.9.1* (20th April, 2005)
+</p>
+<ul>
+<li>Depend on Action Pack 1.8.1
+
+</li>
+</ul>
+<p>
+*0.9.0* (19th April, 2005)
+</p>
+<ul>
+<li>Added that deliver_* will now return the email that was sent
+
+</li>
+<li>Added that quoting to UTF-8 only happens if the characters used are in that
+range 955 [Jamis Buck]
+
+</li>
+<li>Fixed quoting for all address headers, not just to 955 [Jamis Buck]
+
+</li>
+<li>Fixed unquoting of emails that doesn&#8216;t have an explicit charset 1036
+[wolfgang@stufenlos.net]
+
+</li>
+</ul>
+<p>
+*0.8.1* (27th March, 2005)
+</p>
+<ul>
+<li>Fixed that if charset was found that the end of a mime part declaration
+TMail would throw an error 919 [lon@speedymac.com]
+
+</li>
+<li>Fixed that TMail::Unquoter would fail to recognize quoting method if it was
+in lowercase 919 [lon@speedymac.com]
+
+</li>
+<li>Fixed that TMail::Encoder would fail when it attempts to parse e-mail
+addresses which are encoded using something other than the messages
+encoding method 919 [lon@speedymac.com]
+
+</li>
+<li>Added rescue for missing iconv library and throws warnings if subject/body
+is called on a TMail object without it instead
+
+</li>
+</ul>
+<p>
+*0.8.0* (22th March, 2005)
+</p>
+<ul>
+<li>Added framework support for processing incoming emails with an Action
+Mailer class. See example in README.
+
+</li>
+</ul>
+<p>
+*0.7.1* (7th March, 2005)
+</p>
+<ul>
+<li>Bind to newest Action Pack (1.5.1)
+
+</li>
+</ul>
+<p>
+*0.7.0* (24th February, 2005)
+</p>
+<ul>
+<li>Added support for charsets for both subject and body. The default charset
+is now UTF-8 673 [Jamis Buck]. Examples:
+
+<pre>
+  def iso_charset(recipient)
+    @recipients = recipient
+    @subject    = &quot;testing iso charsets&quot;
+    @from       = &quot;system@loudthinking.com&quot;
+    @body       = &quot;Nothing to see here.&quot;
+    @charset    = &quot;iso-8859-1&quot;
+  end
+
+  def unencoded_subject(recipient)
+    @recipients = recipient
+    @subject    = &quot;testing unencoded subject&quot;
+    @from       = &quot;system@loudthinking.com&quot;
+    @body       = &quot;Nothing to see here.&quot;
+    @encode_subject = false
+    @charset    = &quot;iso-8859-1&quot;
+  end
+</pre>
+</li>
+</ul>
+<p>
+*0.6.1* (January 18th, 2005)
+</p>
+<ul>
+<li>Fixed sending of emails to use Tmail#from not the deprecated
+Tmail#from_address
+
+</li>
+</ul>
+<p>
+*0.6* (January 17th, 2005)
+</p>
+<ul>
+<li>Fixed that bcc and cc should be settable through @bcc and @cc &#8212; not
+just @headers[&quot;Bcc&quot;] and @headers[&quot;Cc&quot;] 453 [Eric
+Hodel]
+
+</li>
+<li>Fixed Action Mailer to be &quot;warnings safe&quot; so you can run with
+ruby -w and not get framework warnings 453 [Eric Hodel]
+
+</li>
+</ul>
+<p>
+*0.5*
+</p>
+<ul>
+<li>Added access to custom headers, like cc, bcc, and reply-to 268 [Andreas
+Schwarz]. Example:
+
+<pre>
+  def post_notification(recipients, post)
+    @recipients          = recipients
+    @from                = post.author.email_address_with_name
+    @headers[&quot;bcc&quot;]      = SYSTEM_ADMINISTRATOR_EMAIL
+    @headers[&quot;reply-to&quot;] = &quot;notifications@example.com&quot;
+    @subject             = &quot;[#{post.account.name} #{post.title}]&quot;
+    @body[&quot;post&quot;]        = post
+  end
+</pre>
+</li>
+</ul>
+<p>
+*0.4* (5)
+</p>
+<ul>
+<li>Consolidated the server configuration options into Base#server_settings=
+and expanded that with controls for authentication and more [Marten] NOTE:
+This is an API change that could potentially break your application if you
+used the old application form. Please do change!
+
+</li>
+<li>Added Base#deliveries as an accessor for an array of emails sent out
+through that ActionMailer class when using the :test delivery option.
+[Jeremy Kemper]
+
+</li>
+<li>Added Base#perform_deliveries= which can be set to false to turn off the
+actual delivery of the email through smtp or sendmail. This is especially
+useful for functional testing that shouldn&#8216;t send off real emails,
+but still trigger delivery_* methods.
+
+</li>
+<li>Added option to specify delivery method with Base#delivery_method=. Default
+is :smtp and :sendmail is currently the only other option. Sendmail is
+assumed to be present at &quot;/usr/sbin/sendmail&quot; if that option is
+used. [Kent Sibilev]
+
+</li>
+<li>Dropped &quot;include TMail&quot; as it added to much baggage into the
+default namespace (like Version) [Chad Fowler]
+
+</li>
+</ul>
+<p>
+*0.3*
+</p>
+<ul>
+<li>First release
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

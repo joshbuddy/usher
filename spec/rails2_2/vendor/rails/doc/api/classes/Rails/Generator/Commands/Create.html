@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Rails::Generator::Commands::Create</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Rails::Generator::Commands::Create</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/vendor/rails/railties/lib/rails_generator/commands_rb.html">
+                vendor/rails/railties/lib/rails_generator/commands.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Base.html">
+                Base
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Create.html">Create</a> is the premier generator command. It
+copies files, creates directories, renders templates, and more.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002137">class_collisions</a>&nbsp;&nbsp;
+      <a href="#M002141">complex_template</a>&nbsp;&nbsp;
+      <a href="#M002142">directory</a>&nbsp;&nbsp;
+      <a href="#M002138">file</a>&nbsp;&nbsp;
+      <a href="#M002139">identical?</a>&nbsp;&nbsp;
+      <a href="#M002144">migration_template</a>&nbsp;&nbsp;
+      <a href="#M002143">readme</a>&nbsp;&nbsp;
+      <a href="#M002145">route_resources</a>&nbsp;&nbsp;
+      <a href="#M002140">template</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYNONYM_LOOKUP_URI</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;http://wordnet.princeton.edu/perl/webwn?s=%s&quot;</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002137" class="method-detail">
+        <a name="M002137"></a>
+
+        <div class="method-heading">
+          <a href="#M002137" class="method-signature">
+          <span class="method-name">class_collisions</span><span class="method-args">(*class_names)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Check whether the given class names are already taken by Ruby or <a
+href="../../../Rails.html">Rails</a>. In the future, expand to check other
+namespaces such as the rest of the user&#8216;s app.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002137-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002137-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 172</span>
+172:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">class_collisions</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">class_names</span>)
+173:           <span class="ruby-identifier">path</span> = <span class="ruby-identifier">class_names</span>.<span class="ruby-identifier">shift</span>
+174:           <span class="ruby-identifier">class_names</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">class_name</span><span class="ruby-operator">|</span>
+175:             <span class="ruby-comment cmt"># Convert to string to allow symbol arguments.</span>
+176:             <span class="ruby-identifier">class_name</span> = <span class="ruby-identifier">class_name</span>.<span class="ruby-identifier">to_s</span>
+177: 
+178:             <span class="ruby-comment cmt"># Skip empty strings.</span>
+179:             <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">class_name</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
+180: 
+181:             <span class="ruby-comment cmt"># Split the class from its module nesting.</span>
+182:             <span class="ruby-identifier">nesting</span> = <span class="ruby-identifier">class_name</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'::'</span>)
+183:             <span class="ruby-identifier">name</span> = <span class="ruby-identifier">nesting</span>.<span class="ruby-identifier">pop</span>
+184: 
+185:             <span class="ruby-comment cmt"># Extract the last Module in the nesting.</span>
+186:             <span class="ruby-identifier">last</span> = <span class="ruby-identifier">nesting</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-constant">Object</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">last</span>, <span class="ruby-identifier">nest</span><span class="ruby-operator">|</span>
+187:               <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">last</span>.<span class="ruby-identifier">const_defined?</span>(<span class="ruby-identifier">nest</span>)
+188:               <span class="ruby-identifier">last</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">nest</span>)
+189:             }
+190: 
+191:             <span class="ruby-comment cmt"># If the last Module exists, check whether the given</span>
+192:             <span class="ruby-comment cmt"># class exists and raise a collision if so.</span>
+193:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">last</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">last</span>.<span class="ruby-identifier">const_defined?</span>(<span class="ruby-identifier">name</span>.<span class="ruby-identifier">camelize</span>)
+194:               <span class="ruby-identifier">raise_class_collision</span>(<span class="ruby-identifier">class_name</span>)
+195:             <span class="ruby-keyword kw">end</span>
+196:           <span class="ruby-keyword kw">end</span>
+197:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002141" class="method-detail">
+        <a name="M002141"></a>
+
+        <div class="method-heading">
+          <a href="#M002141" class="method-signature">
+          <span class="method-name">complex_template</span><span class="method-args">(relative_source, relative_destination, template_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002141-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002141-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 305</span>
+305:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">complex_template</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">template_options</span> = {})
+306:           <span class="ruby-identifier">options</span> = <span class="ruby-identifier">template_options</span>.<span class="ruby-identifier">dup</span>
+307:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:assigns</span>] <span class="ruby-operator">||=</span> {}
+308:           <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:assigns</span>][<span class="ruby-value str">'template_for_inclusion'</span>] = <span class="ruby-identifier">render_template_part</span>(<span class="ruby-identifier">template_options</span>)
+309:           <span class="ruby-identifier">template</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">options</span>)
+310:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002142" class="method-detail">
+        <a name="M002142"></a>
+
+        <div class="method-heading">
+          <a href="#M002142" class="method-signature">
+          <span class="method-name">directory</span><span class="method-args">(relative_path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="Create.html">Create</a> a <a
+href="Create.html#M002142">directory</a> including any missing parent
+directories. Always skips directories which exist.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002142-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002142-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 314</span>
+314:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">directory</span>(<span class="ruby-identifier">relative_path</span>)
+315:           <span class="ruby-identifier">path</span> = <span class="ruby-identifier">destination_path</span>(<span class="ruby-identifier">relative_path</span>)
+316:           <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">path</span>)
+317:             <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">exists</span> <span class="ruby-identifier">relative_path</span>
+318:           <span class="ruby-keyword kw">else</span>
+319:             <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">create</span> <span class="ruby-identifier">relative_path</span>
+320:             <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:pretend</span>]
+321:               <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">mkdir_p</span>(<span class="ruby-identifier">path</span>)
+322:               <span class="ruby-comment cmt"># git doesn't require adding the paths, adding the files later will</span>
+323:               <span class="ruby-comment cmt"># automatically do a path add.</span>
+324: 
+325:               <span class="ruby-comment cmt"># Subversion doesn't do path adds, so we need to add</span>
+326:               <span class="ruby-comment cmt"># each directory individually.</span>
+327:               <span class="ruby-comment cmt"># So stack up the directory tree and add the paths to</span>
+328:               <span class="ruby-comment cmt"># subversion in order without recursion.</span>
+329:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:svn</span>]
+330:                 <span class="ruby-identifier">stack</span> = [<span class="ruby-identifier">relative_path</span>]
+331:                 <span class="ruby-keyword kw">until</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-identifier">stack</span>.<span class="ruby-identifier">last</span>) <span class="ruby-operator">==</span> <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">last</span> <span class="ruby-comment cmt"># dirname('.') == '.'</span>
+332:                   <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">push</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-identifier">stack</span>.<span class="ruby-identifier">last</span>)
+333:                 <span class="ruby-keyword kw">end</span>
+334:                 <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">reverse_each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rel_path</span><span class="ruby-operator">|</span>
+335:                   <span class="ruby-identifier">svn_path</span> = <span class="ruby-identifier">destination_path</span>(<span class="ruby-identifier">rel_path</span>)
+336:                   <span class="ruby-identifier">system</span>(<span class="ruby-node">&quot;svn add -N #{svn_path}&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-identifier">svn_path</span>, <span class="ruby-value str">'.svn'</span>))
+337:                 <span class="ruby-keyword kw">end</span>
+338:               <span class="ruby-keyword kw">end</span>
+339:             <span class="ruby-keyword kw">end</span>
+340:           <span class="ruby-keyword kw">end</span>
+341:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002138" class="method-detail">
+        <a name="M002138"></a>
+
+        <div class="method-heading">
+          <a href="#M002138" class="method-signature">
+          <span class="method-name">file</span><span class="method-args">(relative_source, relative_destination, file_options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Copy a <a href="Create.html#M002138">file</a> from source to destination
+with collision checking.
+</p>
+<p>
+The file_options hash accepts :chmod and :shebang and :collision options.
+:chmod sets the permissions of the destination <a
+href="Create.html#M002138">file</a>:
+</p>
+<pre>
+  file 'config/empty.log', 'log/test.log', :chmod =&gt; 0664
+</pre>
+<p>
+:shebang sets the #!/usr/bin/ruby line for scripts
+</p>
+<pre>
+  file 'bin/generate.rb', 'script/generate', :chmod =&gt; 0755, :shebang =&gt; '/usr/bin/env ruby'
+</pre>
+<p>
+:collision sets the collision option only for the destination <a
+href="Create.html#M002138">file</a>:
+</p>
+<pre>
+  file 'settings/server.yml', 'config/server.yml', :collision =&gt; :skip
+</pre>
+<p>
+Collisions are handled by checking whether the destination <a
+href="Create.html#M002138">file</a> exists and either skipping the <a
+href="Create.html#M002138">file</a>, forcing overwrite, or asking the user
+what to do.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002138-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002138-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 212</span>
+212:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">file</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">file_options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+213:           <span class="ruby-comment cmt"># Determine full paths for source and destination files.</span>
+214:           <span class="ruby-identifier">source</span>              = <span class="ruby-identifier">source_path</span>(<span class="ruby-identifier">relative_source</span>)
+215:           <span class="ruby-identifier">destination</span>         = <span class="ruby-identifier">destination_path</span>(<span class="ruby-identifier">relative_destination</span>)
+216:           <span class="ruby-identifier">destination_exists</span>  = <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-identifier">destination</span>)
+217: 
+218:           <span class="ruby-comment cmt"># If source and destination are identical then we're done.</span>
+219:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">destination_exists</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">identical?</span>(<span class="ruby-identifier">source</span>, <span class="ruby-identifier">destination</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+220:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">identical</span>(<span class="ruby-identifier">relative_destination</span>)
+221:           <span class="ruby-keyword kw">end</span>
+222: 
+223:           <span class="ruby-comment cmt"># Check for and resolve file collisions.</span>
+224:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">destination_exists</span>
+225: 
+226:             <span class="ruby-comment cmt"># Make a choice whether to overwrite the file.  :force and</span>
+227:             <span class="ruby-comment cmt"># :skip already have their mind made up, but give :ask a shot.</span>
+228:             <span class="ruby-identifier">choice</span> = <span class="ruby-keyword kw">case</span> (<span class="ruby-identifier">file_options</span>[<span class="ruby-identifier">:collision</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:collision</span>]).<span class="ruby-identifier">to_sym</span> <span class="ruby-comment cmt">#|| :ask</span>
+229:               <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:ask</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">force_file_collision?</span>(<span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">source</span>, <span class="ruby-identifier">destination</span>, <span class="ruby-identifier">file_options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+230:               <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:force</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">:force</span>
+231:               <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:skip</span>  <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">:skip</span>
+232:               <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Invalid collision option: #{options[:collision].inspect}&quot;</span>
+233:             <span class="ruby-keyword kw">end</span>
+234: 
+235:             <span class="ruby-comment cmt"># Take action based on our choice.  Bail out if we chose to</span>
+236:             <span class="ruby-comment cmt"># skip the file; otherwise, log our transgression and continue.</span>
+237:             <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">choice</span>
+238:               <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:force</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">force</span>(<span class="ruby-identifier">relative_destination</span>)
+239:               <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:skip</span>  <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span>(<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">skip</span>(<span class="ruby-identifier">relative_destination</span>))
+240:               <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Invalid collision choice: #{choice}.inspect&quot;</span>
+241:             <span class="ruby-keyword kw">end</span>
+242: 
+243:           <span class="ruby-comment cmt"># File doesn't exist so log its unbesmirched creation.</span>
+244:           <span class="ruby-keyword kw">else</span>
+245:             <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">create</span> <span class="ruby-identifier">relative_destination</span>
+246:           <span class="ruby-keyword kw">end</span>
+247: 
+248:           <span class="ruby-comment cmt"># If we're pretending, back off now.</span>
+249:           <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:pretend</span>]
+250: 
+251:           <span class="ruby-comment cmt"># Write destination file with optional shebang.  Yield for content</span>
+252:           <span class="ruby-comment cmt"># if block given so templaters may render the source file.  If a</span>
+253:           <span class="ruby-comment cmt"># shebang is requested, replace the existing shebang or insert a</span>
+254:           <span class="ruby-comment cmt"># new one.</span>
+255:           <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">destination</span>, <span class="ruby-value str">'wb'</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dest</span><span class="ruby-operator">|</span>
+256:             <span class="ruby-identifier">dest</span>.<span class="ruby-identifier">write</span> <span class="ruby-identifier">render_file</span>(<span class="ruby-identifier">source</span>, <span class="ruby-identifier">file_options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+257:           <span class="ruby-keyword kw">end</span>
+258: 
+259:           <span class="ruby-comment cmt"># Optionally change permissions.</span>
+260:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file_options</span>[<span class="ruby-identifier">:chmod</span>]
+261:             <span class="ruby-constant">FileUtils</span>.<span class="ruby-identifier">chmod</span>(<span class="ruby-identifier">file_options</span>[<span class="ruby-identifier">:chmod</span>], <span class="ruby-identifier">destination</span>)
+262:           <span class="ruby-keyword kw">end</span>
+263: 
+264:           <span class="ruby-comment cmt"># Optionally add file to subversion or git</span>
+265:           <span class="ruby-identifier">system</span>(<span class="ruby-node">&quot;svn add #{destination}&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:svn</span>]
+266:           <span class="ruby-identifier">system</span>(<span class="ruby-node">&quot;git add -v #{relative_destination}&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:git</span>]
+267:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002139" class="method-detail">
+        <a name="M002139"></a>
+
+        <div class="method-heading">
+          <a href="#M002139" class="method-signature">
+          <span class="method-name">identical?</span><span class="method-args">(source, destination) {|sf| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Checks if the source and the destination <a
+href="Create.html#M002138">file</a> are identical. If passed a block then
+the source <a href="Create.html#M002138">file</a> is a <a
+href="Create.html#M002140">template</a> that needs to first be evaluated
+before being compared to the destination.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002139-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002139-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 272</span>
+272:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">identical?</span>(<span class="ruby-identifier">source</span>, <span class="ruby-identifier">destination</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+273:           <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span> <span class="ruby-identifier">destination</span>
+274:           <span class="ruby-identifier">source</span>      = <span class="ruby-identifier">block_given?</span> <span class="ruby-value">? </span><span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">source</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">sf</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">sf</span>)} <span class="ruby-operator">:</span> <span class="ruby-constant">IO</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">source</span>)
+275:           <span class="ruby-identifier">destination</span> = <span class="ruby-constant">IO</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">destination</span>)
+276:           <span class="ruby-identifier">source</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">destination</span>
+277:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002144" class="method-detail">
+        <a name="M002144"></a>
+
+        <div class="method-heading">
+          <a href="#M002144" class="method-signature">
+          <span class="method-name">migration_template</span><span class="method-args">(relative_source, relative_destination, template_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+When creating a migration, it knows to find the first available <a
+href="Create.html#M002138">file</a> in db/migrate and use the migration.rb
+<a href="Create.html#M002140">template</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002144-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002144-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 352</span>
+352:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">migration_template</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">template_options</span> = {})
+353:           <span class="ruby-identifier">migration_directory</span> <span class="ruby-identifier">relative_destination</span>
+354:           <span class="ruby-identifier">migration_file_name</span> = <span class="ruby-identifier">template_options</span>[<span class="ruby-identifier">:migration_file_name</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">file_name</span>
+355:           <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Another migration is already named #{migration_file_name}: #{existing_migrations(migration_file_name).first}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">migration_exists?</span>(<span class="ruby-identifier">migration_file_name</span>)
+356:           <span class="ruby-identifier">template</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-node">&quot;#{relative_destination}/#{next_migration_string}_#{migration_file_name}.rb&quot;</span>, <span class="ruby-identifier">template_options</span>)
+357:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002143" class="method-detail">
+        <a name="M002143"></a>
+
+        <div class="method-heading">
+          <a href="#M002143" class="method-signature">
+          <span class="method-name">readme</span><span class="method-args">(*relative_sources)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Display a README.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002143-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002143-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 344</span>
+344:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">readme</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">relative_sources</span>)
+345:           <span class="ruby-identifier">relative_sources</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">relative_source</span><span class="ruby-operator">|</span>
+346:             <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">readme</span> <span class="ruby-identifier">relative_source</span>
+347:             <span class="ruby-identifier">puts</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">source_path</span>(<span class="ruby-identifier">relative_source</span>)) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:pretend</span>]
+348:           <span class="ruby-keyword kw">end</span>
+349:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002145" class="method-detail">
+        <a name="M002145"></a>
+
+        <div class="method-heading">
+          <a href="#M002145" class="method-signature">
+          <span class="method-name">route_resources</span><span class="method-args">(*resources)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002145-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002145-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 359</span>
+359:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">route_resources</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">resources</span>)
+360:           <span class="ruby-identifier">resource_list</span> = <span class="ruby-identifier">resources</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">to_sym</span>.<span class="ruby-identifier">inspect</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+361:           <span class="ruby-identifier">sentinel</span> = <span class="ruby-value str">'ActionController::Routing::Routes.draw do |map|'</span>
+362: 
+363:           <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">route</span> <span class="ruby-node">&quot;map.resources #{resource_list}&quot;</span>
+364:           <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:pretend</span>]
+365:             <span class="ruby-identifier">gsub_file</span> <span class="ruby-value str">'config/routes.rb'</span>, <span class="ruby-node">/(#{Regexp.escape(sentinel)})/</span><span class="ruby-identifier">mi</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+366:               <span class="ruby-node">&quot;#{match}\n  map.resources #{resource_list}\n&quot;</span>
+367:             <span class="ruby-keyword kw">end</span>
+368:           <span class="ruby-keyword kw">end</span>
+369:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002140" class="method-detail">
+        <a name="M002140"></a>
+
+        <div class="method-heading">
+          <a href="#M002140" class="method-signature">
+          <span class="method-name">template</span><span class="method-args">(relative_source, relative_destination, template_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Generate a <a href="Create.html#M002138">file</a> for a <a
+href="../../../Rails.html">Rails</a> application using an ERuby <a
+href="Create.html#M002140">template</a>. Looks up and evaluates a <a
+href="Create.html#M002140">template</a> by name and writes the result.
+</p>
+<p>
+The <a href="../../../ERB.html">ERB</a> <a
+href="Create.html#M002140">template</a> uses explicit trim mode to best
+control the proliferation of whitespace in generated code. &lt;%- trims
+leading whitespace; -%&gt; trims trailing whitespace including one newline.
+</p>
+<p>
+A hash of <a href="Create.html#M002140">template</a> options may be passed
+as the last argument. The options accepted by the <a
+href="Create.html#M002138">file</a> are accepted as well as :assigns, a
+hash of variable bindings. Example:
+</p>
+<pre>
+  template 'foo', 'bar', :assigns =&gt; { :action =&gt; 'view' }
+</pre>
+<p>
+Template is implemented in terms of <a href="Create.html#M002138">file</a>.
+It calls <a href="Create.html#M002138">file</a> with a block which takes a
+<a href="Create.html#M002138">file</a> handle and returns its rendered
+contents.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002140-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002140-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 293</span>
+293:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">template</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">template_options</span> = {})
+294:           <span class="ruby-identifier">file</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">template_options</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+295:             <span class="ruby-comment cmt"># Evaluate any assignments in a temporary, throwaway binding.</span>
+296:             <span class="ruby-identifier">vars</span> = <span class="ruby-identifier">template_options</span>[<span class="ruby-identifier">:assigns</span>] <span class="ruby-operator">||</span> {}
+297:             <span class="ruby-identifier">b</span> = <span class="ruby-identifier">binding</span>
+298:             <span class="ruby-identifier">vars</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">eval</span> <span class="ruby-node">&quot;#{k} = vars[:#{k}] || vars['#{k}']&quot;</span>, <span class="ruby-identifier">b</span> }
+299: 
+300:             <span class="ruby-comment cmt"># Render the source file with the temporary binding.</span>
+301:             <span class="ruby-constant">ERB</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">file</span>.<span class="ruby-identifier">read</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-value str">'-'</span>).<span class="ruby-identifier">result</span>(<span class="ruby-identifier">b</span>)
+302:           <span class="ruby-keyword kw">end</span>
+303:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

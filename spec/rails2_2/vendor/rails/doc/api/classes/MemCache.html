@@ -1,0 +1,1350 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: MemCache</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">MemCache</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1_5_1/memcache_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+A Ruby client library for memcached.
+</p>
+<p>
+This is intended to provide access to basic memcached functionality. It
+does not attempt to be complete implementation of the entire API, but it is
+approaching a complete implementation.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000068">[]</a>&nbsp;&nbsp;
+      <a href="#M000069">[]=</a>&nbsp;&nbsp;
+      <a href="#M000055">active?</a>&nbsp;&nbsp;
+      <a href="#M000063">add</a>&nbsp;&nbsp;
+      <a href="#M000073">cache_decr</a>&nbsp;&nbsp;
+      <a href="#M000074">cache_get</a>&nbsp;&nbsp;
+      <a href="#M000075">cache_get_multi</a>&nbsp;&nbsp;
+      <a href="#M000076">cache_incr</a>&nbsp;&nbsp;
+      <a href="#M000058">decr</a>&nbsp;&nbsp;
+      <a href="#M000064">delete</a>&nbsp;&nbsp;
+      <a href="#M000065">flush_all</a>&nbsp;&nbsp;
+      <a href="#M000059">get</a>&nbsp;&nbsp;
+      <a href="#M000060">get_multi</a>&nbsp;&nbsp;
+      <a href="#M000071">get_server_for_key</a>&nbsp;&nbsp;
+      <a href="#M000077">handle_error</a>&nbsp;&nbsp;
+      <a href="#M000072">hash_for</a>&nbsp;&nbsp;
+      <a href="#M000061">incr</a>&nbsp;&nbsp;
+      <a href="#M000054">inspect</a>&nbsp;&nbsp;
+      <a href="#M000070">make_cache_key</a>&nbsp;&nbsp;
+      <a href="#M000053">new</a>&nbsp;&nbsp;
+      <a href="#M000079">raise_on_error_response!</a>&nbsp;&nbsp;
+      <a href="#M000056">readonly?</a>&nbsp;&nbsp;
+      <a href="#M000078">request_setup</a>&nbsp;&nbsp;
+      <a href="#M000066">reset</a>&nbsp;&nbsp;
+      <a href="#M000057">servers=</a>&nbsp;&nbsp;
+      <a href="#M000062">set</a>&nbsp;&nbsp;
+      <a href="#M000067">stats</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="MemCache/MemCacheError.html" class="link">MemCache::MemCacheError</a><br />
+Class <a href="MemCache/Server.html" class="link">MemCache::Server</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">VERSION</td>
+          <td>=</td>
+          <td class="context-item-value">'1.5.0'</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+The version of <a href="MemCache.html">MemCache</a> you are using.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULT_OPTIONS</td>
+          <td>=</td>
+          <td class="context-item-value">{     :namespace   =&gt; nil,     :readonly    =&gt; false,     :multithread =&gt; false,   }</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Default options for the cache object.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULT_PORT</td>
+          <td>=</td>
+          <td class="context-item-value">11211</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Default memcached port.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULT_WEIGHT</td>
+          <td>=</td>
+          <td class="context-item-value">1</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+Default memcached server weight.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">multithread</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The multithread setting for this instance
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">namespace</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The namespace for this instance
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request_timeout</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+The amount of time to wait for a response from a memcached server. If a
+response is not completed within this time, the connection to the server
+will be closed and an error will be raised.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">servers</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The servers this client talks to. Play at your own peril.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000053" class="method-detail">
+        <a name="M000053"></a>
+
+        <div class="method-heading">
+          <a href="#M000053" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Accepts a list of <tt>servers</tt> and a list of <tt>opts</tt>.
+<tt>servers</tt> may be omitted. See +<a
+href="MemCache.html#M000057">servers=</a>+ for acceptable server list
+arguments.
+</p>
+<p>
+Valid options for <tt>opts</tt> are:
+</p>
+<pre>
+  [:namespace]   Prepends this value to all keys added or retrieved.
+  [:readonly]    Raises an exception on cache writes when true.
+  [:multithread] Wraps cache access in a Mutex for thread safety.
+</pre>
+<p>
+Other options are ignored.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000053-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000053-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 127</span>
+127:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+128:     <span class="ruby-identifier">servers</span> = []
+129:     <span class="ruby-identifier">opts</span> = {}
+130: 
+131:     <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">length</span>
+132:     <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-comment cmt"># NOP</span>
+133:     <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span>
+134:       <span class="ruby-identifier">arg</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span>
+135:       <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">arg</span>
+136:       <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Hash</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">opts</span> = <span class="ruby-identifier">arg</span>
+137:       <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Array</span>  <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">servers</span> = <span class="ruby-identifier">arg</span>
+138:       <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">servers</span> = [<span class="ruby-identifier">arg</span>]
+139:       <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">'first argument must be Array, Hash or String'</span>
+140:       <span class="ruby-keyword kw">end</span>
+141:     <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">then</span>
+142:       <span class="ruby-identifier">servers</span>, <span class="ruby-identifier">opts</span> = <span class="ruby-identifier">args</span>
+143:     <span class="ruby-keyword kw">else</span>
+144:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;wrong number of arguments (#{args.length} for 2)&quot;</span>
+145:     <span class="ruby-keyword kw">end</span>
+146: 
+147:     <span class="ruby-identifier">opts</span> = <span class="ruby-constant">DEFAULT_OPTIONS</span>.<span class="ruby-identifier">merge</span> <span class="ruby-identifier">opts</span>
+148:     <span class="ruby-ivar">@namespace</span>   = <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:namespace</span>]
+149:     <span class="ruby-ivar">@readonly</span>    = <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:readonly</span>]
+150:     <span class="ruby-ivar">@multithread</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-identifier">:multithread</span>]
+151:     <span class="ruby-ivar">@mutex</span>       = <span class="ruby-constant">Mutex</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+152:     <span class="ruby-ivar">@buckets</span>     = []
+153:     <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">servers</span> = <span class="ruby-identifier">servers</span>
+154:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000068" class="method-detail">
+        <a name="M000068"></a>
+
+        <div class="method-heading">
+          <span class="method-name">[]</span><span class="method-args">(key, raw = false)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="MemCache.html#M000059">get</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000069" class="method-detail">
+        <a name="M000069"></a>
+
+        <div class="method-heading">
+          <a href="#M000069" class="method-signature">
+          <span class="method-name">[]=</span><span class="method-args">(key, value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Shortcut to save a value in the cache. This method does not <a
+href="MemCache.html#M000062">set</a> an expiration on the entry. Use <a
+href="MemCache.html#M000062">set</a> to specify an explicit expiry.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000069-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000069-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 519</span>
+519:   <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]=</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>)
+520:     <span class="ruby-identifier">set</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>
+521:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000055" class="method-detail">
+        <a name="M000055"></a>
+
+        <div class="method-heading">
+          <a href="#M000055" class="method-signature">
+          <span class="method-name">active?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns whether there is at least one active server for the object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000055-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000055-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 167</span>
+167:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">active?</span>
+168:     <span class="ruby-keyword kw">not</span> <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">empty?</span>
+169:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000063" class="method-detail">
+        <a name="M000063"></a>
+
+        <div class="method-heading">
+          <a href="#M000063" class="method-signature">
+          <span class="method-name">add</span><span class="method-args">(key, value, expiry = 0, raw = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add <tt>key</tt> to the cache with value <tt>value</tt> that expires in
+<tt>expiry</tt> seconds, but only if <tt>key</tt> does not already exist in
+the cache. If <tt>raw</tt> is true, <tt>value</tt> will not be Marshalled.
+</p>
+<p>
+Readers should call this method in the event of a cache miss, not <a
+href="MemCache.html#M000062">MemCache#set</a> or <a
+href="MemCache.html">MemCache</a>#[]=.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000063-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000063-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 352</span>
+352:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">expiry</span> = <span class="ruby-value">0</span>, <span class="ruby-identifier">raw</span> = <span class="ruby-keyword kw">false</span>)
+353:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;Update of readonly cache&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@readonly</span>
+354:     <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">request_setup</span> <span class="ruby-identifier">key</span>
+355:     <span class="ruby-identifier">socket</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+356: 
+357:     <span class="ruby-identifier">value</span> = <span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">dump</span> <span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">raw</span>
+358:     <span class="ruby-identifier">command</span> = <span class="ruby-node">&quot;add #{cache_key} 0 #{expiry} #{value.size}\r\n#{value}\r\n&quot;</span>
+359: 
+360:     <span class="ruby-keyword kw">begin</span>
+361:       <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">lock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+362:       <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">write</span> <span class="ruby-identifier">command</span>
+363:       <span class="ruby-identifier">result</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">gets</span>
+364:       <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">result</span>
+365:       <span class="ruby-identifier">result</span>
+366:     <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+367:       <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+368:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-identifier">err</span>.<span class="ruby-identifier">message</span>
+369:     <span class="ruby-keyword kw">ensure</span>
+370:       <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">unlock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+371:     <span class="ruby-keyword kw">end</span>
+372:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000058" class="method-detail">
+        <a name="M000058"></a>
+
+        <div class="method-heading">
+          <a href="#M000058" class="method-signature">
+          <span class="method-name">decr</span><span class="method-args">(key, amount = 1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Decrements the value for <tt>key</tt> by <tt>amount</tt> and returns the <a
+href="MemCache.html#M000053">new</a> value. <tt>key</tt> must already
+exist. If <tt>key</tt> is not an integer, it is assumed to be
+</p>
+<ol>
+<li><tt>key</tt> can not be decremented below 0.
+
+</li>
+</ol>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000058-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000058-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 214</span>
+214:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">decr</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">amount</span> = <span class="ruby-value">1</span>)
+215:     <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">request_setup</span> <span class="ruby-identifier">key</span>
+216: 
+217:     <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span> <span class="ruby-keyword kw">then</span>
+218:       <span class="ruby-identifier">threadsafe_cache_decr</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>, <span class="ruby-identifier">amount</span>
+219:     <span class="ruby-keyword kw">else</span>
+220:       <span class="ruby-identifier">cache_decr</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>, <span class="ruby-identifier">amount</span>
+221:     <span class="ruby-keyword kw">end</span>
+222:   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+223:     <span class="ruby-identifier">handle_error</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">err</span>
+224:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000064" class="method-detail">
+        <a name="M000064"></a>
+
+        <div class="method-heading">
+          <a href="#M000064" class="method-signature">
+          <span class="method-name">delete</span><span class="method-args">(key, expiry = 0)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes <tt>key</tt> from the cache in <tt>expiry</tt> seconds.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000064-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000064-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 377</span>
+377:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">expiry</span> = <span class="ruby-value">0</span>)
+378:     <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">lock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+379: 
+380:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;No active servers&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">active?</span>
+381:     <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">make_cache_key</span> <span class="ruby-identifier">key</span>
+382:     <span class="ruby-identifier">server</span> = <span class="ruby-identifier">get_server_for_key</span> <span class="ruby-identifier">cache_key</span>
+383: 
+384:     <span class="ruby-identifier">sock</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+385:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;No connection to server&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">nil?</span>
+386: 
+387:     <span class="ruby-keyword kw">begin</span>
+388:       <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">write</span> <span class="ruby-node">&quot;delete #{cache_key} #{expiry}\r\n&quot;</span>
+389:       <span class="ruby-identifier">result</span> = <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">gets</span>
+390:       <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">result</span>
+391:       <span class="ruby-identifier">result</span>
+392:     <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+393:       <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+394:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-identifier">err</span>.<span class="ruby-identifier">message</span>
+395:     <span class="ruby-keyword kw">end</span>
+396:   <span class="ruby-keyword kw">ensure</span>
+397:     <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">unlock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+398:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000065" class="method-detail">
+        <a name="M000065"></a>
+
+        <div class="method-heading">
+          <a href="#M000065" class="method-signature">
+          <span class="method-name">flush_all</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Flush the cache from all memcache servers.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000065-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000065-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 403</span>
+403:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">flush_all</span>
+404:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">'No active servers'</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">active?</span>
+405:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;Update of readonly cache&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@readonly</span>
+406:     <span class="ruby-keyword kw">begin</span>
+407:       <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">lock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+408:       <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">server</span><span class="ruby-operator">|</span>
+409:         <span class="ruby-keyword kw">begin</span>
+410:           <span class="ruby-identifier">sock</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+411:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;No connection to server&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">nil?</span>
+412:           <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">write</span> <span class="ruby-value str">&quot;flush_all\r\n&quot;</span>
+413:           <span class="ruby-identifier">result</span> = <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">gets</span>
+414:           <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">result</span>
+415:           <span class="ruby-identifier">result</span>
+416:         <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+417:           <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+418:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-identifier">err</span>.<span class="ruby-identifier">message</span>
+419:         <span class="ruby-keyword kw">end</span>
+420:       <span class="ruby-keyword kw">end</span>
+421:     <span class="ruby-keyword kw">ensure</span>
+422:       <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">unlock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+423:     <span class="ruby-keyword kw">end</span>
+424:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000059" class="method-detail">
+        <a name="M000059"></a>
+
+        <div class="method-heading">
+          <a href="#M000059" class="method-signature">
+          <span class="method-name">get</span><span class="method-args">(key, raw = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Retrieves <tt>key</tt> from memcache. If <tt>raw</tt> is false, the value
+will be unmarshalled.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000059-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000059-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 230</span>
+230:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">raw</span> = <span class="ruby-keyword kw">false</span>)
+231:     <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">request_setup</span> <span class="ruby-identifier">key</span>
+232: 
+233:     <span class="ruby-identifier">value</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span> <span class="ruby-keyword kw">then</span>
+234:               <span class="ruby-identifier">threadsafe_cache_get</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>
+235:             <span class="ruby-keyword kw">else</span>
+236:               <span class="ruby-identifier">cache_get</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>
+237:             <span class="ruby-keyword kw">end</span>
+238: 
+239:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+240: 
+241:     <span class="ruby-identifier">value</span> = <span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span> <span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">raw</span>
+242: 
+243:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">value</span>
+244:   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+245:     <span class="ruby-identifier">handle_error</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">err</span>
+246:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000060" class="method-detail">
+        <a name="M000060"></a>
+
+        <div class="method-heading">
+          <a href="#M000060" class="method-signature">
+          <span class="method-name">get_multi</span><span class="method-args">(*keys)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Retrieves multiple values from memcached in parallel, if possible.
+</p>
+<p>
+The memcached protocol supports the ability to retrieve multiple keys in a
+single request. Pass in an array of keys to this method and it will:
+</p>
+<ol>
+<li>map the key to the appropriate memcached server
+
+</li>
+<li>send a single request to each server that has one or more key values
+
+</li>
+</ol>
+<p>
+Returns a hash of values.
+</p>
+<pre>
+  cache[&quot;a&quot;] = 1
+  cache[&quot;b&quot;] = 2
+  cache.get_multi &quot;a&quot;, &quot;b&quot; # =&gt; { &quot;a&quot; =&gt; 1, &quot;b&quot; =&gt; 2 }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000060-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000060-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 264</span>
+264:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_multi</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">keys</span>)
+265:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">'No active servers'</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">active?</span>
+266: 
+267:     <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">flatten!</span>
+268:     <span class="ruby-identifier">key_count</span> = <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">length</span>
+269:     <span class="ruby-identifier">cache_keys</span> = {}
+270:     <span class="ruby-identifier">server_keys</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">h</span>,<span class="ruby-identifier">k</span><span class="ruby-operator">|</span> <span class="ruby-identifier">h</span>[<span class="ruby-identifier">k</span>] = [] }
+271: 
+272:     <span class="ruby-comment cmt"># map keys to servers</span>
+273:     <span class="ruby-identifier">keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span><span class="ruby-operator">|</span>
+274:       <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">request_setup</span> <span class="ruby-identifier">key</span>
+275:       <span class="ruby-identifier">cache_keys</span>[<span class="ruby-identifier">cache_key</span>] = <span class="ruby-identifier">key</span>
+276:       <span class="ruby-identifier">server_keys</span>[<span class="ruby-identifier">server</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">cache_key</span>
+277:     <span class="ruby-keyword kw">end</span>
+278: 
+279:     <span class="ruby-identifier">results</span> = {}
+280: 
+281:     <span class="ruby-identifier">server_keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">server</span>, <span class="ruby-identifier">keys_for_server</span><span class="ruby-operator">|</span>
+282:       <span class="ruby-identifier">keys_for_server</span> = <span class="ruby-identifier">keys_for_server</span>.<span class="ruby-identifier">join</span> <span class="ruby-value str">' '</span>
+283:       <span class="ruby-identifier">values</span> = <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span> <span class="ruby-keyword kw">then</span>
+284:                  <span class="ruby-identifier">threadsafe_cache_get_multi</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">keys_for_server</span>
+285:                <span class="ruby-keyword kw">else</span>
+286:                  <span class="ruby-identifier">cache_get_multi</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">keys_for_server</span>
+287:                <span class="ruby-keyword kw">end</span>
+288:       <span class="ruby-identifier">values</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+289:         <span class="ruby-identifier">results</span>[<span class="ruby-identifier">cache_keys</span>[<span class="ruby-identifier">key</span>]] = <span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">load</span> <span class="ruby-identifier">value</span>
+290:       <span class="ruby-keyword kw">end</span>
+291:     <span class="ruby-keyword kw">end</span>
+292: 
+293:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">results</span>
+294:   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+295:     <span class="ruby-identifier">handle_error</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">err</span>
+296:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000061" class="method-detail">
+        <a name="M000061"></a>
+
+        <div class="method-heading">
+          <a href="#M000061" class="method-signature">
+          <span class="method-name">incr</span><span class="method-args">(key, amount = 1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Increments the value for <tt>key</tt> by <tt>amount</tt> and retruns the <a
+href="MemCache.html#M000053">new</a> value. <tt>key</tt> must already
+exist. If <tt>key</tt> is not an integer, it is assumed to be 0.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000061-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000061-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 303</span>
+303:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">incr</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">amount</span> = <span class="ruby-value">1</span>)
+304:     <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">request_setup</span> <span class="ruby-identifier">key</span>
+305: 
+306:     <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span> <span class="ruby-keyword kw">then</span>
+307:       <span class="ruby-identifier">threadsafe_cache_incr</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>, <span class="ruby-identifier">amount</span>
+308:     <span class="ruby-keyword kw">else</span>
+309:       <span class="ruby-identifier">cache_incr</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>, <span class="ruby-identifier">amount</span>
+310:     <span class="ruby-keyword kw">end</span>
+311:   <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+312:     <span class="ruby-identifier">handle_error</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">err</span>
+313:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000054" class="method-detail">
+        <a name="M000054"></a>
+
+        <div class="method-heading">
+          <a href="#M000054" class="method-signature">
+          <span class="method-name">inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a string representation of the cache object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000054-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000054-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 159</span>
+159:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inspect</span>
+160:     <span class="ruby-value str">&quot;&lt;MemCache: %d servers, %d buckets, ns: %p, ro: %p&gt;&quot;</span> <span class="ruby-operator">%</span>
+161:       [<span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">length</span>, <span class="ruby-ivar">@buckets</span>.<span class="ruby-identifier">length</span>, <span class="ruby-ivar">@namespace</span>, <span class="ruby-ivar">@readonly</span>]
+162:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000056" class="method-detail">
+        <a name="M000056"></a>
+
+        <div class="method-heading">
+          <a href="#M000056" class="method-signature">
+          <span class="method-name">readonly?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns whether or not the cache object was created read only.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000056-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000056-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 174</span>
+174:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">readonly?</span>
+175:     <span class="ruby-ivar">@readonly</span>
+176:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000066" class="method-detail">
+        <a name="M000066"></a>
+
+        <div class="method-heading">
+          <a href="#M000066" class="method-signature">
+          <span class="method-name">reset</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reset the connection to all memcache servers. This should be called if
+there is a problem with a cache lookup that might have left the connection
+in a corrupted state.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000066-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000066-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 431</span>
+431:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset</span>
+432:     <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">server</span><span class="ruby-operator">|</span> <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span> }
+433:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000057" class="method-detail">
+        <a name="M000057"></a>
+
+        <div class="method-heading">
+          <a href="#M000057" class="method-signature">
+          <span class="method-name">servers=</span><span class="method-args">(servers)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the servers that the requests will be distributed between. Entries can
+be either strings of the form &quot;hostname:port&quot; or
+&quot;hostname:port:weight&quot; or <a
+href="MemCache/Server.html">MemCache::Server</a> objects.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000057-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000057-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 183</span>
+183:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">servers=</span>(<span class="ruby-identifier">servers</span>)
+184:     <span class="ruby-comment cmt"># Create the server objects.</span>
+185:     <span class="ruby-ivar">@servers</span> = <span class="ruby-identifier">servers</span>.<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">server</span><span class="ruby-operator">|</span>
+186:       <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">server</span>
+187:       <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+188:         <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>, <span class="ruby-identifier">weight</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">split</span> <span class="ruby-value str">':'</span>, <span class="ruby-value">3</span>
+189:         <span class="ruby-identifier">port</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">DEFAULT_PORT</span>
+190:         <span class="ruby-identifier">weight</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">DEFAULT_WEIGHT</span>
+191:         <span class="ruby-constant">Server</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">host</span>, <span class="ruby-identifier">port</span>, <span class="ruby-identifier">weight</span>
+192:       <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Server</span>
+193:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">server</span>.<span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">multithread</span> <span class="ruby-operator">!=</span> <span class="ruby-ivar">@multithread</span> <span class="ruby-keyword kw">then</span>
+194:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;can't mix threaded and non-threaded servers&quot;</span>
+195:         <span class="ruby-keyword kw">end</span>
+196:         <span class="ruby-identifier">server</span>
+197:       <span class="ruby-keyword kw">else</span>
+198:         <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-node">&quot;cannot convert #{server.class} into MemCache::Server&quot;</span>
+199:       <span class="ruby-keyword kw">end</span>
+200:     <span class="ruby-keyword kw">end</span>
+201: 
+202:     <span class="ruby-comment cmt"># Create an array of server buckets for weight selection of servers.</span>
+203:     <span class="ruby-ivar">@buckets</span> = []
+204:     <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">server</span><span class="ruby-operator">|</span>
+205:       <span class="ruby-identifier">server</span>.<span class="ruby-identifier">weight</span>.<span class="ruby-identifier">times</span> { <span class="ruby-ivar">@buckets</span>.<span class="ruby-identifier">push</span>(<span class="ruby-identifier">server</span>) }
+206:     <span class="ruby-keyword kw">end</span>
+207:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000062" class="method-detail">
+        <a name="M000062"></a>
+
+        <div class="method-heading">
+          <a href="#M000062" class="method-signature">
+          <span class="method-name">set</span><span class="method-args">(key, value, expiry = 0, raw = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add <tt>key</tt> to the cache with value <tt>value</tt> that expires in
+<tt>expiry</tt> seconds. If <tt>raw</tt> is true, <tt>value</tt> will not
+be Marshalled.
+</p>
+<p>
+Warning: Readers should not call this method in the event of a cache miss;
+see <a href="MemCache.html#M000063">MemCache#add</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000062-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000062-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 322</span>
+322:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set</span>(<span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">expiry</span> = <span class="ruby-value">0</span>, <span class="ruby-identifier">raw</span> = <span class="ruby-keyword kw">false</span>)
+323:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;Update of readonly cache&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@readonly</span>
+324:     <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">request_setup</span> <span class="ruby-identifier">key</span>
+325:     <span class="ruby-identifier">socket</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+326: 
+327:     <span class="ruby-identifier">value</span> = <span class="ruby-constant">Marshal</span>.<span class="ruby-identifier">dump</span> <span class="ruby-identifier">value</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">raw</span>
+328:     <span class="ruby-identifier">command</span> = <span class="ruby-node">&quot;set #{cache_key} 0 #{expiry} #{value.size}\r\n#{value}\r\n&quot;</span>
+329: 
+330:     <span class="ruby-keyword kw">begin</span>
+331:       <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">lock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+332:       <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">write</span> <span class="ruby-identifier">command</span>
+333:       <span class="ruby-identifier">result</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">gets</span>
+334:       <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">result</span>
+335:       <span class="ruby-identifier">result</span>
+336:     <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+337:       <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+338:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-identifier">err</span>.<span class="ruby-identifier">message</span>
+339:     <span class="ruby-keyword kw">ensure</span>
+340:       <span class="ruby-ivar">@mutex</span>.<span class="ruby-identifier">unlock</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@multithread</span>
+341:     <span class="ruby-keyword kw">end</span>
+342:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000067" class="method-detail">
+        <a name="M000067"></a>
+
+        <div class="method-heading">
+          <a href="#M000067" class="method-signature">
+          <span class="method-name">stats</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns statistics for each memcached server. An explanation of the
+statistics can be found in the memcached docs:
+</p>
+<p>
+<a
+href="http://code.sixapart.com/svn/memcached/trunk/server/doc/protocol.txt">code.sixapart.com/svn/memcached/trunk/server/doc/protocol.txt</a>
+</p>
+<p>
+Example:
+</p>
+<pre>
+  &gt;&gt; pp CACHE.stats
+  {&quot;localhost:11211&quot;=&gt;
+    {&quot;bytes&quot;=&gt;4718,
+     &quot;pid&quot;=&gt;20188,
+     &quot;connection_structures&quot;=&gt;4,
+     &quot;time&quot;=&gt;1162278121,
+     &quot;pointer_size&quot;=&gt;32,
+     &quot;limit_maxbytes&quot;=&gt;67108864,
+     &quot;cmd_get&quot;=&gt;14532,
+     &quot;version&quot;=&gt;&quot;1.2.0&quot;,
+     &quot;bytes_written&quot;=&gt;432583,
+     &quot;cmd_set&quot;=&gt;32,
+     &quot;get_misses&quot;=&gt;0,
+     &quot;total_connections&quot;=&gt;19,
+     &quot;curr_connections&quot;=&gt;3,
+     &quot;curr_items&quot;=&gt;4,
+     &quot;uptime&quot;=&gt;1557,
+     &quot;get_hits&quot;=&gt;14532,
+     &quot;total_items&quot;=&gt;32,
+     &quot;rusage_system&quot;=&gt;0.313952,
+     &quot;rusage_user&quot;=&gt;0.119981,
+     &quot;bytes_read&quot;=&gt;190619}}
+  =&gt; nil
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000067-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000067-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 467</span>
+467:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">stats</span>
+468:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;No active servers&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">active?</span>
+469:     <span class="ruby-identifier">server_stats</span> = {}
+470: 
+471:     <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">server</span><span class="ruby-operator">|</span>
+472:       <span class="ruby-identifier">sock</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+473:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;No connection to server&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">nil?</span>
+474: 
+475:       <span class="ruby-identifier">value</span> = <span class="ruby-keyword kw">nil</span>
+476:       <span class="ruby-keyword kw">begin</span>
+477:         <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">write</span> <span class="ruby-value str">&quot;stats\r\n&quot;</span>
+478:         <span class="ruby-identifier">stats</span> = {}
+479:         <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">line</span> = <span class="ruby-identifier">sock</span>.<span class="ruby-identifier">gets</span> <span class="ruby-keyword kw">do</span>
+480:           <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">line</span>
+481:           <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;END\r\n&quot;</span>
+482:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\ASTAT ([\w]+) ([\w\.\:]+)/</span> <span class="ruby-keyword kw">then</span>
+483:             <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$2</span>
+484:             <span class="ruby-identifier">stats</span>[<span class="ruby-identifier">name</span>] = <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">name</span>
+485:                           <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'version'</span>
+486:                             <span class="ruby-identifier">value</span>
+487:                           <span class="ruby-keyword kw">when</span> <span class="ruby-value str">'rusage_user'</span>, <span class="ruby-value str">'rusage_system'</span> <span class="ruby-keyword kw">then</span>
+488:                             <span class="ruby-identifier">seconds</span>, <span class="ruby-identifier">microseconds</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/:/</span>, <span class="ruby-value">2</span>)
+489:                             <span class="ruby-identifier">microseconds</span> <span class="ruby-operator">||=</span> <span class="ruby-value">0</span>
+490:                             <span class="ruby-constant">Float</span>(<span class="ruby-identifier">seconds</span>) <span class="ruby-operator">+</span> (<span class="ruby-constant">Float</span>(<span class="ruby-identifier">microseconds</span>) <span class="ruby-operator">/</span> <span class="ruby-value">1_000_000</span>)
+491:                           <span class="ruby-keyword kw">else</span>
+492:                             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\A\d+\Z/</span> <span class="ruby-keyword kw">then</span>
+493:                               <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span>
+494:                             <span class="ruby-keyword kw">else</span>
+495:                               <span class="ruby-identifier">value</span>
+496:                             <span class="ruby-keyword kw">end</span>
+497:                           <span class="ruby-keyword kw">end</span>
+498:           <span class="ruby-keyword kw">end</span>
+499:         <span class="ruby-keyword kw">end</span>
+500:         <span class="ruby-identifier">server_stats</span>[<span class="ruby-node">&quot;#{server.host}:#{server.port}&quot;</span>] = <span class="ruby-identifier">stats</span>
+501:       <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">SocketError</span>, <span class="ruby-constant">SystemCallError</span>, <span class="ruby-constant">IOError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">err</span>
+502:         <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+503:         <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-identifier">err</span>.<span class="ruby-identifier">message</span>
+504:       <span class="ruby-keyword kw">end</span>
+505:     <span class="ruby-keyword kw">end</span>
+506: 
+507:     <span class="ruby-identifier">server_stats</span>
+508:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000073" class="method-detail">
+        <a name="M000073"></a>
+
+        <div class="method-heading">
+          <a href="#M000073" class="method-signature">
+          <span class="method-name">cache_decr</span><span class="method-args">(server, cache_key, amount)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a raw <a href="MemCache.html#M000058">decr</a> for
+<tt>cache_key</tt> from <tt>server</tt>. Returns nil if not found.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000073-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000073-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 570</span>
+570:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cache_decr</span>(<span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>, <span class="ruby-identifier">amount</span>)
+571:     <span class="ruby-identifier">socket</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+572:     <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">write</span> <span class="ruby-node">&quot;decr #{cache_key} #{amount}\r\n&quot;</span>
+573:     <span class="ruby-identifier">text</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">gets</span>
+574:     <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">text</span>
+575:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">text</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;NOT_FOUND\r\n&quot;</span>
+576:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">text</span>.<span class="ruby-identifier">to_i</span>
+577:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000074" class="method-detail">
+        <a name="M000074"></a>
+
+        <div class="method-heading">
+          <a href="#M000074" class="method-signature">
+          <span class="method-name">cache_get</span><span class="method-args">(server, cache_key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Fetches the raw data for <tt>cache_key</tt> from <tt>server</tt>. Returns
+nil on cache miss.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000074-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000074-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 583</span>
+583:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cache_get</span>(<span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>)
+584:     <span class="ruby-identifier">socket</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+585:     <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">write</span> <span class="ruby-node">&quot;get #{cache_key}\r\n&quot;</span>
+586:     <span class="ruby-identifier">keyline</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">gets</span> <span class="ruby-comment cmt"># &quot;VALUE &lt;key&gt; &lt;flags&gt; &lt;bytes&gt;\r\n&quot;</span>
+587: 
+588:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">keyline</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword kw">then</span>
+589:       <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+590:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-node">&quot;lost connection to #{server.host}:#{server.port}&quot;</span>
+591:     <span class="ruby-keyword kw">end</span>
+592: 
+593:     <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">keyline</span>
+594:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">keyline</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;END\r\n&quot;</span>
+595: 
+596:     <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">keyline</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/(\d+)\r/</span> <span class="ruby-keyword kw">then</span>
+597:       <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+598:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-node">&quot;unexpected response #{keyline.inspect}&quot;</span>
+599:     <span class="ruby-keyword kw">end</span>
+600:     <span class="ruby-identifier">value</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">read</span> <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">to_i</span>
+601:     <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">read</span> <span class="ruby-value">2</span> <span class="ruby-comment cmt"># &quot;\r\n&quot;</span>
+602:     <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">gets</span>   <span class="ruby-comment cmt"># &quot;END\r\n&quot;</span>
+603:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">value</span>
+604:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000075" class="method-detail">
+        <a name="M000075"></a>
+
+        <div class="method-heading">
+          <a href="#M000075" class="method-signature">
+          <span class="method-name">cache_get_multi</span><span class="method-args">(server, cache_keys)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Fetches <tt>cache_keys</tt> from <tt>server</tt> using a multi-<a
+href="MemCache.html#M000059">get</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000075-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000075-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 609</span>
+609:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cache_get_multi</span>(<span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_keys</span>)
+610:     <span class="ruby-identifier">values</span> = {}
+611:     <span class="ruby-identifier">socket</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+612:     <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">write</span> <span class="ruby-node">&quot;get #{cache_keys}\r\n&quot;</span>
+613: 
+614:     <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">keyline</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">gets</span> <span class="ruby-keyword kw">do</span>
+615:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">values</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">keyline</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;END\r\n&quot;</span>
+616:       <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">keyline</span>
+617: 
+618:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">keyline</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\AVALUE (.+) (.+) (.+)/</span> <span class="ruby-keyword kw">then</span>
+619:         <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+620:         <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-node">&quot;unexpected response #{keyline.inspect}&quot;</span>
+621:       <span class="ruby-keyword kw">end</span>
+622: 
+623:       <span class="ruby-identifier">key</span>, <span class="ruby-identifier">data_length</span> = <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$3</span>
+624:       <span class="ruby-identifier">values</span>[<span class="ruby-identifier">$1</span>] = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">read</span> <span class="ruby-identifier">data_length</span>.<span class="ruby-identifier">to_i</span>
+625:       <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">read</span>(<span class="ruby-value">2</span>) <span class="ruby-comment cmt"># &quot;\r\n&quot;</span>
+626:     <span class="ruby-keyword kw">end</span>
+627: 
+628:     <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span>
+629:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-node">&quot;lost connection to #{server.host}:#{server.port}&quot;</span>
+630:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000076" class="method-detail">
+        <a name="M000076"></a>
+
+        <div class="method-heading">
+          <a href="#M000076" class="method-signature">
+          <span class="method-name">cache_incr</span><span class="method-args">(server, cache_key, amount)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a raw <a href="MemCache.html#M000061">incr</a> for
+<tt>cache_key</tt> from <tt>server</tt>. Returns nil if not found.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000076-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000076-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 636</span>
+636:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">cache_incr</span>(<span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>, <span class="ruby-identifier">amount</span>)
+637:     <span class="ruby-identifier">socket</span> = <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>
+638:     <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">write</span> <span class="ruby-node">&quot;incr #{cache_key} #{amount}\r\n&quot;</span>
+639:     <span class="ruby-identifier">text</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">gets</span>
+640:     <span class="ruby-identifier">raise_on_error_response!</span> <span class="ruby-identifier">text</span>
+641:     <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">text</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;NOT_FOUND\r\n&quot;</span>
+642:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">text</span>.<span class="ruby-identifier">to_i</span>
+643:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000071" class="method-detail">
+        <a name="M000071"></a>
+
+        <div class="method-heading">
+          <a href="#M000071" class="method-signature">
+          <span class="method-name">get_server_for_key</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Pick a server to handle the request based on a hash of the key.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000071-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000071-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 540</span>
+540:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_server_for_key</span>(<span class="ruby-identifier">key</span>)
+541:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;illegal character in key #{key.inspect}&quot;</span> <span class="ruby-keyword kw">if</span>
+542:       <span class="ruby-identifier">key</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\s/</span>
+543:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;key too long #{key.inspect}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">250</span>
+544:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;No servers available&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">empty?</span>
+545:     <span class="ruby-keyword kw">return</span> <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">first</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@servers</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+546: 
+547:     <span class="ruby-identifier">hkey</span> = <span class="ruby-identifier">hash_for</span> <span class="ruby-identifier">key</span>
+548: 
+549:     <span class="ruby-value">20</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">try</span><span class="ruby-operator">|</span>
+550:       <span class="ruby-identifier">server</span> = <span class="ruby-ivar">@buckets</span>[<span class="ruby-identifier">hkey</span> <span class="ruby-operator">%</span> <span class="ruby-ivar">@buckets</span>.<span class="ruby-identifier">nitems</span>]
+551:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">server</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">server</span>.<span class="ruby-identifier">alive?</span>
+552:       <span class="ruby-identifier">hkey</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">hash_for</span> <span class="ruby-node">&quot;#{try}#{key}&quot;</span>
+553:     <span class="ruby-keyword kw">end</span>
+554: 
+555:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">&quot;No servers available&quot;</span>
+556:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000077" class="method-detail">
+        <a name="M000077"></a>
+
+        <div class="method-heading">
+          <a href="#M000077" class="method-signature">
+          <span class="method-name">handle_error</span><span class="method-args">(server, error)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Handles <tt>error</tt> from <tt>server</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000077-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000077-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 648</span>
+648:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">handle_error</span>(<span class="ruby-identifier">server</span>, <span class="ruby-identifier">error</span>)
+649:     <span class="ruby-identifier">server</span>.<span class="ruby-identifier">close</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">server</span>
+650:     <span class="ruby-identifier">new_error</span> = <span class="ruby-constant">MemCacheError</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">error</span>.<span class="ruby-identifier">message</span>
+651:     <span class="ruby-identifier">new_error</span>.<span class="ruby-identifier">set_backtrace</span> <span class="ruby-identifier">error</span>.<span class="ruby-identifier">backtrace</span>
+652:     <span class="ruby-identifier">raise</span> <span class="ruby-identifier">new_error</span>
+653:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000072" class="method-detail">
+        <a name="M000072"></a>
+
+        <div class="method-heading">
+          <a href="#M000072" class="method-signature">
+          <span class="method-name">hash_for</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an interoperable hash value for <tt>key</tt>. (I think, docs are
+sketchy for down servers).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000072-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000072-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 562</span>
+562:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hash_for</span>(<span class="ruby-identifier">key</span>)
+563:     (<span class="ruby-identifier">key</span>.<span class="ruby-identifier">crc32_ITU_T</span> <span class="ruby-operator">&gt;&gt;</span> <span class="ruby-value">16</span>) <span class="ruby-operator">&amp;</span> <span class="ruby-value">0x7fff</span>
+564:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000070" class="method-detail">
+        <a name="M000070"></a>
+
+        <div class="method-heading">
+          <a href="#M000070" class="method-signature">
+          <span class="method-name">make_cache_key</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a key for the cache, incorporating the namespace qualifier if
+requested.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000070-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000070-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 529</span>
+529:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">make_cache_key</span>(<span class="ruby-identifier">key</span>)
+530:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">namespace</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword kw">then</span>
+531:       <span class="ruby-identifier">key</span>
+532:     <span class="ruby-keyword kw">else</span>
+533:       <span class="ruby-node">&quot;#{@namespace}:#{key}&quot;</span>
+534:     <span class="ruby-keyword kw">end</span>
+535:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000079" class="method-detail">
+        <a name="M000079"></a>
+
+        <div class="method-heading">
+          <a href="#M000079" class="method-signature">
+          <span class="method-name">raise_on_error_response!</span><span class="method-args">(response)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000079-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000079-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 695</span>
+695:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">raise_on_error_response!</span>(<span class="ruby-identifier">response</span>)
+696:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">response</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\A(?:CLIENT_|SERVER_)?ERROR (.*)/</span>
+697:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">strip</span>
+698:     <span class="ruby-keyword kw">end</span>
+699:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000078" class="method-detail">
+        <a name="M000078"></a>
+
+        <div class="method-heading">
+          <a href="#M000078" class="method-signature">
+          <span class="method-name">request_setup</span><span class="method-args">(key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs setup for making a request with <tt>key</tt> from memcached.
+Returns the server to fetch the key from and the complete key to use.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000078-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000078-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/vendor/memcache-client-1.5.1/memcache.rb, line 659</span>
+659:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">request_setup</span>(<span class="ruby-identifier">key</span>)
+660:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">'No active servers'</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">active?</span>
+661:     <span class="ruby-identifier">cache_key</span> = <span class="ruby-identifier">make_cache_key</span> <span class="ruby-identifier">key</span>
+662:     <span class="ruby-identifier">server</span> = <span class="ruby-identifier">get_server_for_key</span> <span class="ruby-identifier">cache_key</span>
+663:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">MemCacheError</span>, <span class="ruby-value str">'No connection to server'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">server</span>.<span class="ruby-identifier">socket</span>.<span class="ruby-identifier">nil?</span>
+664:     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">server</span>, <span class="ruby-identifier">cache_key</span>
+665:   <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

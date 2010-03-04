@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActiveRecord::NestedAttributes::ClassMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActiveRecord::NestedAttributes::ClassMethods</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/activerecord/lib/active_record/nested_attributes_rb.html">
+                vendor/rails/activerecord/lib/active_record/nested_attributes.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2>Nested Attributes</h2>
+<p>
+Nested attributes allow you to save attributes on associated records
+through the parent. By default nested attribute updating is turned off, you
+can enable it using the <a
+href="ClassMethods.html#M002132">accepts_nested_attributes_for</a> class
+method. When you enable nested attributes an attribute writer is defined on
+the model.
+</p>
+<p>
+The attribute writer is named after the association, which means that in
+the following example, two new methods are added to your model:
+<tt>author_attributes=(attributes)</tt> and
+<tt>pages_attributes=(attributes)</tt>.
+</p>
+<pre>
+  class Book &lt; ActiveRecord::Base
+    has_one :author
+    has_many :pages
+
+    accepts_nested_attributes_for :author, :pages
+  end
+</pre>
+<p>
+Note that the <tt>:autosave</tt> option is automatically enabled on every
+association that <a
+href="ClassMethods.html#M002132">accepts_nested_attributes_for</a> is used
+for.
+</p>
+<h3>One-to-one</h3>
+<p>
+Consider a Member model that has one Avatar:
+</p>
+<pre>
+  class Member &lt; ActiveRecord::Base
+    has_one :avatar
+    accepts_nested_attributes_for :avatar
+  end
+</pre>
+<p>
+Enabling nested attributes on a one-to-one association allows you to create
+the member and avatar in one go:
+</p>
+<pre>
+  params = { :member =&gt; { :name =&gt; 'Jack', :avatar_attributes =&gt; { :icon =&gt; 'smiling' } } }
+  member = Member.create(params)
+  member.avatar.id # =&gt; 2
+  member.avatar.icon # =&gt; 'smiling'
+</pre>
+<p>
+It also allows you to update the avatar through the member:
+</p>
+<pre>
+  params = { :member' =&gt; { :avatar_attributes =&gt; { :id =&gt; '2', :icon =&gt; 'sad' } } }
+  member.update_attributes params['member']
+  member.avatar.icon # =&gt; 'sad'
+</pre>
+<p>
+By default you will only be able to set and update attributes on the
+associated model. If you want to destroy the associated model through the
+attributes hash, you have to enable it first using the
+<tt>:allow_destroy</tt> option.
+</p>
+<pre>
+  class Member &lt; ActiveRecord::Base
+    has_one :avatar
+    accepts_nested_attributes_for :avatar, :allow_destroy =&gt; true
+  end
+</pre>
+<p>
+Now, when you add the <tt>_delete</tt> key to the attributes hash, with a
+value that evaluates to <tt>true</tt>, you will destroy the associated
+model:
+</p>
+<pre>
+  member.avatar_attributes = { :id =&gt; '2', :_delete =&gt; '1' }
+  member.avatar.marked_for_destruction? # =&gt; true
+  member.save
+  member.avatar #=&gt; nil
+</pre>
+<p>
+Note that the model will <em>not</em> be destroyed until the parent is
+saved.
+</p>
+<h3>One-to-many</h3>
+<p>
+Consider a member that has a number of posts:
+</p>
+<pre>
+  class Member &lt; ActiveRecord::Base
+    has_many :posts
+    accepts_nested_attributes_for :posts
+  end
+</pre>
+<p>
+You can now set or update attributes on an associated post model through
+the attribute hash.
+</p>
+<p>
+For each hash that does <em>not</em> have an <tt>id</tt> key a new record
+will be instantiated, unless the hash also contains a <tt>_delete</tt> key
+that evaluates to <tt>true</tt>.
+</p>
+<pre>
+  params = { :member =&gt; {
+    :name =&gt; 'joe', :posts_attributes =&gt; [
+      { :title =&gt; 'Kari, the awesome Ruby documentation browser!' },
+      { :title =&gt; 'The egalitarian assumption of the modern citizen' },
+      { :title =&gt; '', :_delete =&gt; '1' } # this will be ignored
+    ]
+  }}
+
+  member = Member.create(params['member'])
+  member.posts.length # =&gt; 2
+  member.posts.first.title # =&gt; 'Kari, the awesome Ruby documentation browser!'
+  member.posts.second.title # =&gt; 'The egalitarian assumption of the modern citizen'
+</pre>
+<p>
+You may also set a :reject_if proc to silently ignore any new record hashes
+if they fail to pass your criteria. For example, the previous example could
+be rewritten as:
+</p>
+<pre>
+   class Member &lt; ActiveRecord::Base
+     has_many :posts
+     accepts_nested_attributes_for :posts, :reject_if =&gt; proc { |attributes| attributes['title'].blank? }
+   end
+
+  params = { :member =&gt; {
+    :name =&gt; 'joe', :posts_attributes =&gt; [
+      { :title =&gt; 'Kari, the awesome Ruby documentation browser!' },
+      { :title =&gt; 'The egalitarian assumption of the modern citizen' },
+      { :title =&gt; '' } # this will be ignored because of the :reject_if proc
+    ]
+  }}
+
+  member = Member.create(params['member'])
+  member.posts.length # =&gt; 2
+  member.posts.first.title # =&gt; 'Kari, the awesome Ruby documentation browser!'
+  member.posts.second.title # =&gt; 'The egalitarian assumption of the modern citizen'
+</pre>
+<p>
+If the hash contains an <tt>id</tt> key that matches an already associated
+record, the matching record will be modified:
+</p>
+<pre>
+  member.attributes = {
+    :name =&gt; 'Joe',
+    :posts_attributes =&gt; [
+      { :id =&gt; 1, :title =&gt; '[UPDATED] An, as of yet, undisclosed awesome Ruby documentation browser!' },
+      { :id =&gt; 2, :title =&gt; '[UPDATED] other post' }
+    ]
+  }
+
+  member.posts.first.title # =&gt; '[UPDATED] An, as of yet, undisclosed awesome Ruby documentation browser!'
+  member.posts.second.title # =&gt; '[UPDATED] other post'
+</pre>
+<p>
+By default the associated records are protected from being destroyed. If
+you want to destroy any of the associated records through the attributes
+hash, you have to enable it first using the <tt>:allow_destroy</tt> option.
+This will allow you to also use the <tt>_delete</tt> key to destroy
+existing records:
+</p>
+<pre>
+  class Member &lt; ActiveRecord::Base
+    has_many :posts
+    accepts_nested_attributes_for :posts, :allow_destroy =&gt; true
+  end
+
+  params = { :member =&gt; {
+    :posts_attributes =&gt; [{ :id =&gt; '2', :_delete =&gt; '1' }]
+  }}
+
+  member.attributes = params['member']
+  member.posts.detect { |p| p.id == 2 }.marked_for_destruction? # =&gt; true
+  member.posts.length #=&gt; 2
+  member.save
+  member.posts.length # =&gt; 1
+</pre>
+<h3>Saving</h3>
+<p>
+All changes to models, including the destruction of those marked for
+destruction, are saved and destroyed automatically and atomically when the
+parent model is saved. This happens inside the transaction initiated by the
+parents save method. See <a
+href="../AutosaveAssociation.html">ActiveRecord::AutosaveAssociation</a>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002132">accepts_nested_attributes_for</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002132" class="method-detail">
+        <a name="M002132"></a>
+
+        <div class="method-heading">
+          <a href="#M002132" class="method-signature">
+          <span class="method-name">accepts_nested_attributes_for</span><span class="method-args">(*attr_names)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Defines an attributes writer for the specified association(s). If you are
+using <tt>attr_protected</tt> or <tt>attr_accessible</tt>, then you will
+need to add the attribute writer to the allowed list.
+</p>
+<p>
+Supported options:
+</p>
+<dl>
+<dt>:allow_destroy</dt><dd>If true, destroys any members from the attributes hash with a
+<tt>_delete</tt> key and a value that evaluates to <tt>true</tt> (eg. 1,
+&#8216;1&#8217;, true, or &#8216;true&#8217;). This option is off by
+default.
+
+</dd>
+<dt>:reject_if</dt><dd>Allows you to specify a Proc that checks whether a record should be built
+for a certain attribute hash. The hash is passed to the Proc and the Proc
+should return either <tt>true</tt> or <tt>false</tt>. When no Proc is
+specified a record will be built for all attribute hashes that do not have
+a <tt>_delete</tt> that evaluates to true.
+
+</dd>
+</dl>
+<p>
+Examples:
+</p>
+<pre>
+  # creates avatar_attributes=
+  accepts_nested_attributes_for :avatar, :reject_if =&gt; proc { |attributes| attributes['name'].blank? }
+  # creates avatar_attributes= and posts_attributes=
+  accepts_nested_attributes_for :avatar, :posts, :allow_destroy =&gt; true
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002132-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002132-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/nested_attributes.rb, line 189</span>
+189:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">accepts_nested_attributes_for</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">attr_names</span>)
+190:         <span class="ruby-identifier">options</span> = { <span class="ruby-identifier">:allow_destroy</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span> }
+191:         <span class="ruby-identifier">options</span>.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">attr_names</span>.<span class="ruby-identifier">extract_options!</span>)
+192:         <span class="ruby-identifier">options</span>.<span class="ruby-identifier">assert_valid_keys</span>(<span class="ruby-identifier">:allow_destroy</span>, <span class="ruby-identifier">:reject_if</span>)
+193: 
+194:         <span class="ruby-identifier">attr_names</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">association_name</span><span class="ruby-operator">|</span>
+195:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">reflection</span> = <span class="ruby-identifier">reflect_on_association</span>(<span class="ruby-identifier">association_name</span>)
+196:             <span class="ruby-identifier">type</span> = <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">reflection</span>.<span class="ruby-identifier">macro</span>
+197:             <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:has_one</span>, <span class="ruby-identifier">:belongs_to</span>
+198:               <span class="ruby-identifier">:one_to_one</span>
+199:             <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:has_many</span>, <span class="ruby-identifier">:has_and_belongs_to_many</span>
+200:               <span class="ruby-identifier">:collection</span>
+201:             <span class="ruby-keyword kw">end</span>
+202: 
+203:             <span class="ruby-identifier">reflection</span>.<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:autosave</span>] = <span class="ruby-keyword kw">true</span>
+204:             <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">reject_new_nested_attributes_procs</span>[<span class="ruby-identifier">association_name</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:reject_if</span>]
+205: 
+206:             <span class="ruby-comment cmt"># def pirate_attributes=(attributes)</span>
+207:             <span class="ruby-comment cmt">#   assign_nested_attributes_for_one_to_one_association(:pirate, attributes, false)</span>
+208:             <span class="ruby-comment cmt"># end</span>
+209:             <span class="ruby-identifier">class_eval</span> <span class="ruby-node">%{
+210:               def #{association_name}_attributes=(attributes)
+211:                 assign_nested_attributes_for_#{type}_association(:#{association_name}, attributes, #{options[:allow_destroy]})
+212:               end
+213:             }</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-keyword kw">__LINE__</span>
+214:           <span class="ruby-keyword kw">else</span>
+215:             <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;No association found for name `#{association_name}'. Has it been defined yet?&quot;</span>
+216:           <span class="ruby-keyword kw">end</span>
+217:         <span class="ruby-keyword kw">end</span>
+218:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>vendor/rails/actionpack/README
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Fri Nov 21 18:49:27 +0100 2008</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>Action Pack &#8212; On rails from request to response</h1>
+<p>
+Action Pack splits the response to a web request into a controller part
+(performing the logic) and a view part (rendering a template). This
+two-step approach is known as an action, which will normally create, read,
+update, or delete (CRUD for short) some sort of model part (often backed by
+a database) before choosing either to render a template or redirecting to
+another action.
+</p>
+<p>
+Action Pack implements these actions as public methods on Action
+Controllers and uses Action Views to implement the template rendering.
+Action Controllers are then responsible for handling all the actions
+relating to a certain part of an application. This grouping usually
+consists of actions for lists and for CRUDs revolving around a single (or a
+few) model objects. So ContactController would be responsible for listing
+contacts, creating, deleting, and updating contacts. A WeblogController
+could be responsible for both posts and comments.
+</p>
+<p>
+Action View templates are written using embedded Ruby in tags mingled in
+with the HTML. To avoid cluttering the templates with code, a bunch of
+helper classes provide common behavior for forms, dates, and strings. And
+it&#8216;s easy to add specific helpers to keep the separation as the
+application evolves.
+</p>
+<p>
+Note: Some of the features, such as scaffolding and form building, are tied
+to <a href="http://activerecord.rubyonrails.org">ActiveRecord</a> (an
+object-relational mapping package), but that doesn&#8216;t mean that Action
+Pack depends on Active Record. Action Pack is an independent package that
+can be used with any sort of backend (<a
+href="http://www.instiki.org">Instiki</a>, which is based on an older
+version of Action Pack, used Madeleine for example). Read more about the
+role Action Pack can play when used together with Active Record on <a
+href="http://www.rubyonrails.org">www.rubyonrails.org</a>.
+</p>
+<p>
+A short rundown of the major features:
+</p>
+<ul>
+<li>Actions grouped in controller as methods instead of separate command
+objects and can therefore share helper methods
+
+<pre>
+  BlogController &lt; ActionController::Base
+    def show
+      @customer = find_customer
+    end
+
+    def update
+      @customer = find_customer
+      @customer.attributes = params[:customer]
+      @customer.save ?
+        redirect_to(:action =&gt; &quot;display&quot;) :
+        render(:action =&gt; &quot;edit&quot;)
+    end
+
+    private
+      def find_customer() Customer.find(params[:id]) end
+  end
+</pre>
+<p>
+<a href="../../../../classes/ActionController/Base.html">Learn more</a>
+</p>
+</li>
+<li>Embedded Ruby for templates (no new &quot;easy&quot; template language)
+
+<pre>
+  &lt;% for post in @posts %&gt;
+    Title: &lt;%= post.title %&gt;
+  &lt;% end %&gt;
+
+  All post titles: &lt;%= @post.collect{ |p| p.title }.join &quot;, &quot; %&gt;
+
+  &lt;% unless @person.is_client? %&gt;
+    Not for clients to see...
+  &lt;% end %&gt;
+</pre>
+<p>
+<a href="../../../../classes/ActionView.html">Learn more</a>
+</p>
+</li>
+<li><a href="../../../../classes/Builder.html">Builder</a>-based templates
+(great for XML content, like RSS)
+
+<pre>
+  xml.rss(&quot;version&quot; =&gt; &quot;2.0&quot;) do
+    xml.channel do
+      xml.title(@feed_title)
+      xml.link(@url)
+      xml.description &quot;Basecamp: Recent items&quot;
+      xml.language &quot;en-us&quot;
+      xml.ttl &quot;40&quot;
+
+      for item in @recent_items
+        xml.item do
+          xml.title(item_title(item))
+          xml.description(item_description(item))
+          xml.pubDate(item_pubDate(item))
+          xml.guid(@recent_items.url(item))
+          xml.link(@recent_items.url(item))
+        end
+      end
+    end
+  end
+</pre>
+<p>
+<a href="../../../../classes/ActionView/Base.html">Learn more</a>
+</p>
+</li>
+<li>Filters for pre and post processing of the response (as methods, procs, and
+classes)
+
+<pre>
+  class WeblogController &lt; ActionController::Base
+    before_filter :authenticate, :cache, :audit
+    after_filter { |c| c.response.body = Gzip::compress(c.response.body) }
+    after_filter LocalizeFilter
+
+    def index
+      # Before this action is run, the user will be authenticated, the cache
+      # will be examined to see if a valid copy of the results already
+      # exists, and the action will be logged for auditing.
+
+      # After this action has run, the output will first be localized then
+      # compressed to minimize bandwidth usage
+    end
+
+    private
+      def authenticate
+        # Implement the filter with full access to both request and response
+      end
+  end
+</pre>
+<p>
+<a
+href="../../../../classes/ActionController/Filters/ClassMethods.html">Learn
+more</a>
+</p>
+</li>
+<li>Helpers for forms, dates, action links, and text
+
+<pre>
+  &lt;%= text_field &quot;post&quot;, &quot;title&quot;, &quot;size&quot; =&gt; 30 %&gt;
+  &lt;%= html_date_select(Date.today) %&gt;
+  &lt;%= link_to &quot;New post&quot;, :controller =&gt; &quot;post&quot;, :action =&gt; &quot;new&quot; %&gt;
+  &lt;%= truncate(post.title, 25) %&gt;
+</pre>
+<p>
+<a href="../../../../classes/ActionView/Helpers.html">Learn more</a>
+</p>
+</li>
+<li>Layout sharing for template reuse (think simple version of Struts <a
+href="http://jakarta.apache.org/struts/userGuide/dev_tiles.html">Tiles</a>)
+
+<pre>
+  class WeblogController &lt; ActionController::Base
+    layout &quot;weblog_layout&quot;
+
+    def hello_world
+    end
+  end
+
+  Layout file (called weblog_layout):
+    &lt;html&gt;&lt;body&gt;&lt;%= yield %&gt;&lt;/body&gt;&lt;/html&gt;
+
+  Template for hello_world action:
+    &lt;h1&gt;Hello world&lt;/h1&gt;
+
+  Result of running hello_world action:
+    &lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello world&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;
+</pre>
+<p>
+<a
+href="../../../../classes/ActionController/Layout/ClassMethods.html">Learn
+more</a>
+</p>
+</li>
+<li>Routing makes pretty urls incredibly easy
+
+<pre>
+  map.connect 'clients/:client_name/:project_name/:controller/:action'
+
+  Accessing /clients/37signals/basecamp/project/dash calls ProjectController#dash with
+  { &quot;client_name&quot; =&gt; &quot;37signals&quot;, &quot;project_name&quot; =&gt; &quot;basecamp&quot; } in params[:params]
+
+  From that URL, you can rewrite the redirect in a number of ways:
+
+  redirect_to(:action =&gt; &quot;edit&quot;) =&gt;
+    /clients/37signals/basecamp/project/dash
+
+  redirect_to(:client_name =&gt; &quot;nextangle&quot;, :project_name =&gt; &quot;rails&quot;) =&gt;
+    /clients/nextangle/rails/project/dash
+</pre>
+<p>
+<a href="../../../../classes/ActionController/Base.html">Learn more</a>
+</p>
+</li>
+<li>Javascript and Ajax integration
+
+<pre>
+  link_to_function &quot;Greeting&quot;, &quot;alert('Hello world!')&quot;
+  link_to_remote &quot;Delete this post&quot;, :update =&gt; &quot;posts&quot;,
+                 :url =&gt; { :action =&gt; &quot;destroy&quot;, :id =&gt; post.id }
+</pre>
+<p>
+<a
+href="../../../../classes/ActionView/Helpers/JavaScriptHelper.html">Learn
+more</a>
+</p>
+</li>
+<li>Pagination for navigating lists of results
+
+<pre>
+  # controller
+  def list
+    @pages, @people =
+      paginate :people, :order =&gt; 'last_name, first_name'
+  end
+
+  # view
+  &lt;%= link_to &quot;Previous page&quot;, { :page =&gt; @pages.current.previous } if @pages.current.previous %&gt;
+  &lt;%= link_to &quot;Next page&quot;, { :page =&gt; @pages.current.next } if @pages.current.next %&gt;
+</pre>
+<p>
+<a href="../../../../classes/ActionController/Pagination.html">Learn
+more</a>
+</p>
+</li>
+<li>Easy testing of both controller and rendered template through <a
+href="../../../../classes/ActionController/TestCase.html">ActionController::TestCase</a>
+
+<pre>
+  class LoginControllerTest &lt; ActionController::TestCase
+    def test_failing_authenticate
+      process :authenticate, :user_name =&gt; &quot;nop&quot;, :password =&gt; &quot;&quot;
+      assert flash.has_key?(:alert)
+      assert_redirected_to :action =&gt; &quot;index&quot;
+    end
+  end
+</pre>
+<p>
+<a href="../../../../classes/ActionController/TestCase.html">Learn more</a>
+</p>
+</li>
+<li>Automated benchmarking and integrated logging
+
+<pre>
+  Processing WeblogController#index (for 127.0.0.1 at Fri May 28 00:41:55)
+  Parameters: {&quot;action&quot;=&gt;&quot;index&quot;, &quot;controller&quot;=&gt;&quot;weblog&quot;}
+  Rendering weblog/index (200 OK)
+  Completed in 0.029281 (34 reqs/sec)
+
+  If Active Record is used as the model, you'll have the database debugging
+  as well:
+
+  Processing WeblogController#create (for 127.0.0.1 at Sat Jun 19 14:04:23)
+  Params: {&quot;controller&quot;=&gt;&quot;weblog&quot;, &quot;action&quot;=&gt;&quot;create&quot;,
+           &quot;post&quot;=&gt;{&quot;title&quot;=&gt;&quot;this is good&quot;} }
+  SQL (0.000627) INSERT INTO posts (title) VALUES('this is good')
+  Redirected to http://test/weblog/display/5
+  Completed in 0.221764 (4 reqs/sec) | DB: 0.059920 (27%)
+
+  You specify a logger through a class method, such as:
+
+  ActionController::Base.logger = Logger.new(&quot;Application Log&quot;)
+  ActionController::Base.logger = Log4r::Logger.new(&quot;Application Log&quot;)
+</pre>
+</li>
+<li>Caching at three levels of granularity (page, action, fragment)
+
+<pre>
+  class WeblogController &lt; ActionController::Base
+    caches_page :show
+    caches_action :account
+
+    def show
+      # the output of the method will be cached as
+      # ActionController::Base.page_cache_directory + &quot;/weblog/show/n.html&quot;
+      # and the web server will pick it up without even hitting Rails
+    end
+
+    def account
+      # the output of the method will be cached in the fragment store
+      # but Rails is hit to retrieve it, so filters are run
+    end
+
+    def update
+      List.update(params[:list][:id], params[:list])
+      expire_page   :action =&gt; &quot;show&quot;, :id =&gt; params[:list][:id]
+      expire_action :action =&gt; &quot;account&quot;
+      redirect_to   :action =&gt; &quot;show&quot;, :id =&gt; params[:list][:id]
+    end
+  end
+</pre>
+<p>
+<a href="../../../../classes/ActionController/Caching.html">Learn more</a>
+</p>
+</li>
+<li>Component requests from one controller to another
+
+<pre>
+  class WeblogController &lt; ActionController::Base
+    # Performs a method and then lets hello_world output its render
+    def delegate_action
+      do_other_stuff_before_hello_world
+      render_component :controller =&gt; &quot;greeter&quot;,  :action =&gt; &quot;hello_world&quot;
+    end
+  end
+
+  class GreeterController &lt; ActionController::Base
+    def hello_world
+      render_text &quot;Hello World!&quot;
+    end
+  end
+
+  The same can be done in a view to do a partial rendering:
+
+    Let's see a greeting:
+    &lt;%= render_component :controller =&gt; &quot;greeter&quot;, :action =&gt; &quot;hello_world&quot; %&gt;
+</pre>
+<p>
+<a href="../../../../classes/ActionController/Components.html">Learn
+more</a>
+</p>
+</li>
+<li>Powerful debugging mechanism for local requests
+
+<pre>
+  All exceptions raised on actions performed on the request of a local user
+  will be presented with a tailored debugging screen that includes exception
+  message, stack trace, request parameters, session contents, and the
+  half-finished response.
+</pre>
+<p>
+<a href="../../../../classes/ActionController/Rescue.html">Learn more</a>
+</p>
+</li>
+<li>Scaffolding for Active Record model objects
+
+<pre>
+  class AccountController &lt; ActionController::Base
+    scaffold :account
+  end
+
+  The AccountController now has the full CRUD range of actions and default
+  templates: list, show, destroy, new, create, edit, update
+</pre>
+<p>
+<a
+href="../../../../classes/ActionController/Scaffolding/ClassMethods.html">Learn
+more</a>
+</p>
+</li>
+<li>Form building for Active Record model objects
+
+<pre>
+  The post object has a title (varchar), content (text), and
+  written_on (date)
+
+  &lt;%= form &quot;post&quot; %&gt;
+
+  ...will generate something like (the selects will have more options, of
+  course):
+
+  &lt;form action=&quot;create&quot; method=&quot;POST&quot;&gt;
+    &lt;p&gt;
+      &lt;b&gt;Title:&lt;/b&gt;&lt;br/&gt;
+      &lt;input type=&quot;text&quot; name=&quot;post[title]&quot; value=&quot;&lt;%= @post.title %&gt;&quot; /&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Content:&lt;/b&gt;&lt;br/&gt;
+      &lt;textarea name=&quot;post[content]&quot;&gt;&lt;%= @post.title %&gt;&lt;/textarea&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;b&gt;Written on:&lt;/b&gt;&lt;br/&gt;
+      &lt;select name='post[written_on(3i)]'&gt;&lt;option&gt;18&lt;/option&gt;&lt;/select&gt;
+      &lt;select name='post[written_on(2i)]'&gt;&lt;option value='7'&gt;July&lt;/option&gt;&lt;/select&gt;
+      &lt;select name='post[written_on(1i)]'&gt;&lt;option&gt;2004&lt;/option&gt;&lt;/select&gt;
+    &lt;/p&gt;
+
+    &lt;input type=&quot;submit&quot; value=&quot;Create&quot;&gt;
+  &lt;/form&gt;
+
+  This form generates a params[:post] array that can be used directly in a save action:
+
+  class WeblogController &lt; ActionController::Base
+    def create
+      post = Post.create(params[:post])
+      redirect_to :action =&gt; &quot;display&quot;, :id =&gt; post.id
+    end
+  end
+</pre>
+<p>
+<a
+href="../../../../classes/ActionView/Helpers/ActiveRecordHelper.html">Learn
+more</a>
+</p>
+</li>
+<li>Runs on top of WEBrick, Mongrel, CGI, FCGI, and mod_ruby
+
+</li>
+</ul>
+<h2>Simple example (from outside of <a href="../../../../classes/Rails.html">Rails</a>)</h2>
+<p>
+This example will implement a simple weblog system using inline templates
+and an Active Record model. So let&#8216;s build that WeblogController with
+just a few methods:
+</p>
+<pre>
+  require 'action_controller'
+  require 'post'
+
+  class WeblogController &lt; ActionController::Base
+    layout &quot;weblog/layout&quot;
+
+    def index
+      @posts = Post.find(:all)
+    end
+
+    def display
+      @post = Post.find(params[:id])
+    end
+
+    def new
+      @post = Post.new
+    end
+
+    def create
+      @post = Post.create(params[:post])
+      redirect_to :action =&gt; &quot;display&quot;, :id =&gt; @post.id
+    end
+  end
+
+  WeblogController::Base.view_paths = [ File.dirname(__FILE__) ]
+  WeblogController.process_cgi if $0 == __FILE__
+</pre>
+<p>
+The last two lines are responsible for telling ActionController where the
+template files are located and actually running the controller on a new
+request from the web-server (like to be Apache).
+</p>
+<p>
+And the templates look like this:
+</p>
+<pre>
+  weblog/layout.erb:
+    &lt;html&gt;&lt;body&gt;
+    &lt;%= yield %&gt;
+    &lt;/body&gt;&lt;/html&gt;
+
+  weblog/index.erb:
+    &lt;% for post in @posts %&gt;
+      &lt;p&gt;&lt;%= link_to(post.title, :action =&gt; &quot;display&quot;, :id =&gt; post.id %&gt;&lt;/p&gt;
+    &lt;% end %&gt;
+
+  weblog/display.erb:
+    &lt;p&gt;
+      &lt;b&gt;&lt;%= post.title %&gt;&lt;/b&gt;&lt;br/&gt;
+      &lt;b&gt;&lt;%= post.content %&gt;&lt;/b&gt;
+    &lt;/p&gt;
+
+  weblog/new.erb:
+    &lt;%= form &quot;post&quot; %&gt;
+</pre>
+<p>
+This simple setup will list all the posts in the system on the index page,
+which is called by accessing /weblog/. It uses the form builder for the
+Active Record model to make the new screen, which in turn hands everything
+over to the create action (that&#8216;s the default target for the form
+builder when given a new model). After creating the post, it&#8216;ll
+redirect to the display page using an URL such as /weblog/display/5 (where
+5 is the id of the post).
+</p>
+<h2>Examples</h2>
+<p>
+Action Pack ships with three examples that all demonstrate an increasingly
+detailed view of the possibilities. First is blog_controller that is just a
+single file for the whole MVC (but still split into separate parts). Second
+is the debate_controller that uses separate template files and multiple
+screens. Third is the address_book_controller that uses the layout feature
+to separate template casing from content.
+</p>
+<p>
+Please note that you might need to change the &quot;shebang&quot; line to
+#!/usr/local/env ruby, if your Ruby is not placed in /usr/local/bin/ruby
+</p>
+<p>
+Also note that these examples are all for demonstrating using Action Pack
+on its own. Not for when it&#8216;s used inside of <a
+href="../../../../classes/Rails.html">Rails</a>.
+</p>
+<h2>Download</h2>
+<p>
+The latest version of Action Pack can be found at
+</p>
+<ul>
+<li><a
+href="http://rubyforge.org/project/showfiles.php?group_id=249">rubyforge.org/project/showfiles.php?group_id=249</a>
+
+</li>
+</ul>
+<p>
+Documentation can be found at
+</p>
+<ul>
+<li><a href="http://api.rubyonrails.com">api.rubyonrails.com</a>
+
+</li>
+</ul>
+<h2>Installation</h2>
+<p>
+You can install Action Pack with the following command.
+</p>
+<pre>
+  % [sudo] ruby install.rb
+</pre>
+<p>
+from its distribution directory.
+</p>
+<h2>License</h2>
+<p>
+Action Pack is released under the MIT license.
+</p>
+<h2>Support</h2>
+<p>
+The Action Pack homepage is <a
+href="http://www.rubyonrails.org">www.rubyonrails.org</a>. You can find the
+Action Pack RubyForge page at <a
+href="http://rubyforge.org/projects/actionpack">rubyforge.org/projects/actionpack</a>.
+And as Jim from Rake says:
+</p>
+<pre>
+   Feel free to submit commits or feature requests.  If you send a patch,
+   remember to update the corresponding unit tests.  If fact, I prefer
+   new feature to be submitted in the form of new unit tests.
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

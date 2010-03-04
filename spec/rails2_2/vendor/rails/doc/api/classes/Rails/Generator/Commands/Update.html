@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Rails::Generator::Commands::Update</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Rails::Generator::Commands::Update</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/vendor/rails/railties/lib/rails_generator/commands_rb.html">
+                vendor/rails/railties/lib/rails_generator/commands.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Create.html">
+                Create
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Update.html">Update</a> generator&#8216;s action manifest.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002135">complex_template</a>&nbsp;&nbsp;
+      <a href="#M002136">directory</a>&nbsp;&nbsp;
+      <a href="#M002133">file</a>&nbsp;&nbsp;
+      <a href="#M002134">template</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002135" class="method-detail">
+        <a name="M002135"></a>
+
+        <div class="method-heading">
+          <a href="#M002135" class="method-signature">
+          <span class="method-name">complex_template</span><span class="method-args">(relative_source, relative_destination, template_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002135-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002135-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 589</span>
+589:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">complex_template</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">template_options</span> = {})
+590: 
+591:            <span class="ruby-keyword kw">begin</span>
+592:              <span class="ruby-identifier">dest_file</span> = <span class="ruby-identifier">destination_path</span>(<span class="ruby-identifier">relative_destination</span>)
+593:              <span class="ruby-identifier">source_to_update</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-identifier">dest_file</span>).<span class="ruby-identifier">join</span>
+594:            <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Errno</span><span class="ruby-operator">::</span><span class="ruby-constant">ENOENT</span>
+595:              <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">missing</span> <span class="ruby-identifier">relative_destination</span>
+596:              <span class="ruby-keyword kw">return</span>
+597:            <span class="ruby-keyword kw">end</span>
+598: 
+599:            <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">refreshing</span> <span class="ruby-node">&quot;#{template_options[:insert].gsub(/\.erb/,'')} inside #{relative_destination}&quot;</span>
+600: 
+601:            <span class="ruby-identifier">begin_mark</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">quote</span>(<span class="ruby-identifier">template_part_mark</span>(<span class="ruby-identifier">template_options</span>[<span class="ruby-identifier">:begin_mark</span>], <span class="ruby-identifier">template_options</span>[<span class="ruby-identifier">:mark_id</span>]))
+602:            <span class="ruby-identifier">end_mark</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">quote</span>(<span class="ruby-identifier">template_part_mark</span>(<span class="ruby-identifier">template_options</span>[<span class="ruby-identifier">:end_mark</span>], <span class="ruby-identifier">template_options</span>[<span class="ruby-identifier">:mark_id</span>]))
+603: 
+604:            <span class="ruby-comment cmt"># Refreshing inner part of the template with freshly rendered part.</span>
+605:            <span class="ruby-identifier">rendered_part</span> = <span class="ruby-identifier">render_template_part</span>(<span class="ruby-identifier">template_options</span>)
+606:            <span class="ruby-identifier">source_to_update</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-node">/#{begin_mark}.*?#{end_mark}/</span><span class="ruby-identifier">m</span>, <span class="ruby-identifier">rendered_part</span>)
+607: 
+608:            <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">dest_file</span>, <span class="ruby-value str">'w'</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">source_to_update</span>) }
+609:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002136" class="method-detail">
+        <a name="M002136"></a>
+
+        <div class="method-heading">
+          <a href="#M002136" class="method-signature">
+          <span class="method-name">directory</span><span class="method-args">(relative_path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002136-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002136-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 611</span>
+611:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">directory</span>(<span class="ruby-identifier">relative_path</span>)
+612:           <span class="ruby-comment cmt"># logger.directory &quot;#{destination_path(relative_path)}/&quot;</span>
+613:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002133" class="method-detail">
+        <a name="M002133"></a>
+
+        <div class="method-heading">
+          <a href="#M002133" class="method-signature">
+          <span class="method-name">file</span><span class="method-args">(relative_source, relative_destination, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002133-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002133-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 581</span>
+581:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">file</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">options</span> = {})
+582:           <span class="ruby-comment cmt"># logger.file relative_destination</span>
+583:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002134" class="method-detail">
+        <a name="M002134"></a>
+
+        <div class="method-heading">
+          <a href="#M002134" class="method-signature">
+          <span class="method-name">template</span><span class="method-args">(relative_source, relative_destination, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002134-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002134-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 585</span>
+585:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">template</span>(<span class="ruby-identifier">relative_source</span>, <span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">options</span> = {})
+586:           <span class="ruby-comment cmt"># logger.template relative_destination</span>
+587:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

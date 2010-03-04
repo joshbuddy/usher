@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionView::Partials</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionView::Partials</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/vendor/rails/actionpack/lib/action_view/partials_rb.html">
+                vendor/rails/actionpack/lib/action_view/partials.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+There&#8216;s also a convenience method for rendering sub templates within
+the current controller that depends on a single object (we call this kind
+of sub templates for partials). It relies on the fact that partials should
+follow the naming convention of being prefixed with an underscore &#8212;
+as to separate them from regular templates that could be rendered on their
+own.
+</p>
+<p>
+In a template for Advertiser#account:
+</p>
+<pre>
+ &lt;%= render :partial =&gt; &quot;account&quot; %&gt;
+</pre>
+<p>
+This would render &quot;advertiser/_account.erb&quot; and pass the instance
+variable @account in as a local variable <tt>account</tt> to the template
+for display.
+</p>
+<p>
+In another template for Advertiser#buy, we could have:
+</p>
+<pre>
+  &lt;%= render :partial =&gt; &quot;account&quot;, :locals =&gt; { :account =&gt; @buyer } %&gt;
+
+  &lt;% for ad in @advertisements %&gt;
+    &lt;%= render :partial =&gt; &quot;ad&quot;, :locals =&gt; { :ad =&gt; ad } %&gt;
+  &lt;% end %&gt;
+</pre>
+<p>
+This would first render &quot;advertiser/_account.erb&quot; with @buyer
+passed in as the local variable <tt>account</tt>, then render
+&quot;advertiser/_ad.erb&quot; and pass the local variable <tt>ad</tt> to
+the template for display.
+</p>
+<h2>Rendering a collection of partials</h2>
+<p>
+The example of partial use describes a familiar pattern where a template
+needs to iterate over an array and render a sub template for each of the
+elements. This pattern has been implemented as a single method that accepts
+an array and renders a partial by the same name as the elements contained
+within. So the three-lined example in &quot;Using partials&quot; can be
+rewritten with a single line:
+</p>
+<pre>
+  &lt;%= render :partial =&gt; &quot;ad&quot;, :collection =&gt; @advertisements %&gt;
+</pre>
+<p>
+This will render &quot;advertiser/_ad.erb&quot; and pass the local variable
+<tt>ad</tt> to the template for display. An iteration counter will
+automatically be made available to the template with a name of the form
+<tt>partial_name_counter</tt>. In the case of the example above, the
+template would be fed <tt>ad_counter</tt>.
+</p>
+<p>
+NOTE: Due to backwards compatibility concerns, the collection can&#8216;t
+be one of hashes. Normally you&#8216;d also just keep domain objects, like
+Active Records, in there.
+</p>
+<h2>Rendering shared partials</h2>
+<p>
+Two controllers can share a set of partials and render them like this:
+</p>
+<pre>
+  &lt;%= render :partial =&gt; &quot;advertisement/ad&quot;, :locals =&gt; { :ad =&gt; @advertisement } %&gt;
+</pre>
+<p>
+This will render the partial &quot;advertisement/_ad.erb&quot; regardless
+of which controller this is being called from.
+</p>
+<h2>Rendering objects with the RecordIdentifier</h2>
+<p>
+Instead of explicitly naming the location of a partial, you can also let
+the RecordIdentifier do the work if you&#8216;re following its conventions
+for RecordIdentifier#partial_path. Examples:
+</p>
+<pre>
+ # @account is an Account instance, so it uses the RecordIdentifier to replace
+ # &lt;%= render :partial =&gt; &quot;accounts/account&quot;, :locals =&gt; { :account =&gt; @buyer } %&gt;
+ &lt;%= render :partial =&gt; @account %&gt;
+
+ # @posts is an array of Post instances, so it uses the RecordIdentifier to replace
+ # &lt;%= render :partial =&gt; &quot;posts/post&quot;, :collection =&gt; @posts %&gt;
+ &lt;%= render :partial =&gt; @posts %&gt;
+</pre>
+<h2>Rendering the default case</h2>
+<p>
+If you&#8216;re not going to be using any of the options like collections
+or layouts, you can also use the short-hand defaults of render to render
+partials. Examples:
+</p>
+<pre>
+ # Instead of &lt;%= render :partial =&gt; &quot;account&quot; %&gt;
+ &lt;%= render &quot;account&quot; %&gt;
+
+ # Instead of &lt;%= render :partial =&gt; &quot;account&quot;, :locals =&gt; { :account =&gt; @buyer } %&gt;
+ &lt;%= render &quot;account&quot;, :account =&gt; @buyer %&gt;
+
+ # @account is an Account instance, so it uses the RecordIdentifier to replace
+ # &lt;%= render :partial =&gt; &quot;accounts/account&quot;, :locals =&gt; { :account =&gt; @account } %&gt;
+ &lt;%= render(@account) %&gt;
+
+ # @posts is an array of Post instances, so it uses the RecordIdentifier to replace
+ # &lt;%= render :partial =&gt; &quot;posts/post&quot;, :collection =&gt; @posts %&gt;
+ &lt;%= render(@posts) %&gt;
+</pre>
+<h2>Rendering partials with layouts</h2>
+<p>
+<a href="Partials.html">Partials</a> can have their own layouts applied to
+them. These layouts are different than the ones that are specified globally
+for the entire action, but they work in a similar fashion. Imagine a list
+with two types of users:
+</p>
+<pre>
+  &lt;%# app/views/users/index.html.erb &amp;&gt;
+  Here's the administrator:
+  &lt;%= render :partial =&gt; &quot;user&quot;, :layout =&gt; &quot;administrator&quot;, :locals =&gt; { :user =&gt; administrator } %&gt;
+
+  Here's the editor:
+  &lt;%= render :partial =&gt; &quot;user&quot;, :layout =&gt; &quot;editor&quot;, :locals =&gt; { :user =&gt; editor } %&gt;
+
+  &lt;%# app/views/users/_user.html.erb &amp;&gt;
+  Name: &lt;%= user.name %&gt;
+
+  &lt;%# app/views/users/_administrator.html.erb &amp;&gt;
+  &lt;div id=&quot;administrator&quot;&gt;
+    Budget: $&lt;%= user.budget %&gt;
+    &lt;%= yield %&gt;
+  &lt;/div&gt;
+
+  &lt;%# app/views/users/_editor.html.erb &amp;&gt;
+  &lt;div id=&quot;editor&quot;&gt;
+    Deadline: &lt;%= user.deadline %&gt;
+    &lt;%= yield %&gt;
+  &lt;/div&gt;
+</pre>
+<p>
+&#8230;this will return:
+</p>
+<pre>
+  Here's the administrator:
+  &lt;div id=&quot;administrator&quot;&gt;
+    Budget: $&lt;%= user.budget %&gt;
+    Name: &lt;%= user.name %&gt;
+  &lt;/div&gt;
+
+  Here's the editor:
+  &lt;div id=&quot;editor&quot;&gt;
+    Deadline: &lt;%= user.deadline %&gt;
+    Name: &lt;%= user.name %&gt;
+  &lt;/div&gt;
+</pre>
+<p>
+You can also apply a layout to a block within any template:
+</p>
+<pre>
+  &lt;%# app/views/users/_chief.html.erb &amp;&gt;
+  &lt;% render(:layout =&gt; &quot;administrator&quot;, :locals =&gt; { :user =&gt; chief }) do %&gt;
+    Title: &lt;%= chief.title %&gt;
+  &lt;% end %&gt;
+</pre>
+<p>
+&#8230;this will return:
+</p>
+<pre>
+  &lt;div id=&quot;administrator&quot;&gt;
+    Budget: $&lt;%= user.budget %&gt;
+    Title: &lt;%= chief.name %&gt;
+  &lt;/div&gt;
+</pre>
+<p>
+As you can see, the <tt>:locals</tt> hash is shared between both the
+partial and its layout.
+</p>
+<p>
+If you pass arguments to &quot;yield&quot; then this will be passed to the
+block. One way to use this is to pass an array to layout and treat it as an
+enumerable.
+</p>
+<pre>
+  &lt;%# app/views/users/_user.html.erb &amp;&gt;
+  &lt;div class=&quot;user&quot;&gt;
+    Budget: $&lt;%= user.budget %&gt;
+    &lt;%= yield user %&gt;
+  &lt;/div&gt;
+
+  &lt;%# app/views/users/index.html.erb &amp;&gt;
+  &lt;% render :layout =&gt; @users do |user| %&gt;
+    Title: &lt;%= user.title %&gt;
+  &lt;% end %&gt;
+</pre>
+<p>
+This will render the layout for each user and yield to the block, passing
+the user, each time.
+</p>
+<p>
+You can also yield multiple times in one layout and use block arguments to
+differentiate the sections.
+</p>
+<pre>
+  &lt;%# app/views/users/_user.html.erb &amp;&gt;
+  &lt;div class=&quot;user&quot;&gt;
+    &lt;%= yield user, :header %&gt;
+    Budget: $&lt;%= user.budget %&gt;
+    &lt;%= yield user, :footer %&gt;
+  &lt;/div&gt;
+
+  &lt;%# app/views/users/index.html.erb &amp;&gt;
+  &lt;% render :layout =&gt; @users do |user, section| %&gt;
+    &lt;%- case section when :header -%&gt;
+      Title: &lt;%= user.title %&gt;
+    &lt;%- when :footer -%&gt;
+      Deadline: &lt;%= user.deadline %&gt;
+    &lt;%- end -%&gt;
+  &lt;% end %&gt;
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

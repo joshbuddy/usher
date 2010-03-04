@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: CHANGELOG</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>CHANGELOG</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>vendor/rails/activeresource/CHANGELOG
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Mon Jul 20 10:39:27 -0500 2009</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+*2.3.3 (July 20, 2009)*
+</p>
+<ul>
+<li>No changes, just a version bump.
+
+</li>
+</ul>
+<p>
+*2.3.2 [Final] (March 15, 2009)*
+</p>
+<ul>
+<li>Nothing new, just included in 2.3.2
+
+</li>
+</ul>
+<p>
+*2.2.1 [RC2] (November 14th, 2008)*
+</p>
+<ul>
+<li>Fixed that ActiveResource#post would post an empty string when it
+shouldn&#8216;t be posting anything 525 [Paolo Angelini]
+
+</li>
+</ul>
+<p>
+*2.2.0 [RC1] (October 24th, 2008)*
+</p>
+<ul>
+<li>Add ActiveResource::Base#to_xml and ActiveResource::Base#to_json. 1011
+[Rasik Pandey, Cody Fauser]
+
+</li>
+<li>Add ActiveResource::Base.find(:last). [754 state:resolved] (Adrian Mugnolo)
+
+</li>
+<li>Fixed problems with the logger used if the logging string included
+%&#8217;s [840 state:resolved] (Jamis Buck)
+
+</li>
+<li>Fixed Base#exists? to check status code as integer [299 state:resolved]
+(Wes Oldenbeuving)
+
+</li>
+</ul>
+<p>
+*2.1.0 (May 31st, 2008)*
+</p>
+<ul>
+<li>Fixed response logging to use length instead of the entire thing (seangeo)
+[27]
+
+</li>
+<li>Fixed that to_param should be used and honored instead of hardcoding the id
+11406 [gspiers]
+
+</li>
+<li>Improve documentation. [Ryan Bigg, Jan De Poorter, Cheah Chu Yeow, Xavier
+Shay, Jack Danger Canty, Emilio Tagua, Xavier Noria, Sunny Ripert]
+
+</li>
+<li>Use HEAD instead of GET in exists? [bscofield]
+
+</li>
+<li>Fix small documentation typo. Closes 10670 [Luca Guidi]
+
+</li>
+<li>find_or_create_resource_for handles module nesting. 10646 [xavier]
+
+</li>
+<li>Allow setting ActiveResource::Base#format before site. [Rick Olson]
+
+</li>
+<li>Support agnostic formats when calling custom methods. Closes 10635
+[joerichsen]
+
+</li>
+<li>Document custom methods. 10589 [Cheah Chu Yeow]
+
+</li>
+<li>Ruby 1.9 compatibility. [Jeremy Kemper]
+
+</li>
+</ul>
+<p>
+*2.0.2* (December 16th, 2007)
+</p>
+<ul>
+<li>Added more specific exceptions for 400, 401, and 403 (all descending from
+ClientError so existing rescues will work) 10326 [trek]
+
+</li>
+<li>Correct empty response handling. 10445 [seangeo]
+
+</li>
+</ul>
+<p>
+*2.0.1* (December 7th, 2007)
+</p>
+<ul>
+<li>Don&#8216;t cache net/http object so that <a
+href="../../../../classes/ActiveResource.html">ActiveResource</a> is more
+thread-safe. Closes 10142 [kou]
+
+</li>
+<li>Update XML documentation examples to include explicit type attributes.
+Closes 9754 [Josh Susser]
+
+</li>
+<li>Added one-off declarations of mock behavior [David Heinemeier Hansson].
+Example:
+
+<pre>
+  Before:
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get &quot;/people/1.xml&quot;, {}, &quot;&lt;person&gt;&lt;name&gt;David&lt;/name&gt;&lt;/person&gt;&quot;
+    end
+
+  Now:
+    ActiveResource::HttpMock.respond_to.get &quot;/people/1.xml&quot;, {}, &quot;&lt;person&gt;&lt;name&gt;David&lt;/name&gt;&lt;/person&gt;&quot;
+</pre>
+</li>
+<li>Added ActiveResource.format= which defaults to :xml but can also be set to
+:json [David Heinemeier Hansson]. Example:
+
+<pre>
+  class Person &lt; ActiveResource::Base
+    self.site   = &quot;http://app/&quot;
+    self.format = :json
+  end
+
+  person = Person.find(1) # =&gt; GET http://app/people/1.json
+  person.name = &quot;David&quot;
+  person.save             # =&gt; PUT http://app/people/1.json {name: &quot;David&quot;}
+
+  Person.format = :xml
+  person.name = &quot;Mary&quot;
+  person.save             # =&gt; PUT http://app/people/1.json &lt;person&gt;&lt;name&gt;Mary&lt;/name&gt;&lt;/person&gt;
+</pre>
+</li>
+<li>Fix reload error when path prefix is used. 8727 [Ian Warshak]
+
+</li>
+<li>Remove ActiveResource::Struct because it hasn&#8216;t proven very useful.
+Creating a new <a
+href="../../../../classes/ActiveResource/Base.html">ActiveResource::Base</a>
+subclass is often less code and always clearer. 8612 [Josh Peek]
+
+</li>
+<li>Fix query methods on resources. [Cody Fauser]
+
+</li>
+<li>pass the prefix_options to the instantiated record when using find without
+a specific id. Closes 8544 [Eloy Duran]
+
+</li>
+<li>Recognize and raise an exception on 405 Method Not Allowed responses. 7692
+[Josh Peek]
+
+</li>
+<li>Handle string and symbol param keys when splitting params into prefix
+params and query params.
+
+<pre>
+  Comment.find(:all, :params =&gt; { :article_id =&gt; 5, :page =&gt; 2 }) or Comment.find(:all, :params =&gt; { 'article_id' =&gt; 5, :page =&gt; 2 })
+</pre>
+</li>
+<li>Added find-one with symbol [David Heinemeier Hansson]. Example:
+Person.find(:one, :from =&gt; :leader) # =&gt; GET /people/leader.xml
+
+</li>
+<li>BACKWARDS INCOMPATIBLE: Changed the finder API to be more extensible with
+:params and more strict usage of scopes [David Heinemeier Hansson].
+Changes:
+
+<pre>
+  Person.find(:all, :title =&gt; &quot;CEO&quot;)      ...becomes: Person.find(:all, :params =&gt; { :title =&gt; &quot;CEO&quot; })
+  Person.find(:managers)                  ...becomes: Person.find(:all, :from =&gt; :managers)
+  Person.find(&quot;/companies/1/manager.xml&quot;) ...becomes: Person.find(:one, :from =&gt; &quot;/companies/1/manager.xml&quot;)
+</pre>
+</li>
+<li>Add support for setting custom headers per Active Resource model [Rick
+Olson]
+
+<p>
+class Project
+</p>
+<pre>
+  headers['X-Token'] = 'foo'
+</pre>
+<p>
+end
+</p>
+<p>
+# makes the GET request with the custom X-Token header Project.find(:all)
+</p>
+</li>
+<li>Added find-by-path options to ActiveResource::Base.find [David Heinemeier
+Hansson]. Examples:
+
+<pre>
+  employees = Person.find(:all, :from =&gt; &quot;/companies/1/people.xml&quot;) # =&gt; GET /companies/1/people.xml
+  manager   = Person.find(&quot;/companies/1/manager.xml&quot;)               # =&gt; GET /companies/1/manager.xml
+</pre>
+</li>
+<li>Added support for using classes from within a single nested module [David
+Heinemeier Hansson]. Example:
+
+<pre>
+  module Highrise
+    class Note &lt; ActiveResource::Base
+      self.site = &quot;http://37s.sunrise.i:3000&quot;
+    end
+
+    class Comment &lt; ActiveResource::Base
+      self.site = &quot;http://37s.sunrise.i:3000&quot;
+    end
+  end
+</pre>
+<p>
+assert_kind_of Highrise::Comment, Note.find(1).comments.first
+</p>
+</li>
+<li>Added load_attributes_from_response as a way of loading attributes from
+other responses than just create [David Heinemeier Hansson]
+
+<pre>
+  class Highrise::Task &lt; ActiveResource::Base
+    def complete
+      load_attributes_from_response(post(:complete))
+    end
+  end
+</pre>
+<p>
+&#8230;will set &quot;done_at&quot; when complete is called.
+</p>
+</li>
+<li>Added support for calling custom methods 6979 [rwdaigle]
+
+<pre>
+  Person.find(:managers)    # =&gt; GET /people/managers.xml
+  Kase.find(1).post(:close) # =&gt; POST /kases/1/close.xml
+</pre>
+</li>
+<li>Remove explicit prefix_options parameter for
+ActiveResource::Base#initialize. [Rick Olson] <a
+href="../../../../classes/ActiveResource.html">ActiveResource</a> splits
+the prefix_options from it automatically.
+
+</li>
+<li>Allow ActiveResource::Base.delete with custom prefix. [Rick Olson]
+
+</li>
+<li>Add ActiveResource::Base#dup [Rick Olson]
+
+</li>
+<li>Fixed constant warning when fetching the same object multiple times [David
+Heinemeier Hansson]
+
+</li>
+<li>Added that saves which get a body response (and not just a 201) will use
+that response to update themselves [David Heinemeier Hansson]
+
+</li>
+<li>Disregard namespaces from the default element name, so Highrise::Person
+will just try to fetch from &quot;/people&quot;, not
+&quot;/highrise/people&quot; [David Heinemeier Hansson]
+
+</li>
+<li>Allow array and hash query parameters. 7756 [Greg Spurrier]
+
+</li>
+<li>Loading a resource preserves its prefix_options. 7353 [Ryan Daigle]
+
+</li>
+<li>Carry over the convenience of create from ActiveRecord. Closes 7340. [Ryan
+Daigle]
+
+</li>
+<li>Increase <a
+href="../../../../classes/ActiveResource/Base.html">ActiveResource::Base</a>
+test coverage. Closes 7173, 7174 [Rich Collins]
+
+</li>
+<li>Interpret 422 Unprocessable Entity as ResourceInvalid. 7097 [dkubb]
+
+</li>
+<li>Mega documentation patches. 7025, 7069 [rwdaigle]
+
+</li>
+<li>Base.exists?(id, options) and Base#exists? check whether the resource is
+found. 6970 [rwdaigle]
+
+</li>
+<li>Query string support. [untext, Jeremy Kemper]
+
+<pre>
+  # GET /forums/1/topics.xml?sort=created_at
+  Topic.find(:all, :forum_id =&gt; 1, :sort =&gt; 'created_at')
+</pre>
+</li>
+<li>Base#==, eql?, and hash methods. == returns true if its argument is
+identical to self or if it&#8216;s an instance of the same class, is not
+new?, and has the same id. eql? is an alias for ==. hash delegates to id.
+[Jeremy Kemper]
+
+</li>
+<li>Allow subclassed resources to share the site info [Rick Olson, Jeremy
+Kemper]
+
+</li>
+</ul>
+<p>
+d
+</p>
+<pre>
+    class BeastResource &lt; ActiveResource::Base
+      self.site = 'http://beast.caboo.se'
+    end
+
+    class Forum &lt; BeastResource
+      # taken from BeastResource
+      # self.site = 'http://beast.caboo.se'
+    end
+
+    class Topic &lt; BeastResource
+      self.site += '/forums/:forum_id'
+    end
+</pre>
+<ul>
+<li>Fix issues with <a
+href="../../../../classes/ActiveResource.html">ActiveResource</a>
+collection handling. Closes 6291. [bmilekic]
+
+</li>
+<li>Use attr_accessor_with_default to dry up attribute initialization.
+References 6538. [Stuart Halloway]
+
+</li>
+<li>Add basic logging support for logging outgoing requests. [Jamis Buck]
+
+</li>
+<li>Add Base.delete for deleting resources without having to instantiate them
+first. [Jamis Buck]
+
+</li>
+<li>Make save behavior mimic AR::Base#save (true on success, false on failure).
+[Jamis Buck]
+
+</li>
+<li>Add Basic HTTP Authentication to <a
+href="../../../../classes/ActiveResource.html">ActiveResource</a> (closes
+6305). [jonathan]
+
+</li>
+<li>Extracted id_from_response as an entry point for customizing how a created
+resource gets its own ID. By default, it extracts from the Location
+response header.
+
+</li>
+<li>Optimistic locking: raise <a
+href="../../../../classes/ActiveResource/ResourceConflict.html">ActiveResource::ResourceConflict</a>
+on 409 Conflict response. [Jeremy Kemper]
+
+<pre>
+  # Example controller action
+  def update
+    @person.save!
+  rescue ActiveRecord::StaleObjectError
+    render :xml =&gt; @person.reload.to_xml, :status =&gt; '409 Conflict'
+  end
+</pre>
+</li>
+<li>Basic validation support [Rick Olson]
+
+<p>
+Parses the xml response of ActiveRecord::Errors#to_xml with a similar
+interface to <a
+href="../../../../classes/ActiveRecord/Errors.html">ActiveRecord::Errors</a>.
+</p>
+<pre>
+  render :xml =&gt; @person.errors.to_xml, :status =&gt; '400 Validation Error'
+</pre>
+</li>
+<li>Deep hashes are converted into collections of resources. [Jeremy Kemper]
+
+<pre>
+  Person.new :name =&gt; 'Bob',
+             :address =&gt; { :id =&gt; 1, :city =&gt; 'Portland' },
+             :contacts =&gt; [{ :id =&gt; 1 }, { :id =&gt; 2 }]
+</pre>
+<p>
+Looks for Address and Contact resources and creates them if unavailable. So
+clients can fetch a complex resource in a single request if you e.g.
+</p>
+<pre>
+  render :xml =&gt; @person.to_xml(:include =&gt; [:address, :contacts])
+</pre>
+<p>
+in your controller action.
+</p>
+</li>
+<li>Major updates [Rick Olson]
+
+<ul>
+<li>Add full support for find/create/update/destroy
+
+</li>
+<li>Add support for specifying prefixes.
+
+</li>
+<li>Allow overriding of element_name, collection_name, and primary key
+
+</li>
+<li>Provide simpler HTTP mock interface for testing
+
+<p>
+# rails routing code map.resources :posts do |post|
+</p>
+<pre>
+  post.resources :comments
+</pre>
+<p>
+end
+</p>
+<p>
+# ActiveResources class Post &lt; <a
+href="../../../../classes/ActiveResource/Base.html">ActiveResource::Base</a>
+</p>
+<pre>
+  self.site = &quot;http://37s.sunrise.i:3000/&quot;
+</pre>
+<p>
+end
+</p>
+<p>
+class Comment &lt; <a
+href="../../../../classes/ActiveResource/Base.html">ActiveResource::Base</a>
+</p>
+<pre>
+  self.site = &quot;http://37s.sunrise.i:3000/posts/:post_id/&quot;
+</pre>
+<p>
+end
+</p>
+<p>
+@post = Post.find 5 @comments = Comment.find :all, :post_id =&gt; @post.id
+</p>
+<p>
+@comment = Comment.new({:body =&gt; &#8216;hello world&#8217;}, {:post_id
+=&gt; @post.id}) @comment.save
+</p>
+</li>
+</ul>
+</li>
+<li>Base.site= accepts URIs. 200...400 are valid response codes. PUT and POST
+request bodies default to &#8217;&#8217;. [Jeremy Kemper]
+
+</li>
+<li>Initial checkin: object-oriented client for restful HTTP resources which
+follow the <a href="../../../../classes/Rails.html">Rails</a> convention.
+[David Heinemeier Hansson]
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

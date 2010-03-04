@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActiveSupport::CoreExtensions::DateTime::Conversions</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActiveSupport::CoreExtensions::DateTime::Conversions</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions_rb.html">
+                vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Converting datetimes to formatted strings, dates, and times.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001007">formatted_offset</a>&nbsp;&nbsp;
+      <a href="#M001008">readable_inspect</a>&nbsp;&nbsp;
+      <a href="#M001009">to_date</a>&nbsp;&nbsp;
+      <a href="#M001011">to_datetime</a>&nbsp;&nbsp;
+      <a href="#M001013">to_f</a>&nbsp;&nbsp;
+      <a href="#M001006">to_formatted_s</a>&nbsp;&nbsp;
+      <a href="#M001010">to_time</a>&nbsp;&nbsp;
+      <a href="#M001012">xmlschema</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001007" class="method-detail">
+        <a name="M001007"></a>
+
+        <div class="method-heading">
+          <a href="#M001007" class="method-signature">
+          <span class="method-name">formatted_offset</span><span class="method-args">(colon = true, alternate_utc_string = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <tt>utc_offset</tt> as an +HH:MM formatted string. Examples:
+</p>
+<pre>
+  datetime = DateTime.civil(2000, 1, 1, 0, 0, 0, Rational(-6, 24))
+  datetime.formatted_offset         # =&gt; &quot;-06:00&quot;
+  datetime.formatted_offset(false)  # =&gt; &quot;-0600&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001007-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001007-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 58</span>
+58:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">formatted_offset</span>(<span class="ruby-identifier">colon</span> = <span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">alternate_utc_string</span> = <span class="ruby-keyword kw">nil</span>)
+59:           <span class="ruby-identifier">utc?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">alternate_utc_string</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">utc_offset</span>.<span class="ruby-identifier">to_utc_offset_s</span>(<span class="ruby-identifier">colon</span>)
+60:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001008" class="method-detail">
+        <a name="M001008"></a>
+
+        <div class="method-heading">
+          <a href="#M001008" class="method-signature">
+          <span class="method-name">readable_inspect</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Overrides the default inspect method with a human readable one, e.g.,
+&quot;Mon, 21 Feb 2005 14:30:00 +0000&quot;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001008-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001008-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 63</span>
+63:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">readable_inspect</span>
+64:           <span class="ruby-identifier">to_s</span>(<span class="ruby-identifier">:rfc822</span>)
+65:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001009" class="method-detail">
+        <a name="M001009"></a>
+
+        <div class="method-heading">
+          <a href="#M001009" class="method-signature">
+          <span class="method-name">to_date</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts self to a Ruby Date object; time portion is discarded
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001009-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001009-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 68</span>
+68:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_date</span>
+69:           <span class="ruby-operator">::</span><span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">year</span>, <span class="ruby-identifier">month</span>, <span class="ruby-identifier">day</span>)
+70:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001011" class="method-detail">
+        <a name="M001011"></a>
+
+        <div class="method-heading">
+          <a href="#M001011" class="method-signature">
+          <span class="method-name">to_datetime</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+To be able to keep Times, Dates and DateTimes interchangeable on
+conversions
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001011-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001011-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 79</span>
+79:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_datetime</span>
+80:           <span class="ruby-keyword kw">self</span>
+81:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001013" class="method-detail">
+        <a name="M001013"></a>
+
+        <div class="method-heading">
+          <a href="#M001013" class="method-signature">
+          <span class="method-name">to_f</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts self to a floating-point number of seconds since the Unix epoch
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001013-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001013-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 89</span>
+89:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_f</span>
+90:           <span class="ruby-identifier">days_since_unix_epoch</span> = <span class="ruby-keyword kw">self</span> <span class="ruby-operator">-</span> <span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">civil</span>(<span class="ruby-value">1970</span>)
+91:           (<span class="ruby-identifier">days_since_unix_epoch</span> <span class="ruby-operator">*</span> <span class="ruby-value">86_400</span>).<span class="ruby-identifier">to_f</span>
+92:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001006" class="method-detail">
+        <a name="M001006"></a>
+
+        <div class="method-heading">
+          <a href="#M001006" class="method-signature">
+          <span class="method-name">to_formatted_s</span><span class="method-args">(format = :default)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convert to a formatted string. See Time::DATE_FORMATS for predefined
+formats.
+</p>
+<p>
+This method is aliased to <tt>to_s</tt>.
+</p>
+<h3>Examples:</h3>
+<pre>
+  datetime = DateTime.civil(2007, 12, 4, 0, 0, 0, 0)   # =&gt; Tue, 04 Dec 2007 00:00:00 +0000
+
+  datetime.to_formatted_s(:db)            # =&gt; &quot;2007-12-04 00:00:00&quot;
+  datetime.to_s(:db)                      # =&gt; &quot;2007-12-04 00:00:00&quot;
+  datetime.to_s(:number)                  # =&gt; &quot;20071204000000&quot;
+  datetime.to_formatted_s(:short)         # =&gt; &quot;04 Dec 00:00&quot;
+  datetime.to_formatted_s(:long)          # =&gt; &quot;December 04, 2007 00:00&quot;
+  datetime.to_formatted_s(:long_ordinal)  # =&gt; &quot;December 4th, 2007 00:00&quot;
+  datetime.to_formatted_s(:rfc822)        # =&gt; &quot;Tue, 04 Dec 2007 00:00:00 +0000&quot;
+</pre>
+<h2>Adding your own datetime formats to <a href="Conversions.html#M001006">to_formatted_s</a></h2>
+<p>
+DateTime formats are shared with Time. You can add your own to the
+Time::DATE_FORMATS hash. Use the format name as the hash key and either a
+strftime string or Proc instance that takes a time or datetime argument as
+the value.
+</p>
+<pre>
+  # config/initializers/time_formats.rb
+  Time::DATE_FORMATS[:month_and_year] = &quot;%B %Y&quot;
+  Time::DATE_FORMATS[:short_ordinal] = lambda { |time| time.strftime(&quot;%B #{time.day.ordinalize}&quot;) }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001006-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001006-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 48</span>
+48:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_formatted_s</span>(<span class="ruby-identifier">format</span> = <span class="ruby-identifier">:default</span>)
+49:           <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">to_default_s</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">formatter</span> = <span class="ruby-operator">::</span><span class="ruby-constant">Time</span><span class="ruby-operator">::</span><span class="ruby-constant">DATE_FORMATS</span>[<span class="ruby-identifier">format</span>]
+50:           <span class="ruby-identifier">formatter</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:call</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">formatter</span>.<span class="ruby-identifier">call</span>(<span class="ruby-keyword kw">self</span>).<span class="ruby-identifier">to_s</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">strftime</span>(<span class="ruby-identifier">formatter</span>)
+51:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001010" class="method-detail">
+        <a name="M001010"></a>
+
+        <div class="method-heading">
+          <a href="#M001010" class="method-signature">
+          <span class="method-name">to_time</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Attempts to convert self to a Ruby Time object; returns self if out of
+range of Ruby Time class If self has an offset other than 0, self will just
+be returned unaltered, since there&#8216;s no clean way to map it to a Time
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001010-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001010-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 74</span>
+74:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_time</span>
+75:           <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">offset</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-operator">::</span><span class="ruby-constant">Time</span>.<span class="ruby-identifier">utc_time</span>(<span class="ruby-identifier">year</span>, <span class="ruby-identifier">month</span>, <span class="ruby-identifier">day</span>, <span class="ruby-identifier">hour</span>, <span class="ruby-identifier">min</span>, <span class="ruby-identifier">sec</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword kw">self</span>
+76:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001012" class="method-detail">
+        <a name="M001012"></a>
+
+        <div class="method-heading">
+          <a href="#M001012" class="method-signature">
+          <span class="method-name">xmlschema</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts datetime to an appropriate format for use in XML
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001012-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001012-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/date_time/conversions.rb, line 84</span>
+84:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">xmlschema</span>
+85:           <span class="ruby-identifier">strftime</span>(<span class="ruby-value str">&quot;%Y-%m-%dT%H:%M:%S%Z&quot;</span>)
+86:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

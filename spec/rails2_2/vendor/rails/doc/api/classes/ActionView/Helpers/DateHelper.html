@@ -1,0 +1,1063 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionView::Helpers::DateHelper</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionView::Helpers::DateHelper</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_view/helpers/date_helper_rb.html">
+                vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The Date Helper primarily creates select/option tags for different kinds of
+dates and date elements. All of the select-type methods share a number of
+common options that are as follows:
+</p>
+<ul>
+<li><tt>:prefix</tt> - overwrites the default prefix of &quot;date&quot; used
+for the select names. So specifying &quot;birthday&quot;
+
+</li>
+</ul>
+<p>
+would give birthday[month] instead of date[month] if passed to the <a
+href="DateHelper.html#M001488">select_month</a> method.
+</p>
+<ul>
+<li><tt>:include_blank</tt> - set to true if it should be possible to set an
+empty date.
+
+</li>
+<li><tt>:discard_type</tt> - set to true if you want to discard the type part
+of the select name. If set to true, the <a
+href="DateHelper.html#M001488">select_month</a> method would use simply
+&quot;date&quot; (which can be overwritten using <tt>:prefix</tt>) instead
+of &quot;date[month]&quot;.
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001478">date_select</a>&nbsp;&nbsp;
+      <a href="#M001480">datetime_select</a>&nbsp;&nbsp;
+      <a href="#M001475">distance_of_time_in_words</a>&nbsp;&nbsp;
+      <a href="#M001477">distance_of_time_in_words_to_now</a>&nbsp;&nbsp;
+      <a href="#M001482">select_date</a>&nbsp;&nbsp;
+      <a href="#M001481">select_datetime</a>&nbsp;&nbsp;
+      <a href="#M001487">select_day</a>&nbsp;&nbsp;
+      <a href="#M001486">select_hour</a>&nbsp;&nbsp;
+      <a href="#M001485">select_minute</a>&nbsp;&nbsp;
+      <a href="#M001488">select_month</a>&nbsp;&nbsp;
+      <a href="#M001484">select_second</a>&nbsp;&nbsp;
+      <a href="#M001483">select_time</a>&nbsp;&nbsp;
+      <a href="#M001489">select_year</a>&nbsp;&nbsp;
+      <a href="#M001476">time_ago_in_words</a>&nbsp;&nbsp;
+      <a href="#M001479">time_select</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001478" class="method-detail">
+        <a name="M001478"></a>
+
+        <div class="method-heading">
+          <a href="#M001478" class="method-signature">
+          <span class="method-name">date_select</span><span class="method-args">(object_name, method, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a set of select tags (one for year, month, and day) pre-selected
+for accessing a specified date-based attribute (identified by
+<tt>method</tt>) on an object assigned to the template (identified by
+<tt>object</tt>). You can the output in the <tt>options</tt> hash.
+</p>
+<h4>Options</h4>
+<ul>
+<li><tt>:use_month_numbers</tt> - Set to true if you want to use month numbers
+rather than month names (e.g.
+
+<pre>
+ &quot;2&quot; instead of &quot;February&quot;).
+</pre>
+</li>
+<li><tt>:use_short_month</tt> - Set to true if you want to use the abbreviated
+month name instead of the full name (e.g. &quot;Feb&quot; instead of
+&quot;February&quot;).
+
+</li>
+<li><tt>:add_month_number</tt> - Set to true if you want to show both, the
+month&#8216;s number and name (e.g. &quot;2 - February&quot; instead of
+&quot;February&quot;).
+
+</li>
+<li><tt>:use_month_names</tt> - Set to an array with 12 month names if you want
+to customize month names. Note: You can also use <a
+href="../../Rails.html">Rails</a>&#8217; new i18n functionality for this.
+
+</li>
+<li><tt>:date_separator</tt> - Specifies a string to separate the date fields.
+Default is &quot;&quot; (i.e. nothing).
+
+</li>
+<li><tt>:start_year</tt> - Set the start year for the year select. Default is
+<tt>Time.now.year - 5</tt>.
+
+</li>
+<li><tt>:end_year</tt> - Set the end year for the year select. Default is
+<tt>Time.now.year + 5</tt>.
+
+</li>
+<li><tt>:discard_day</tt> - Set to true if you don&#8216;t want to show a day
+select. This includes the day as a hidden field instead of showing a select
+field. Also note that this implicitly sets the day to be the first of the
+given month in order to not create invalid dates like 31 February.
+
+</li>
+<li><tt>:discard_month</tt> - Set to true if you don&#8216;t want to show a
+month select. This includes the month as a hidden field instead of showing
+a select field. Also note that this implicitly sets :discard_day to true.
+
+</li>
+<li><tt>:discard_year</tt> - Set to true if you don&#8216;t want to show a year
+select. This includes the year as a hidden field instead of showing a
+select field.
+
+</li>
+<li><tt>:order</tt> - Set to an array containing <tt>:day</tt>, <tt>:month</tt>
+and <tt>:year</tt> do customize the order in which the select fields are
+shown. If you leave out any of the symbols, the respective select will not
+be shown (like when you set <tt>:discard_xxx =&gt; true</tt>. Defaults to
+the order defined in the respective locale (e.g. [:year, :month, :day] in
+the en locale that ships with <a href="../../Rails.html">Rails</a>).
+
+</li>
+<li><tt>:include_blank</tt> - Include a blank option in every select field so
+it&#8216;s possible to set empty dates.
+
+</li>
+<li><tt>:default</tt> - Set a default date if the affected date isn&#8216;t set
+or is nil.
+
+</li>
+<li><tt>:disabled</tt> - Set to true if you want show the select fields as
+disabled.
+
+</li>
+</ul>
+<p>
+If anything is passed in the <tt>html_options</tt> hash it will be applied
+to every select tag in the set.
+</p>
+<p>
+NOTE: Discarded selects will default to 1. So if no month select is
+available, January will be assumed.
+</p>
+<h4>Examples</h4>
+<pre>
+  # Generates a date select that when POSTed is stored in the post variable, in the written_on attribute
+  date_select(&quot;post&quot;, &quot;written_on&quot;)
+
+  # Generates a date select that when POSTed is stored in the post variable, in the written_on attribute,
+  # with the year in the year drop down box starting at 1995.
+  date_select(&quot;post&quot;, &quot;written_on&quot;, :start_year =&gt; 1995)
+
+  # Generates a date select that when POSTed is stored in the post variable, in the written_on attribute,
+  # with the year in the year drop down box starting at 1995, numbers used for months instead of words,
+  # and without a day select box.
+  date_select(&quot;post&quot;, &quot;written_on&quot;, :start_year =&gt; 1995, :use_month_numbers =&gt; true,
+                                    :discard_day =&gt; true, :include_blank =&gt; true)
+
+  # Generates a date select that when POSTed is stored in the post variable, in the written_on attribute
+  # with the fields ordered as day, month, year rather than month, day, year.
+  date_select(&quot;post&quot;, &quot;written_on&quot;, :order =&gt; [:day, :month, :year])
+
+  # Generates a date select that when POSTed is stored in the user variable, in the birthday attribute
+  # lacking a year field.
+  date_select(&quot;user&quot;, &quot;birthday&quot;, :order =&gt; [:month, :day])
+
+  # Generates a date select that when POSTed is stored in the user variable, in the birthday attribute
+  # which is initially set to the date 3 days from the current date
+  date_select(&quot;post&quot;, &quot;written_on&quot;, :default =&gt; 3.days.from_now)
+
+  # Generates a date select that when POSTed is stored in the credit_card variable, in the bill_due attribute
+  # that will have a default day of 20.
+  date_select(&quot;credit_card&quot;, &quot;bill_due&quot;, :default =&gt; { :day =&gt; 20 })
+</pre>
+<p>
+The selects are prepared for multi-parameter assignment to an Active Record
+object.
+</p>
+<p>
+Note: If the day is not included as an option but the month is, the day
+will be set to the 1st to ensure that all month choices are valid.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001478-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001478-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 178</span>
+178:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">date_select</span>(<span class="ruby-identifier">object_name</span>, <span class="ruby-identifier">method</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+179:         <span class="ruby-constant">InstanceTag</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">object_name</span>, <span class="ruby-identifier">method</span>, <span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:object</span>)).<span class="ruby-identifier">to_date_select_tag</span>(<span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>)
+180:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001480" class="method-detail">
+        <a name="M001480"></a>
+
+        <div class="method-heading">
+          <a href="#M001480" class="method-signature">
+          <span class="method-name">datetime_select</span><span class="method-args">(object_name, method, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a set of select tags (one for year, month, day, hour, and minute)
+pre-selected for accessing a specified datetime-based attribute (identified
+by <tt>method</tt>) on an object assigned to the template (identified by
+<tt>object</tt>). Examples:
+</p>
+<p>
+If anything is passed in the html_options hash it will be applied to every
+select tag in the set.
+</p>
+<h4>Examples</h4>
+<pre>
+  # Generates a datetime select that, when POSTed, will be stored in the post variable in the written_on
+  # attribute
+  datetime_select(&quot;post&quot;, &quot;written_on&quot;)
+
+  # Generates a datetime select with a year select that starts at 1995 that, when POSTed, will be stored in the
+  # post variable in the written_on attribute.
+  datetime_select(&quot;post&quot;, &quot;written_on&quot;, :start_year =&gt; 1995)
+
+  # Generates a datetime select with a default value of 3 days from the current time that, when POSTed, will
+  # be stored in the trip variable in the departing attribute.
+  datetime_select(&quot;trip&quot;, &quot;departing&quot;, :default =&gt; 3.days.from_now)
+
+  # Generates a datetime select that discards the type that, when POSTed, will be stored in the post variable
+  # as the written_on attribute.
+  datetime_select(&quot;post&quot;, &quot;written_on&quot;, :discard_type =&gt; true)
+</pre>
+<p>
+The selects are prepared for multi-parameter assignment to an Active Record
+object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001480-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001480-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 245</span>
+245:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">datetime_select</span>(<span class="ruby-identifier">object_name</span>, <span class="ruby-identifier">method</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+246:         <span class="ruby-constant">InstanceTag</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">object_name</span>, <span class="ruby-identifier">method</span>, <span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:object</span>)).<span class="ruby-identifier">to_datetime_select_tag</span>(<span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>)
+247:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001475" class="method-detail">
+        <a name="M001475"></a>
+
+        <div class="method-heading">
+          <a href="#M001475" class="method-signature">
+          <span class="method-name">distance_of_time_in_words</span><span class="method-args">(from_time, to_time = 0, include_seconds = false, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reports the approximate distance in time between two Time or Date objects
+or integers as seconds. Set <tt>include_seconds</tt> to true if you want
+more detailed approximations when distance &lt; 1 min, 29 secs Distances
+are reported based on the following table:
+</p>
+<pre>
+  0 &lt;-&gt; 29 secs                                                             # =&gt; less than a minute
+  30 secs &lt;-&gt; 1 min, 29 secs                                                # =&gt; 1 minute
+  1 min, 30 secs &lt;-&gt; 44 mins, 29 secs                                       # =&gt; [2..44] minutes
+  44 mins, 30 secs &lt;-&gt; 89 mins, 29 secs                                     # =&gt; about 1 hour
+  89 mins, 29 secs &lt;-&gt; 23 hrs, 59 mins, 29 secs                             # =&gt; about [2..24] hours
+  23 hrs, 59 mins, 29 secs &lt;-&gt; 47 hrs, 59 mins, 29 secs                     # =&gt; 1 day
+  47 hrs, 59 mins, 29 secs &lt;-&gt; 29 days, 23 hrs, 59 mins, 29 secs            # =&gt; [2..29] days
+  29 days, 23 hrs, 59 mins, 30 secs &lt;-&gt; 59 days, 23 hrs, 59 mins, 29 secs   # =&gt; about 1 month
+  59 days, 23 hrs, 59 mins, 30 secs &lt;-&gt; 1 yr minus 1 sec                    # =&gt; [2..12] months
+  1 yr &lt;-&gt; 2 yrs minus 1 secs                                               # =&gt; about 1 year
+  2 yrs &lt;-&gt; max time or date                                                # =&gt; over [2..X] years
+</pre>
+<p>
+With <tt>include_seconds</tt> = true and the difference &lt; 1 minute 29
+seconds:
+</p>
+<pre>
+  0-4   secs      # =&gt; less than 5 seconds
+  5-9   secs      # =&gt; less than 10 seconds
+  10-19 secs      # =&gt; less than 20 seconds
+  20-39 secs      # =&gt; half a minute
+  40-59 secs      # =&gt; less than a minute
+  60-89 secs      # =&gt; 1 minute
+</pre>
+<h4>Examples</h4>
+<pre>
+  from_time = Time.now
+  distance_of_time_in_words(from_time, from_time + 50.minutes)        # =&gt; about 1 hour
+  distance_of_time_in_words(from_time, 50.minutes.from_now)           # =&gt; about 1 hour
+  distance_of_time_in_words(from_time, from_time + 15.seconds)        # =&gt; less than a minute
+  distance_of_time_in_words(from_time, from_time + 15.seconds, true)  # =&gt; less than 20 seconds
+  distance_of_time_in_words(from_time, 3.years.from_now)              # =&gt; over 3 years
+  distance_of_time_in_words(from_time, from_time + 60.hours)          # =&gt; about 3 days
+  distance_of_time_in_words(from_time, from_time + 45.seconds, true)  # =&gt; less than a minute
+  distance_of_time_in_words(from_time, from_time - 45.seconds, true)  # =&gt; less than a minute
+  distance_of_time_in_words(from_time, 76.seconds.from_now)           # =&gt; 1 minute
+  distance_of_time_in_words(from_time, from_time + 1.year + 3.days)   # =&gt; about 1 year
+  distance_of_time_in_words(from_time, from_time + 4.years + 9.days + 30.minutes + 5.seconds) # =&gt; over 4 years
+
+  to_time = Time.now + 6.years + 19.days
+  distance_of_time_in_words(from_time, to_time, true)     # =&gt; over 6 years
+  distance_of_time_in_words(to_time, from_time, true)     # =&gt; over 6 years
+  distance_of_time_in_words(Time.now, Time.now)           # =&gt; less than a minute
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001475-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001475-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 59</span>
+59:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">distance_of_time_in_words</span>(<span class="ruby-identifier">from_time</span>, <span class="ruby-identifier">to_time</span> = <span class="ruby-value">0</span>, <span class="ruby-identifier">include_seconds</span> = <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">options</span> = {})
+60:         <span class="ruby-identifier">from_time</span> = <span class="ruby-identifier">from_time</span>.<span class="ruby-identifier">to_time</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">from_time</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:to_time</span>)
+61:         <span class="ruby-identifier">to_time</span> = <span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">to_time</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:to_time</span>)
+62:         <span class="ruby-identifier">distance_in_minutes</span> = (((<span class="ruby-identifier">to_time</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">from_time</span>).<span class="ruby-identifier">abs</span>)<span class="ruby-operator">/</span><span class="ruby-value">60</span>).<span class="ruby-identifier">round</span>
+63:         <span class="ruby-identifier">distance_in_seconds</span> = ((<span class="ruby-identifier">to_time</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">from_time</span>).<span class="ruby-identifier">abs</span>).<span class="ruby-identifier">round</span>
+64: 
+65:         <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">with_options</span> <span class="ruby-identifier">:locale</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:locale</span>], <span class="ruby-identifier">:scope</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'datetime.distance_in_words'</span><span class="ruby-value str">'datetime.distance_in_words'</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">locale</span><span class="ruby-operator">|</span>
+66:           <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">distance_in_minutes</span>
+67:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>
+68:               <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">distance_in_minutes</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span>
+69:                      <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">:less_than_x_minutes</span>, <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>) <span class="ruby-operator">:</span>
+70:                      <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span>(<span class="ruby-identifier">:x_minutes</span>, <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">distance_in_minutes</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">include_seconds</span>
+71: 
+72:               <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">distance_in_seconds</span>
+73:                 <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">4</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:less_than_x_seconds</span>, <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">5</span>
+74:                 <span class="ruby-keyword kw">when</span> <span class="ruby-value">5</span><span class="ruby-operator">..</span><span class="ruby-value">9</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:less_than_x_seconds</span>, <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">10</span>
+75:                 <span class="ruby-keyword kw">when</span> <span class="ruby-value">10</span><span class="ruby-operator">..</span><span class="ruby-value">19</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:less_than_x_seconds</span>, <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">20</span>
+76:                 <span class="ruby-keyword kw">when</span> <span class="ruby-value">20</span><span class="ruby-operator">..</span><span class="ruby-value">39</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:half_a_minute</span>
+77:                 <span class="ruby-keyword kw">when</span> <span class="ruby-value">40</span><span class="ruby-operator">..</span><span class="ruby-value">59</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:less_than_x_minutes</span>, <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+78:                 <span class="ruby-keyword kw">else</span>             <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:x_minutes</span>,           <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+79:               <span class="ruby-keyword kw">end</span>
+80: 
+81:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span><span class="ruby-operator">..</span><span class="ruby-value">44</span>           <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:x_minutes</span>,      <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">distance_in_minutes</span>
+82:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">45</span><span class="ruby-operator">..</span><span class="ruby-value">89</span>          <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:about_x_hours</span>,  <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+83:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">90</span><span class="ruby-operator">..</span><span class="ruby-value">1439</span>        <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:about_x_hours</span>,  <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> (<span class="ruby-identifier">distance_in_minutes</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-value">60.0</span>).<span class="ruby-identifier">round</span>
+84:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">1440</span><span class="ruby-operator">..</span><span class="ruby-value">2879</span>      <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:x_days</span>,         <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+85:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">2880</span><span class="ruby-operator">..</span><span class="ruby-value">43199</span>     <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:x_days</span>,         <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> (<span class="ruby-identifier">distance_in_minutes</span> <span class="ruby-operator">/</span> <span class="ruby-value">1440</span>).<span class="ruby-identifier">round</span>
+86:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">43200</span><span class="ruby-operator">..</span><span class="ruby-value">86399</span>    <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:about_x_months</span>, <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+87:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">86400</span><span class="ruby-operator">..</span><span class="ruby-value">525599</span>   <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:x_months</span>,       <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> (<span class="ruby-identifier">distance_in_minutes</span> <span class="ruby-operator">/</span> <span class="ruby-value">43200</span>).<span class="ruby-identifier">round</span>
+88:             <span class="ruby-keyword kw">when</span> <span class="ruby-value">525600</span><span class="ruby-operator">..</span><span class="ruby-value">1051199</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:about_x_years</span>,  <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+89:             <span class="ruby-keyword kw">else</span>                      <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">t</span> <span class="ruby-identifier">:over_x_years</span>,   <span class="ruby-identifier">:count</span> =<span class="ruby-operator">&gt;</span> (<span class="ruby-identifier">distance_in_minutes</span> <span class="ruby-operator">/</span> <span class="ruby-value">525600</span>).<span class="ruby-identifier">round</span>
+90:           <span class="ruby-keyword kw">end</span>
+91:         <span class="ruby-keyword kw">end</span>
+92:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001477" class="method-detail">
+        <a name="M001477"></a>
+
+        <div class="method-heading">
+          <span class="method-name">distance_of_time_in_words_to_now</span><span class="method-args">(from_time, include_seconds = false)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="DateHelper.html#M001476">time_ago_in_words</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001482" class="method-detail">
+        <a name="M001482"></a>
+
+        <div class="method-heading">
+          <a href="#M001482" class="method-signature">
+          <span class="method-name">select_date</span><span class="method-args">(date = Date.current, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a set of html select-tags (one for year, month, and day)
+pre-selected with the <tt>date</tt>. It&#8216;s possible to explicitly set
+the order of the tags using the <tt>:order</tt> option with an array of
+symbols <tt>:year</tt>, <tt>:month</tt> and <tt>:day</tt> in the desired
+order. If you do not supply a Symbol, it will be appended onto the
+<tt>:order</tt> passed in.
+</p>
+<p>
+If anything is passed in the html_options hash it will be applied to every
+select tag in the set.
+</p>
+<h4>Examples</h4>
+<pre>
+  my_date = Time.today + 6.days
+
+  # Generates a date select that defaults to the date in my_date (six days after today)
+  select_date(my_date)
+
+  # Generates a date select that defaults to today (no specified date)
+  select_date()
+
+  # Generates a date select that defaults to the date in my_date (six days after today)
+  # with the fields ordered year, month, day rather than month, day, year.
+  select_date(my_date, :order =&gt; [:year, :month, :day])
+
+  # Generates a date select that discards the type of the field and defaults to the date in
+  # my_date (six days after today)
+  select_date(my_date, :discard_type =&gt; true)
+
+  # Generates a date select that defaults to the date in my_date,
+  # which has fields separated by '/'
+  select_date(my_date, :date_separator =&gt; '/')
+
+  # Generates a date select that defaults to the datetime in my_date (six days after today)
+  # prefixed with 'payday' rather than 'date'
+  select_date(my_date, :prefix =&gt; 'payday')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001482-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001482-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 324</span>
+324:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_date</span>(<span class="ruby-identifier">date</span> = <span class="ruby-constant">Date</span>.<span class="ruby-identifier">current</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+325:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">date</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_date</span>
+326:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001481" class="method-detail">
+        <a name="M001481"></a>
+
+        <div class="method-heading">
+          <a href="#M001481" class="method-signature">
+          <span class="method-name">select_datetime</span><span class="method-args">(datetime = Time.current, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a set of html select-tags (one for year, month, day, hour, and
+minute) pre-selected with the <tt>datetime</tt>. It&#8216;s also possible
+to explicitly set the order of the tags using the <tt>:order</tt> option
+with an array of symbols <tt>:year</tt>, <tt>:month</tt> and <tt>:day</tt>
+in the desired order. If you do not supply a Symbol, it will be appended
+onto the <tt>:order</tt> passed in. You can also add
+<tt>:date_separator</tt>, <tt>:datetime_separator</tt> and
+<tt>:time_separator</tt> keys to the <tt>options</tt> to control visual
+display of the elements.
+</p>
+<p>
+If anything is passed in the html_options hash it will be applied to every
+select tag in the set.
+</p>
+<h4>Examples</h4>
+<pre>
+  my_date_time = Time.now + 4.days
+
+  # Generates a datetime select that defaults to the datetime in my_date_time (four days after today)
+  select_datetime(my_date_time)
+
+  # Generates a datetime select that defaults to today (no specified datetime)
+  select_datetime()
+
+  # Generates a datetime select that defaults to the datetime in my_date_time (four days after today)
+  # with the fields ordered year, month, day rather than month, day, year.
+  select_datetime(my_date_time, :order =&gt; [:year, :month, :day])
+
+  # Generates a datetime select that defaults to the datetime in my_date_time (four days after today)
+  # with a '/' between each date field.
+  select_datetime(my_date_time, :date_separator =&gt; '/')
+
+  # Generates a datetime select that defaults to the datetime in my_date_time (four days after today)
+  # with a date fields separated by '/', time fields separated by '' and the date and time fields
+  # separated by a comma (',').
+  select_datetime(my_date_time, :date_separator =&gt; '/', :time_separator =&gt; '', :datetime_separator =&gt; ',')
+
+  # Generates a datetime select that discards the type of the field and defaults to the datetime in
+  # my_date_time (four days after today)
+  select_datetime(my_date_time, :discard_type =&gt; true)
+
+  # Generates a datetime select that defaults to the datetime in my_date_time (four days after today)
+  # prefixed with 'payday' rather than 'date'
+  select_datetime(my_date_time, :prefix =&gt; 'payday')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001481-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001481-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 288</span>
+288:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_datetime</span>(<span class="ruby-identifier">datetime</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+289:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_datetime</span>
+290:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001487" class="method-detail">
+        <a name="M001487"></a>
+
+        <div class="method-heading">
+          <a href="#M001487" class="method-signature">
+          <span class="method-name">select_day</span><span class="method-args">(date, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a select tag with options for each of the days 1 through 31 with
+the current day selected. The <tt>date</tt> can also be substituted for a
+hour number. Override the field name using the <tt>:field_name</tt> option,
+&#8216;day&#8217; by default.
+</p>
+<h4>Examples</h4>
+<pre>
+  my_date = Time.today + 2.days
+
+  # Generates a select field for days that defaults to the day for the date in my_date
+  select_day(my_time)
+
+  # Generates a select field for days that defaults to the number given
+  select_day(5)
+
+  # Generates a select field for days that defaults to the day for the date in my_date
+  # that is named 'due' rather than 'day'
+  select_day(my_time, :field_name =&gt; 'due')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001487-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001487-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 440</span>
+440:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_day</span>(<span class="ruby-identifier">date</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+441:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">date</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_day</span>
+442:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001486" class="method-detail">
+        <a name="M001486"></a>
+
+        <div class="method-heading">
+          <a href="#M001486" class="method-signature">
+          <span class="method-name">select_hour</span><span class="method-args">(datetime, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a select tag with options for each of the hours 0 through 23 with
+the current hour selected. The <tt>hour</tt> can also be substituted for a
+hour number. Override the field name using the <tt>:field_name</tt> option,
+&#8216;hour&#8217; by default.
+</p>
+<h4>Examples</h4>
+<pre>
+  my_time = Time.now + 6.hours
+
+  # Generates a select field for hours that defaults to the hour for the time in my_time
+  select_hour(my_time)
+
+  # Generates a select field for hours that defaults to the number given
+  select_hour(13)
+
+  # Generates a select field for hours that defaults to the minutes for the time in my_time
+  # that is named 'stride' rather than 'second'
+  select_hour(my_time, :field_name =&gt; 'stride')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001486-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001486-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 419</span>
+419:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_hour</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+420:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_hour</span>
+421:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001485" class="method-detail">
+        <a name="M001485"></a>
+
+        <div class="method-heading">
+          <a href="#M001485" class="method-signature">
+          <span class="method-name">select_minute</span><span class="method-args">(datetime, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a select tag with options for each of the minutes 0 through 59 with
+the current minute selected. Also can return a select tag with options by
+<tt>minute_step</tt> from 0 through 59 with the 00 minute selected. The
+<tt>minute</tt> can also be substituted for a minute number. Override the
+field name using the <tt>:field_name</tt> option, &#8216;minute&#8217; by
+default.
+</p>
+<h4>Examples</h4>
+<pre>
+  my_time = Time.now + 6.hours
+
+  # Generates a select field for minutes that defaults to the minutes for the time in my_time
+  select_minute(my_time)
+
+  # Generates a select field for minutes that defaults to the number given
+  select_minute(14)
+
+  # Generates a select field for minutes that defaults to the minutes for the time in my_time
+  # that is named 'stride' rather than 'second'
+  select_minute(my_time, :field_name =&gt; 'stride')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001485-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001485-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 398</span>
+398:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_minute</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+399:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_minute</span>
+400:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001488" class="method-detail">
+        <a name="M001488"></a>
+
+        <div class="method-heading">
+          <a href="#M001488" class="method-signature">
+          <span class="method-name">select_month</span><span class="method-args">(date, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a select tag with options for each of the months January through
+December with the current month selected. The month names are presented as
+keys (what&#8216;s shown to the user) and the month numbers (1-12) are used
+as values (what&#8216;s submitted to the server). It&#8216;s also possible
+to use month numbers for the presentation instead of names &#8212; set the
+<tt>:use_month_numbers</tt> key in <tt>options</tt> to true for this to
+happen. If you want both numbers and names, set the
+<tt>:add_month_numbers</tt> key in <tt>options</tt> to true. If you would
+prefer to show month names as abbreviations, set the
+<tt>:use_short_month</tt> key in <tt>options</tt> to true. If you want to
+use your own month names, set the <tt>:use_month_names</tt> key in
+<tt>options</tt> to an array of 12 month names. Override the field name
+using the <tt>:field_name</tt> option, &#8216;month&#8217; by default.
+</p>
+<h4>Examples</h4>
+<pre>
+  # Generates a select field for months that defaults to the current month that
+  # will use keys like &quot;January&quot;, &quot;March&quot;.
+  select_month(Date.today)
+
+  # Generates a select field for months that defaults to the current month that
+  # is named &quot;start&quot; rather than &quot;month&quot;
+  select_month(Date.today, :field_name =&gt; 'start')
+
+  # Generates a select field for months that defaults to the current month that
+  # will use keys like &quot;1&quot;, &quot;3&quot;.
+  select_month(Date.today, :use_month_numbers =&gt; true)
+
+  # Generates a select field for months that defaults to the current month that
+  # will use keys like &quot;1 - January&quot;, &quot;3 - March&quot;.
+  select_month(Date.today, :add_month_numbers =&gt; true)
+
+  # Generates a select field for months that defaults to the current month that
+  # will use keys like &quot;Jan&quot;, &quot;Mar&quot;.
+  select_month(Date.today, :use_short_month =&gt; true)
+
+  # Generates a select field for months that defaults to the current month that
+  # will use keys like &quot;Januar&quot;, &quot;Marts.&quot;
+  select_month(Date.today, :use_month_names =&gt; %w(Januar Februar Marts ...))
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001488-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001488-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 478</span>
+478:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_month</span>(<span class="ruby-identifier">date</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+479:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">date</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_month</span>
+480:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001484" class="method-detail">
+        <a name="M001484"></a>
+
+        <div class="method-heading">
+          <a href="#M001484" class="method-signature">
+          <span class="method-name">select_second</span><span class="method-args">(datetime, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a select tag with options for each of the seconds 0 through 59 with
+the current second selected. The <tt>second</tt> can also be substituted
+for a second number. Override the field name using the <tt>:field_name</tt>
+option, &#8216;second&#8217; by default.
+</p>
+<h4>Examples</h4>
+<pre>
+  my_time = Time.now + 16.minutes
+
+  # Generates a select field for seconds that defaults to the seconds for the time in my_time
+  select_second(my_time)
+
+  # Generates a select field for seconds that defaults to the number given
+  select_second(33)
+
+  # Generates a select field for seconds that defaults to the seconds for the time in my_time
+  # that is named 'interval' rather than 'second'
+  select_second(my_time, :field_name =&gt; 'interval')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001484-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001484-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 376</span>
+376:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_second</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+377:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_second</span>
+378:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001483" class="method-detail">
+        <a name="M001483"></a>
+
+        <div class="method-heading">
+          <a href="#M001483" class="method-signature">
+          <span class="method-name">select_time</span><span class="method-args">(datetime = Time.current, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a set of html select-tags (one for hour and minute) You can set
+<tt>:time_separator</tt> key to format the output, and the
+<tt>:include_seconds</tt> option to include an input for seconds.
+</p>
+<p>
+If anything is passed in the html_options hash it will be applied to every
+select tag in the set.
+</p>
+<h4>Examples</h4>
+<pre>
+  my_time = Time.now + 5.days + 7.hours + 3.minutes + 14.seconds
+
+  # Generates a time select that defaults to the time in my_time
+  select_time(my_time)
+
+  # Generates a time select that defaults to the current time (no specified time)
+  select_time()
+
+  # Generates a time select that defaults to the time in my_time,
+  # which has fields separated by ':'
+  select_time(my_time, :time_separator =&gt; ':')
+
+  # Generates a time select that defaults to the time in my_time,
+  # that also includes an input for seconds
+  select_time(my_time, :include_seconds =&gt; true)
+
+  # Generates a time select that defaults to the time in my_time, that has fields
+  # separated by ':' and includes an input for seconds
+  select_time(my_time, :time_separator =&gt; ':', :include_seconds =&gt; true)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001483-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001483-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 355</span>
+355:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_time</span>(<span class="ruby-identifier">datetime</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">current</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+356:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">datetime</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_time</span>
+357:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001489" class="method-detail">
+        <a name="M001489"></a>
+
+        <div class="method-heading">
+          <a href="#M001489" class="method-signature">
+          <span class="method-name">select_year</span><span class="method-args">(date, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a select tag with options for each of the five years on each side
+of the current, which is selected. The five year radius can be changed
+using the <tt>:start_year</tt> and <tt>:end_year</tt> keys in the
+<tt>options</tt>. Both ascending and descending year lists are supported by
+making <tt>:start_year</tt> less than or greater than <tt>:end_year</tt>.
+The <tt>date</tt> can also be substituted for a year given as a number.
+Override the field name using the <tt>:field_name</tt> option,
+&#8216;year&#8217; by default.
+</p>
+<h4>Examples</h4>
+<pre>
+  # Generates a select field for years that defaults to the current year that
+  # has ascending year values
+  select_year(Date.today, :start_year =&gt; 1992, :end_year =&gt; 2007)
+
+  # Generates a select field for years that defaults to the current year that
+  # is named 'birth' rather than 'year'
+  select_year(Date.today, :field_name =&gt; 'birth')
+
+  # Generates a select field for years that defaults to the current year that
+  # has descending year values
+  select_year(Date.today, :start_year =&gt; 2005, :end_year =&gt; 1900)
+
+  # Generates a select field for years that defaults to the year 2006 that
+  # has ascending year values
+  select_year(2006, :start_year =&gt; 2000, :end_year =&gt; 2010)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001489-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001489-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 505</span>
+505:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_year</span>(<span class="ruby-identifier">date</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+506:         <span class="ruby-constant">DateTimeSelector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">date</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>).<span class="ruby-identifier">select_year</span>
+507:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001476" class="method-detail">
+        <a name="M001476"></a>
+
+        <div class="method-heading">
+          <a href="#M001476" class="method-signature">
+          <span class="method-name">time_ago_in_words</span><span class="method-args">(from_time, include_seconds = false)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Like <a href="DateHelper.html#M001475">distance_of_time_in_words</a>, but
+where <tt>to_time</tt> is fixed to <tt>Time.now</tt>.
+</p>
+<h4>Examples</h4>
+<pre>
+  time_ago_in_words(3.minutes.from_now)       # =&gt; 3 minutes
+  time_ago_in_words(Time.now - 15.hours)      # =&gt; 15 hours
+  time_ago_in_words(Time.now)                 # =&gt; less than a minute
+
+  from_time = Time.now - 3.days - 14.minutes - 25.seconds     # =&gt; 3 days
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001476-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001476-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 102</span>
+102:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">time_ago_in_words</span>(<span class="ruby-identifier">from_time</span>, <span class="ruby-identifier">include_seconds</span> = <span class="ruby-keyword kw">false</span>)
+103:         <span class="ruby-identifier">distance_of_time_in_words</span>(<span class="ruby-identifier">from_time</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>, <span class="ruby-identifier">include_seconds</span>)
+104:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001479" class="method-detail">
+        <a name="M001479"></a>
+
+        <div class="method-heading">
+          <a href="#M001479" class="method-signature">
+          <span class="method-name">time_select</span><span class="method-args">(object_name, method, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a set of select tags (one for hour, minute and optionally second)
+pre-selected for accessing a specified time-based attribute (identified by
+<tt>method</tt>) on an object assigned to the template (identified by
+<tt>object</tt>). You can include the seconds with
+<tt>:include_seconds</tt>.
+</p>
+<p>
+This method will also generate 3 input hidden tags, for the actual year,
+month and day unless the option <tt>:ignore_date</tt> is set to
+<tt>true</tt>.
+</p>
+<p>
+If anything is passed in the html_options hash it will be applied to every
+select tag in the set.
+</p>
+<h4>Examples</h4>
+<pre>
+  # Creates a time select tag that, when POSTed, will be stored in the post variable in the sunrise attribute
+  time_select(&quot;post&quot;, &quot;sunrise&quot;)
+
+  # Creates a time select tag that, when POSTed, will be stored in the order variable in the submitted
+  # attribute
+  time_select(&quot;order&quot;, &quot;submitted&quot;)
+
+  # Creates a time select tag that, when POSTed, will be stored in the mail variable in the sent_at attribute
+  time_select(&quot;mail&quot;, &quot;sent_at&quot;)
+
+  # Creates a time select tag with a seconds field that, when POSTed, will be stored in the post variables in
+  # the sunrise attribute.
+  time_select(&quot;post&quot;, &quot;start_time&quot;, :include_seconds =&gt; true)
+
+  # Creates a time select tag with a seconds field that, when POSTed, will be stored in the entry variables in
+  # the submission_time attribute.
+  time_select(&quot;entry&quot;, &quot;submission_time&quot;, :include_seconds =&gt; true)
+
+  # You can set the :minute_step to 15 which will give you: 00, 15, 30 and 45.
+  time_select 'game', 'game_time', {:minute_step =&gt; 15}
+</pre>
+<p>
+The selects are prepared for multi-parameter assignment to an Active Record
+object.
+</p>
+<p>
+Note: If the day is not included as an option but the month is, the day
+will be set to the 1st to ensure that all month choices are valid.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001479-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001479-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/date_helper.rb, line 217</span>
+217:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">time_select</span>(<span class="ruby-identifier">object_name</span>, <span class="ruby-identifier">method</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+218:         <span class="ruby-constant">InstanceTag</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">object_name</span>, <span class="ruby-identifier">method</span>, <span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:object</span>)).<span class="ruby-identifier">to_time_select_tag</span>(<span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>)
+219:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

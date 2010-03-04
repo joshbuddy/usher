@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: TZInfo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">TZInfo</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/data_timezone_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/data_timezone.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/data_timezone_info_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/data_timezone_info.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Africa/Algiers_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Africa/Algiers.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Africa/Cairo_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Africa/Cairo.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Africa/Casablanca_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Africa/Casablanca.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Africa/Harare_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Africa/Harare.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Africa/Johannesburg_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Africa/Johannesburg.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Africa/Monrovia_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Africa/Monrovia.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Africa/Nairobi_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Africa/Nairobi.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Argentina/Buenos_Aires_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Argentina/Buenos_Aires.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Argentina/San_Juan_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Argentina/San_Juan.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Bogota_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Bogota.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Caracas_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Caracas.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Chicago_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Chicago.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Chihuahua_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Chihuahua.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Denver_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Denver.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Godthab_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Godthab.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Guatemala_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Guatemala.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Halifax_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Halifax.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Indiana/Indianapolis_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Indiana/Indianapolis.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Juneau_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Juneau.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/La_Paz_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/La_Paz.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Lima_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Lima.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Los_Angeles_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Los_Angeles.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Mazatlan_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Mazatlan.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Mexico_City_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Mexico_City.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Monterrey_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Monterrey.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/New_York_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/New_York.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Phoenix_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Phoenix.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Regina_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Regina.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Santiago_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Santiago.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Sao_Paulo_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Sao_Paulo.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/St_Johns_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/St_Johns.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/America/Tijuana_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/America/Tijuana.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Almaty_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Almaty.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Baghdad_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Baghdad.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Baku_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Baku.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Bangkok_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Bangkok.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Chongqing_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Chongqing.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Colombo_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Colombo.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Dhaka_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Dhaka.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Hong_Kong_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Hong_Kong.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Irkutsk_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Irkutsk.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Jakarta_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Jakarta.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Jerusalem_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Jerusalem.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Kabul_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Kabul.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Kamchatka_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Kamchatka.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Karachi_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Karachi.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Katmandu_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Katmandu.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Kolkata_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Kolkata.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Krasnoyarsk_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Krasnoyarsk.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Kuala_Lumpur_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Kuala_Lumpur.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Kuwait_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Kuwait.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Magadan_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Magadan.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Muscat_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Muscat.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Novosibirsk_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Novosibirsk.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Rangoon_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Rangoon.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Riyadh_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Riyadh.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Seoul_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Seoul.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Shanghai_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Shanghai.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Singapore_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Singapore.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Taipei_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Taipei.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Tashkent_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Tashkent.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Tbilisi_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Tbilisi.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Tehran_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Tehran.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Tokyo_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Tokyo.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Ulaanbaatar_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Ulaanbaatar.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Urumqi_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Urumqi.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Vladivostok_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Vladivostok.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Yakutsk_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Yakutsk.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Yekaterinburg_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Yekaterinburg.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Asia/Yerevan_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Asia/Yerevan.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Atlantic/Azores_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Atlantic/Azores.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Atlantic/Cape_Verde_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Atlantic/Cape_Verde.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Atlantic/South_Georgia_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Atlantic/South_Georgia.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Australia/Adelaide_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Australia/Adelaide.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Australia/Brisbane_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Australia/Brisbane.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Australia/Darwin_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Australia/Darwin.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Australia/Hobart_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Australia/Hobart.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Australia/Melbourne_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Australia/Melbourne.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Australia/Perth_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Australia/Perth.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Australia/Sydney_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Australia/Sydney.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Etc/UTC_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Etc/UTC.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Amsterdam_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Amsterdam.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Athens_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Athens.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Belgrade_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Belgrade.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Berlin_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Berlin.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Bratislava_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Bratislava.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Brussels_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Brussels.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Bucharest_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Bucharest.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Budapest_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Budapest.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Copenhagen_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Copenhagen.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Dublin_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Dublin.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Helsinki_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Helsinki.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Istanbul_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Istanbul.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Kiev_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Kiev.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Lisbon_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Lisbon.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Ljubljana_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Ljubljana.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/London_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/London.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Madrid_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Madrid.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Minsk_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Minsk.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Moscow_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Moscow.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Paris_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Paris.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Prague_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Prague.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Riga_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Riga.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Rome_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Rome.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Sarajevo_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Sarajevo.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Skopje_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Skopje.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Sofia_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Sofia.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Stockholm_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Stockholm.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Tallinn_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Tallinn.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Vienna_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Vienna.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Vilnius_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Vilnius.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Warsaw_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Warsaw.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Europe/Zagreb_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Europe/Zagreb.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Auckland_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Auckland.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Fiji_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Fiji.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Guam_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Guam.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Honolulu_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Honolulu.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Majuro_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Majuro.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Midway_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Midway.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Noumea_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Noumea.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Pago_Pago_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Pago_Pago.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Port_Moresby_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Port_Moresby.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/definitions/Pacific/Tongatapu_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/definitions/Pacific/Tongatapu.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/info_timezone_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/info_timezone.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/linked_timezone_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/linked_timezone.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/linked_timezone_info_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/linked_timezone_info.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/offset_rationals_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/offset_rationals.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/ruby_core_support_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/ruby_core_support.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/time_or_datetime_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/time_or_datetime.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/timezone_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/timezone.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/timezone_definition_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/timezone_definition.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/timezone_info_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/timezone_info.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/timezone_offset_info_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/timezone_offset_info.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/timezone_period_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/timezone_period.rb
+                </a>
+        <br />
+                <a href="../files/vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0_3_12/tzinfo/timezone_transition_info_rb.html">
+                vendor/rails/activesupport/lib/active_support/vendor/tzinfo-0.3.12/tzinfo/timezone_transition_info.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="TZInfo/Definitions.html" class="link">TZInfo::Definitions</a><br />
+Class <a href="TZInfo/AmbiguousTime.html" class="link">TZInfo::AmbiguousTime</a><br />
+Class <a href="TZInfo/InvalidTimezoneIdentifier.html" class="link">TZInfo::InvalidTimezoneIdentifier</a><br />
+Class <a href="TZInfo/NoOffsetsDefined.html" class="link">TZInfo::NoOffsetsDefined</a><br />
+Class <a href="TZInfo/PeriodNotFound.html" class="link">TZInfo::PeriodNotFound</a><br />
+Class <a href="TZInfo/Timezone.html" class="link">TZInfo::Timezone</a><br />
+Class <a href="TZInfo/TimezonePeriod.html" class="link">TZInfo::TimezonePeriod</a><br />
+Class <a href="TZInfo/UnknownTimezone.html" class="link">TZInfo::UnknownTimezone</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

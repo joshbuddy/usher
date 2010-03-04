@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ActiveSupport::Testing::Metrics::Time</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ActiveSupport::Testing::Metrics::Time</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/vendor/rails/activesupport/lib/active_support/testing/performance_rb.html">
+                vendor/rails/activesupport/lib/active_support/testing/performance.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="Base.html">
+                Base
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001091">format</a>&nbsp;&nbsp;
+      <a href="#M001090">measure</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001091" class="method-detail">
+        <a name="M001091"></a>
+
+        <div class="method-heading">
+          <a href="#M001091" class="method-signature">
+          <span class="method-name">format</span><span class="method-args">(measurement)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001091-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001091-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/testing/performance.rb, line 291</span>
+291:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">format</span>(<span class="ruby-identifier">measurement</span>)
+292:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">measurement</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">2</span>
+293:               <span class="ruby-value str">'%d ms'</span> <span class="ruby-operator">%</span> (<span class="ruby-identifier">measurement</span> <span class="ruby-operator">*</span> <span class="ruby-value">1000</span>)
+294:             <span class="ruby-keyword kw">else</span>
+295:               <span class="ruby-value str">'%.2f sec'</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">measurement</span>
+296:             <span class="ruby-keyword kw">end</span>
+297:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001090" class="method-detail">
+        <a name="M001090"></a>
+
+        <div class="method-heading">
+          <a href="#M001090" class="method-signature">
+          <span class="method-name">measure</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001090-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001090-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/testing/performance.rb, line 287</span>
+287:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">measure</span>
+288:             <span class="ruby-operator">::</span><span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">to_f</span>
+289:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionController::MimeResponds::InstanceMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionController::MimeResponds::InstanceMethods</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_controller/mime_responds_rb.html">
+                vendor/rails/actionpack/lib/action_controller/mime_responds.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000245">respond_to</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000245" class="method-detail">
+        <a name="M000245"></a>
+
+        <div class="method-heading">
+          <a href="#M000245" class="method-signature">
+          <span class="method-name">respond_to</span><span class="method-args">(*types, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Without web-service support, an action which collects the data for
+displaying a list of people might look something like this:
+</p>
+<pre>
+  def index
+    @people = Person.find(:all)
+  end
+</pre>
+<p>
+Here&#8216;s the same action, with web-service support baked in:
+</p>
+<pre>
+  def index
+    @people = Person.find(:all)
+
+    respond_to do |format|
+      format.html
+      format.xml { render :xml =&gt; @people.to_xml }
+    end
+  end
+</pre>
+<p>
+What that says is, &quot;if the client wants HTML in response to this
+action, just respond as we would have before, but if the client wants XML,
+return them the list of people in XML format.&quot; (<a
+href="../../Rails.html">Rails</a> determines the desired response format
+from the HTTP Accept header submitted by the client.)
+</p>
+<p>
+Supposing you have an action that adds a new person, optionally creating
+their company (by name) if it does not already exist, without web-services,
+it might look like this:
+</p>
+<pre>
+  def create
+    @company = Company.find_or_create_by_name(params[:company][:name])
+    @person  = @company.people.create(params[:person])
+
+    redirect_to(person_list_url)
+  end
+</pre>
+<p>
+Here&#8216;s the same action, with web-service support baked in:
+</p>
+<pre>
+  def create
+    company  = params[:person].delete(:company)
+    @company = Company.find_or_create_by_name(company[:name])
+    @person  = @company.people.create(params[:person])
+
+    respond_to do |format|
+      format.html { redirect_to(person_list_url) }
+      format.js
+      format.xml  { render :xml =&gt; @person.to_xml(:include =&gt; @company) }
+    end
+  end
+</pre>
+<p>
+If the client wants HTML, we just redirect them back to the person list. If
+they want Javascript (format.js), then it is an RJS request and we render
+the RJS template associated with this action. Lastly, if the client wants
+XML, we render the created person as XML, but with a twist: we also include
+the person&#8216;s company in the rendered XML, so you get something like
+this:
+</p>
+<pre>
+  &lt;person&gt;
+    &lt;id&gt;...&lt;/id&gt;
+    ...
+    &lt;company&gt;
+      &lt;id&gt;...&lt;/id&gt;
+      &lt;name&gt;...&lt;/name&gt;
+      ...
+    &lt;/company&gt;
+  &lt;/person&gt;
+</pre>
+<p>
+Note, however, the extra bit at the top of that action:
+</p>
+<pre>
+  company  = params[:person].delete(:company)
+  @company = Company.find_or_create_by_name(company[:name])
+</pre>
+<p>
+This is because the incoming XML document (if a web-service request is in
+process) can only contain a single root-node. So, we have to rearrange
+things so that the request looks like this (url-encoded):
+</p>
+<pre>
+  person[name]=...&amp;person[company][name]=...&amp;...
+</pre>
+<p>
+And, like this (xml-encoded):
+</p>
+<pre>
+  &lt;person&gt;
+    &lt;name&gt;...&lt;/name&gt;
+    &lt;company&gt;
+      &lt;name&gt;...&lt;/name&gt;
+    &lt;/company&gt;
+  &lt;/person&gt;
+</pre>
+<p>
+In other words, we make the request so that it operates on a single
+entity&#8216;s person. Then, in the action, we extract the company data
+from the request, find or create the company, and then create the new
+person with the remaining data.
+</p>
+<p>
+Note that you can define your own XML parameter parser which would allow
+you to describe multiple entities in a single request (i.e., by wrapping
+them all in a single root node), but if you just go with the flow and
+accept <a href="../../Rails.html">Rails</a>&#8217; defaults, life will be
+much easier.
+</p>
+<p>
+If you need to use a MIME type which isn&#8216;t supported by default, you
+can register your own handlers in environment.rb as follows.
+</p>
+<pre>
+  Mime::Type.register &quot;image/jpg&quot;, :jpg
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000245-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000245-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/mime_responds.rb, line 102</span>
+102:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">respond_to</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">types</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+103:         <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;respond_to takes either types or a block, never both&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">types</span>.<span class="ruby-identifier">any?</span> <span class="ruby-operator">^</span> <span class="ruby-identifier">block</span>
+104:         <span class="ruby-identifier">block</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">lambda</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">responder</span><span class="ruby-operator">|</span> <span class="ruby-identifier">types</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">type</span><span class="ruby-operator">|</span> <span class="ruby-identifier">responder</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">type</span>) } }
+105:         <span class="ruby-identifier">responder</span> = <span class="ruby-constant">Responder</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+106:         <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">responder</span>)
+107:         <span class="ruby-identifier">responder</span>.<span class="ruby-identifier">respond</span>
+108:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

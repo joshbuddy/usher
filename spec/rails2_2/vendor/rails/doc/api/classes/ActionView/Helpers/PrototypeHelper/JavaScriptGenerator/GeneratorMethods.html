@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionView::Helpers::PrototypeHelper::JavaScriptGenerator::GeneratorMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionView::Helpers::PrototypeHelper::JavaScriptGenerator::GeneratorMethods</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../../files/vendor/rails/actionpack/lib/action_view/helpers/prototype_helper_rb.html">
+                vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+JavaScriptGenerator generates blocks of JavaScript code that allow you to
+change the content and presentation of multiple DOM elements. Use this in
+your Ajax response bodies, either in a &lt;script&gt; tag or as plain
+JavaScript sent with a Content-type of &quot;text/javascript&quot;.
+</p>
+<p>
+Create new instances with <a
+href="../../PrototypeHelper.html#M001436">PrototypeHelper#update_page</a>
+or with ActionController::Base#render, then <a
+href="GeneratorMethods.html#M001455">call</a> <tt><a
+href="GeneratorMethods.html#M001445">insert_html</a></tt>, <tt><a
+href="GeneratorMethods.html#M001446">replace_html</a></tt>, <tt><a
+href="GeneratorMethods.html#M001448">remove</a></tt>, <tt><a
+href="GeneratorMethods.html#M001449">show</a></tt>, <tt><a
+href="GeneratorMethods.html#M001450">hide</a></tt>, <tt><a
+href="GeneratorMethods.html#M001459">visual_effect</a></tt>, or any other
+of the built-in methods on the yielded generator in any order you like to
+modify the content and appearance of the current page.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  # Generates:
+  #     new Element.insert(&quot;list&quot;, { bottom: &quot;&lt;li&gt;Some item&lt;/li&gt;&quot; });
+  #     new Effect.Highlight(&quot;list&quot;);
+  #     [&quot;status-indicator&quot;, &quot;cancel-link&quot;].each(Element.hide);
+  update_page do |page|
+    page.insert_html :bottom, 'list', &quot;&lt;li&gt;#{@item.name}&lt;/li&gt;&quot;
+    page.visual_effect :highlight, 'list'
+    page.hide 'status-indicator', 'cancel-link'
+  end
+</pre>
+<p>
+Helper methods can be used in conjunction with JavaScriptGenerator. When a
+helper method is called inside an update block on the <tt>page</tt> object,
+that method will also have access to a <tt>page</tt> object.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  module ApplicationHelper
+    def update_time
+      page.replace_html 'time', Time.now.to_s(:db)
+      page.visual_effect :highlight, 'time'
+    end
+  end
+
+  # Controller action
+  def poll
+    render(:update) { |page| page.update_time }
+  end
+</pre>
+<p>
+Calls to JavaScriptGenerator not matching a helper method below generate a
+proxy to the JavaScript Class named by the method called.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  # Generates:
+  #     Foo.init();
+  update_page do |page|
+    page.foo.init
+  end
+
+  # Generates:
+  #     Event.observe('one', 'click', function () {
+  #       $('two').show();
+  #     });
+  update_page do |page|
+    page.event.observe('one', 'click') do |p|
+     p[:two].show
+    end
+  end
+</pre>
+<p>
+You can also use <a
+href="../../PrototypeHelper.html#M001437">PrototypeHelper#update_page_tag</a>
+instead of <a
+href="../../PrototypeHelper.html#M001436">PrototypeHelper#update_page</a>
+to wrap the generated JavaScript in a &lt;script&gt; tag.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001457">&lt;&lt;</a>&nbsp;&nbsp;
+      <a href="#M001442">[]</a>&nbsp;&nbsp;
+      <a href="#M001452">alert</a>&nbsp;&nbsp;
+      <a href="#M001456">assign</a>&nbsp;&nbsp;
+      <a href="#M001455">call</a>&nbsp;&nbsp;
+      <a href="#M001458">delay</a>&nbsp;&nbsp;
+      <a href="#M001461">draggable</a>&nbsp;&nbsp;
+      <a href="#M001462">drop_receiving</a>&nbsp;&nbsp;
+      <a href="#M001450">hide</a>&nbsp;&nbsp;
+      <a href="#M001445">insert_html</a>&nbsp;&nbsp;
+      <a href="#M001443">literal</a>&nbsp;&nbsp;
+      <a href="#M001453">redirect_to</a>&nbsp;&nbsp;
+      <a href="#M001454">reload</a>&nbsp;&nbsp;
+      <a href="#M001448">remove</a>&nbsp;&nbsp;
+      <a href="#M001447">replace</a>&nbsp;&nbsp;
+      <a href="#M001446">replace_html</a>&nbsp;&nbsp;
+      <a href="#M001444">select</a>&nbsp;&nbsp;
+      <a href="#M001449">show</a>&nbsp;&nbsp;
+      <a href="#M001460">sortable</a>&nbsp;&nbsp;
+      <a href="#M001451">toggle</a>&nbsp;&nbsp;
+      <a href="#M001459">visual_effect</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001457" class="method-detail">
+        <a name="M001457"></a>
+
+        <div class="method-heading">
+          <a href="#M001457" class="method-signature">
+          <span class="method-name">&lt;&lt;</span><span class="method-args">(javascript)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Writes raw JavaScript to the page.
+</p>
+<p>
+Example:
+</p>
+<pre>
+ page &lt;&lt; &quot;alert('JavaScript with Prototype.');&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001457-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001457-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 935</span>
+935:           <span class="ruby-keyword kw">def</span> <span class="ruby-operator">&lt;&lt;</span>(<span class="ruby-identifier">javascript</span>)
+936:             <span class="ruby-ivar">@lines</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">javascript</span>
+937:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001442" class="method-detail">
+        <a name="M001442"></a>
+
+        <div class="method-heading">
+          <a href="#M001442" class="method-signature">
+          <span class="method-name">[]</span><span class="method-args">(id)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a element reference by finding it through <tt>id</tt> in the DOM.
+This element can then be used for further method calls. Examples:
+</p>
+<pre>
+  page['blank_slate']                  # =&gt; $('blank_slate');
+  page['blank_slate'].show             # =&gt; $('blank_slate').show();
+  page['blank_slate'].show('first').up # =&gt; $('blank_slate').show('first').up();
+</pre>
+<p>
+You can also pass in a record, which will use
+ActionController::RecordIdentifier.dom_id to lookup the correct id:
+</p>
+<pre>
+  page[@post]     # =&gt; $('post_45')
+  page[Post.new]  # =&gt; $('new_post')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001442-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001442-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 686</span>
+686:           <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">id</span>)
+687:             <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">id</span>
+688:               <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>, <span class="ruby-constant">Symbol</span>, <span class="ruby-constant">NilClass</span>
+689:                 <span class="ruby-constant">JavaScriptElementProxy</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">id</span>)
+690:               <span class="ruby-keyword kw">else</span>
+691:                 <span class="ruby-constant">JavaScriptElementProxy</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">RecordIdentifier</span>.<span class="ruby-identifier">dom_id</span>(<span class="ruby-identifier">id</span>))
+692:             <span class="ruby-keyword kw">end</span>
+693:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001452" class="method-detail">
+        <a name="M001452"></a>
+
+        <div class="method-heading">
+          <a href="#M001452" class="method-signature">
+          <span class="method-name">alert</span><span class="method-args">(message)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Displays an <a href="GeneratorMethods.html#M001452">alert</a> dialog with
+the given <tt>message</tt>.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  # Generates: alert('This message is from Rails!')
+  page.alert('This message is from Rails!')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001452-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001452-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 858</span>
+858:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">alert</span>(<span class="ruby-identifier">message</span>)
+859:             <span class="ruby-identifier">call</span> <span class="ruby-value str">'alert'</span>, <span class="ruby-identifier">message</span>
+860:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001456" class="method-detail">
+        <a name="M001456"></a>
+
+        <div class="method-heading">
+          <a href="#M001456" class="method-signature">
+          <span class="method-name">assign</span><span class="method-args">(variable, value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Assigns the JavaScript <tt>variable</tt> the given <tt>value</tt>.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+ # Generates: my_string = &quot;This is mine!&quot;;
+ page.assign 'my_string', 'This is mine!'
+
+ # Generates: record_count = 33;
+ page.assign 'record_count', 33
+
+ # Generates: tabulated_total = 47
+ page.assign 'tabulated_total', @total_from_cart
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001456-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001456-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 926</span>
+926:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">assign</span>(<span class="ruby-identifier">variable</span>, <span class="ruby-identifier">value</span>)
+927:             <span class="ruby-identifier">record</span> <span class="ruby-node">&quot;#{variable} = #{javascript_object_for(value)}&quot;</span>
+928:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001455" class="method-detail">
+        <a name="M001455"></a>
+
+        <div class="method-heading">
+          <a href="#M001455" class="method-signature">
+          <span class="method-name">call</span><span class="method-args">(function, *arguments, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Calls the JavaScript <tt>function</tt>, optionally with the given
+<tt>arguments</tt>.
+</p>
+<p>
+If a block is given, the block will be passed to a new JavaScriptGenerator;
+the resulting JavaScript code will then be wrapped inside <tt>function() {
+&#8230; }</tt> and passed as the called function&#8216;s final argument.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  # Generates: Element.replace(my_element, &quot;My content to replace with.&quot;)
+  page.call 'Element.replace', 'my_element', &quot;My content to replace with.&quot;
+
+  # Generates: alert('My message!')
+  page.call 'alert', 'My message!'
+
+  # Generates:
+  #     my_method(function() {
+  #       $(&quot;one&quot;).show();
+  #       $(&quot;two&quot;).hide();
+  #    });
+  page.call(:my_method) do |p|
+     p[:one].show
+     p[:two].hide
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001455-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001455-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 909</span>
+909:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">call</span>(<span class="ruby-identifier">function</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">arguments</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+910:             <span class="ruby-identifier">record</span> <span class="ruby-node">&quot;#{function}(#{arguments_for_call(arguments, block)})&quot;</span>
+911:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001458" class="method-detail">
+        <a name="M001458"></a>
+
+        <div class="method-heading">
+          <a href="#M001458" class="method-signature">
+          <span class="method-name">delay</span><span class="method-args">(seconds = 1) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Executes the content of the block after a <a
+href="GeneratorMethods.html#M001458">delay</a> of <tt>seconds</tt>.
+Example:
+</p>
+<pre>
+  # Generates:
+  #     setTimeout(function() {
+  #     ;
+  #     new Effect.Fade(&quot;notice&quot;,{});
+  #     }, 20000);
+  page.delay(20) do
+    page.visual_effect :fade, 'notice'
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001458-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001458-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 949</span>
+949:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delay</span>(<span class="ruby-identifier">seconds</span> = <span class="ruby-value">1</span>)
+950:             <span class="ruby-identifier">record</span> <span class="ruby-value str">&quot;setTimeout(function() {\n\n&quot;</span>
+951:             <span class="ruby-keyword kw">yield</span>
+952:             <span class="ruby-identifier">record</span> <span class="ruby-node">&quot;}, #{(seconds * 1000).to_i})&quot;</span>
+953:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001461" class="method-detail">
+        <a name="M001461"></a>
+
+        <div class="method-heading">
+          <a href="#M001461" class="method-signature">
+          <span class="method-name">draggable</span><span class="method-args">(id, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a script.aculo.us <a
+href="GeneratorMethods.html#M001461">draggable</a> element. See <a
+href="../../ScriptaculousHelper.html">ActionView::Helpers::ScriptaculousHelper</a>
+for more information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001461-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001461-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 971</span>
+971:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">draggable</span>(<span class="ruby-identifier">id</span>, <span class="ruby-identifier">options</span> = {})
+972:             <span class="ruby-identifier">record</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:draggable_element_js</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">options</span>)
+973:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001462" class="method-detail">
+        <a name="M001462"></a>
+
+        <div class="method-heading">
+          <a href="#M001462" class="method-signature">
+          <span class="method-name">drop_receiving</span><span class="method-args">(id, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a script.aculo.us drop receiving element. See <a
+href="../../ScriptaculousHelper.html">ActionView::Helpers::ScriptaculousHelper</a>
+for more information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001462-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001462-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 977</span>
+977:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">drop_receiving</span>(<span class="ruby-identifier">id</span>, <span class="ruby-identifier">options</span> = {})
+978:             <span class="ruby-identifier">record</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:drop_receiving_element_js</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">options</span>)
+979:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001450" class="method-detail">
+        <a name="M001450"></a>
+
+        <div class="method-heading">
+          <a href="#M001450" class="method-signature">
+          <span class="method-name">hide</span><span class="method-args">(*ids)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Hides the visible DOM elements with the given <tt>ids</tt>.
+</p>
+<p>
+Example:
+</p>
+<pre>
+ # Hide a few people
+ # Generates: [&quot;person_29&quot;, &quot;person_9&quot;, &quot;person_0&quot;].each(Element.hide);
+ page.hide 'person_29', 'person_9', 'person_0'
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001450-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001450-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 836</span>
+836:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hide</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ids</span>)
+837:             <span class="ruby-identifier">loop_on_multiple_args</span> <span class="ruby-value str">'Element.hide'</span>, <span class="ruby-identifier">ids</span>
+838:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001445" class="method-detail">
+        <a name="M001445"></a>
+
+        <div class="method-heading">
+          <a href="#M001445" class="method-signature">
+          <span class="method-name">insert_html</span><span class="method-args">(position, id, *options_for_render)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Inserts HTML at the specified <tt>position</tt> relative to the DOM element
+identified by the given <tt>id</tt>.
+</p>
+<p>
+<tt>position</tt> may be one of:
+</p>
+<table>
+<tr><td valign="top"><tt>:top</tt>:</td><td>HTML is inserted inside the element, before the element&#8216;s existing
+content.
+
+</td></tr>
+<tr><td valign="top"><tt>:bottom</tt>:</td><td>HTML is inserted inside the element, after the element&#8216;s existing
+content.
+
+</td></tr>
+<tr><td valign="top"><tt>:before</tt>:</td><td>HTML is inserted immediately preceding the element.
+
+</td></tr>
+<tr><td valign="top"><tt>:after</tt>:</td><td>HTML is inserted immediately following the element.
+
+</td></tr>
+</table>
+<p>
+<tt>options_for_render</tt> may be either a string of HTML to insert, or a
+hash of options to be passed to ActionView::Base#render. For example:
+</p>
+<pre>
+  # Insert the rendered 'navigation' partial just before the DOM
+  # element with ID 'content'.
+  # Generates: Element.insert(&quot;content&quot;, { before: &quot;-- Contents of 'navigation' partial --&quot; });
+  page.insert_html :before, 'content', :partial =&gt; 'navigation'
+
+  # Add a list item to the bottom of the &lt;ul&gt; with ID 'list'.
+  # Generates: Element.insert(&quot;list&quot;, { bottom: &quot;&lt;li&gt;Last item&lt;/li&gt;&quot; });
+  page.insert_html :bottom, 'list', '&lt;li&gt;Last item&lt;/li&gt;'
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001445-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001445-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 751</span>
+751:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">insert_html</span>(<span class="ruby-identifier">position</span>, <span class="ruby-identifier">id</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">options_for_render</span>)
+752:             <span class="ruby-identifier">content</span> = <span class="ruby-identifier">javascript_object_for</span>(<span class="ruby-identifier">render</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">options_for_render</span>))
+753:             <span class="ruby-identifier">record</span> <span class="ruby-node">&quot;Element.insert(\&quot;#{id}\&quot;, { #{position.to_s.downcase}: #{content} });&quot;</span>
+754:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001443" class="method-detail">
+        <a name="M001443"></a>
+
+        <div class="method-heading">
+          <a href="#M001443" class="method-signature">
+          <span class="method-name">literal</span><span class="method-args">(code)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an object whose <tt>to_json</tt> evaluates to <tt>code</tt>. Use
+this to pass a <a href="GeneratorMethods.html#M001443">literal</a>
+JavaScript expression as an argument to another JavaScriptGenerator method.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001443-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001443-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 697</span>
+697:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">literal</span>(<span class="ruby-identifier">code</span>)
+698:             <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">JSON</span><span class="ruby-operator">::</span><span class="ruby-constant">Variable</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">code</span>.<span class="ruby-identifier">to_s</span>)
+699:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001453" class="method-detail">
+        <a name="M001453"></a>
+
+        <div class="method-heading">
+          <a href="#M001453" class="method-signature">
+          <span class="method-name">redirect_to</span><span class="method-args">(location)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Redirects the browser to the given <tt>location</tt> using JavaScript, in
+the same form as <tt>url_for</tt>.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+ # Generates: window.location.href = &quot;/mycontroller&quot;;
+ page.redirect_to(:action =&gt; 'index')
+
+ # Generates: window.location.href = &quot;/account/signup&quot;;
+ page.redirect_to(:controller =&gt; 'account', :action =&gt; 'signup')
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001453-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001453-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 871</span>
+871:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">redirect_to</span>(<span class="ruby-identifier">location</span>)
+872:             <span class="ruby-identifier">url</span> = <span class="ruby-identifier">location</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">location</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">location</span>)
+873:             <span class="ruby-identifier">record</span> <span class="ruby-node">&quot;window.location.href = #{url.inspect}&quot;</span>
+874:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001454" class="method-detail">
+        <a name="M001454"></a>
+
+        <div class="method-heading">
+          <a href="#M001454" class="method-signature">
+          <span class="method-name">reload</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Reloads the browser&#8216;s current <tt>location</tt> using JavaScript
+</p>
+<p>
+Examples:
+</p>
+<pre>
+ # Generates: window.location.reload();
+ page.reload
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001454-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001454-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 882</span>
+882:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reload</span>
+883:             <span class="ruby-identifier">record</span> <span class="ruby-value str">'window.location.reload()'</span>
+884:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001448" class="method-detail">
+        <a name="M001448"></a>
+
+        <div class="method-heading">
+          <a href="#M001448" class="method-signature">
+          <span class="method-name">remove</span><span class="method-args">(*ids)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes the DOM elements with the given <tt>ids</tt> from the page.
+</p>
+<p>
+Example:
+</p>
+<pre>
+ # Remove a few people
+ # Generates: [&quot;person_23&quot;, &quot;person_9&quot;, &quot;person_2&quot;].each(Element.remove);
+ page.remove 'person_23', 'person_9', 'person_2'
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001448-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001448-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 812</span>
+812:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">remove</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ids</span>)
+813:             <span class="ruby-identifier">loop_on_multiple_args</span> <span class="ruby-value str">'Element.remove'</span>, <span class="ruby-identifier">ids</span>
+814:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001447" class="method-detail">
+        <a name="M001447"></a>
+
+        <div class="method-heading">
+          <a href="#M001447" class="method-signature">
+          <span class="method-name">replace</span><span class="method-args">(id, *options_for_render)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces the &quot;outer HTML&quot; (i.e., the entire element, not just its
+contents) of the DOM element with the given <tt>id</tt>.
+</p>
+<p>
+<tt>options_for_render</tt> may be either a string of HTML to insert, or a
+hash of options to be passed to ActionView::Base#render. For example:
+</p>
+<pre>
+  # Replace the DOM element having ID 'person-45' with the
+  # 'person' partial for the appropriate object.
+  page.replace 'person-45', :partial =&gt; 'person', :object =&gt; @person
+</pre>
+<p>
+This allows the same partial that is used for the <tt><a
+href="GeneratorMethods.html#M001445">insert_html</a></tt> to be also used
+for the input to <tt><a
+href="GeneratorMethods.html#M001447">replace</a></tt> without resorting to
+the use of wrapper elements.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  &lt;div id=&quot;people&quot;&gt;
+    &lt;%= render :partial =&gt; 'person', :collection =&gt; @people %&gt;
+  &lt;/div&gt;
+
+  # Insert a new person
+  #
+  # Generates: new Insertion.Bottom({object: &quot;Matz&quot;, partial: &quot;person&quot;}, &quot;&quot;);
+  page.insert_html :bottom, :partial =&gt; 'person', :object =&gt; @person
+
+  # Replace an existing person
+
+  # Generates: Element.replace(&quot;person_45&quot;, &quot;-- Contents of partial --&quot;);
+  page.replace 'person_45', :partial =&gt; 'person', :object =&gt; @person
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001447-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001447-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 800</span>
+800:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">replace</span>(<span class="ruby-identifier">id</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">options_for_render</span>)
+801:             <span class="ruby-identifier">call</span> <span class="ruby-value str">'Element.replace'</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">render</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">options_for_render</span>)
+802:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001446" class="method-detail">
+        <a name="M001446"></a>
+
+        <div class="method-heading">
+          <a href="#M001446" class="method-signature">
+          <span class="method-name">replace_html</span><span class="method-args">(id, *options_for_render)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces the inner HTML of the DOM element with the given <tt>id</tt>.
+</p>
+<p>
+<tt>options_for_render</tt> may be either a string of HTML to insert, or a
+hash of options to be passed to ActionView::Base#render. For example:
+</p>
+<pre>
+  # Replace the HTML of the DOM element having ID 'person-45' with the
+  # 'person' partial for the appropriate object.
+  # Generates:  Element.update(&quot;person-45&quot;, &quot;-- Contents of 'person' partial --&quot;);
+  page.replace_html 'person-45', :partial =&gt; 'person', :object =&gt; @person
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001446-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001446-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 766</span>
+766:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">replace_html</span>(<span class="ruby-identifier">id</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">options_for_render</span>)
+767:             <span class="ruby-identifier">call</span> <span class="ruby-value str">'Element.update'</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">render</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">options_for_render</span>)
+768:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001444" class="method-detail">
+        <a name="M001444"></a>
+
+        <div class="method-heading">
+          <a href="#M001444" class="method-signature">
+          <span class="method-name">select</span><span class="method-args">(pattern)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a collection reference by finding it through a CSS <tt>pattern</tt>
+in the DOM. This collection can then be used for further method calls.
+Examples:
+</p>
+<pre>
+  page.select('p')                      # =&gt; $$('p');
+  page.select('p.welcome b').first      # =&gt; $$('p.welcome b').first();
+  page.select('p.welcome b').first.hide # =&gt; $$('p.welcome b').first().hide();
+</pre>
+<p>
+You can also use prototype enumerations with the collection. Observe:
+</p>
+<pre>
+  # Generates: $$('#items li').each(function(value) { value.hide(); });
+  page.select('#items li').each do |value|
+    value.hide
+  end
+</pre>
+<p>
+Though you can <a href="GeneratorMethods.html#M001455">call</a> the block
+param anything you want, they are always rendered in the javascript as
+&#8216;value, index.&#8217; Other enumerations, like collect() return the
+last statement:
+</p>
+<pre>
+  # Generates: var hidden = $$('#items li').collect(function(value, index) { return value.hide(); });
+  page.select('#items li').collect('hidden') do |item|
+    item.hide
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001444-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001444-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 723</span>
+723:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select</span>(<span class="ruby-identifier">pattern</span>)
+724:             <span class="ruby-constant">JavaScriptElementCollectionProxy</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">pattern</span>)
+725:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001449" class="method-detail">
+        <a name="M001449"></a>
+
+        <div class="method-heading">
+          <a href="#M001449" class="method-signature">
+          <span class="method-name">show</span><span class="method-args">(*ids)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Shows hidden DOM elements with the given <tt>ids</tt>.
+</p>
+<p>
+Example:
+</p>
+<pre>
+ # Show a few people
+ # Generates: [&quot;person_6&quot;, &quot;person_13&quot;, &quot;person_223&quot;].each(Element.show);
+ page.show 'person_6', 'person_13', 'person_223'
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001449-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001449-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 824</span>
+824:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">show</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ids</span>)
+825:             <span class="ruby-identifier">loop_on_multiple_args</span> <span class="ruby-value str">'Element.show'</span>, <span class="ruby-identifier">ids</span>
+826:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001460" class="method-detail">
+        <a name="M001460"></a>
+
+        <div class="method-heading">
+          <a href="#M001460" class="method-signature">
+          <span class="method-name">sortable</span><span class="method-args">(id, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a script.aculo.us <a
+href="GeneratorMethods.html#M001460">sortable</a> element. Useful to
+recreate <a href="GeneratorMethods.html#M001460">sortable</a> elements
+after items get added or deleted. See <a
+href="../../ScriptaculousHelper.html">ActionView::Helpers::ScriptaculousHelper</a>
+for more information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001460-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001460-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 965</span>
+965:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">sortable</span>(<span class="ruby-identifier">id</span>, <span class="ruby-identifier">options</span> = {})
+966:             <span class="ruby-identifier">record</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:sortable_element_js</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">options</span>)
+967:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001451" class="method-detail">
+        <a name="M001451"></a>
+
+        <div class="method-heading">
+          <a href="#M001451" class="method-signature">
+          <span class="method-name">toggle</span><span class="method-args">(*ids)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Toggles the visibility of the DOM elements with the given <tt>ids</tt>.
+Example:
+</p>
+<pre>
+ # Show a few people
+ # Generates: [&quot;person_14&quot;, &quot;person_12&quot;, &quot;person_23&quot;].each(Element.toggle);
+ page.toggle 'person_14', 'person_12', 'person_23'      # Hides the elements
+ page.toggle 'person_14', 'person_12', 'person_23'      # Shows the previously hidden elements
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001451-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001451-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 848</span>
+848:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">toggle</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ids</span>)
+849:             <span class="ruby-identifier">loop_on_multiple_args</span> <span class="ruby-value str">'Element.toggle'</span>, <span class="ruby-identifier">ids</span>
+850:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001459" class="method-detail">
+        <a name="M001459"></a>
+
+        <div class="method-heading">
+          <a href="#M001459" class="method-signature">
+          <span class="method-name">visual_effect</span><span class="method-args">(name, id = nil, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Starts a script.aculo.us visual effect. See <a
+href="../../ScriptaculousHelper.html">ActionView::Helpers::ScriptaculousHelper</a>
+for more information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001459-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001459-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/prototype_helper.rb, line 957</span>
+957:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">visual_effect</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">id</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">options</span> = {})
+958:             <span class="ruby-identifier">record</span> <span class="ruby-ivar">@context</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:visual_effect</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">id</span>, <span class="ruby-identifier">options</span>)
+959:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionController::Helpers::ClassMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionController::Helpers::ClassMethods</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_controller/helpers_rb.html">
+                vendor/rails/actionpack/lib/action_controller/helpers.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <a href="../../Rails.html">Rails</a> framework provides a large number
+of <a href="ClassMethods.html#M000325">helpers</a> for working with
+<tt>assets</tt>, <tt>dates</tt>, <tt>forms</tt>, <tt>numbers</tt> and
+Active Record objects, to name a few. These <a
+href="ClassMethods.html#M000325">helpers</a> are available to all templates
+by default.
+</p>
+<p>
+In addition to using the standard template <a
+href="ClassMethods.html#M000325">helpers</a> provided in the <a
+href="../../Rails.html">Rails</a> framework, creating custom <a
+href="ClassMethods.html#M000325">helpers</a> to extract complicated logic
+or reusable functionality is strongly encouraged. By default, the
+controller will include a <a href="ClassMethods.html#M000322">helper</a>
+whose name matches that of the controller, e.g., <tt>MyController</tt> will
+automatically include <tt>MyHelper</tt>.
+</p>
+<p>
+Additional <a href="ClassMethods.html#M000325">helpers</a> can be specified
+using the <tt><a href="ClassMethods.html#M000322">helper</a></tt> class
+method in <tt><a href="../Base.html">ActionController::Base</a></tt> or any
+controller which inherits from it.
+</p>
+<h4>Examples</h4>
+<p>
+The <tt>to_s</tt> method from the Time class can be wrapped in a <a
+href="ClassMethods.html#M000322">helper</a> method to display a custom
+message if the Time object is blank:
+</p>
+<pre>
+  module FormattedTimeHelper
+    def format_time(time, format=:long, blank_message=&quot;&amp;nbsp;&quot;)
+      time.blank? ? blank_message : time.to_s(format)
+    end
+  end
+</pre>
+<p>
+FormattedTimeHelper can now be included in a controller, using the <tt><a
+href="ClassMethods.html#M000322">helper</a></tt> class method:
+</p>
+<pre>
+  class EventsController &lt; ActionController::Base
+    helper FormattedTimeHelper
+    def index
+      @events = Event.find(:all)
+    end
+  end
+</pre>
+<p>
+Then, in any view rendered by <tt>EventController</tt>, the
+<tt>format_time</tt> method can be called:
+</p>
+<pre>
+  &lt;% @events.each do |event| -%&gt;
+    &lt;p&gt;
+      &lt;% format_time(event.time, :short, &quot;N/A&quot;) %&gt; | &lt;%= event.name %&gt;
+    &lt;/p&gt;
+  &lt;% end -%&gt;
+</pre>
+<p>
+Finally, assuming we have two event instances, one which has a time and one
+which does not, the output might look like this:
+</p>
+<pre>
+  23 Aug 11:30 | Carolina Railhawks Soccer Match
+  N/A | Carolina Railhaws Training Workshop
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000322">helper</a>&nbsp;&nbsp;
+      <a href="#M000324">helper_attr</a>&nbsp;&nbsp;
+      <a href="#M000323">helper_method</a>&nbsp;&nbsp;
+      <a href="#M000325">helpers</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000322" class="method-detail">
+        <a name="M000322"></a>
+
+        <div class="method-heading">
+          <a href="#M000322" class="method-signature">
+          <span class="method-name">helper</span><span class="method-args">(*args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The <tt><a href="ClassMethods.html#M000322">helper</a></tt> class method
+can take a series of <a href="ClassMethods.html#M000322">helper</a> module
+names, a block, or both.
+</p>
+<ul>
+<li><tt>*args</tt>: One or more modules, strings or symbols, or the special
+symbol <tt>:all</tt>.
+
+</li>
+<li><tt>&amp;block</tt>: A block defining <a
+href="ClassMethods.html#M000322">helper</a> methods.
+
+</li>
+</ul>
+<h4>Examples</h4>
+<p>
+When the argument is a string or symbol, the method will provide the
+&quot;_helper&quot; suffix, require the file and include the module in the
+template class. The second form illustrates how to include custom <a
+href="ClassMethods.html#M000325">helpers</a> when working with namespaced
+controllers, or other cases where the file containing the <a
+href="ClassMethods.html#M000322">helper</a> definition is not in one of <a
+href="../../Rails.html">Rails</a>&#8217; standard load paths:
+</p>
+<pre>
+  helper :foo             # =&gt; requires 'foo_helper' and includes FooHelper
+  helper 'resources/foo'  # =&gt; requires 'resources/foo_helper' and includes Resources::FooHelper
+</pre>
+<p>
+When the argument is a module it will be included directly in the template
+class.
+</p>
+<pre>
+  helper FooHelper # =&gt; includes FooHelper
+</pre>
+<p>
+When the argument is the symbol <tt>:all</tt>, the controller will include
+all <a href="ClassMethods.html#M000325">helpers</a> from
+<tt>app/helpers/**/*.rb</tt> under RAILS_ROOT.
+</p>
+<pre>
+  helper :all
+</pre>
+<p>
+Additionally, the <tt><a href="ClassMethods.html#M000322">helper</a></tt>
+class method can receive and evaluate a block, making the methods defined
+available to the template.
+</p>
+<pre>
+  # One line
+  helper { def hello() &quot;Hello, world!&quot; end }
+  # Multi-line
+  helper do
+    def foo(bar)
+      &quot;#{bar} is the very best&quot;
+    end
+  end
+</pre>
+<p>
+Finally, all the above styles can be mixed together, and the <tt><a
+href="ClassMethods.html#M000322">helper</a></tt> method can be invoked with
+a mix of <tt>symbols</tt>, <tt>strings</tt>, <tt>modules</tt> and blocks.
+</p>
+<pre>
+  helper(:three, BlindHelper) { def mice() 'mice' end }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000322-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000322-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/helpers.rb, line 110</span>
+110:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">helper</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+111:         <span class="ruby-identifier">args</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arg</span><span class="ruby-operator">|</span>
+112:           <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">arg</span>
+113:             <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Module</span>
+114:               <span class="ruby-identifier">add_template_helper</span>(<span class="ruby-identifier">arg</span>)
+115:             <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:all</span>
+116:               <span class="ruby-identifier">helper</span>(<span class="ruby-identifier">all_application_helpers</span>)
+117:             <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>, <span class="ruby-constant">Symbol</span>
+118:               <span class="ruby-identifier">file_name</span>  = <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">underscore</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'_helper'</span>
+119:               <span class="ruby-identifier">class_name</span> = <span class="ruby-identifier">file_name</span>.<span class="ruby-identifier">camelize</span>
+120: 
+121:               <span class="ruby-keyword kw">begin</span>
+122:                 <span class="ruby-identifier">require_dependency</span>(<span class="ruby-identifier">file_name</span>)
+123:               <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">load_error</span>
+124:                 <span class="ruby-identifier">requiree</span> = <span class="ruby-regexp re">/ -- (.*?)(\.rb)?$/</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">load_error</span>.<span class="ruby-identifier">message</span>).<span class="ruby-identifier">to_a</span>[<span class="ruby-value">1</span>]
+125:                 <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">requiree</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">file_name</span>
+126:                   <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;Missing helper file helpers/#{file_name}.rb&quot;</span>
+127:                   <span class="ruby-identifier">raise</span> <span class="ruby-constant">LoadError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">msg</span>).<span class="ruby-identifier">copy_blame!</span>(<span class="ruby-identifier">load_error</span>)
+128:                 <span class="ruby-keyword kw">else</span>
+129:                   <span class="ruby-identifier">raise</span>
+130:                 <span class="ruby-keyword kw">end</span>
+131:               <span class="ruby-keyword kw">end</span>
+132: 
+133:               <span class="ruby-identifier">add_template_helper</span>(<span class="ruby-identifier">class_name</span>.<span class="ruby-identifier">constantize</span>)
+134:             <span class="ruby-keyword kw">else</span>
+135:               <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;helper expects String, Symbol, or Module argument (was: #{args.inspect})&quot;</span>
+136:           <span class="ruby-keyword kw">end</span>
+137:         <span class="ruby-keyword kw">end</span>
+138: 
+139:         <span class="ruby-comment cmt"># Evaluate block in template class if given.</span>
+140:         <span class="ruby-identifier">master_helper_module</span>.<span class="ruby-identifier">module_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+141:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000324" class="method-detail">
+        <a name="M000324"></a>
+
+        <div class="method-heading">
+          <a href="#M000324" class="method-signature">
+          <span class="method-name">helper_attr</span><span class="method-args">(*attrs)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Declares <a href="ClassMethods.html#M000322">helper</a> accessors for
+controller attributes. For example, the following adds new <tt>name</tt>
+and <tt>name=</tt> instance methods to a controller and makes them
+available to the view:
+</p>
+<pre>
+  helper_attr :name
+  attr_accessor :name
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000324-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000324-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/helpers.rb, line 175</span>
+175:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">helper_attr</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">attrs</span>)
+176:         <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">attr</span><span class="ruby-operator">|</span> <span class="ruby-identifier">helper_method</span>(<span class="ruby-identifier">attr</span>, <span class="ruby-node">&quot;#{attr}=&quot;</span>) }
+177:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000323" class="method-detail">
+        <a name="M000323"></a>
+
+        <div class="method-heading">
+          <a href="#M000323" class="method-signature">
+          <span class="method-name">helper_method</span><span class="method-args">(*methods)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Declare a controller method as a <a
+href="ClassMethods.html#M000322">helper</a>. For example, the following
+makes the <tt>current_user</tt> controller method available to the view:
+</p>
+<pre>
+  class ApplicationController &lt; ActionController::Base
+    helper_method :current_user, :logged_in?
+
+    def current_user
+      @current_user ||= User.find_by_id(session[:user])
+    end
+
+     def logged_in?
+       current_user != nil
+     end
+  end
+</pre>
+<p>
+In a view:
+</p>
+<pre>
+ &lt;% if logged_in? -%&gt;Welcome, &lt;%= current_user.name %&gt;&lt;% end -%&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000323-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000323-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/helpers.rb, line 159</span>
+159:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">helper_method</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">methods</span>)
+160:         <span class="ruby-identifier">methods</span>.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">method</span><span class="ruby-operator">|</span>
+161:           <span class="ruby-identifier">master_helper_module</span>.<span class="ruby-identifier">module_eval</span> <span class="ruby-value str">&quot;def \#{method}(*args, &amp;block)\ncontroller.send(%(\#{method}), *args, &amp;block)\nend\n&quot;</span>
+162:         <span class="ruby-keyword kw">end</span>
+163:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000325" class="method-detail">
+        <a name="M000325"></a>
+
+        <div class="method-heading">
+          <a href="#M000325" class="method-signature">
+          <span class="method-name">helpers</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Provides a proxy to access <a href="ClassMethods.html#M000325">helpers</a>
+methods from outside the view.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000325-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000325-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/helpers.rb, line 180</span>
+180:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">helpers</span>
+181:         <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@helper_proxy</span>
+182:           <span class="ruby-ivar">@helper_proxy</span> = <span class="ruby-constant">ActionView</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">new</span>
+183:           <span class="ruby-ivar">@helper_proxy</span>.<span class="ruby-identifier">extend</span> <span class="ruby-identifier">master_helper_module</span>
+184:         <span class="ruby-keyword kw">else</span>
+185:           <span class="ruby-ivar">@helper_proxy</span>
+186:         <span class="ruby-keyword kw">end</span>
+187:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

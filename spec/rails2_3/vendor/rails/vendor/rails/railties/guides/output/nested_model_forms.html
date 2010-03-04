@@ -1,0 +1,269 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Rails nested model forms</title>
+
+<link rel="stylesheet" type="text/css" href="files/stylesheets/style.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/syntax.css" />
+<link rel="stylesheet" type="text/css" href="files/stylesheets/print.css" media="print" />
+
+<script type="text/javascript" src="files/javascripts/guides.js"></script>
+<script type="text/javascript" src="files/javascripts/code_highlighter.js"></script>
+<script type="text/javascript" src="files/javascripts/highlighters.js"></script>
+
+</head>
+<body class="guide">
+  <div id="topNav">
+    <div class="wrapper">
+      <strong>More at <a href="http://rubyonrails.org/">rubyonrails.org:</a> </strong>
+      <a href="http://rubyonrails.org/">Overview</a> |
+      <a href="http://rubyonrails.org/download">Download</a> |
+      <a href="http://rubyonrails.org/deploy">Deploy</a> |
+      <a href="http://rails.lighthouseapp.com/projects/8994-ruby-on-rails/overview">Code</a> |
+      <a href="http://rubyonrails.org/screencasts">Screencasts</a> |
+      <a href="http://rubyonrails.org/documentation">Documentation</a> |
+      <a href="http://rubyonrails.org/ecosystem">Ecosystem</a> |
+      <a href="http://rubyonrails.org/community">Community</a> |
+      <a href="http://weblog.rubyonrails.org/">Blog</a>
+    </div>
+  </div>
+  <div id="header">
+    <div class="wrapper clearfix">
+      <h1><a href="index.html" title="Return to home page">Guides.rubyonrails.org</a></h1>
+      <p class="hide"><a href="#mainCol">Skip navigation</a>.</p>
+      <ul class="nav">
+        <li><a href="index.html">Home</a></li>
+        <li class="index"><a href="index.html" onclick="guideMenu(); return false;" id="guidesMenu">Guides Index</a>
+          <div id="guides" class="clearfix" style="display: none;">
+            <hr />
+            <dl class="L">
+              <dt>Start Here</dt>
+              <dd><a href="getting_started.html">Getting Started with Rails</a></dd>
+              <dt>Models</dt>
+              <dd><a href="migrations.html">Rails Database Migrations</a></dd>
+              <dd><a href="activerecord_validations_callbacks.html">Active Record Validations and Callbacks</a></dd>
+              <dd><a href="association_basics.html">Active Record Associations</a></dd>
+              <dd><a href="active_record_querying.html">Active Record Query Interface</a></dd>
+              <dt>Views</dt>
+              <dd><a href="layouts_and_rendering.html">Layouts and Rendering in Rails</a></dd>
+              <dd><a href="form_helpers.html">Action View Form Helpers</a></dd>
+              <dt>Controllers</dt>
+              <dd><a href="action_controller_overview.html">Action Controller Overview</a></dd>
+              <dd><a href="routing.html">Rails Routing from the Outside In</a></dd>
+            </dl>
+            <dl class="R">
+              <dt>Digging Deeper</dt>
+              <dd><a href="i18n.html">Rails Internationalization API</a></dd>
+              <dd><a href="action_mailer_basics.html">Action Mailer Basics</a></dd>
+              <dd><a href="testing.html">Testing Rails Applications</a></dd>
+              <dd><a href="security.html">Securing Rails Applications</a></dd>
+              <dd><a href="debugging_rails_applications.html">Debugging Rails Applications</a></dd>
+              <dd><a href="performance_testing.html">Performance Testing Rails Applications</a></dd>
+              <dd><a href="plugins.html">The Basics of Creating Rails Plugins</a></dd>
+              <dd><a href="configuring.html">Configuring Rails Applications</a></dd>
+              <dd><a href="rails_on_rack.html">Rails on Rack</a></dd>
+              <dd><a href="command_line.html">Rails Command Line Tools and Rake Tasks</a></dd>
+              <dd><a href="caching_with_rails.html">Caching with Rails</a></dd>
+              <dd><a href="contributing_to_rails.html">Contributing to Rails</a></dd>
+            </dl>
+          </div>
+        </li>
+        <li><a href="contribute.html">Contribute</a></li>
+        <li><a href="credits.html">Credits</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr class="hide" />
+
+  <div id="feature">
+    <div class="wrapper">
+      <h2>Rails nested model forms</h2>
+<p>Creating a form for a model <em>and</em> its associations can become quite tedious. Therefor Rails provides helpers to assist in dealing with the complexities of generating these forms <em>and</em> the required <span class="caps">CRUD</span> operations to create, update, and destroy associations.</p>
+<p>In this guide you will:</p>
+<ul>
+	<li>do stuff</li>
+</ul>
+
+            <div id="subCol">
+        <h3 class="chapter"><img src="images/chapters_icon.gif" alt="" />Chapters</h3>
+        <ol class="chapters">
+<li><a href="#model-setup">Model setup</a><ul><li><a href="#activerecordbase-model">ActiveRecord::Base model</a></li><li><a href="#custom-model">Custom model</a></li></ul></li><li><a href="#views">Views</a><ul><li><a href="#controller-code">Controller code</a></li><li><a href="#form-code">Form code</a></li></ul></li></ol></div>
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+        <div class='note'><p>This guide assumes the user knows how to use the <a href="form_helpers.html">Rails form helpers</a> in general. Also, it’s <strong>not</strong> an <span class="caps">API</span> reference. For a complete reference please visit <a href="http://api.rubyonrails.org/">the Rails <span class="caps">API</span> documentation</a>.</p></div>
+<h3 id="model-setup">1 Model setup</h3>
+<p>To be able to use the nested model functionality in your forms, the model will need to support some basic operations.</p>
+<p>First of all, it needs to define a writer method for the attribute that corresponds to the association you are building a nested model form for. The <tt>fields_for</tt> form helper will look for this method to decide whether or not a nested model form should be build.</p>
+<p>If the associated object is an array a form builder will be yielded for each object, else only a single form builder will be yielded.</p>
+<p>Consider a Person model with an associated Address. When asked to yield a nested FormBuilder for the <tt>:address</tt> attribute, the <tt>fields_for</tt> form helper will look for a method on the Person instance named <tt>address_attributes=</tt>.</p>
+<h4 id="activerecordbase-model">1.1 ActiveRecord::Base model</h4>
+<p>For an ActiveRecord::Base model and association this writer method is commonly defined with the <tt>accepts_nested_attributes_for</tt> class method:</p>
+<h5 id="has-one">1.1.1 has_one</h5>
+<div class="code_container"><code class="ruby">
+class Person &lt; ActiveRecord::Base
+  has_one :address
+  accepts_nested_attributes_for :address
+end
+</code></div>
+<h5 id="belongs-to">1.1.2 belongs_to</h5>
+<div class="code_container"><code class="ruby">
+class Person &lt; ActiveRecord::Base
+  belongs_to :firm
+  accepts_nested_attributes_for :firm
+end
+</code></div>
+<h5 id="has-many--has-and-belongs-to-many">1.1.3 has_many / has_and_belongs_to_many</h5>
+<div class="code_container"><code class="ruby">
+class Person &lt; ActiveRecord::Base
+  has_many :projects
+  accepts_nested_attributes_for :projects
+end
+</code></div>
+<h4 id="custom-model">1.2 Custom model</h4>
+<p>As you might have inflected from this explanation, you <em>don’t</em> necessarily need an ActiveRecord::Base model to use this functionality. The following examples are sufficient to enable the nested model form behaviour:</p>
+<h5 id="single-associated-object">1.2.1 Single associated object</h5>
+<div class="code_container"><code class="ruby">
+class Person
+  def address
+    Address.new
+  end
+  
+  def address_attributes=(attributes)
+    # ...
+  end
+end
+</code></div>
+<h5 id="association-collection">1.2.2 Association collection</h5>
+<div class="code_container"><code class="ruby">
+class Person
+  def projects
+    [Project.new, Project.new]
+  end
+  
+  def projects_attributes=(attributes)
+    # ...
+  end
+end
+</code></div>
+<div class='note'><p>See (<span class="caps">TODO</span>) in the advanced section for more information on how to deal with the <span class="caps">CRUD</span> operations in your custom model.</p></div>
+<h3 id="views">2 Views</h3>
+<h4 id="controller-code">2.1 Controller code</h4>
+<p>A nested model form will <em>only</em> be build if the associated object(s) exist. This means that for a new model instance you would probably want to build the associated object(s) first.</p>
+<p>Consider the following typical RESTful controller which will prepare a new Person instance and its <tt>address</tt> and <tt>projects</tt> associations before rendering the <tt>new</tt> template:</p>
+<div class="code_container"><code class="ruby">
+class PeopleController &lt; ActionController:Base
+  def new
+    @person = Person.new
+    @person.built_address
+    2.times { @person.projects.build }
+  end
+  
+  def create
+    @person = Person.new(params[:person])
+    if @person.save
+      # ...
+    end
+  end
+end
+</code></div>
+<div class='note'><p>Obviously the instantiation of the associated object(s) can become tedious and not <span class="caps">DRY</span>, so you might want to move that into the model itself. ActiveRecord::Base provides an <tt>after_initialize</tt> callback which is a good way to refactor this.</p></div>
+<h4 id="form-code">2.2 Form code</h4>
+<p>Now that you have a model instance, with the appropriate methods and associated object(s), you can start building the nested model form.</p>
+<h5 id="standard-form">2.2.1 Standard form</h5>
+<p>Start out with a regular RESTful form:</p>
+<div class="code_container"><code class="html">
+&lt;% form_for @person do |f| %&gt;
+  &lt;%= f.text_field :name %&gt;
+&lt;% end %&gt;
+</code></div>
+<p>This will generate the following html:</p>
+<div class="code_container"><code class="html">
+&lt;form action=&quot;/people&quot; class=&quot;new_person&quot; id=&quot;new_person&quot; method=&quot;post&quot;&gt;
+  &lt;input id=&quot;person_name&quot; name=&quot;person[name]&quot; size=&quot;30&quot; type=&quot;text&quot; /&gt;
+&lt;/form&gt;
+</code></div>
+<h5 id="nested-form-for-a-single-associated-object">2.2.2 Nested form for a single associated object</h5>
+<p>Now add a nested form for the <tt>address</tt> association:</p>
+<div class="code_container"><code class="html">
+&lt;% form_for @person do |f| %&gt;
+  &lt;%= f.text_field :name %&gt;
+  
+  &lt;% f.fields_for :address do |af| %&gt;
+    &lt;%= f.text_field :street %&gt;
+  &lt;% end %&gt;
+&lt;% end %&gt;
+</code></div>
+<p>This generates:</p>
+<div class="code_container"><code class="html">
+&lt;form action=&quot;/people&quot; class=&quot;new_person&quot; id=&quot;new_person&quot; method=&quot;post&quot;&gt;
+  &lt;input id=&quot;person_name&quot; name=&quot;person[name]&quot; size=&quot;30&quot; type=&quot;text&quot; /&gt;
+  
+  &lt;input id=&quot;person_address_attributes_street&quot; name=&quot;person[address_attributes][street]&quot; size=&quot;30&quot; type=&quot;text&quot; /&gt;
+&lt;/form&gt;
+</code></div>
+<p>Notice that <tt>fields_for</tt> recognized the <tt>address</tt> as an association for which a nested model form should be build by the way it has namespaced the <tt>name</tt> attribute.</p>
+<p>When this form is posted the Rails parameter parser will construct a hash like the following:</p>
+<div class="code_container"><code class="ruby">
+{
+  &quot;person&quot; =&gt; {
+    &quot;name&quot; =&gt; &quot;Eloy Duran&quot;,
+    &quot;address_attributes&quot; =&gt; {
+      &quot;street&quot; =&gt; &quot;Nieuwe Prinsengracht&quot;
+    }
+  }
+}
+</code></div>
+<p>That’s it. The controller will simply pass this hash on to the model from the <tt>create</tt> action. The model will then handle building the <tt>address</tt> association for you and automatically save it when the parent (<tt>person</tt>) is saved.</p>
+<h5 id="nested-form-for-a-collection-of-associated-objects">2.2.3 Nested form for a collection of associated objects</h5>
+<p>The form code for an association collection is pretty similar to that of a single associated object:</p>
+<div class="code_container"><code class="html">
+&lt;% form_for @person do |f| %&gt;
+  &lt;%= f.text_field :name %&gt;
+  
+  &lt;% f.fields_for :projects do |pf| %&gt;
+    &lt;%= f.text_field :name %&gt;
+  &lt;% end %&gt;
+&lt;% end %&gt;
+</code></div>
+<p>Which generates:</p>
+<div class="code_container"><code class="html">
+&lt;form action=&quot;/people&quot; class=&quot;new_person&quot; id=&quot;new_person&quot; method=&quot;post&quot;&gt;
+  &lt;input id=&quot;person_name&quot; name=&quot;person[name]&quot; size=&quot;30&quot; type=&quot;text&quot; /&gt;
+  
+  &lt;input id=&quot;person_projects_attributes_0_name&quot; name=&quot;person[projects_attributes][0][name]&quot; size=&quot;30&quot; type=&quot;text&quot; /&gt;
+  &lt;input id=&quot;person_projects_attributes_1_name&quot; name=&quot;person[projects_attributes][1][name]&quot; size=&quot;30&quot; type=&quot;text&quot; /&gt;
+&lt;/form&gt;
+</code></div>
+<p>As you can see it has generated 2 <tt>project name</tt> inputs, one for each new <tt>project</tt> that’s build in the controllers <tt>new</tt> action. Only this time the <tt>name</tt> attribute of the input contains a digit as an extra namespace. This will be parsed by the Rails parameter parser as:</p>
+<div class="code_container"><code class="ruby">
+{
+  &quot;person&quot; =&gt; {
+    &quot;name&quot; =&gt; &quot;Eloy Duran&quot;,
+    &quot;projects_attributes&quot; =&gt; {
+      &quot;0&quot; =&gt; { &quot;name&quot; =&gt; &quot;Project 1&quot; },
+      &quot;1&quot; =&gt; { &quot;name&quot; =&gt; &quot;Project 2&quot; }
+    }
+  }
+}
+</code></div>
+<p>You can basically see the <tt>projects_attributes</tt> hash as an array of attribute hashes. One for each model instance.</p>
+<div class='note'><p>The reason that <tt>fields_for</tt> constructed a form which would result in a hash instead of an array is that it won&#8217;t work for any forms nested deeper than one level deep.</p></div>
+<div class='info'><p>You <em>can</em> however pass an array to the writer method generated by <tt>accepts_nested_attributes_for</tt> if you&#8217;re using plain Ruby or some other <span class="caps">API</span> access. See (<span class="caps">TODO</span>) for more info and example.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+  <div id="footer">
+    <div class="wrapper">
+      <p>This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0</a> License</a></p>
+      <p>"Rails", "Ruby on Rails", and the Rails logo are trademarks of David Heinemeier Hansson. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActiveSupport::CoreExtensions::String::Inflections</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActiveSupport::CoreExtensions::String::Inflections</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/vendor/rails/activesupport/lib/active_support/core_ext/string/inflections_rb.html">
+                vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+String inflections define new methods on the String class to transform
+names for different purposes. For instance, you can figure out the name of
+a database from the name of a class.
+</p>
+<pre>
+  &quot;ScaleScore&quot;.tableize # =&gt; &quot;scale_scores&quot;
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001047">camelcase</a>&nbsp;&nbsp;
+      <a href="#M001046">camelize</a>&nbsp;&nbsp;
+      <a href="#M001055">classify</a>&nbsp;&nbsp;
+      <a href="#M001058">constantize</a>&nbsp;&nbsp;
+      <a href="#M001051">dasherize</a>&nbsp;&nbsp;
+      <a href="#M001052">demodulize</a>&nbsp;&nbsp;
+      <a href="#M001057">foreign_key</a>&nbsp;&nbsp;
+      <a href="#M001056">humanize</a>&nbsp;&nbsp;
+      <a href="#M001053">parameterize</a>&nbsp;&nbsp;
+      <a href="#M001044">pluralize</a>&nbsp;&nbsp;
+      <a href="#M001045">singularize</a>&nbsp;&nbsp;
+      <a href="#M001054">tableize</a>&nbsp;&nbsp;
+      <a href="#M001049">titlecase</a>&nbsp;&nbsp;
+      <a href="#M001048">titleize</a>&nbsp;&nbsp;
+      <a href="#M001050">underscore</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001047" class="method-detail">
+        <a name="M001047"></a>
+
+        <div class="method-heading">
+          <span class="method-name">camelcase</span><span class="method-args">(first_letter = :upper)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Inflections.html#M001046">camelize</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001046" class="method-detail">
+        <a name="M001046"></a>
+
+        <div class="method-heading">
+          <a href="#M001046" class="method-signature">
+          <span class="method-name">camelize</span><span class="method-args">(first_letter = :upper)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+By default, <tt><a href="Inflections.html#M001046">camelize</a></tt>
+converts strings to UpperCamelCase. If the argument to <a
+href="Inflections.html#M001046">camelize</a> is set to <tt>:lower</tt> then
+<a href="Inflections.html#M001046">camelize</a> produces lowerCamelCase.
+</p>
+<p>
+<tt><a href="Inflections.html#M001046">camelize</a></tt> will also convert
+&#8217;/&#8217; to &#8217;::&#8217; which is useful for converting paths to
+namespaces.
+</p>
+<pre>
+  &quot;active_record&quot;.camelize                # =&gt; &quot;ActiveRecord&quot;
+  &quot;active_record&quot;.camelize(:lower)        # =&gt; &quot;activeRecord&quot;
+  &quot;active_record/errors&quot;.camelize         # =&gt; &quot;ActiveRecord::Errors&quot;
+  &quot;active_record/errors&quot;.camelize(:lower) # =&gt; &quot;activeRecord::Errors&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001046-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001046-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 44</span>
+44:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">camelize</span>(<span class="ruby-identifier">first_letter</span> = <span class="ruby-identifier">:upper</span>)
+45:           <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">first_letter</span>
+46:             <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:upper</span> <span class="ruby-keyword kw">then</span> <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">camelize</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-keyword kw">true</span>)
+47:             <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:lower</span> <span class="ruby-keyword kw">then</span> <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">camelize</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-keyword kw">false</span>)
+48:           <span class="ruby-keyword kw">end</span>
+49:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001055" class="method-detail">
+        <a name="M001055"></a>
+
+        <div class="method-heading">
+          <a href="#M001055" class="method-signature">
+          <span class="method-name">classify</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a class name from a plural table name like <a
+href="../../../Rails.html">Rails</a> does for table names to models. Note
+that this returns a string and not a class. (To convert to an actual class
+follow <tt><a href="Inflections.html#M001055">classify</a></tt> with <tt><a
+href="Inflections.html#M001058">constantize</a></tt>.)
+</p>
+<pre>
+  &quot;egg_and_hams&quot;.classify # =&gt; &quot;EggAndHam&quot;
+  &quot;posts&quot;.classify        # =&gt; &quot;Post&quot;
+</pre>
+<p>
+Singular names are not handled correctly.
+</p>
+<pre>
+  &quot;business&quot;.classify # =&gt; &quot;Busines&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001055-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001055-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 129</span>
+129:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">classify</span>
+130:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">classify</span>(<span class="ruby-keyword kw">self</span>)
+131:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001058" class="method-detail">
+        <a name="M001058"></a>
+
+        <div class="method-heading">
+          <a href="#M001058" class="method-signature">
+          <span class="method-name">constantize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<tt><a href="Inflections.html#M001058">constantize</a></tt> tries to find a
+declared constant with the name specified in the string. It raises a
+NameError when the name is not in CamelCase or is not initialized.
+</p>
+<p>
+Examples
+</p>
+<pre>
+  &quot;Module&quot;.constantize # =&gt; Module
+  &quot;Class&quot;.constantize  # =&gt; Class
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001058-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001058-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 161</span>
+161:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">constantize</span>
+162:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">constantize</span>(<span class="ruby-keyword kw">self</span>)
+163:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001051" class="method-detail">
+        <a name="M001051"></a>
+
+        <div class="method-heading">
+          <a href="#M001051" class="method-signature">
+          <span class="method-name">dasherize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces underscores with dashes in the string.
+</p>
+<pre>
+  &quot;puni_puni&quot; # =&gt; &quot;puni-puni&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001051-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001051-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 78</span>
+78:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dasherize</span>
+79:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">dasherize</span>(<span class="ruby-keyword kw">self</span>)
+80:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001052" class="method-detail">
+        <a name="M001052"></a>
+
+        <div class="method-heading">
+          <a href="#M001052" class="method-signature">
+          <span class="method-name">demodulize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes the module part from the constant expression in the string.
+</p>
+<pre>
+  &quot;ActiveRecord::CoreExtensions::String::Inflections&quot;.demodulize # =&gt; &quot;Inflections&quot;
+  &quot;Inflections&quot;.demodulize                                       # =&gt; &quot;Inflections&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001052-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001052-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 86</span>
+86:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">demodulize</span>
+87:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">demodulize</span>(<span class="ruby-keyword kw">self</span>)
+88:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001057" class="method-detail">
+        <a name="M001057"></a>
+
+        <div class="method-heading">
+          <a href="#M001057" class="method-signature">
+          <span class="method-name">foreign_key</span><span class="method-args">(separate_class_name_and_id_with_underscore = true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a foreign key name from a class name.
+<tt>separate_class_name_and_id_with_underscore</tt> sets whether the method
+should put &#8216;_&#8217; between the name and &#8216;id&#8217;.
+</p>
+<p>
+Examples
+</p>
+<pre>
+  &quot;Message&quot;.foreign_key        # =&gt; &quot;message_id&quot;
+  &quot;Message&quot;.foreign_key(false) # =&gt; &quot;messageid&quot;
+  &quot;Admin::Post&quot;.foreign_key    # =&gt; &quot;post_id&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001057-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001057-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 150</span>
+150:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">foreign_key</span>(<span class="ruby-identifier">separate_class_name_and_id_with_underscore</span> = <span class="ruby-keyword kw">true</span>)
+151:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">foreign_key</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">separate_class_name_and_id_with_underscore</span>)
+152:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001056" class="method-detail">
+        <a name="M001056"></a>
+
+        <div class="method-heading">
+          <a href="#M001056" class="method-signature">
+          <span class="method-name">humanize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Capitalizes the first word, turns underscores into spaces, and strips
+&#8216;_id&#8217;. Like <tt><a
+href="Inflections.html#M001048">titleize</a></tt>, this is meant for
+creating pretty output.
+</p>
+<pre>
+  &quot;employee_salary&quot; # =&gt; &quot;Employee salary&quot;
+  &quot;author_id&quot;       # =&gt; &quot;Author&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001056-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001056-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 138</span>
+138:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">humanize</span>
+139:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">humanize</span>(<span class="ruby-keyword kw">self</span>)
+140:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001053" class="method-detail">
+        <a name="M001053"></a>
+
+        <div class="method-heading">
+          <a href="#M001053" class="method-signature">
+          <span class="method-name">parameterize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces special characters in a string so that it may be used as part of a
+&#8216;pretty&#8217; URL.
+</p>
+<h4>Examples</h4>
+<pre>
+  class Person
+    def to_param
+      &quot;#{id}-#{name.parameterize}&quot;
+    end
+  end
+
+  @person = Person.find(1)
+  # =&gt; #&lt;Person id: 1, name: &quot;Donald E. Knuth&quot;&gt;
+
+  &lt;%= link_to(@person.name, person_path %&gt;
+  # =&gt; &lt;a href=&quot;/person/1-donald-e-knuth&quot;&gt;Donald E. Knuth&lt;/a&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001053-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001053-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 105</span>
+105:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parameterize</span>
+106:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">parameterize</span>(<span class="ruby-keyword kw">self</span>)
+107:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001044" class="method-detail">
+        <a name="M001044"></a>
+
+        <div class="method-heading">
+          <a href="#M001044" class="method-signature">
+          <span class="method-name">pluralize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the plural form of the word in the string.
+</p>
+<pre>
+  &quot;post&quot;.pluralize             # =&gt; &quot;posts&quot;
+  &quot;octopus&quot;.pluralize          # =&gt; &quot;octopi&quot;
+  &quot;sheep&quot;.pluralize            # =&gt; &quot;sheep&quot;
+  &quot;words&quot;.pluralize            # =&gt; &quot;words&quot;
+  &quot;the blue mailman&quot;.pluralize # =&gt; &quot;the blue mailmen&quot;
+  &quot;CamelOctopus&quot;.pluralize     # =&gt; &quot;CamelOctopi&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001044-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001044-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 19</span>
+19:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pluralize</span>
+20:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">pluralize</span>(<span class="ruby-keyword kw">self</span>)
+21:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001045" class="method-detail">
+        <a name="M001045"></a>
+
+        <div class="method-heading">
+          <a href="#M001045" class="method-signature">
+          <span class="method-name">singularize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The reverse of <tt><a href="Inflections.html#M001044">pluralize</a></tt>,
+returns the singular form of a word in a string.
+</p>
+<pre>
+  &quot;posts&quot;.singularize            # =&gt; &quot;post&quot;
+  &quot;octopi&quot;.singularize           # =&gt; &quot;octopus&quot;
+  &quot;sheep&quot;.singularize            # =&gt; &quot;sheep&quot;
+  &quot;word&quot;.singularize             # =&gt; &quot;word&quot;
+  &quot;the blue mailmen&quot;.singularize # =&gt; &quot;the blue mailman&quot;
+  &quot;CamelOctopi&quot;.singularize      # =&gt; &quot;CamelOctopus&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001045-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001045-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 31</span>
+31:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">singularize</span>
+32:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">singularize</span>(<span class="ruby-keyword kw">self</span>)
+33:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001054" class="method-detail">
+        <a name="M001054"></a>
+
+        <div class="method-heading">
+          <a href="#M001054" class="method-signature">
+          <span class="method-name">tableize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates the name of a table like <a href="../../../Rails.html">Rails</a>
+does for models to table names. This method uses the <tt><a
+href="Inflections.html#M001044">pluralize</a></tt> method on the last word
+in the string.
+</p>
+<pre>
+  &quot;RawScaledScorer&quot;.tableize # =&gt; &quot;raw_scaled_scorers&quot;
+  &quot;egg_and_ham&quot;.tableize     # =&gt; &quot;egg_and_hams&quot;
+  &quot;fancyCategory&quot;.tableize   # =&gt; &quot;fancy_categories&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001054-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001054-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 115</span>
+115:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tableize</span>
+116:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">tableize</span>(<span class="ruby-keyword kw">self</span>)
+117:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001049" class="method-detail">
+        <a name="M001049"></a>
+
+        <div class="method-heading">
+          <span class="method-name">titlecase</span><span class="method-args">()</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Inflections.html#M001048">titleize</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001048" class="method-detail">
+        <a name="M001048"></a>
+
+        <div class="method-heading">
+          <a href="#M001048" class="method-signature">
+          <span class="method-name">titleize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Capitalizes all the words and replaces some characters in the string to
+create a nicer looking title. <tt><a
+href="Inflections.html#M001048">titleize</a></tt> is meant for creating
+pretty output. It is not used in the <a
+href="../../../Rails.html">Rails</a> internals.
+</p>
+<p>
+<tt><a href="Inflections.html#M001048">titleize</a></tt> is also aliased as
+<tt><a href="Inflections.html#M001049">titlecase</a></tt>.
+</p>
+<pre>
+  &quot;man from the boondocks&quot;.titleize # =&gt; &quot;Man From The Boondocks&quot;
+  &quot;x-men: the last stand&quot;.titleize  # =&gt; &quot;X Men: The Last Stand&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001048-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001048-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 60</span>
+60:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">titleize</span>
+61:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">titleize</span>(<span class="ruby-keyword kw">self</span>)
+62:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001050" class="method-detail">
+        <a name="M001050"></a>
+
+        <div class="method-heading">
+          <a href="#M001050" class="method-signature">
+          <span class="method-name">underscore</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+The reverse of <tt><a href="Inflections.html#M001046">camelize</a></tt>.
+Makes an underscored, lowercase form from the expression in the string.
+</p>
+<p>
+<tt><a href="Inflections.html#M001050">underscore</a></tt> will also change
+&#8217;::&#8217; to &#8217;/&#8217; to convert namespaces to paths.
+</p>
+<pre>
+  &quot;ActiveRecord&quot;.underscore         # =&gt; &quot;active_record&quot;
+  &quot;ActiveRecord::Errors&quot;.underscore # =&gt; active_record/errors
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001050-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001050-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb, line 71</span>
+71:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">underscore</span>
+72:           <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">underscore</span>(<span class="ruby-keyword kw">self</span>)
+73:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

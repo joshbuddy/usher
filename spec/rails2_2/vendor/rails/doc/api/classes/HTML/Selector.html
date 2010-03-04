@@ -1,0 +1,1345 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: HTML::Selector</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">HTML::Selector</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector_rb.html">
+                vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Selects HTML elements using CSS 2 selectors.
+</p>
+<p>
+The <tt><a href="Selector.html">Selector</a></tt> class uses CSS selector
+expressions to <a href="Selector.html#M000207">match</a> and <a
+href="Selector.html#M000208">select</a> HTML elements.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  selector = HTML::Selector.new &quot;form.login[action=/login]&quot;
+</pre>
+<p>
+creates a <a href="Selector.html#M000206">new</a> selector that matches any
+<tt>form</tt> element with the class <tt>login</tt> and an attribute
+<tt>action</tt> with the value <tt>/login</tt>.
+</p>
+<h3>Matching Elements</h3>
+<p>
+Use the <a href="Selector.html#M000207">match</a> method to determine if an
+element matches the selector.
+</p>
+<p>
+For simple selectors, the method returns an array with that element, or
+<tt>nil</tt> if the element does not <a
+href="Selector.html#M000207">match</a>. For complex selectors (see below)
+the method returns an array with all matched elements, of <tt>nil</tt> if
+no <a href="Selector.html#M000207">match</a> found.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  if selector.match(element)
+    puts &quot;Element is a login form&quot;
+  end
+</pre>
+<h3>Selecting Elements</h3>
+<p>
+Use the <a href="Selector.html#M000208">select</a> method to <a
+href="Selector.html#M000208">select</a> all matching elements starting with
+one element and going through all children in depth-first order.
+</p>
+<p>
+This method returns an array of all matching elements, an empty array if no
+<a href="Selector.html#M000207">match</a> is found
+</p>
+<p>
+For example:
+</p>
+<pre>
+  selector = HTML::Selector.new &quot;input[type=text]&quot;
+  matches = selector.select(element)
+  matches.each do |match|
+    puts &quot;Found text field with name #{match.attributes['name']}&quot;
+  end
+</pre>
+<h3>Expressions</h3>
+<p>
+Selectors can <a href="Selector.html#M000207">match</a> elements using any
+of the following criteria:
+</p>
+<ul>
+<li><tt>name</tt> &#8212; Match an element based on its name (tag name). For
+example, <tt>p</tt> to <a href="Selector.html#M000207">match</a> a
+paragraph. You can use <tt>*</tt> to <a
+href="Selector.html#M000207">match</a> any element.
+
+</li>
+<li><tt>#id</tt> &#8212; Match an element based on its identifier (the
+<tt>id</tt> attribute). For example, <tt>#page</tt>.
+
+</li>
+<li><tt>.class</tt> &#8212; Match an element based on its class name, all class
+names if more than one specified.
+
+</li>
+<li><tt>[attr]</tt> &#8212; Match an element that has the specified attribute.
+
+</li>
+<li><tt>[attr=value]</tt> &#8212; Match an element that has the specified
+attribute and value. (More operators are supported see below)
+
+</li>
+<li><tt>:pseudo-class</tt> &#8212; Match an element based on a pseudo class,
+such as <tt>:nth-child</tt> and <tt>:empty</tt>.
+
+</li>
+<li><tt>:not(expr)</tt> &#8212; Match an element that does not <a
+href="Selector.html#M000207">match</a> the negation expression.
+
+</li>
+</ul>
+<p>
+When using a combination of the above, the element name comes first
+followed by identifier, class names, attributes, pseudo classes and
+negation in any order. Do not separate these parts with spaces! Space
+separation is used for descendant selectors.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  selector = HTML::Selector.new &quot;form.login[action=/login]&quot;
+</pre>
+<p>
+The matched element must be of type <tt>form</tt> and have the class
+<tt>login</tt>. It may have other classes, but the class <tt>login</tt> is
+required to <a href="Selector.html#M000207">match</a>. It must also have an
+attribute called <tt>action</tt> with the value <tt>/login</tt>.
+</p>
+<p>
+This selector will <a href="Selector.html#M000207">match</a> the following
+element:
+</p>
+<pre>
+  &lt;form class=&quot;login form&quot; method=&quot;post&quot; action=&quot;/login&quot;&gt;
+</pre>
+<p>
+but will not <a href="Selector.html#M000207">match</a> the element:
+</p>
+<pre>
+  &lt;form method=&quot;post&quot; action=&quot;/logout&quot;&gt;
+</pre>
+<h3>Attribute Values</h3>
+<p>
+Several operators are supported for matching attributes:
+</p>
+<ul>
+<li><tt>name</tt> &#8212; The element must have an attribute with that name.
+
+</li>
+<li><tt>name=value</tt> &#8212; The element must have an attribute with that
+name and value.
+
+</li>
+<li><tt>name^=value</tt> &#8212; The attribute value must start with the
+specified value.
+
+</li>
+<li><tt>name$=value</tt> &#8212; The attribute value must end with the
+specified value.
+
+</li>
+<li><tt>name*=value</tt> &#8212; The attribute value must contain the specified
+value.
+
+</li>
+<li><tt>name~=word</tt> &#8212; The attribute value must contain the specified
+word (space separated).
+
+</li>
+<li><tt>name|=word</tt> &#8212; The attribute value must start with specified
+word.
+
+</li>
+</ul>
+<p>
+For example, the following two selectors <a
+href="Selector.html#M000207">match</a> the same element:
+</p>
+<pre>
+  #my_id
+  [id=my_id]
+</pre>
+<p>
+and so do the following two selectors:
+</p>
+<pre>
+  .my_class
+  [class~=my_class]
+</pre>
+<h3>Alternatives, siblings, children</h3>
+<p>
+Complex selectors use a combination of expressions to <a
+href="Selector.html#M000207">match</a> elements:
+</p>
+<ul>
+<li><tt>expr1 expr2</tt> &#8212; Match any element against the second
+expression if it has some parent element that matches the first expression.
+
+</li>
+<li><tt>expr1 &gt; expr2</tt> &#8212; Match any element against the second
+expression if it is the child of an element that matches the first
+expression.
+
+</li>
+<li><tt>expr1 + expr2</tt> &#8212; Match any element against the second
+expression if it immediately follows an element that matches the first
+expression.
+
+</li>
+<li><tt>expr1 ~ expr2</tt> &#8212; Match any element against the second
+expression that comes after an element that matches the first expression.
+
+</li>
+<li><tt>expr1, expr2</tt> &#8212; Match any element against the first
+expression, or against the second expression.
+
+</li>
+</ul>
+<p>
+Since children and sibling selectors may <a
+href="Selector.html#M000207">match</a> more than one element given the
+first element, the <a href="Selector.html#M000207">match</a> method may
+return more than one <a href="Selector.html#M000207">match</a>.
+</p>
+<h3>Pseudo classes</h3>
+<p>
+Pseudo classes were introduced in CSS 3. They are most often used to <a
+href="Selector.html#M000208">select</a> elements in a given position:
+</p>
+<ul>
+<li><tt>:root</tt> &#8212; Match the element only if it is the root element (no
+parent element).
+
+</li>
+<li><tt>:empty</tt> &#8212; Match the element only if it has no child elements,
+and no text content.
+
+</li>
+<li><tt>:only-child</tt> &#8212; Match the element if it is the only child
+(element) of its parent element.
+
+</li>
+<li><tt>:only-of-type</tt> &#8212; Match the element if it is the only child
+(element) of its parent element and its type.
+
+</li>
+<li><tt>:first-child</tt> &#8212; Match the element if it is the first child
+(element) of its parent element.
+
+</li>
+<li><tt>:first-of-type</tt> &#8212; Match the element if it is the first child
+(element) of its parent element of its type.
+
+</li>
+<li><tt>:last-child</tt> &#8212; Match the element if it is the last child
+(element) of its parent element.
+
+</li>
+<li><tt>:last-of-type</tt> &#8212; Match the element if it is the last child
+(element) of its parent element of its type.
+
+</li>
+<li><tt>:nth-child(b)</tt> &#8212; Match the element if it is the b-th child
+(element) of its parent element. The value <tt>b</tt> specifies its index,
+starting with 1.
+
+</li>
+<li><tt>:nth-child(an+b)</tt> &#8212; Match the element if it is the b-th child
+(element) in each group of <tt>a</tt> child elements of its parent element.
+
+</li>
+<li><tt>:nth-child(-an+b)</tt> &#8212; Match the element if it is the first
+child (element) in each group of <tt>a</tt> child elements, up to the first
+<tt>b</tt> child elements of its parent element.
+
+</li>
+<li><tt>:nth-child(odd)</tt> &#8212; Match element in the odd position (i.e.
+first, third). Same as <tt>:nth-child(2n+1)</tt>.
+
+</li>
+<li><tt>:nth-child(even)</tt> &#8212; Match element in the even position (i.e.
+second, fourth). Same as <tt>:nth-child(2n+2)</tt>.
+
+</li>
+<li><tt>:nth-of-type(..)</tt> &#8212; As above, but only counts elements of its
+type.
+
+</li>
+<li><tt>:nth-last-child(..)</tt> &#8212; As above, but counts from the last
+child.
+
+</li>
+<li><tt>:nth-last-of-type(..)</tt> &#8212; As above, but counts from the last
+child and only elements of its type.
+
+</li>
+<li><tt>:not(selector)</tt> &#8212; Match the element only if the element does
+not <a href="Selector.html#M000207">match</a> the simple selector.
+
+</li>
+</ul>
+<p>
+As you can see, &lt;tt&gt;:nth-child&lt;tt&gt; pseudo class and its variant
+can get quite tricky and the CSS specification doesn&#8216;t do a much
+better job explaining it. But after reading the examples and trying a few
+combinations, it&#8216;s easy to figure out.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  table tr:nth-child(odd)
+</pre>
+<p>
+Selects every second row in the table starting with the first one.
+</p>
+<pre>
+  div p:nth-child(4)
+</pre>
+<p>
+Selects the fourth paragraph in the <tt>div</tt>, but not if the
+<tt>div</tt> contains other elements, since those are also counted.
+</p>
+<pre>
+  div p:nth-of-type(4)
+</pre>
+<p>
+Selects the fourth paragraph in the <tt>div</tt>, counting only paragraphs,
+and ignoring all other elements.
+</p>
+<pre>
+  div p:nth-of-type(-n+4)
+</pre>
+<p>
+Selects the first four paragraphs, ignoring all others.
+</p>
+<p>
+And you can always <a href="Selector.html#M000208">select</a> an element
+that matches one set of rules but not another using <tt>:not</tt>. For
+example:
+</p>
+<pre>
+  p:not(.post)
+</pre>
+<p>
+Matches all paragraphs that do not have the class <tt>.post</tt>.
+</p>
+<h3>Substitution Values</h3>
+<p>
+You can use substitution with identifiers, class names and element values.
+A substitution takes the form of a question mark (<tt>?</tt>) and uses the
+next value in the argument list following the CSS expression.
+</p>
+<p>
+The substitution value may be a string or a regular expression. All other
+values are converted to strings.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  selector = HTML::Selector.new &quot;#?&quot;, /^\d+$/
+</pre>
+<p>
+matches any element whose identifier consists of one or more digits.
+</p>
+<p>
+See <a
+href="http://www.w3.org/TR/css3-selectors">www.w3.org/TR/css3-selectors</a>/
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000212">attribute_match</a>&nbsp;&nbsp;
+      <a href="#M000204">for_class</a>&nbsp;&nbsp;
+      <a href="#M000205">for_id</a>&nbsp;&nbsp;
+      <a href="#M000207">match</a>&nbsp;&nbsp;
+      <a href="#M000206">new</a>&nbsp;&nbsp;
+      <a href="#M000210">next_element</a>&nbsp;&nbsp;
+      <a href="#M000215">next_selector</a>&nbsp;&nbsp;
+      <a href="#M000213">nth_child</a>&nbsp;&nbsp;
+      <a href="#M000214">only_child</a>&nbsp;&nbsp;
+      <a href="#M000208">select</a>&nbsp;&nbsp;
+      <a href="#M000209">select_first</a>&nbsp;&nbsp;
+      <a href="#M000211">simple_selector</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000204" class="method-detail">
+        <a name="M000204"></a>
+
+        <div class="method-heading">
+          <a href="#M000204" class="method-signature">
+          <span class="method-name">Selector.for_class(cls) => selector<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="Selector.html#M000206">new</a> selector for the given
+class name.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000204-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000204-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 214</span>
+214:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">for_class</span>(<span class="ruby-identifier">cls</span>)
+215:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">new</span>([<span class="ruby-value str">&quot;.?&quot;</span>, <span class="ruby-identifier">cls</span>])
+216:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000205" class="method-detail">
+        <a name="M000205"></a>
+
+        <div class="method-heading">
+          <a href="#M000205" class="method-signature">
+          <span class="method-name">Selector.for_id(id) => selector<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="Selector.html#M000206">new</a> selector for the given
+id.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000205-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000205-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 223</span>
+223:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">for_id</span>(<span class="ruby-identifier">id</span>)
+224:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">new</span>([<span class="ruby-value str">&quot;#?&quot;</span>, <span class="ruby-identifier">id</span>])
+225:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000206" class="method-detail">
+        <a name="M000206"></a>
+
+        <div class="method-heading">
+          <a href="#M000206" class="method-signature">
+          <span class="method-name">Selector.new(string, [values ...]) => selector<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="Selector.html#M000206">new</a> selector from a CSS 2
+selector expression.
+</p>
+<p>
+The first argument is the selector expression. All other arguments are used
+for value substitution.
+</p>
+<p>
+Throws InvalidSelectorError is the selector expression is invalid.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000206-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000206-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 239</span>
+239:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">selector</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">values</span>)
+240:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;CSS expression cannot be empty&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">selector</span>.<span class="ruby-identifier">empty?</span>
+241:       <span class="ruby-ivar">@source</span> = <span class="ruby-value str">&quot;&quot;</span>
+242:       <span class="ruby-identifier">values</span> = <span class="ruby-identifier">values</span>[<span class="ruby-value">0</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">values</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">values</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+243: 
+244:       <span class="ruby-comment cmt"># We need a copy to determine if we failed to parse, and also</span>
+245:       <span class="ruby-comment cmt"># preserve the original pass by-ref statement.</span>
+246:       <span class="ruby-identifier">statement</span> = <span class="ruby-identifier">selector</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">dup</span>
+247: 
+248:       <span class="ruby-comment cmt"># Create a simple selector, along with negation.</span>
+249:       <span class="ruby-identifier">simple_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-node">&quot;@#{name}&quot;</span>, <span class="ruby-identifier">value</span>) }
+250: 
+251:       <span class="ruby-ivar">@alternates</span> = []
+252:       <span class="ruby-ivar">@depends</span> = <span class="ruby-keyword kw">nil</span>
+253: 
+254:       <span class="ruby-comment cmt"># Alternative selector.</span>
+255:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\s*,\s*/</span>, <span class="ruby-value str">&quot;&quot;</span>)
+256:         <span class="ruby-identifier">second</span> = <span class="ruby-constant">Selector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>)
+257:         <span class="ruby-ivar">@alternates</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">second</span>
+258:         <span class="ruby-comment cmt"># If there are alternate selectors, we group them in the top selector.</span>
+259:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">alternates</span> = <span class="ruby-identifier">second</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-identifier">:@alternates</span>)
+260:           <span class="ruby-identifier">second</span>.<span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-identifier">:@alternates</span>, [])
+261:           <span class="ruby-ivar">@alternates</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">alternates</span>
+262:         <span class="ruby-keyword kw">end</span>
+263:         <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; , &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">second</span>.<span class="ruby-identifier">to_s</span>
+264:       <span class="ruby-comment cmt"># Sibling selector: create a dependency into second selector that will</span>
+265:       <span class="ruby-comment cmt"># match element immediately following this one.</span>
+266:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\s*\+\s*/</span>, <span class="ruby-value str">&quot;&quot;</span>)
+267:         <span class="ruby-identifier">second</span> = <span class="ruby-identifier">next_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>)
+268:         <span class="ruby-ivar">@depends</span> = <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span>, <span class="ruby-identifier">first</span><span class="ruby-operator">|</span>
+269:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element</span> = <span class="ruby-identifier">next_element</span>(<span class="ruby-identifier">element</span>)
+270:             <span class="ruby-identifier">second</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">element</span>, <span class="ruby-identifier">first</span>)
+271:           <span class="ruby-keyword kw">end</span>
+272:         <span class="ruby-keyword kw">end</span>
+273:         <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; + &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">second</span>.<span class="ruby-identifier">to_s</span>
+274:       <span class="ruby-comment cmt"># Adjacent selector: create a dependency into second selector that will</span>
+275:       <span class="ruby-comment cmt"># match all elements following this one.</span>
+276:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\s*~\s*/</span>, <span class="ruby-value str">&quot;&quot;</span>)
+277:         <span class="ruby-identifier">second</span> = <span class="ruby-identifier">next_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>)
+278:         <span class="ruby-ivar">@depends</span> = <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span>, <span class="ruby-identifier">first</span><span class="ruby-operator">|</span>
+279:           <span class="ruby-identifier">matches</span> = []
+280:           <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">element</span> = <span class="ruby-identifier">next_element</span>(<span class="ruby-identifier">element</span>)
+281:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subset</span> = <span class="ruby-identifier">second</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">element</span>, <span class="ruby-identifier">first</span>)
+282:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">subset</span>.<span class="ruby-identifier">empty?</span>
+283:                 <span class="ruby-identifier">matches</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">subset</span>.<span class="ruby-identifier">first</span>
+284:                 <span class="ruby-keyword kw">break</span>
+285:               <span class="ruby-keyword kw">else</span>
+286:                 <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">subset</span>
+287:               <span class="ruby-keyword kw">end</span>
+288:             <span class="ruby-keyword kw">end</span>
+289:           <span class="ruby-keyword kw">end</span>
+290:           <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">matches</span>
+291:         <span class="ruby-keyword kw">end</span>
+292:         <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; ~ &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">second</span>.<span class="ruby-identifier">to_s</span>
+293:       <span class="ruby-comment cmt"># Child selector: create a dependency into second selector that will</span>
+294:       <span class="ruby-comment cmt"># match a child element of this one.</span>
+295:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\s*&gt;\s*/</span>, <span class="ruby-value str">&quot;&quot;</span>)
+296:         <span class="ruby-identifier">second</span> = <span class="ruby-identifier">next_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>)
+297:         <span class="ruby-ivar">@depends</span> = <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span>, <span class="ruby-identifier">first</span><span class="ruby-operator">|</span>
+298:           <span class="ruby-identifier">matches</span> = []
+299:           <span class="ruby-identifier">element</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">child</span><span class="ruby-operator">|</span>
+300:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">tag?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">subset</span> = <span class="ruby-identifier">second</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">child</span>, <span class="ruby-identifier">first</span>)
+301:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">subset</span>.<span class="ruby-identifier">empty?</span>
+302:                 <span class="ruby-identifier">matches</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">subset</span>.<span class="ruby-identifier">first</span>
+303:                 <span class="ruby-keyword kw">break</span>
+304:               <span class="ruby-keyword kw">else</span>
+305:                 <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">subset</span>
+306:               <span class="ruby-keyword kw">end</span>
+307:             <span class="ruby-keyword kw">end</span>
+308:           <span class="ruby-keyword kw">end</span>
+309:           <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">matches</span>
+310:         <span class="ruby-keyword kw">end</span>
+311:         <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &gt; &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">second</span>.<span class="ruby-identifier">to_s</span>
+312:       <span class="ruby-comment cmt"># Descendant selector: create a dependency into second selector that</span>
+313:       <span class="ruby-comment cmt"># will match all descendant elements of this one. Note,</span>
+314:       <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">statement</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\s+\S+/</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">statement</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">selector</span>
+315:         <span class="ruby-identifier">second</span> = <span class="ruby-identifier">next_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>)
+316:         <span class="ruby-ivar">@depends</span> = <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span>, <span class="ruby-identifier">first</span><span class="ruby-operator">|</span>
+317:           <span class="ruby-identifier">matches</span> = []
+318:           <span class="ruby-identifier">stack</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">children</span>.<span class="ruby-identifier">reverse</span>
+319:           <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">node</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">pop</span>
+320:             <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">tag?</span>
+321:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subset</span> = <span class="ruby-identifier">second</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">node</span>, <span class="ruby-identifier">first</span>)
+322:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">first</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">subset</span>.<span class="ruby-identifier">empty?</span>
+323:                 <span class="ruby-identifier">matches</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">subset</span>.<span class="ruby-identifier">first</span>
+324:                 <span class="ruby-keyword kw">break</span>
+325:               <span class="ruby-keyword kw">else</span>
+326:                 <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">subset</span>
+327:               <span class="ruby-keyword kw">end</span>
+328:             <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">children</span> = <span class="ruby-identifier">node</span>.<span class="ruby-identifier">children</span>
+329:               <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">children</span>.<span class="ruby-identifier">reverse</span>
+330:             <span class="ruby-keyword kw">end</span>
+331:           <span class="ruby-keyword kw">end</span>
+332:           <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-value">? </span><span class="ruby-keyword kw">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">matches</span>
+333:         <span class="ruby-keyword kw">end</span>
+334:         <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">second</span>.<span class="ruby-identifier">to_s</span>
+335:       <span class="ruby-keyword kw">else</span>
+336:         <span class="ruby-comment cmt"># The last selector is where we check that we parsed</span>
+337:         <span class="ruby-comment cmt"># all the parts.</span>
+338:         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
+339:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Invalid selector: #{statement}&quot;</span>
+340:         <span class="ruby-keyword kw">end</span>
+341:       <span class="ruby-keyword kw">end</span>
+342:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000207" class="method-detail">
+        <a name="M000207"></a>
+
+        <div class="method-heading">
+          <a href="#M000207" class="method-signature">
+          <span class="method-name">match(element, first?) => array or nil<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Matches an element against the selector.
+</p>
+<p>
+For a simple selector this method returns an array with the element if the
+element matches, nil otherwise.
+</p>
+<p>
+For a complex selector (sibling and descendant) this method returns an
+array with all matching elements, nil if no <a
+href="Selector.html#M000207">match</a> is found.
+</p>
+<p>
+Use +first_only=true+ if you are only interested in the first element.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  if selector.match(element)
+    puts &quot;Element is a login form&quot;
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000207-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000207-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 363</span>
+363:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">match</span>(<span class="ruby-identifier">element</span>, <span class="ruby-identifier">first_only</span> = <span class="ruby-keyword kw">false</span>)
+364:       <span class="ruby-comment cmt"># Match element if no element name or element name same as element name</span>
+365:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matched</span> = (<span class="ruby-operator">!</span><span class="ruby-ivar">@tag_name</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@tag_name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">name</span>)
+366:         <span class="ruby-comment cmt"># No match if one of the attribute matches failed</span>
+367:         <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">attr</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@attributes</span>
+368:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-identifier">attr</span>[<span class="ruby-value">0</span>]] <span class="ruby-operator">!~</span> <span class="ruby-identifier">attr</span>[<span class="ruby-value">1</span>]
+369:             <span class="ruby-identifier">matched</span> = <span class="ruby-keyword kw">false</span>
+370:             <span class="ruby-keyword kw">break</span>
+371:           <span class="ruby-keyword kw">end</span>
+372:         <span class="ruby-keyword kw">end</span>
+373:       <span class="ruby-keyword kw">end</span>
+374: 
+375:       <span class="ruby-comment cmt"># Pseudo class matches (nth-child, empty, etc).</span>
+376:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matched</span>
+377:         <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">pseudo</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@pseudo</span>
+378:           <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">pseudo</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">element</span>)
+379:             <span class="ruby-identifier">matched</span> = <span class="ruby-keyword kw">false</span>
+380:             <span class="ruby-keyword kw">break</span>
+381:           <span class="ruby-keyword kw">end</span>
+382:         <span class="ruby-keyword kw">end</span>
+383:       <span class="ruby-keyword kw">end</span>
+384: 
+385:       <span class="ruby-comment cmt"># Negation. Same rules as above, but we fail if a match is made.</span>
+386:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matched</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@negation</span>
+387:         <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">negation</span> <span class="ruby-keyword kw">in</span> <span class="ruby-ivar">@negation</span>
+388:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">negation</span>[<span class="ruby-identifier">:tag_name</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">name</span>
+389:             <span class="ruby-identifier">matched</span> = <span class="ruby-keyword kw">false</span>
+390:           <span class="ruby-keyword kw">else</span>
+391:             <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">attr</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">negation</span>[<span class="ruby-identifier">:attributes</span>]
+392:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-identifier">attr</span>[<span class="ruby-value">0</span>]] <span class="ruby-operator">=~</span> <span class="ruby-identifier">attr</span>[<span class="ruby-value">1</span>]
+393:                 <span class="ruby-identifier">matched</span> = <span class="ruby-keyword kw">false</span>
+394:                 <span class="ruby-keyword kw">break</span>
+395:               <span class="ruby-keyword kw">end</span>
+396:             <span class="ruby-keyword kw">end</span>
+397:           <span class="ruby-keyword kw">end</span>
+398:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matched</span>
+399:             <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">pseudo</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">negation</span>[<span class="ruby-identifier">:pseudo</span>]
+400:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">pseudo</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">element</span>)
+401:                 <span class="ruby-identifier">matched</span> = <span class="ruby-keyword kw">false</span>
+402:                 <span class="ruby-keyword kw">break</span>
+403:               <span class="ruby-keyword kw">end</span>
+404:             <span class="ruby-keyword kw">end</span>
+405:           <span class="ruby-keyword kw">end</span>
+406:           <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">matched</span>
+407:         <span class="ruby-keyword kw">end</span>
+408:       <span class="ruby-keyword kw">end</span>
+409: 
+410:       <span class="ruby-comment cmt"># If element matched but depends on another element (child,</span>
+411:       <span class="ruby-comment cmt"># sibling, etc), apply the dependent matches instead.</span>
+412:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matched</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@depends</span>
+413:         <span class="ruby-identifier">matches</span> = <span class="ruby-ivar">@depends</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">element</span>, <span class="ruby-identifier">first_only</span>)
+414:       <span class="ruby-keyword kw">else</span>
+415:         <span class="ruby-identifier">matches</span> = <span class="ruby-identifier">matched</span> <span class="ruby-value">? </span>[<span class="ruby-identifier">element</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
+416:       <span class="ruby-keyword kw">end</span>
+417: 
+418:       <span class="ruby-comment cmt"># If this selector is part of the group, try all the alternative</span>
+419:       <span class="ruby-comment cmt"># selectors (unless first_only).</span>
+420:       <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">first_only</span> <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">matches</span>
+421:         <span class="ruby-ivar">@alternates</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">alternate</span><span class="ruby-operator">|</span>
+422:           <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matches</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">first_only</span>
+423:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">subset</span> = <span class="ruby-identifier">alternate</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">element</span>, <span class="ruby-identifier">first_only</span>)
+424:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">matches</span>
+425:               <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">subset</span>
+426:             <span class="ruby-keyword kw">else</span>
+427:               <span class="ruby-identifier">matches</span> = <span class="ruby-identifier">subset</span>
+428:             <span class="ruby-keyword kw">end</span>
+429:           <span class="ruby-keyword kw">end</span>
+430:         <span class="ruby-keyword kw">end</span>
+431:       <span class="ruby-keyword kw">end</span>
+432: 
+433:       <span class="ruby-identifier">matches</span>
+434:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000210" class="method-detail">
+        <a name="M000210"></a>
+
+        <div class="method-heading">
+          <a href="#M000210" class="method-signature">
+          <span class="method-name">next_element</span><span class="method-args">(element, name = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return the next element after this one. Skips sibling text nodes.
+</p>
+<p>
+With the <tt>name</tt> argument, returns the next element with that name,
+skipping other sibling elements.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000210-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000210-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 493</span>
+493:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">next_element</span>(<span class="ruby-identifier">element</span>, <span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>)
+494:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">siblings</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">children</span>
+495:         <span class="ruby-identifier">found</span> = <span class="ruby-keyword kw">false</span>
+496:         <span class="ruby-identifier">siblings</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+497:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">element</span>)
+498:             <span class="ruby-identifier">found</span> = <span class="ruby-keyword kw">true</span>
+499:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">found</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">tag?</span>
+500:             <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">node</span> <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span>)
+501:           <span class="ruby-keyword kw">end</span>
+502:         <span class="ruby-keyword kw">end</span>
+503:       <span class="ruby-keyword kw">end</span>
+504:       <span class="ruby-keyword kw">nil</span>
+505:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000208" class="method-detail">
+        <a name="M000208"></a>
+
+        <div class="method-heading">
+          <a href="#M000208" class="method-signature">
+          <span class="method-name">select(root) => array<br />
+</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Selects and returns an array with all matching elements, beginning with one
+node and traversing through all children depth-first. Returns an empty
+array if no <a href="Selector.html#M000207">match</a> is found.
+</p>
+<p>
+The root node may be any element in the document, or the document itself.
+</p>
+<p>
+For example:
+</p>
+<pre>
+  selector = HTML::Selector.new &quot;input[type=text]&quot;
+  matches = selector.select(element)
+  matches.each do |match|
+    puts &quot;Found text field with name #{match.attributes['name']}&quot;
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000208-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000208-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 453</span>
+453:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select</span>(<span class="ruby-identifier">root</span>)
+454:       <span class="ruby-identifier">matches</span> = []
+455:       <span class="ruby-identifier">stack</span> = [<span class="ruby-identifier">root</span>]
+456:       <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">node</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">pop</span>
+457:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">tag?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">subset</span> = <span class="ruby-identifier">match</span>(<span class="ruby-identifier">node</span>, <span class="ruby-keyword kw">false</span>)
+458:           <span class="ruby-identifier">subset</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+459:             <span class="ruby-identifier">matches</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">match</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">matches</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">match</span>) }
+460:           <span class="ruby-keyword kw">end</span>
+461:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">children</span> = <span class="ruby-identifier">node</span>.<span class="ruby-identifier">children</span>
+462:           <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">children</span>.<span class="ruby-identifier">reverse</span>
+463:         <span class="ruby-keyword kw">end</span>
+464:       <span class="ruby-keyword kw">end</span>
+465:       <span class="ruby-identifier">matches</span>
+466:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000209" class="method-detail">
+        <a name="M000209"></a>
+
+        <div class="method-heading">
+          <a href="#M000209" class="method-signature">
+          <span class="method-name">select_first</span><span class="method-args">(root)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Similar to <a href="Selector.html#M000208">select</a> but returns the first
+matching element. Returns <tt>nil</tt> if no element matches the selector.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000209-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000209-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 471</span>
+471:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_first</span>(<span class="ruby-identifier">root</span>)
+472:       <span class="ruby-identifier">stack</span> = [<span class="ruby-identifier">root</span>]
+473:       <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">node</span> = <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">pop</span>
+474:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">tag?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">subset</span> = <span class="ruby-identifier">match</span>(<span class="ruby-identifier">node</span>, <span class="ruby-keyword kw">true</span>)
+475:           <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">subset</span>.<span class="ruby-identifier">first</span> <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">subset</span>.<span class="ruby-identifier">empty?</span>
+476:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">children</span> = <span class="ruby-identifier">node</span>.<span class="ruby-identifier">children</span>
+477:           <span class="ruby-identifier">stack</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">children</span>.<span class="ruby-identifier">reverse</span>
+478:         <span class="ruby-keyword kw">end</span>
+479:       <span class="ruby-keyword kw">end</span>
+480:       <span class="ruby-keyword kw">nil</span>
+481:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000212" class="method-detail">
+        <a name="M000212"></a>
+
+        <div class="method-heading">
+          <a href="#M000212" class="method-signature">
+          <span class="method-name">attribute_match</span><span class="method-args">(equality, value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a regular expression to <a href="Selector.html#M000207">match</a> an
+attribute value based on the equality operator (=, ^=, |=, etc).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000212-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000212-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 687</span>
+687:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">attribute_match</span>(<span class="ruby-identifier">equality</span>, <span class="ruby-identifier">value</span>)
+688:       <span class="ruby-identifier">regexp</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Regexp</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">escape</span>(<span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>)
+689:       <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">equality</span>
+690:         <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;=&quot;</span> <span class="ruby-keyword kw">then</span>
+691:           <span class="ruby-comment cmt"># Match the attribute value in full</span>
+692:           <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;^#{regexp}$&quot;</span>)
+693:         <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;~=&quot;</span> <span class="ruby-keyword kw">then</span>
+694:           <span class="ruby-comment cmt"># Match a space-separated word within the attribute value</span>
+695:           <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;(^|\s)#{regexp}($|\s)&quot;</span>)
+696:         <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;^=&quot;</span>
+697:           <span class="ruby-comment cmt"># Match the beginning of the attribute value</span>
+698:           <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;^#{regexp}&quot;</span>)
+699:         <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;$=&quot;</span>
+700:           <span class="ruby-comment cmt"># Match the end of the attribute value</span>
+701:           <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;#{regexp}$&quot;</span>)
+702:         <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;*=&quot;</span>
+703:           <span class="ruby-comment cmt"># Match substring of the attribute value</span>
+704:           <span class="ruby-identifier">regexp</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Regexp</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">regexp</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">regexp</span>)
+705:         <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;|=&quot;</span> <span class="ruby-keyword kw">then</span>
+706:           <span class="ruby-comment cmt"># Match the first space-separated item of the attribute value</span>
+707:           <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;^#{regexp}($|\s)&quot;</span>)
+708:         <span class="ruby-keyword kw">else</span>
+709:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">InvalidSelectorError</span>, <span class="ruby-value str">&quot;Invalid operation/value&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">empty?</span>
+710:           <span class="ruby-comment cmt"># Match all attributes values (existence check)</span>
+711:           <span class="ruby-regexp re">//</span>
+712:       <span class="ruby-keyword kw">end</span>
+713:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000215" class="method-detail">
+        <a name="M000215"></a>
+
+        <div class="method-heading">
+          <a href="#M000215" class="method-signature">
+          <span class="method-name">next_selector</span><span class="method-args">(statement, values)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Called to create a dependent selector (sibling, descendant, etc). Passes
+the remainder of the statement that will be reduced to zero eventually, and
+array of substitution values.
+</p>
+<p>
+This method is called from four places, so it helps to put it here for
+reuse. The only logic deals with the need to detect comma separators
+(alternate) and apply them to the selector group of the top selector.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000215-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000215-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 800</span>
+800:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">next_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>)
+801:       <span class="ruby-identifier">second</span> = <span class="ruby-constant">Selector</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>)
+802:       <span class="ruby-comment cmt"># If there are alternate selectors, we group them in the top selector.</span>
+803:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">alternates</span> = <span class="ruby-identifier">second</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-identifier">:@alternates</span>)
+804:         <span class="ruby-identifier">second</span>.<span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-identifier">:@alternates</span>, [])
+805:         <span class="ruby-ivar">@alternates</span>.<span class="ruby-identifier">concat</span> <span class="ruby-identifier">alternates</span>
+806:       <span class="ruby-keyword kw">end</span>
+807:       <span class="ruby-identifier">second</span>
+808:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000213" class="method-detail">
+        <a name="M000213"></a>
+
+        <div class="method-heading">
+          <a href="#M000213" class="method-signature">
+          <span class="method-name">nth_child</span><span class="method-args">(a, b, of_type, reverse)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a lambda that can <a href="Selector.html#M000207">match</a> an
+element against the nth-child pseudo class, given the following arguments:
+</p>
+<ul>
+<li><tt>a</tt> &#8212; Value of a part.
+
+</li>
+<li><tt>b</tt> &#8212; Value of b part.
+
+</li>
+<li><tt>of_type</tt> &#8212; True to test only elements of this type (of-type).
+
+</li>
+<li><tt>reverse</tt> &#8212; True to count in reverse order (last-).
+
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000213-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000213-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 722</span>
+722:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">nth_child</span>(<span class="ruby-identifier">a</span>, <span class="ruby-identifier">b</span>, <span class="ruby-identifier">of_type</span>, <span class="ruby-identifier">reverse</span>)
+723:       <span class="ruby-comment cmt"># a = 0 means select at index b, if b = 0 nothing selected</span>
+724:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">lambda</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">false</span> } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+725:       <span class="ruby-comment cmt"># a &lt; 0 and b &lt; 0 will never match against an index</span>
+726:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">lambda</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">false</span> } <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+727:       <span class="ruby-identifier">b</span> = <span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>   <span class="ruby-comment cmt"># b &lt; 0 just picks last element from each group</span>
+728:       <span class="ruby-identifier">b</span> <span class="ruby-operator">-=</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">b</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>  <span class="ruby-comment cmt"># b == 0 is same as b == 1, otherwise zero based</span>
+729:       <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+730:         <span class="ruby-comment cmt"># Element must be inside parent element.</span>
+731:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">tag?</span>
+732:         <span class="ruby-identifier">index</span> = <span class="ruby-value">0</span>
+733:         <span class="ruby-comment cmt"># Get siblings, reverse if counting from last.</span>
+734:         <span class="ruby-identifier">siblings</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">children</span>
+735:         <span class="ruby-identifier">siblings</span> = <span class="ruby-identifier">siblings</span>.<span class="ruby-identifier">reverse</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">reverse</span>
+736:         <span class="ruby-comment cmt"># Match element name if of-type, otherwise ignore name.</span>
+737:         <span class="ruby-identifier">name</span> = <span class="ruby-identifier">of_type</span> <span class="ruby-value">? </span><span class="ruby-identifier">element</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
+738:         <span class="ruby-identifier">found</span> = <span class="ruby-keyword kw">false</span>
+739:         <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">child</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">siblings</span>
+740:           <span class="ruby-comment cmt"># Skip text nodes/comments.</span>
+741:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">tag?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span>)
+742:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+743:               <span class="ruby-comment cmt"># Shortcut when a == 0 no need to go past count</span>
+744:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">index</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">b</span>
+745:                 <span class="ruby-identifier">found</span> = <span class="ruby-identifier">child</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">element</span>)
+746:                 <span class="ruby-keyword kw">break</span>
+747:               <span class="ruby-keyword kw">end</span>
+748:             <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">a</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+749:               <span class="ruby-comment cmt"># Only look for first b elements</span>
+750:               <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">index</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">b</span>
+751:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">element</span>)
+752:                 <span class="ruby-identifier">found</span> = (<span class="ruby-identifier">index</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">a</span>) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+753:                 <span class="ruby-keyword kw">break</span>
+754:               <span class="ruby-keyword kw">end</span>
+755:             <span class="ruby-keyword kw">else</span>
+756:               <span class="ruby-comment cmt"># Otherwise, break if child found and count ==  an+b</span>
+757:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">element</span>)
+758:                 <span class="ruby-identifier">found</span> = (<span class="ruby-identifier">index</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">a</span>) <span class="ruby-operator">==</span> <span class="ruby-identifier">b</span>
+759:                 <span class="ruby-keyword kw">break</span>
+760:               <span class="ruby-keyword kw">end</span>
+761:             <span class="ruby-keyword kw">end</span>
+762:             <span class="ruby-identifier">index</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+763:           <span class="ruby-keyword kw">end</span>
+764:         <span class="ruby-keyword kw">end</span>
+765:         <span class="ruby-identifier">found</span>
+766:       <span class="ruby-keyword kw">end</span>
+767:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000214" class="method-detail">
+        <a name="M000214"></a>
+
+        <div class="method-heading">
+          <a href="#M000214" class="method-signature">
+          <span class="method-name">only_child</span><span class="method-args">(of_type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a only child lambda. Pass +of-type+ to only look at elements of its
+type.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000214-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000214-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 772</span>
+772:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">only_child</span>(<span class="ruby-identifier">of_type</span>)
+773:       <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+774:         <span class="ruby-comment cmt"># Element must be inside parent element.</span>
+775:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">tag?</span>
+776:         <span class="ruby-identifier">name</span> = <span class="ruby-identifier">of_type</span> <span class="ruby-value">? </span><span class="ruby-identifier">element</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">nil</span>
+777:         <span class="ruby-identifier">other</span> = <span class="ruby-keyword kw">false</span>
+778:         <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">child</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">children</span>
+779:           <span class="ruby-comment cmt"># Skip text nodes/comments.</span>
+780:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">tag?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">name</span>)
+781:             <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">equal?</span>(<span class="ruby-identifier">element</span>)
+782:               <span class="ruby-identifier">other</span> = <span class="ruby-keyword kw">true</span>
+783:               <span class="ruby-keyword kw">break</span>
+784:             <span class="ruby-keyword kw">end</span>
+785:           <span class="ruby-keyword kw">end</span>
+786:         <span class="ruby-keyword kw">end</span>
+787:         <span class="ruby-operator">!</span><span class="ruby-identifier">other</span>
+788:       <span class="ruby-keyword kw">end</span>
+789:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000211" class="method-detail">
+        <a name="M000211"></a>
+
+        <div class="method-heading">
+          <a href="#M000211" class="method-signature">
+          <span class="method-name">simple_selector</span><span class="method-args">(statement, values, can_negate = true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a simple selector given the statement and array of substitution
+values.
+</p>
+<p>
+Returns a hash with the values <tt>tag_name</tt>, <tt>attributes</tt>,
+<tt>pseudo</tt> (classes) and <tt>negation</tt>.
+</p>
+<p>
+Called the first time with <tt>can_negate</tt> true to allow negation.
+Called a second time with false since negation cannot be negated.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000211-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000211-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/vendor/html-scanner/html/selector.rb, line 520</span>
+520:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">simple_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>, <span class="ruby-identifier">can_negate</span> = <span class="ruby-keyword kw">true</span>)
+521:       <span class="ruby-identifier">tag_name</span> = <span class="ruby-keyword kw">nil</span>
+522:       <span class="ruby-identifier">attributes</span> = []
+523:       <span class="ruby-identifier">pseudo</span> = []
+524:       <span class="ruby-identifier">negation</span> = []
+525: 
+526:       <span class="ruby-comment cmt"># Element name. (Note that in negation, this can come at</span>
+527:       <span class="ruby-comment cmt"># any order, but for simplicity we allow if only first).</span>
+528:       <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^(\*|[[:alpha:]][\w\-]*)/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+529:         <span class="ruby-identifier">match</span>.<span class="ruby-identifier">strip!</span>
+530:         <span class="ruby-identifier">tag_name</span> = <span class="ruby-identifier">match</span>.<span class="ruby-identifier">downcase</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">match</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;*&quot;</span>
+531:         <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">match</span>
+532:         <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+533:       <span class="ruby-keyword kw">end</span>
+534: 
+535:       <span class="ruby-comment cmt"># Get identifier, class, attribute name, pseudo or negation.</span>
+536:       <span class="ruby-keyword kw">while</span> <span class="ruby-keyword kw">true</span>
+537:         <span class="ruby-comment cmt"># Element identifier.</span>
+538:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^#(\?|[\w\-]+)/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+539:           <span class="ruby-identifier">id</span> = <span class="ruby-identifier">$1</span>
+540:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;?&quot;</span>
+541:             <span class="ruby-identifier">id</span> = <span class="ruby-identifier">values</span>.<span class="ruby-identifier">shift</span>
+542:           <span class="ruby-keyword kw">end</span>
+543:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;##{id}&quot;</span>
+544:           <span class="ruby-identifier">id</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;^#{Regexp.escape(id.to_s)}$&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">id</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Regexp</span>)
+545:           <span class="ruby-identifier">attributes</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-value str">&quot;id&quot;</span>, <span class="ruby-identifier">id</span>]
+546:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+547:         <span class="ruby-keyword kw">end</span>
+548: 
+549:         <span class="ruby-comment cmt"># Class name.</span>
+550:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\.([\w\-]+)/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+551:           <span class="ruby-identifier">class_name</span> = <span class="ruby-identifier">$1</span>
+552:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;.#{class_name}&quot;</span>
+553:           <span class="ruby-identifier">class_name</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;(^|\s)#{Regexp.escape(class_name)}($|\s)&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">class_name</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Regexp</span>)
+554:           <span class="ruby-identifier">attributes</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-value str">&quot;class&quot;</span>, <span class="ruby-identifier">class_name</span>]
+555:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+556:         <span class="ruby-keyword kw">end</span>
+557: 
+558:         <span class="ruby-comment cmt"># Attribute value.</span>
+559:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\[\s*([[:alpha:]][\w\-]*)\s*((?:[~|^$*])?=)?\s*('[^']*'|&quot;[^*]&quot;|[^\]]*)\s*\]/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+560:           <span class="ruby-identifier">name</span>, <span class="ruby-identifier">equality</span>, <span class="ruby-identifier">value</span> = <span class="ruby-identifier">$1</span>, <span class="ruby-identifier">$2</span>, <span class="ruby-identifier">$3</span>
+561:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;?&quot;</span>
+562:             <span class="ruby-identifier">value</span> = <span class="ruby-identifier">values</span>.<span class="ruby-identifier">shift</span>
+563:           <span class="ruby-keyword kw">else</span>
+564:             <span class="ruby-comment cmt"># Handle single and double quotes.</span>
+565:             <span class="ruby-identifier">value</span>.<span class="ruby-identifier">strip!</span>
+566:             <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">value</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?&quot;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">value</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?'</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">value</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>[<span class="ruby-value">-1</span>]
+567:               <span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-2</span>]
+568:             <span class="ruby-keyword kw">end</span>
+569:           <span class="ruby-keyword kw">end</span>
+570:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;[#{name}#{equality}'#{value}']&quot;</span>
+571:           <span class="ruby-identifier">attributes</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">strip</span>, <span class="ruby-identifier">attribute_match</span>(<span class="ruby-identifier">equality</span>, <span class="ruby-identifier">value</span>)]
+572:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+573:         <span class="ruby-keyword kw">end</span>
+574: 
+575:         <span class="ruby-comment cmt"># Root element only.</span>
+576:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^:root/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+577:           <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+578:             <span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">element</span>.<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">tag?</span>
+579:           <span class="ruby-keyword kw">end</span>
+580:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;:root&quot;</span>
+581:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+582:         <span class="ruby-keyword kw">end</span>
+583: 
+584:         <span class="ruby-comment cmt"># Nth-child including last and of-type.</span>
+585:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^:nth-(last-)?(child|of-type)\((odd|even|(\d+|\?)|(-?\d*|\?)?n([+\-]\d+|\?)?)\)/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+586:           <span class="ruby-identifier">reverse</span> = <span class="ruby-identifier">$1</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;last-&quot;</span>
+587:           <span class="ruby-identifier">of_type</span> = <span class="ruby-identifier">$2</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;of-type&quot;</span>
+588:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;:nth-#{$1}#{$2}(&quot;</span>
+589:           <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">$3</span>
+590:             <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;odd&quot;</span>
+591:               <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nth_child</span>(<span class="ruby-value">2</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">of_type</span>, <span class="ruby-identifier">reverse</span>)
+592:               <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;odd)&quot;</span>
+593:             <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;even&quot;</span>
+594:               <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nth_child</span>(<span class="ruby-value">2</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">of_type</span>, <span class="ruby-identifier">reverse</span>)
+595:               <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;even)&quot;</span>
+596:             <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^(\d+|\?)$/</span>  <span class="ruby-comment cmt"># b only</span>
+597:               <span class="ruby-identifier">b</span> = (<span class="ruby-identifier">$1</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;?&quot;</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">values</span>.<span class="ruby-identifier">shift</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$1</span>).<span class="ruby-identifier">to_i</span>
+598:               <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nth_child</span>(<span class="ruby-value">0</span>, <span class="ruby-identifier">b</span>, <span class="ruby-identifier">of_type</span>, <span class="ruby-identifier">reverse</span>)
+599:               <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{b})&quot;</span>
+600:             <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">/^(-?\d*|\?)?n([+\-]\d+|\?)?$/</span>
+601:               <span class="ruby-identifier">a</span> = (<span class="ruby-identifier">$1</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;?&quot;</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">values</span>.<span class="ruby-identifier">shift</span> <span class="ruby-operator">:</span>
+602:                    <span class="ruby-identifier">$1</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-operator">?</span> <span class="ruby-value">1</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$1</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;-&quot;</span> <span class="ruby-operator">?</span> <span class="ruby-value">-1</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$1</span>).<span class="ruby-identifier">to_i</span>
+603:               <span class="ruby-identifier">b</span> = (<span class="ruby-identifier">$2</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;?&quot;</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">values</span>.<span class="ruby-identifier">shift</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$2</span>).<span class="ruby-identifier">to_i</span>
+604:               <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nth_child</span>(<span class="ruby-identifier">a</span>, <span class="ruby-identifier">b</span>, <span class="ruby-identifier">of_type</span>, <span class="ruby-identifier">reverse</span>)
+605:               <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-identifier">b</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;#{a}n+#{b})&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{a}n#{b})&quot;</span>)
+606:             <span class="ruby-keyword kw">else</span>
+607:               <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-node">&quot;Invalid nth-child #{match}&quot;</span>
+608:           <span class="ruby-keyword kw">end</span>
+609:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+610:         <span class="ruby-keyword kw">end</span>
+611:         <span class="ruby-comment cmt"># First/last child (of type).</span>
+612:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^:(first|last)-(child|of-type)/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+613:           <span class="ruby-identifier">reverse</span> = <span class="ruby-identifier">$1</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;last&quot;</span>
+614:           <span class="ruby-identifier">of_type</span> = <span class="ruby-identifier">$2</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;of-type&quot;</span>
+615:           <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">nth_child</span>(<span class="ruby-value">0</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">of_type</span>, <span class="ruby-identifier">reverse</span>)
+616:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;:#{$1}-#{$2}&quot;</span>
+617:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+618:         <span class="ruby-keyword kw">end</span>
+619:         <span class="ruby-comment cmt"># Only child (of type).</span>
+620:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^:only-(child|of-type)/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+621:           <span class="ruby-identifier">of_type</span> = <span class="ruby-identifier">$1</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;of-type&quot;</span>
+622:           <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">only_child</span>(<span class="ruby-identifier">of_type</span>)
+623:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;:only-#{$1}&quot;</span>
+624:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+625:         <span class="ruby-keyword kw">end</span>
+626: 
+627:         <span class="ruby-comment cmt"># Empty: no child elements or meaningful content (whitespaces</span>
+628:         <span class="ruby-comment cmt"># are ignored).</span>
+629:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^:empty/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+630:           <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+631:             <span class="ruby-identifier">empty</span> = <span class="ruby-keyword kw">true</span>
+632:             <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">child</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">children</span>
+633:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">tag?</span> <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">child</span>.<span class="ruby-identifier">content</span>.<span class="ruby-identifier">strip</span>.<span class="ruby-identifier">empty?</span>
+634:                 <span class="ruby-identifier">empty</span> = <span class="ruby-keyword kw">false</span>
+635:                 <span class="ruby-keyword kw">break</span>
+636:               <span class="ruby-keyword kw">end</span>
+637:             <span class="ruby-keyword kw">end</span>
+638:             <span class="ruby-identifier">empty</span>
+639:           <span class="ruby-keyword kw">end</span>
+640:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;:empty&quot;</span>
+641:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+642:         <span class="ruby-keyword kw">end</span>
+643:         <span class="ruby-comment cmt"># Content: match the text content of the element, stripping</span>
+644:         <span class="ruby-comment cmt"># leading and trailing spaces.</span>
+645:         <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^:content\(\s*(\?|'[^']*'|&quot;[^&quot;]*&quot;|[^)]*)\s*\)/</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">match</span><span class="ruby-operator">|</span>
+646:           <span class="ruby-identifier">content</span> = <span class="ruby-identifier">$1</span>
+647:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">content</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;?&quot;</span>
+648:             <span class="ruby-identifier">content</span> = <span class="ruby-identifier">values</span>.<span class="ruby-identifier">shift</span>
+649:           <span class="ruby-keyword kw">elsif</span> (<span class="ruby-identifier">content</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?&quot;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">content</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?'</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">content</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">content</span>[<span class="ruby-value">-1</span>]
+650:             <span class="ruby-identifier">content</span> = <span class="ruby-identifier">content</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-2</span>]
+651:           <span class="ruby-keyword kw">end</span>
+652:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;:content('#{content}')&quot;</span>
+653:           <span class="ruby-identifier">content</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;^#{Regexp.escape(content.to_s)}$&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">content</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Regexp</span>)
+654:           <span class="ruby-identifier">pseudo</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">lambda</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+655:             <span class="ruby-identifier">text</span> = <span class="ruby-value str">&quot;&quot;</span>
+656:             <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">child</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">element</span>.<span class="ruby-identifier">children</span>
+657:               <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">tag?</span>
+658:                 <span class="ruby-identifier">text</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">child</span>.<span class="ruby-identifier">content</span>
+659:               <span class="ruby-keyword kw">end</span>
+660:             <span class="ruby-keyword kw">end</span>
+661:             <span class="ruby-identifier">text</span>.<span class="ruby-identifier">strip</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">content</span>
+662:           <span class="ruby-keyword kw">end</span>
+663:           <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Remove</span>
+664:         <span class="ruby-keyword kw">end</span>
+665: 
+666:         <span class="ruby-comment cmt"># Negation. Create another simple selector to handle it.</span>
+667:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^:not\(\s*/</span>, <span class="ruby-value str">&quot;&quot;</span>)
+668:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;Double negatives are not missing feature&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">can_negate</span>
+669:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;:not(&quot;</span>
+670:           <span class="ruby-identifier">negation</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">simple_selector</span>(<span class="ruby-identifier">statement</span>, <span class="ruby-identifier">values</span>, <span class="ruby-keyword kw">false</span>)
+671:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;Negation not closed&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">statement</span>.<span class="ruby-identifier">sub!</span>(<span class="ruby-regexp re">/^\s*\)/</span>, <span class="ruby-value str">&quot;&quot;</span>)
+672:           <span class="ruby-ivar">@source</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value str">&quot;)&quot;</span>
+673:           <span class="ruby-keyword kw">next</span>
+674:         <span class="ruby-keyword kw">end</span>
+675: 
+676:         <span class="ruby-comment cmt"># No match: moving on.</span>
+677:         <span class="ruby-keyword kw">break</span>
+678:       <span class="ruby-keyword kw">end</span>
+679: 
+680:       <span class="ruby-comment cmt"># Return hash. The keys are mapped to instance variables.</span>
+681:       {<span class="ruby-identifier">:tag_name=</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">tag_name</span>, <span class="ruby-identifier">:attributes=</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">attributes</span>, <span class="ruby-identifier">:pseudo=</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">pseudo</span>, <span class="ruby-identifier">:negation=</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">negation</span>}
+682:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActiveRecord::Serialization</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActiveRecord::Serialization</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/vendor/rails/activerecord/lib/active_record/serialization_rb.html">
+                vendor/rails/activerecord/lib/active_record/serialization.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/activerecord/lib/active_record/serializers/json_serializer_rb.html">
+                vendor/rails/activerecord/lib/active_record/serializers/json_serializer.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/activerecord/lib/active_record/serializers/xml_serializer_rb.html">
+                vendor/rails/activerecord/lib/active_record/serializers/xml_serializer.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001638">from_json</a>&nbsp;&nbsp;
+      <a href="#M001640">from_xml</a>&nbsp;&nbsp;
+      <a href="#M001636">included</a>&nbsp;&nbsp;
+      <a href="#M001637">to_json</a>&nbsp;&nbsp;
+      <a href="#M001639">to_xml</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="Serialization/ClassMethods.html" class="link">ActiveRecord::Serialization::ClassMethods</a><br />
+
+    </div>
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001636" class="method-detail">
+        <a name="M001636"></a>
+
+        <div class="method-heading">
+          <a href="#M001636" class="method-signature">
+          <span class="method-name">included</span><span class="method-args">(base)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001636-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001636-source">
+<pre>
+   <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/serializers/json_serializer.rb, line 3</span>
+3:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">included</span>(<span class="ruby-identifier">base</span>)
+4:       <span class="ruby-identifier">base</span>.<span class="ruby-identifier">cattr_accessor</span> <span class="ruby-identifier">:include_root_in_json</span>, <span class="ruby-identifier">:instance_writer</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span>
+5:       <span class="ruby-identifier">base</span>.<span class="ruby-identifier">extend</span> <span class="ruby-constant">ClassMethods</span>
+6:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001638" class="method-detail">
+        <a name="M001638"></a>
+
+        <div class="method-heading">
+          <a href="#M001638" class="method-signature">
+          <span class="method-name">from_json</span><span class="method-args">(json)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001638-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001638-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/serializers/json_serializer.rb, line 63</span>
+63:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">from_json</span>(<span class="ruby-identifier">json</span>)
+64:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">attributes</span> = <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">decode</span>(<span class="ruby-identifier">json</span>)
+65:       <span class="ruby-keyword kw">self</span>
+66:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001640" class="method-detail">
+        <a name="M001640"></a>
+
+        <div class="method-heading">
+          <a href="#M001640" class="method-signature">
+          <span class="method-name">from_xml</span><span class="method-args">(xml)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001640-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001640-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/serializers/xml_serializer.rb, line 158</span>
+158:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">from_xml</span>(<span class="ruby-identifier">xml</span>)
+159:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">attributes</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">from_xml</span>(<span class="ruby-identifier">xml</span>).<span class="ruby-identifier">values</span>.<span class="ruby-identifier">first</span>
+160:       <span class="ruby-keyword kw">self</span>
+161:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001637" class="method-detail">
+        <a name="M001637"></a>
+
+        <div class="method-heading">
+          <a href="#M001637" class="method-signature">
+          <span class="method-name">to_json</span><span class="method-args">(options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a JSON string representing the model. Some configuration is
+available through <tt>options</tt>.
+</p>
+<p>
+Without any <tt>options</tt>, the returned JSON string will include all the
+model&#8216;s attributes. For example:
+</p>
+<pre>
+  konata = User.find(1)
+  konata.to_json
+  # =&gt; {&quot;id&quot;: 1, &quot;name&quot;: &quot;Konata Izumi&quot;, &quot;age&quot;: 16,
+        &quot;created_at&quot;: &quot;2006/08/01&quot;, &quot;awesome&quot;: true}
+</pre>
+<p>
+The <tt>:only</tt> and <tt>:except</tt> options can be used to limit the
+attributes <a href="Serialization.html#M001636">included</a>, and work
+similar to the <tt>attributes</tt> method. For example:
+</p>
+<pre>
+  konata.to_json(:only =&gt; [ :id, :name ])
+  # =&gt; {&quot;id&quot;: 1, &quot;name&quot;: &quot;Konata Izumi&quot;}
+
+  konata.to_json(:except =&gt; [ :id, :created_at, :age ])
+  # =&gt; {&quot;name&quot;: &quot;Konata Izumi&quot;, &quot;awesome&quot;: true}
+</pre>
+<p>
+To include any methods on the model, use <tt>:methods</tt>.
+</p>
+<pre>
+  konata.to_json(:methods =&gt; :permalink)
+  # =&gt; {&quot;id&quot;: 1, &quot;name&quot;: &quot;Konata Izumi&quot;, &quot;age&quot;: 16,
+        &quot;created_at&quot;: &quot;2006/08/01&quot;, &quot;awesome&quot;: true,
+        &quot;permalink&quot;: &quot;1-konata-izumi&quot;}
+</pre>
+<p>
+To include associations, use <tt>:include</tt>.
+</p>
+<pre>
+  konata.to_json(:include =&gt; :posts)
+  # =&gt; {&quot;id&quot;: 1, &quot;name&quot;: &quot;Konata Izumi&quot;, &quot;age&quot;: 16,
+        &quot;created_at&quot;: &quot;2006/08/01&quot;, &quot;awesome&quot;: true,
+        &quot;posts&quot;: [{&quot;id&quot;: 1, &quot;author_id&quot;: 1, &quot;title&quot;: &quot;Welcome to the weblog&quot;},
+                  {&quot;id&quot;: 2, author_id: 1, &quot;title&quot;: &quot;So I was thinking&quot;}]}
+</pre>
+<p>
+2nd level and higher order associations work as well:
+</p>
+<pre>
+  konata.to_json(:include =&gt; { :posts =&gt; {
+                                 :include =&gt; { :comments =&gt; {
+                                               :only =&gt; :body } },
+                                 :only =&gt; :title } })
+  # =&gt; {&quot;id&quot;: 1, &quot;name&quot;: &quot;Konata Izumi&quot;, &quot;age&quot;: 16,
+        &quot;created_at&quot;: &quot;2006/08/01&quot;, &quot;awesome&quot;: true,
+        &quot;posts&quot;: [{&quot;comments&quot;: [{&quot;body&quot;: &quot;1st post!&quot;}, {&quot;body&quot;: &quot;Second!&quot;}],
+                   &quot;title&quot;: &quot;Welcome to the weblog&quot;},
+                  {&quot;comments&quot;: [{&quot;body&quot;: &quot;Don't think too hard&quot;}],
+                   &quot;title&quot;: &quot;So I was thinking&quot;}]}
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001637-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001637-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/serializers/json_serializer.rb, line 55</span>
+55:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_json</span>(<span class="ruby-identifier">options</span> = {})
+56:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">include_root_in_json</span>
+57:         <span class="ruby-node">&quot;{#{self.class.json_class_name}: #{JsonSerializer.new(self, options).to_s}}&quot;</span>
+58:       <span class="ruby-keyword kw">else</span>
+59:         <span class="ruby-constant">JsonSerializer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">options</span>).<span class="ruby-identifier">to_s</span>
+60:       <span class="ruby-keyword kw">end</span>
+61:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001639" class="method-detail">
+        <a name="M001639"></a>
+
+        <div class="method-heading">
+          <a href="#M001639" class="method-signature">
+          <span class="method-name">to_xml</span><span class="method-args">(options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Builds an XML document to represent the model. Some configuration is
+available through <tt>options</tt>. However more complicated cases should
+override ActiveRecord::Base#to_xml.
+</p>
+<p>
+By default the generated XML document will include the processing
+instruction and all the object&#8216;s attributes. For example:
+</p>
+<pre>
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+  &lt;topic&gt;
+    &lt;title&gt;The First Topic&lt;/title&gt;
+    &lt;author-name&gt;David&lt;/author-name&gt;
+    &lt;id type=&quot;integer&quot;&gt;1&lt;/id&gt;
+    &lt;approved type=&quot;boolean&quot;&gt;false&lt;/approved&gt;
+    &lt;replies-count type=&quot;integer&quot;&gt;0&lt;/replies-count&gt;
+    &lt;bonus-time type=&quot;datetime&quot;&gt;2000-01-01T08:28:00+12:00&lt;/bonus-time&gt;
+    &lt;written-on type=&quot;datetime&quot;&gt;2003-07-16T09:28:00+1200&lt;/written-on&gt;
+    &lt;content&gt;Have a nice day&lt;/content&gt;
+    &lt;author-email-address&gt;david@loudthinking.com&lt;/author-email-address&gt;
+    &lt;parent-id&gt;&lt;/parent-id&gt;
+    &lt;last-read type=&quot;date&quot;&gt;2004-04-15&lt;/last-read&gt;
+  &lt;/topic&gt;
+</pre>
+<p>
+This behavior can be controlled with <tt>:only</tt>, <tt>:except</tt>,
+<tt>:skip_instruct</tt>, <tt>:skip_types</tt> and <tt>:dasherize</tt>. The
+<tt>:only</tt> and <tt>:except</tt> options are the same as for the
+<tt>attributes</tt> method. The default is to dasherize all column names,
+but you can disable this setting <tt>:dasherize</tt> to <tt>false</tt>. To
+not have the column type <a href="Serialization.html#M001636">included</a>
+in the XML output set <tt>:skip_types</tt> to <tt>true</tt>.
+</p>
+<p>
+For instance:
+</p>
+<pre>
+  topic.to_xml(:skip_instruct =&gt; true, :except =&gt; [ :id, :bonus_time, :written_on, :replies_count ])
+
+  &lt;topic&gt;
+    &lt;title&gt;The First Topic&lt;/title&gt;
+    &lt;author-name&gt;David&lt;/author-name&gt;
+    &lt;approved type=&quot;boolean&quot;&gt;false&lt;/approved&gt;
+    &lt;content&gt;Have a nice day&lt;/content&gt;
+    &lt;author-email-address&gt;david@loudthinking.com&lt;/author-email-address&gt;
+    &lt;parent-id&gt;&lt;/parent-id&gt;
+    &lt;last-read type=&quot;date&quot;&gt;2004-04-15&lt;/last-read&gt;
+  &lt;/topic&gt;
+</pre>
+<p>
+To include first level associations use <tt>:include</tt>:
+</p>
+<pre>
+  firm.to_xml :include =&gt; [ :account, :clients ]
+
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+  &lt;firm&gt;
+    &lt;id type=&quot;integer&quot;&gt;1&lt;/id&gt;
+    &lt;rating type=&quot;integer&quot;&gt;1&lt;/rating&gt;
+    &lt;name&gt;37signals&lt;/name&gt;
+    &lt;clients type=&quot;array&quot;&gt;
+      &lt;client&gt;
+        &lt;rating type=&quot;integer&quot;&gt;1&lt;/rating&gt;
+        &lt;name&gt;Summit&lt;/name&gt;
+      &lt;/client&gt;
+      &lt;client&gt;
+        &lt;rating type=&quot;integer&quot;&gt;1&lt;/rating&gt;
+        &lt;name&gt;Microsoft&lt;/name&gt;
+      &lt;/client&gt;
+    &lt;/clients&gt;
+    &lt;account&gt;
+      &lt;id type=&quot;integer&quot;&gt;1&lt;/id&gt;
+      &lt;credit-limit type=&quot;integer&quot;&gt;50&lt;/credit-limit&gt;
+    &lt;/account&gt;
+  &lt;/firm&gt;
+</pre>
+<p>
+To include deeper levels of associations pass a hash like this:
+</p>
+<pre>
+  firm.to_xml :include =&gt; {:account =&gt; {}, :clients =&gt; {:include =&gt; :address}}
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+  &lt;firm&gt;
+    &lt;id type=&quot;integer&quot;&gt;1&lt;/id&gt;
+    &lt;rating type=&quot;integer&quot;&gt;1&lt;/rating&gt;
+    &lt;name&gt;37signals&lt;/name&gt;
+    &lt;clients type=&quot;array&quot;&gt;
+      &lt;client&gt;
+        &lt;rating type=&quot;integer&quot;&gt;1&lt;/rating&gt;
+        &lt;name&gt;Summit&lt;/name&gt;
+        &lt;address&gt;
+          ...
+        &lt;/address&gt;
+      &lt;/client&gt;
+      &lt;client&gt;
+        &lt;rating type=&quot;integer&quot;&gt;1&lt;/rating&gt;
+        &lt;name&gt;Microsoft&lt;/name&gt;
+        &lt;address&gt;
+          ...
+        &lt;/address&gt;
+      &lt;/client&gt;
+    &lt;/clients&gt;
+    &lt;account&gt;
+      &lt;id type=&quot;integer&quot;&gt;1&lt;/id&gt;
+      &lt;credit-limit type=&quot;integer&quot;&gt;50&lt;/credit-limit&gt;
+    &lt;/account&gt;
+  &lt;/firm&gt;
+</pre>
+<p>
+To include any methods on the model being called use <tt>:methods</tt>:
+</p>
+<pre>
+  firm.to_xml :methods =&gt; [ :calculated_earnings, :real_earnings ]
+
+  &lt;firm&gt;
+    # ... normal attributes as shown above ...
+    &lt;calculated-earnings&gt;100000000000000000&lt;/calculated-earnings&gt;
+    &lt;real-earnings&gt;5&lt;/real-earnings&gt;
+  &lt;/firm&gt;
+</pre>
+<p>
+To call any additional Procs use <tt>:procs</tt>. The Procs are passed a
+modified version of the options hash that was given to <tt><a
+href="Serialization.html#M001639">to_xml</a></tt>:
+</p>
+<pre>
+  proc = Proc.new { |options| options[:builder].tag!('abc', 'def') }
+  firm.to_xml :procs =&gt; [ proc ]
+
+  &lt;firm&gt;
+    # ... normal attributes as shown above ...
+    &lt;abc&gt;def&lt;/abc&gt;
+  &lt;/firm&gt;
+</pre>
+<p>
+Alternatively, you can yield the builder object as part of the <tt><a
+href="Serialization.html#M001639">to_xml</a></tt> call:
+</p>
+<pre>
+  firm.to_xml do |xml|
+    xml.creator do
+      xml.first_name &quot;David&quot;
+      xml.last_name &quot;Heinemeier Hansson&quot;
+    end
+  end
+
+  &lt;firm&gt;
+    # ... normal attributes as shown above ...
+    &lt;creator&gt;
+      &lt;first_name&gt;David&lt;/first_name&gt;
+      &lt;last_name&gt;Heinemeier Hansson&lt;/last_name&gt;
+    &lt;/creator&gt;
+  &lt;/firm&gt;
+</pre>
+<p>
+As noted above, you may override <tt><a
+href="Serialization.html#M001639">to_xml</a></tt> in your <a
+href="Base.html">ActiveRecord::Base</a> subclasses to have complete control
+about what&#8216;s generated. The general form of doing this is:
+</p>
+<pre>
+  class IHaveMyOwnXML &lt; ActiveRecord::Base
+    def to_xml(options = {})
+      options[:indent] ||= 2
+      xml = options[:builder] ||= Builder::XmlMarkup.new(:indent =&gt; options[:indent])
+      xml.instruct! unless options[:skip_instruct]
+      xml.level_one do
+        xml.tag!(:second_level, 'content')
+      end
+    end
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001639-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001639-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/serializers/xml_serializer.rb, line 153</span>
+153:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_xml</span>(<span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+154:       <span class="ruby-identifier">serializer</span> = <span class="ruby-constant">XmlSerializer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">options</span>)
+155:       <span class="ruby-identifier">block_given?</span> <span class="ruby-value">? </span><span class="ruby-identifier">serializer</span>.<span class="ruby-identifier">to_s</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">serializer</span>.<span class="ruby-identifier">to_s</span>
+156:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

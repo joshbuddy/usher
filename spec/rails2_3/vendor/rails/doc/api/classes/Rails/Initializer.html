@@ -1,0 +1,1587 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Rails::Initializer</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Rails::Initializer</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/vendor/rails/railties/lib/initializer_rb.html">
+                vendor/rails/railties/lib/initializer.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <a href="Initializer.html">Initializer</a> is responsible for
+processing the <a href="../Rails.html">Rails</a> configuration, such as
+setting the $LOAD_PATH, requiring the right frameworks, initializing
+logging, and more. It can be <a href="Initializer.html#M002493">run</a>
+either as a single command that&#8216;ll just use the default
+configuration, like this:
+</p>
+<pre>
+  Rails::Initializer.run
+</pre>
+<p>
+But normally it&#8216;s more interesting to pass in a custom configuration
+through the block running:
+</p>
+<pre>
+  Rails::Initializer.run do |config|
+    config.frameworks -= [ :action_mailer ]
+  end
+</pre>
+<p>
+This will use the default configuration options from <a
+href="Configuration.html">Rails::Configuration</a>, but allow for
+overwriting on select areas.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002504">add_gem_load_paths</a>&nbsp;&nbsp;
+      <a href="#M002503">add_plugin_load_paths</a>&nbsp;&nbsp;
+      <a href="#M002502">add_support_load_paths</a>&nbsp;&nbsp;
+      <a href="#M002529">after_initialize</a>&nbsp;&nbsp;
+      <a href="#M002506">check_for_unbuilt_gems</a>&nbsp;&nbsp;
+      <a href="#M002507">check_gem_dependencies</a>&nbsp;&nbsp;
+      <a href="#M002496">check_ruby_version</a>&nbsp;&nbsp;
+      <a href="#M002532">disable_dependency_loading</a>&nbsp;&nbsp;
+      <a href="#M002517">initialize_cache</a>&nbsp;&nbsp;
+      <a href="#M002515">initialize_database</a>&nbsp;&nbsp;
+      <a href="#M002516">initialize_database_middleware</a>&nbsp;&nbsp;
+      <a href="#M002523">initialize_dependency_mechanism</a>&nbsp;&nbsp;
+      <a href="#M002514">initialize_encoding</a>&nbsp;&nbsp;
+      <a href="#M002518">initialize_framework_caches</a>&nbsp;&nbsp;
+      <a href="#M002520">initialize_framework_logging</a>&nbsp;&nbsp;
+      <a href="#M002528">initialize_framework_settings</a>&nbsp;&nbsp;
+      <a href="#M002521">initialize_framework_views</a>&nbsp;&nbsp;
+      <a href="#M002526">initialize_i18n</a>&nbsp;&nbsp;
+      <a href="#M002519">initialize_logger</a>&nbsp;&nbsp;
+      <a href="#M002527">initialize_metal</a>&nbsp;&nbsp;
+      <a href="#M002522">initialize_routing</a>&nbsp;&nbsp;
+      <a href="#M002525">initialize_time_zone</a>&nbsp;&nbsp;
+      <a href="#M002524">initialize_whiny_nils</a>&nbsp;&nbsp;
+      <a href="#M002497">install_gem_spec_stubs</a>&nbsp;&nbsp;
+      <a href="#M002513">load_application_classes</a>&nbsp;&nbsp;
+      <a href="#M002530">load_application_initializers</a>&nbsp;&nbsp;
+      <a href="#M002510">load_environment</a>&nbsp;&nbsp;
+      <a href="#M002505">load_gems</a>&nbsp;&nbsp;
+      <a href="#M002511">load_observers</a>&nbsp;&nbsp;
+      <a href="#M002508">load_plugins</a>&nbsp;&nbsp;
+      <a href="#M002512">load_view_paths</a>&nbsp;&nbsp;
+      <a href="#M002494">new</a>&nbsp;&nbsp;
+      <a href="#M002509">plugin_loader</a>&nbsp;&nbsp;
+      <a href="#M002501">preload_frameworks</a>&nbsp;&nbsp;
+      <a href="#M002531">prepare_dispatcher</a>&nbsp;&nbsp;
+      <a href="#M002495">process</a>&nbsp;&nbsp;
+      <a href="#M002500">require_frameworks</a>&nbsp;&nbsp;
+      <a href="#M002493">run</a>&nbsp;&nbsp;
+      <a href="#M002499">set_autoload_paths</a>&nbsp;&nbsp;
+      <a href="#M002498">set_load_path</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">configuration</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The <a href="Configuration.html">Configuration</a> instance used by this <a
+href="Initializer.html">Initializer</a> instance.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">gems_dependencies_loaded</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Whether or not all the gem dependencies have been met
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">loaded_plugins</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The set of loaded plugins.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002494" class="method-detail">
+        <a name="M002494"></a>
+
+        <div class="method-heading">
+          <a href="#M002494" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(configuration)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="Initializer.html#M002494">new</a> <a
+href="Initializer.html">Initializer</a> instance that references the given
+<a href="Configuration.html">Configuration</a> instance.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002494-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002494-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 119</span>
+119:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">configuration</span>)
+120:       <span class="ruby-ivar">@configuration</span> = <span class="ruby-identifier">configuration</span>
+121:       <span class="ruby-ivar">@loaded_plugins</span> = []
+122:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002493" class="method-detail">
+        <a name="M002493"></a>
+
+        <div class="method-heading">
+          <a href="#M002493" class="method-signature">
+          <span class="method-name">run</span><span class="method-args">(command = :process, configuration = Configuration.new) {|configuration if block_given?| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Runs the initializer. By default, this will invoke the <a
+href="Initializer.html#M002495">process</a> method, which simply executes
+all of the initialization routines. Alternately, you can specify explicitly
+which initialization routine you want:
+</p>
+<pre>
+  Rails::Initializer.run(:set_load_path)
+</pre>
+<p>
+This is useful if you only want the load path initialized, without
+incurring the overhead of completely loading the entire environment.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002493-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002493-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 110</span>
+110:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">run</span>(<span class="ruby-identifier">command</span> = <span class="ruby-identifier">:process</span>, <span class="ruby-identifier">configuration</span> = <span class="ruby-constant">Configuration</span>.<span class="ruby-identifier">new</span>)
+111:       <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">configuration</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+112:       <span class="ruby-identifier">initializer</span> = <span class="ruby-identifier">new</span> <span class="ruby-identifier">configuration</span>
+113:       <span class="ruby-identifier">initializer</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">command</span>)
+114:       <span class="ruby-identifier">initializer</span>
+115:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002504" class="method-detail">
+        <a name="M002504"></a>
+
+        <div class="method-heading">
+          <a href="#M002504" class="method-signature">
+          <span class="method-name">add_gem_load_paths</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002504-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002504-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 298</span>
+298:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_gem_load_paths</span>
+299:       <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-constant">GemDependency</span>.<span class="ruby-identifier">add_frozen_gem_path</span>
+300:       <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@configuration</span>.<span class="ruby-identifier">gems</span>.<span class="ruby-identifier">empty?</span>
+301:         <span class="ruby-identifier">require</span> <span class="ruby-value str">&quot;rubygems&quot;</span>
+302:         <span class="ruby-ivar">@configuration</span>.<span class="ruby-identifier">gems</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">gem</span><span class="ruby-operator">|</span> <span class="ruby-identifier">gem</span>.<span class="ruby-identifier">add_load_paths</span> }
+303:       <span class="ruby-keyword kw">end</span>
+304:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002503" class="method-detail">
+        <a name="M002503"></a>
+
+        <div class="method-heading">
+          <a href="#M002503" class="method-signature">
+          <span class="method-name">add_plugin_load_paths</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds all load paths from plugins to the global set of load paths, so that
+code from plugins can be required (explicitly or automatically via
+ActiveSupport::Dependencies).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002503-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002503-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 294</span>
+294:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_plugin_load_paths</span>
+295:       <span class="ruby-identifier">plugin_loader</span>.<span class="ruby-identifier">add_plugin_load_paths</span>
+296:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002502" class="method-detail">
+        <a name="M002502"></a>
+
+        <div class="method-heading">
+          <a href="#M002502" class="method-signature">
+          <span class="method-name">add_support_load_paths</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add the load paths used by support functions such as the info controller
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002502-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002502-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 289</span>
+289:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_support_load_paths</span>
+290:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002529" class="method-detail">
+        <a name="M002529"></a>
+
+        <div class="method-heading">
+          <a href="#M002529" class="method-signature">
+          <span class="method-name">after_initialize</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Fires the user-supplied <a
+href="Initializer.html#M002529">after_initialize</a> block (<a
+href="Configuration.html#M002546">Configuration#after_initialize</a>)
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002529-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002529-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 614</span>
+614:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">after_initialize</span>
+615:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">gems_dependencies_loaded</span>
+616:         <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">after_initialize_blocks</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">block</span><span class="ruby-operator">|</span>
+617:           <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>
+618:         <span class="ruby-keyword kw">end</span>
+619:       <span class="ruby-keyword kw">end</span>
+620:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002506" class="method-detail">
+        <a name="M002506"></a>
+
+        <div class="method-heading">
+          <a href="#M002506" class="method-signature">
+          <span class="method-name">check_for_unbuilt_gems</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002506-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002506-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 312</span>
+312:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_for_unbuilt_gems</span>
+313:       <span class="ruby-identifier">unbuilt_gems</span> = <span class="ruby-ivar">@configuration</span>.<span class="ruby-identifier">gems</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">:frozen?</span>).<span class="ruby-identifier">reject</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">:built?</span>)
+314:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">unbuilt_gems</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+315:         <span class="ruby-comment cmt"># don't print if the gems:build rake tasks are being run</span>
+316:         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">$gems_build_rake_task</span>
+317:           <span class="ruby-identifier">abort</span> <span class="ruby-value str">&quot;The following gems have native components that need to be built\n\#{unbuilt_gems.map { |gem| \&quot;\#{gem.name}  \#{gem.requirement}\&quot; } * \&quot;\\n  \&quot;}\n\nYou're running:\nruby \#{Gem.ruby_version} at \#{Gem.ruby}\nrubygems \#{Gem::RubyGemsVersion} at \#{Gem.path * ', '}\n\nRun `rake gems:build` to build the unbuilt gems.\n&quot;</span>
+318:         <span class="ruby-keyword kw">end</span>
+319:       <span class="ruby-keyword kw">end</span>
+320:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002507" class="method-detail">
+        <a name="M002507"></a>
+
+        <div class="method-heading">
+          <a href="#M002507" class="method-signature">
+          <span class="method-name">check_gem_dependencies</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002507-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002507-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 332</span>
+332:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_gem_dependencies</span>
+333:       <span class="ruby-identifier">unloaded_gems</span> = <span class="ruby-ivar">@configuration</span>.<span class="ruby-identifier">gems</span>.<span class="ruby-identifier">reject</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">g</span><span class="ruby-operator">|</span> <span class="ruby-identifier">g</span>.<span class="ruby-identifier">loaded?</span> }
+334:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">unloaded_gems</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+335:         <span class="ruby-ivar">@gems_dependencies_loaded</span> = <span class="ruby-keyword kw">false</span>
+336:         <span class="ruby-comment cmt"># don't print if the gems rake tasks are being run</span>
+337:         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">$gems_rake_task</span>
+338:           <span class="ruby-identifier">abort</span> <span class="ruby-value str">&quot;Missing these required gems:\n\#{unloaded_gems.map { |gem| \&quot;\#{gem.name}  \#{gem.requirement}\&quot; } * \&quot;\\n  \&quot;}\n\nYou're running:\nruby \#{Gem.ruby_version} at \#{Gem.ruby}\nrubygems \#{Gem::RubyGemsVersion} at \#{Gem.path * ', '}\n\nRun `rake gems:install` to install the missing gems.\n&quot;</span>
+339:         <span class="ruby-keyword kw">end</span>
+340:       <span class="ruby-keyword kw">else</span>
+341:         <span class="ruby-ivar">@gems_dependencies_loaded</span> = <span class="ruby-keyword kw">true</span>
+342:       <span class="ruby-keyword kw">end</span>
+343:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002496" class="method-detail">
+        <a name="M002496"></a>
+
+        <div class="method-heading">
+          <a href="#M002496" class="method-signature">
+          <span class="method-name">check_ruby_version</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Check for valid Ruby version This is done in an external file, so we can
+use it from the `rails` program as well without duplication.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002496-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002496-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 209</span>
+209:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_ruby_version</span>
+210:       <span class="ruby-identifier">require</span> <span class="ruby-value str">'ruby_version_check'</span>
+211:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002532" class="method-detail">
+        <a name="M002532"></a>
+
+        <div class="method-heading">
+          <a href="#M002532" class="method-signature">
+          <span class="method-name">disable_dependency_loading</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002532-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002532-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 637</span>
+637:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">disable_dependency_loading</span>
+638:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">cache_classes</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">dependency_loading</span>
+639:         <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependencies</span>.<span class="ruby-identifier">unhook!</span>
+640:       <span class="ruby-keyword kw">end</span>
+641:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002517" class="method-detail">
+        <a name="M002517"></a>
+
+        <div class="method-heading">
+          <a href="#M002517" class="method-signature">
+          <span class="method-name">initialize_cache</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002517-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002517-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 458</span>
+458:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_cache</span>
+459:       <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">RAILS_CACHE</span>)
+460:         <span class="ruby-identifier">silence_warnings</span> { <span class="ruby-constant">Object</span>.<span class="ruby-identifier">const_set</span> <span class="ruby-value str">&quot;RAILS_CACHE&quot;</span>, <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Cache</span>.<span class="ruby-identifier">lookup_store</span>(<span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">cache_store</span>) }
+461: 
+462:         <span class="ruby-keyword kw">if</span> <span class="ruby-constant">RAILS_CACHE</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:middleware</span>)
+463:           <span class="ruby-comment cmt"># Insert middleware to setup and teardown local cache for each request</span>
+464:           <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">insert_after</span>(<span class="ruby-value str">&quot;ActionController::Failsafe&quot;</span><span class="ruby-value str">&quot;ActionController::Failsafe&quot;</span>, <span class="ruby-constant">RAILS_CACHE</span>.<span class="ruby-identifier">middleware</span>)
+465:         <span class="ruby-keyword kw">end</span>
+466:       <span class="ruby-keyword kw">end</span>
+467:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002515" class="method-detail">
+        <a name="M002515"></a>
+
+        <div class="method-heading">
+          <a href="#M002515" class="method-signature">
+          <span class="method-name">initialize_database</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This initialization routine does nothing unless <tt>:active_record</tt> is
+one of the frameworks to load (Configuration#frameworks). If it is, this
+sets the database configuration from <a
+href="Configuration.html#M002543">Configuration#database_configuration</a>
+and then establishes the connection.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002515-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002515-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 438</span>
+438:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_database</span>
+439:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:active_record</span>)
+440:         <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">configurations</span> = <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">database_configuration</span>
+441:         <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">establish_connection</span>
+442:       <span class="ruby-keyword kw">end</span>
+443:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002516" class="method-detail">
+        <a name="M002516"></a>
+
+        <div class="method-heading">
+          <a href="#M002516" class="method-signature">
+          <span class="method-name">initialize_database_middleware</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002516-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002516-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 445</span>
+445:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_database_middleware</span>
+446:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:active_record</span>)
+447:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_controller</span>) <span class="ruby-operator">&amp;&amp;</span>
+448:             <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">session_store</span> <span class="ruby-operator">==</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">SessionStore</span>
+449:           <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">insert_before</span> <span class="ruby-value str">&quot;ActiveRecord::SessionStore&quot;</span><span class="ruby-value str">&quot;ActiveRecord::SessionStore&quot;</span>, <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ConnectionAdapters</span><span class="ruby-operator">::</span><span class="ruby-constant">ConnectionManagement</span>
+450:           <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">insert_before</span> <span class="ruby-value str">&quot;ActiveRecord::SessionStore&quot;</span><span class="ruby-value str">&quot;ActiveRecord::SessionStore&quot;</span>, <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">QueryCache</span>
+451:         <span class="ruby-keyword kw">else</span>
+452:           <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">use</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ConnectionAdapters</span><span class="ruby-operator">::</span><span class="ruby-constant">ConnectionManagement</span>
+453:           <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">use</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">QueryCache</span>
+454:         <span class="ruby-keyword kw">end</span>
+455:       <span class="ruby-keyword kw">end</span>
+456:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002523" class="method-detail">
+        <a name="M002523"></a>
+
+        <div class="method-heading">
+          <a href="#M002523" class="method-signature">
+          <span class="method-name">initialize_dependency_mechanism</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the dependency loading mechanism based on the value of
+Configuration#cache_classes.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002523-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002523-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 545</span>
+545:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_dependency_mechanism</span>
+546:       <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependencies</span>.<span class="ruby-identifier">mechanism</span> = <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">cache_classes</span> <span class="ruby-value">? </span><span class="ruby-operator">:</span><span class="ruby-identifier">require</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">:load</span>
+547:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002514" class="method-detail">
+        <a name="M002514"></a>
+
+        <div class="method-heading">
+          <a href="#M002514" class="method-signature">
+          <span class="method-name">initialize_encoding</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+For Ruby 1.8, this initialization sets $KCODE to &#8216;u&#8217; to enable
+the multibyte safe operations. <a href="../Plugin.html">Plugin</a> authors
+supporting other encodings should override this behaviour and set the
+relevant <tt>default_charset</tt> on <a
+href="../ActionController/Base.html">ActionController::Base</a>.
+</p>
+<p>
+For Ruby 1.9, this does nothing. Specify the default encoding in the Ruby
+shebang line if you don&#8216;t want UTF-8.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002514-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002514-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 430</span>
+430:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_encoding</span>
+431:       <span class="ruby-identifier">$KCODE</span>=<span class="ruby-value str">'u'</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">RUBY_VERSION</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value str">'1.9'</span>
+432:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002518" class="method-detail">
+        <a name="M002518"></a>
+
+        <div class="method-heading">
+          <a href="#M002518" class="method-signature">
+          <span class="method-name">initialize_framework_caches</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002518-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002518-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 469</span>
+469:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_framework_caches</span>
+470:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_controller</span>)
+471:         <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">cache_store</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">RAILS_CACHE</span>
+472:       <span class="ruby-keyword kw">end</span>
+473:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002520" class="method-detail">
+        <a name="M002520"></a>
+
+        <div class="method-heading">
+          <a href="#M002520" class="method-signature">
+          <span class="method-name">initialize_framework_logging</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the logger for Active Record, Action Controller, and Action Mailer
+(but only for those frameworks that are to be loaded). If the
+framework&#8216;s logger is already set, it is not changed, otherwise it is
+set to use RAILS_DEFAULT_LOGGER.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002520-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002520-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 511</span>
+511:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_framework_logging</span>
+512:       <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">framework</span> <span class="ruby-keyword kw">in</span> ([ <span class="ruby-identifier">:active_record</span>, <span class="ruby-identifier">:action_controller</span>, <span class="ruby-identifier">:action_mailer</span> ] <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>)
+513:         <span class="ruby-identifier">framework</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">camelize</span>.<span class="ruby-identifier">constantize</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-value str">&quot;Base&quot;</span>).<span class="ruby-identifier">logger</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>
+514:       <span class="ruby-keyword kw">end</span>
+515: 
+516:       <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependencies</span>.<span class="ruby-identifier">logger</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>
+517:       <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">logger</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>
+518:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002528" class="method-detail">
+        <a name="M002528"></a>
+
+        <div class="method-heading">
+          <a href="#M002528" class="method-signature">
+          <span class="method-name">initialize_framework_settings</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Initializes framework-specific settings for each of the loaded frameworks
+(Configuration#frameworks). The available settings map to the accessors on
+each of the corresponding Base classes.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002528-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002528-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 600</span>
+600:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_framework_settings</span>
+601:       <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">framework</span><span class="ruby-operator">|</span>
+602:         <span class="ruby-identifier">base_class</span> = <span class="ruby-identifier">framework</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">camelize</span>.<span class="ruby-identifier">constantize</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-value str">&quot;Base&quot;</span>)
+603: 
+604:         <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">framework</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">setting</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+605:           <span class="ruby-identifier">base_class</span>.<span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{setting}=&quot;</span>, <span class="ruby-identifier">value</span>)
+606:         <span class="ruby-keyword kw">end</span>
+607:       <span class="ruby-keyword kw">end</span>
+608:       <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">active_support</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">setting</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+609:         <span class="ruby-constant">ActiveSupport</span>.<span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{setting}=&quot;</span>, <span class="ruby-identifier">value</span>)
+610:       <span class="ruby-keyword kw">end</span>
+611:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002521" class="method-detail">
+        <a name="M002521"></a>
+
+        <div class="method-heading">
+          <a href="#M002521" class="method-signature">
+          <span class="method-name">initialize_framework_views</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets +ActionController::Base#view_paths+ and
++ActionMailer::Base#template_root+ (but only for those frameworks that are
+to be loaded). If the framework&#8216;s paths have already been set, it is
+not changed, otherwise it is set to use Configuration#view_path.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002521-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002521-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 524</span>
+524:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_framework_views</span>
+525:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_view</span>)
+526:         <span class="ruby-identifier">view_path</span> = <span class="ruby-constant">ActionView</span><span class="ruby-operator">::</span><span class="ruby-constant">PathSet</span>.<span class="ruby-identifier">type_cast</span>(<span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">view_path</span>)
+527:         <span class="ruby-constant">ActionMailer</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">template_root</span>  = <span class="ruby-identifier">view_path</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_mailer</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ActionMailer</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">blank?</span>
+528:         <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">view_paths</span> = <span class="ruby-identifier">view_path</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_controller</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">blank?</span>
+529:       <span class="ruby-keyword kw">end</span>
+530:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002526" class="method-detail">
+        <a name="M002526"></a>
+
+        <div class="method-heading">
+          <a href="#M002526" class="method-signature">
+          <span class="method-name">initialize_i18n</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the i18n configuration from config.i18n but special-case for the
+load_path which should be appended to what&#8216;s already set instead of
+overwritten.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002526-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002526-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 578</span>
+578:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_i18n</span>
+579:       <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">i18n</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">setting</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+580:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">setting</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:load_path</span>
+581:           <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">load_path</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">value</span>
+582:         <span class="ruby-keyword kw">else</span>
+583:           <span class="ruby-constant">I18n</span>.<span class="ruby-identifier">send</span>(<span class="ruby-node">&quot;#{setting}=&quot;</span>, <span class="ruby-identifier">value</span>)
+584:         <span class="ruby-keyword kw">end</span>
+585:       <span class="ruby-keyword kw">end</span>
+586:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002519" class="method-detail">
+        <a name="M002519"></a>
+
+        <div class="method-heading">
+          <a href="#M002519" class="method-signature">
+          <span class="method-name">initialize_logger</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+If the RAILS_DEFAULT_LOGGER constant is already set, this initialization
+routine does nothing. If the constant is not set, and Configuration#logger
+is not <tt>nil</tt>, this also does nothing. Otherwise, a <a
+href="Initializer.html#M002494">new</a> logger instance is created at
+Configuration#log_path, with a default log level of
+Configuration#log_level.
+</p>
+<p>
+If the log could not be created, the log will be set to output to
+<tt>STDERR</tt>, with a log level of <tt>WARN</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002519-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002519-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 483</span>
+483:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_logger</span>
+484:       <span class="ruby-comment cmt"># if the environment has explicitly defined a logger, use it</span>
+485:       <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>
+486: 
+487:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">logger</span> = <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">logger</span>
+488:         <span class="ruby-keyword kw">begin</span>
+489:           <span class="ruby-identifier">logger</span> = <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">BufferedLogger</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">log_path</span>)
+490:           <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">level</span> = <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">BufferedLogger</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">log_level</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">upcase</span>)
+491:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">environment</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;production&quot;</span>
+492:             <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">auto_flushing</span> = <span class="ruby-keyword kw">false</span>
+493:           <span class="ruby-keyword kw">end</span>
+494:         <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">StandardError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+495:           <span class="ruby-identifier">logger</span> = <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">BufferedLogger</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">STDERR</span>)
+496:           <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">level</span> = <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">BufferedLogger</span><span class="ruby-operator">::</span><span class="ruby-constant">WARN</span>
+497:           <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
+498:             <span class="ruby-node">&quot;Rails Error: Unable to access log file. Please ensure that #{configuration.log_path} exists and is chmod 0666. &quot;</span> <span class="ruby-operator">+</span>
+499:             <span class="ruby-value str">&quot;The log level has been raised to WARN and the output directed to STDERR until the problem is fixed.&quot;</span>
+500:           )
+501:         <span class="ruby-keyword kw">end</span>
+502:       <span class="ruby-keyword kw">end</span>
+503: 
+504:       <span class="ruby-identifier">silence_warnings</span> { <span class="ruby-constant">Object</span>.<span class="ruby-identifier">const_set</span> <span class="ruby-value str">&quot;RAILS_DEFAULT_LOGGER&quot;</span>, <span class="ruby-identifier">logger</span> }
+505:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002527" class="method-detail">
+        <a name="M002527"></a>
+
+        <div class="method-heading">
+          <a href="#M002527" class="method-signature">
+          <span class="method-name">initialize_metal</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002527-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002527-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 588</span>
+588:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_metal</span>
+589:       <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Metal</span>.<span class="ruby-identifier">requested_metals</span> = <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">metals</span>
+590:       <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Metal</span>.<span class="ruby-identifier">metal_paths</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">plugin_loader</span>.<span class="ruby-identifier">engine_metal_paths</span>
+591: 
+592:       <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">insert_before</span>(
+593:         <span class="ruby-value str">&quot;ActionController::ParamsParser&quot;</span><span class="ruby-value str">&quot;ActionController::ParamsParser&quot;</span>,
+594:         <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Metal</span>, <span class="ruby-identifier">:if</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Metal</span>.<span class="ruby-identifier">metals</span>.<span class="ruby-identifier">any?</span>)
+595:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002522" class="method-detail">
+        <a name="M002522"></a>
+
+        <div class="method-heading">
+          <a href="#M002522" class="method-signature">
+          <span class="method-name">initialize_routing</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+If Action Controller is not one of the loaded frameworks
+(Configuration#frameworks) this does nothing. Otherwise, it loads the
+routing definitions and sets up loading module used to lazily load
+controllers (Configuration#controller_paths).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002522-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002522-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 535</span>
+535:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_routing</span>
+536:       <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_controller</span>)
+537: 
+538:       <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Routing</span>.<span class="ruby-identifier">controller_paths</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">controller_paths</span>
+539:       <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Routing</span><span class="ruby-operator">::</span><span class="ruby-constant">Routes</span>.<span class="ruby-identifier">add_configuration_file</span>(<span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">routes_configuration_file</span>)
+540:       <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Routing</span><span class="ruby-operator">::</span><span class="ruby-constant">Routes</span>.<span class="ruby-identifier">reload!</span>
+541:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002525" class="method-detail">
+        <a name="M002525"></a>
+
+        <div class="method-heading">
+          <a href="#M002525" class="method-signature">
+          <span class="method-name">initialize_time_zone</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the default value for Time.zone, and turns on
+ActiveRecord::Base#time_zone_aware_attributes. If assigned value cannot be
+matched to a TimeZone, an exception will be raised.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002525-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002525-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 557</span>
+557:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_time_zone</span>
+558:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">time_zone</span>
+559:         <span class="ruby-identifier">zone_default</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">__send__</span>(<span class="ruby-identifier">:get_zone</span>, <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">time_zone</span>)
+560: 
+561:         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">zone_default</span>
+562:           <span class="ruby-identifier">raise</span> \
+563:             <span class="ruby-value str">'Value assigned to config.time_zone not recognized.'</span> <span class="ruby-operator">+</span>
+564:             <span class="ruby-value str">'Run &quot;rake -D time&quot; for a list of tasks for finding appropriate time zone names.'</span>
+565:         <span class="ruby-keyword kw">end</span>
+566: 
+567:         <span class="ruby-constant">Time</span>.<span class="ruby-identifier">zone_default</span> = <span class="ruby-identifier">zone_default</span>
+568: 
+569:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:active_record</span>)
+570:           <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">time_zone_aware_attributes</span> = <span class="ruby-keyword kw">true</span>
+571:           <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">default_timezone</span> = <span class="ruby-identifier">:utc</span>
+572:         <span class="ruby-keyword kw">end</span>
+573:       <span class="ruby-keyword kw">end</span>
+574:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002524" class="method-detail">
+        <a name="M002524"></a>
+
+        <div class="method-heading">
+          <a href="#M002524" class="method-signature">
+          <span class="method-name">initialize_whiny_nils</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Loads support for &quot;whiny nil&quot; (noisy warnings when methods are
+invoked on <tt>nil</tt> values) if Configuration#whiny_nils is true.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002524-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002524-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 551</span>
+551:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize_whiny_nils</span>
+552:       <span class="ruby-identifier">require</span>(<span class="ruby-value str">'active_support/whiny_nil'</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">whiny_nils</span>
+553:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002497" class="method-detail">
+        <a name="M002497"></a>
+
+        <div class="method-heading">
+          <a href="#M002497" class="method-signature">
+          <span class="method-name">install_gem_spec_stubs</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+If <a href="../Rails.html">Rails</a> is vendored and RubyGems is available,
+install stub GemSpecs for <a href="../Rails.html">Rails</a>, Active
+Support, Active Record, Action Pack, Action Mailer, and Active Resource.
+This allows Gem plugins to depend on <a href="../Rails.html">Rails</a> even
+when the Gem version of <a href="../Rails.html">Rails</a> shouldn&#8216;t
+be loaded.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002497-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002497-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 217</span>
+217:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">install_gem_spec_stubs</span>
+218:       <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:vendor_rails?</span>)
+219:         <span class="ruby-identifier">abort</span> <span class="ruby-value str">%{Your config/boot.rb is outdated: Run &quot;rake rails:update&quot;.}</span>
+220:       <span class="ruby-keyword kw">end</span>
+221: 
+222:       <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">vendor_rails?</span>
+223:         <span class="ruby-keyword kw">begin</span>; <span class="ruby-identifier">require</span> <span class="ruby-value str">&quot;rubygems&quot;</span>; <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span>; <span class="ruby-keyword kw">return</span>; <span class="ruby-keyword kw">end</span>
+224: 
+225:         <span class="ruby-identifier">stubs</span> = <span class="ruby-node">%w(rails activesupport activerecord actionpack actionmailer activeresource)</span>
+226:         <span class="ruby-identifier">stubs</span>.<span class="ruby-identifier">reject!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-constant">Gem</span>.<span class="ruby-identifier">loaded_specs</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">s</span>) }
+227: 
+228:         <span class="ruby-identifier">stubs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">stub</span><span class="ruby-operator">|</span>
+229:           <span class="ruby-constant">Gem</span>.<span class="ruby-identifier">loaded_specs</span>[<span class="ruby-identifier">stub</span>] = <span class="ruby-constant">Gem</span><span class="ruby-operator">::</span><span class="ruby-constant">Specification</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+230:             <span class="ruby-identifier">s</span>.<span class="ruby-identifier">name</span> = <span class="ruby-identifier">stub</span>
+231:             <span class="ruby-identifier">s</span>.<span class="ruby-identifier">version</span> = <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-constant">VERSION</span><span class="ruby-operator">::</span><span class="ruby-constant">STRING</span>
+232:             <span class="ruby-identifier">s</span>.<span class="ruby-identifier">loaded_from</span> = <span class="ruby-value str">&quot;&quot;</span>
+233:           <span class="ruby-keyword kw">end</span>
+234:         <span class="ruby-keyword kw">end</span>
+235:       <span class="ruby-keyword kw">end</span>
+236:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002513" class="method-detail">
+        <a name="M002513"></a>
+
+        <div class="method-heading">
+          <a href="#M002513" class="method-signature">
+          <span class="method-name">load_application_classes</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Eager load application classes
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002513-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002513-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 411</span>
+411:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_application_classes</span>
+412:       <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$rails_rake_task</span>
+413:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">cache_classes</span>
+414:         <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">eager_load_paths</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">load_path</span><span class="ruby-operator">|</span>
+415:           <span class="ruby-identifier">matcher</span> = <span class="ruby-node">/\A#{Regexp.escape(load_path)}(.*)\.rb\Z/</span>
+416:           <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">glob</span>(<span class="ruby-node">&quot;#{load_path}/**/*.rb&quot;</span>).<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+417:             <span class="ruby-identifier">require_dependency</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-identifier">matcher</span>, <span class="ruby-value str">'\1'</span>)
+418:           <span class="ruby-keyword kw">end</span>
+419:         <span class="ruby-keyword kw">end</span>
+420:       <span class="ruby-keyword kw">end</span>
+421:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002530" class="method-detail">
+        <a name="M002530"></a>
+
+        <div class="method-heading">
+          <a href="#M002530" class="method-signature">
+          <span class="method-name">load_application_initializers</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002530-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002530-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 622</span>
+622:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_application_initializers</span>
+623:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">gems_dependencies_loaded</span>
+624:         <span class="ruby-constant">Dir</span>[<span class="ruby-node">&quot;#{configuration.root_path}/config/initializers/**/*.rb&quot;</span>].<span class="ruby-identifier">sort</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">initializer</span><span class="ruby-operator">|</span>
+625:           <span class="ruby-identifier">load</span>(<span class="ruby-identifier">initializer</span>)
+626:         <span class="ruby-keyword kw">end</span>
+627:       <span class="ruby-keyword kw">end</span>
+628:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002510" class="method-detail">
+        <a name="M002510"></a>
+
+        <div class="method-heading">
+          <a href="#M002510" class="method-signature">
+          <span class="method-name">load_environment</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Loads the environment specified by <a
+href="Configuration.html#M002544">Configuration#environment_path</a>, which
+is typically one of development, test, or production.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002510-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002510-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 381</span>
+381:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_environment</span>
+382:       <span class="ruby-identifier">silence_warnings</span> <span class="ruby-keyword kw">do</span>
+383:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@environment_loaded</span>
+384:         <span class="ruby-ivar">@environment_loaded</span> = <span class="ruby-keyword kw">true</span>
+385: 
+386:         <span class="ruby-identifier">config</span> = <span class="ruby-identifier">configuration</span>
+387:         <span class="ruby-identifier">constants</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">constants</span>
+388: 
+389:         <span class="ruby-identifier">eval</span>(<span class="ruby-constant">IO</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">environment_path</span>), <span class="ruby-identifier">binding</span>, <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">environment_path</span>)
+390: 
+391:         (<span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">constants</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">constants</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">const</span><span class="ruby-operator">|</span>
+392:           <span class="ruby-constant">Object</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-identifier">const</span>, <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">const</span>))
+393:         <span class="ruby-keyword kw">end</span>
+394:       <span class="ruby-keyword kw">end</span>
+395:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002505" class="method-detail">
+        <a name="M002505"></a>
+
+        <div class="method-heading">
+          <a href="#M002505" class="method-signature">
+          <span class="method-name">load_gems</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002505-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002505-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 306</span>
+306:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_gems</span>
+307:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">$gems_rake_task</span>
+308:         <span class="ruby-ivar">@configuration</span>.<span class="ruby-identifier">gems</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">gem</span><span class="ruby-operator">|</span> <span class="ruby-identifier">gem</span>.<span class="ruby-identifier">load</span> }
+309:       <span class="ruby-keyword kw">end</span>
+310:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002511" class="method-detail">
+        <a name="M002511"></a>
+
+        <div class="method-heading">
+          <a href="#M002511" class="method-signature">
+          <span class="method-name">load_observers</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002511-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002511-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 397</span>
+397:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_observers</span>
+398:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">gems_dependencies_loaded</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:active_record</span>)
+399:         <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">instantiate_observers</span>
+400:       <span class="ruby-keyword kw">end</span>
+401:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002508" class="method-detail">
+        <a name="M002508"></a>
+
+        <div class="method-heading">
+          <a href="#M002508" class="method-signature">
+          <span class="method-name">load_plugins</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Loads all plugins in <tt>config.plugin_paths</tt>. <tt>plugin_paths</tt>
+defaults to <tt>vendor/plugins</tt> but may also be set to a list of paths,
+such as
+</p>
+<pre>
+  config.plugin_paths = [&quot;#{RAILS_ROOT}/lib/plugins&quot;, &quot;#{RAILS_ROOT}/vendor/plugins&quot;]
+</pre>
+<p>
+In the default implementation, as each plugin discovered in
+<tt>plugin_paths</tt> is initialized:
+</p>
+<ul>
+<li>its <tt>lib</tt> directory, if present, is added to the load path
+(immediately after the applications lib directory)
+
+</li>
+<li><tt>init.rb</tt> is evaluated, if present
+
+</li>
+</ul>
+<p>
+After all plugins are loaded, duplicates are removed from the load path. If
+an array of plugin names is specified in config.plugins, only those plugins
+will be loaded and they plugins will be loaded in that order. Otherwise,
+plugins are loaded in alphabetical order.
+</p>
+<p>
+if config.plugins ends contains :all then the named plugins will be loaded
+in the given order and all other plugins will be loaded in alphabetical
+order
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002508-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002508-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 371</span>
+371:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_plugins</span>
+372:       <span class="ruby-identifier">plugin_loader</span>.<span class="ruby-identifier">load_plugins</span>
+373:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002512" class="method-detail">
+        <a name="M002512"></a>
+
+        <div class="method-heading">
+          <a href="#M002512" class="method-signature">
+          <span class="method-name">load_view_paths</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002512-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002512-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 403</span>
+403:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_view_paths</span>
+404:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_view</span>)
+405:         <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">load!</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_controller</span>)
+406:         <span class="ruby-constant">ActionMailer</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">load!</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_mailer</span>)
+407:       <span class="ruby-keyword kw">end</span>
+408:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002509" class="method-detail">
+        <a name="M002509"></a>
+
+        <div class="method-heading">
+          <a href="#M002509" class="method-signature">
+          <span class="method-name">plugin_loader</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002509-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002509-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 375</span>
+375:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">plugin_loader</span>
+376:       <span class="ruby-ivar">@plugin_loader</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">plugin_loader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+377:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002501" class="method-detail">
+        <a name="M002501"></a>
+
+        <div class="method-heading">
+          <a href="#M002501" class="method-signature">
+          <span class="method-name">preload_frameworks</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Preload all frameworks specified by the Configuration#frameworks. Used by
+Passenger to ensure everything&#8216;s loaded before forking and to avoid
+autoload race conditions in JRuby.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002501-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002501-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 278</span>
+278:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">preload_frameworks</span>
+279:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">preload_frameworks</span>
+280:         <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">framework</span><span class="ruby-operator">|</span>
+281:           <span class="ruby-comment cmt"># String#classify and #constantize aren't available yet.</span>
+282:           <span class="ruby-identifier">toplevel</span> = <span class="ruby-constant">Object</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">framework</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/(?:^|_)(.)/</span>) { <span class="ruby-identifier">$1</span>.<span class="ruby-identifier">upcase</span> })
+283:           <span class="ruby-identifier">toplevel</span>.<span class="ruby-identifier">load_all!</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">toplevel</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:load_all!</span>)
+284:         <span class="ruby-keyword kw">end</span>
+285:       <span class="ruby-keyword kw">end</span>
+286:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002531" class="method-detail">
+        <a name="M002531"></a>
+
+        <div class="method-heading">
+          <a href="#M002531" class="method-signature">
+          <span class="method-name">prepare_dispatcher</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002531-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002531-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 630</span>
+630:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepare_dispatcher</span>
+631:       <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:action_controller</span>)
+632:       <span class="ruby-identifier">require</span> <span class="ruby-value str">'dispatcher'</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Dispatcher</span>)
+633:       <span class="ruby-constant">Dispatcher</span>.<span class="ruby-identifier">define_dispatcher_callbacks</span>(<span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">cache_classes</span>)
+634:       <span class="ruby-constant">Dispatcher</span>.<span class="ruby-identifier">run_prepare_callbacks</span>
+635:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002495" class="method-detail">
+        <a name="M002495"></a>
+
+        <div class="method-heading">
+          <a href="#M002495" class="method-signature">
+          <span class="method-name">process</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sequentially step through all of the available initialization routines, in
+order (view execution order in source).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002495-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002495-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 126</span>
+126:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span>
+127:       <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">configuration</span> = <span class="ruby-identifier">configuration</span>
+128: 
+129:       <span class="ruby-identifier">check_ruby_version</span>
+130:       <span class="ruby-identifier">install_gem_spec_stubs</span>
+131:       <span class="ruby-identifier">set_load_path</span>
+132:       <span class="ruby-identifier">add_gem_load_paths</span>
+133: 
+134:       <span class="ruby-identifier">require_frameworks</span>
+135:       <span class="ruby-identifier">set_autoload_paths</span>
+136:       <span class="ruby-identifier">add_plugin_load_paths</span>
+137:       <span class="ruby-identifier">load_environment</span>
+138:       <span class="ruby-identifier">preload_frameworks</span>
+139: 
+140:       <span class="ruby-identifier">initialize_encoding</span>
+141:       <span class="ruby-identifier">initialize_database</span>
+142: 
+143:       <span class="ruby-identifier">initialize_cache</span>
+144:       <span class="ruby-identifier">initialize_framework_caches</span>
+145: 
+146:       <span class="ruby-identifier">initialize_logger</span>
+147:       <span class="ruby-identifier">initialize_framework_logging</span>
+148: 
+149:       <span class="ruby-identifier">initialize_dependency_mechanism</span>
+150:       <span class="ruby-identifier">initialize_whiny_nils</span>
+151: 
+152:       <span class="ruby-identifier">initialize_time_zone</span>
+153:       <span class="ruby-identifier">initialize_i18n</span>
+154: 
+155:       <span class="ruby-identifier">initialize_framework_settings</span>
+156:       <span class="ruby-identifier">initialize_framework_views</span>
+157: 
+158:       <span class="ruby-identifier">initialize_metal</span>
+159: 
+160:       <span class="ruby-identifier">add_support_load_paths</span>
+161: 
+162:       <span class="ruby-identifier">check_for_unbuilt_gems</span>
+163: 
+164:       <span class="ruby-identifier">load_gems</span>
+165:       <span class="ruby-identifier">load_plugins</span>
+166: 
+167:       <span class="ruby-comment cmt"># pick up any gems that plugins depend on</span>
+168:       <span class="ruby-identifier">add_gem_load_paths</span>
+169:       <span class="ruby-identifier">load_gems</span>
+170:       <span class="ruby-identifier">check_gem_dependencies</span>
+171: 
+172:       <span class="ruby-comment cmt"># bail out if gems are missing - note that check_gem_dependencies will have</span>
+173:       <span class="ruby-comment cmt"># already called abort() unless $gems_rake_task is set</span>
+174:       <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">gems_dependencies_loaded</span>
+175: 
+176:       <span class="ruby-identifier">load_application_initializers</span>
+177: 
+178:       <span class="ruby-comment cmt"># the framework is now fully initialized</span>
+179:       <span class="ruby-identifier">after_initialize</span>
+180: 
+181:       <span class="ruby-comment cmt"># Setup database middleware after initializers have run</span>
+182:       <span class="ruby-identifier">initialize_database_middleware</span>
+183: 
+184:       <span class="ruby-comment cmt"># Prepare dispatcher callbacks and run 'prepare' callbacks</span>
+185:       <span class="ruby-identifier">prepare_dispatcher</span>
+186: 
+187:       <span class="ruby-comment cmt"># Routing must be initialized after plugins to allow the former to extend the routes</span>
+188:       <span class="ruby-identifier">initialize_routing</span>
+189: 
+190:       <span class="ruby-comment cmt"># Observers are loaded after plugins in case Observers or observed models are modified by plugins.</span>
+191:       <span class="ruby-identifier">load_observers</span>
+192: 
+193:       <span class="ruby-comment cmt"># Load view path cache</span>
+194:       <span class="ruby-identifier">load_view_paths</span>
+195: 
+196:       <span class="ruby-comment cmt"># Load application classes</span>
+197:       <span class="ruby-identifier">load_application_classes</span>
+198: 
+199:       <span class="ruby-comment cmt"># Disable dependency loading during request cycle</span>
+200:       <span class="ruby-identifier">disable_dependency_loading</span>
+201: 
+202:       <span class="ruby-comment cmt"># Flag initialized</span>
+203:       <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">initialized</span> = <span class="ruby-keyword kw">true</span>
+204:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002500" class="method-detail">
+        <a name="M002500"></a>
+
+        <div class="method-heading">
+          <a href="#M002500" class="method-signature">
+          <span class="method-name">require_frameworks</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Requires all frameworks specified by the Configuration#frameworks list. By
+default, all frameworks (Active Record, Active Support, Action Pack, Action
+Mailer, and Active Resource) are loaded.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002500-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002500-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 268</span>
+268:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">require_frameworks</span>
+269:       <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">frameworks</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">framework</span><span class="ruby-operator">|</span> <span class="ruby-identifier">require</span>(<span class="ruby-identifier">framework</span>.<span class="ruby-identifier">to_s</span>) }
+270:     <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">LoadError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+271:       <span class="ruby-comment cmt"># Re-raise as RuntimeError because Mongrel would swallow LoadError.</span>
+272:       <span class="ruby-identifier">raise</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">to_s</span>
+273:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002499" class="method-detail">
+        <a name="M002499"></a>
+
+        <div class="method-heading">
+          <a href="#M002499" class="method-signature">
+          <span class="method-name">set_autoload_paths</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the paths from which <a href="../Rails.html">Rails</a> will
+automatically load source files, and the load_once paths.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002499-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002499-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 248</span>
+248:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_autoload_paths</span>
+249:       <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependencies</span>.<span class="ruby-identifier">load_paths</span> = <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">load_paths</span>.<span class="ruby-identifier">uniq</span>
+250:       <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependencies</span>.<span class="ruby-identifier">load_once_paths</span> = <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">load_once_paths</span>.<span class="ruby-identifier">uniq</span>
+251: 
+252:       <span class="ruby-identifier">extra</span> = <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependencies</span>.<span class="ruby-identifier">load_once_paths</span> <span class="ruby-operator">-</span> <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Dependencies</span>.<span class="ruby-identifier">load_paths</span>
+253:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">extra</span>.<span class="ruby-identifier">empty?</span>
+254:         <span class="ruby-identifier">abort</span> <span class="ruby-value str">&quot;load_once_paths must be a subset of the load_paths.\nExtra items in load_once_paths: \#{extra * ','}\n&quot;</span>
+255:       <span class="ruby-keyword kw">end</span>
+256: 
+257:       <span class="ruby-comment cmt"># Freeze the arrays so future modifications will fail rather than do nothing mysteriously</span>
+258:       <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">load_once_paths</span>.<span class="ruby-identifier">freeze</span>
+259:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002498" class="method-detail">
+        <a name="M002498"></a>
+
+        <div class="method-heading">
+          <a href="#M002498" class="method-signature">
+          <span class="method-name">set_load_path</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the <tt>$LOAD_PATH</tt> based on the value of Configuration#load_paths.
+Duplicates are removed.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002498-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002498-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/initializer.rb, line 240</span>
+240:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">set_load_path</span>
+241:       <span class="ruby-identifier">load_paths</span> = <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">load_paths</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">configuration</span>.<span class="ruby-identifier">framework_paths</span>
+242:       <span class="ruby-identifier">load_paths</span>.<span class="ruby-identifier">reverse_each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span> <span class="ruby-identifier">$LOAD_PATH</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-identifier">dir</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">dir</span>) }
+243:       <span class="ruby-identifier">$LOAD_PATH</span>.<span class="ruby-identifier">uniq!</span>
+244:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

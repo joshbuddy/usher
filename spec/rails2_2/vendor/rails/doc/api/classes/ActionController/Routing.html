@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionController::Routing</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionController::Routing</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/routing/builder_rb.html">
+                vendor/rails/actionpack/lib/action_controller/routing/builder.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/routing/optimisations_rb.html">
+                vendor/rails/actionpack/lib/action_controller/routing/optimisations.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/routing/recognition_optimisation_rb.html">
+                vendor/rails/actionpack/lib/action_controller/routing/recognition_optimisation.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/routing/route_rb.html">
+                vendor/rails/actionpack/lib/action_controller/routing/route.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/routing/route_set_rb.html">
+                vendor/rails/actionpack/lib/action_controller/routing/route_set.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/routing/segments_rb.html">
+                vendor/rails/actionpack/lib/action_controller/routing/segments.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/routing_rb.html">
+                vendor/rails/actionpack/lib/action_controller/routing.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h2><a href="Routing.html">Routing</a></h2>
+<p>
+The routing module provides URL rewriting in native Ruby. It&#8216;s a way
+to redirect incoming requests to controllers and actions. This replaces
+mod_rewrite rules. Best of all, <a href="../Rails.html">Rails</a>&#8217; <a
+href="Routing.html">Routing</a> works with any web server. Routes are
+defined in <tt>config/routes.rb</tt>.
+</p>
+<p>
+Consider the following route, installed by <a
+href="../Rails.html">Rails</a> when you generate your application:
+</p>
+<pre>
+  map.connect ':controller/:action/:id'
+</pre>
+<p>
+This route states that it expects requests to consist of a
+<tt>:controller</tt> followed by an <tt>:action</tt> that in turn is fed
+some <tt>:id</tt>.
+</p>
+<p>
+Suppose you get an incoming request for <tt>/blog/edit/22</tt>,
+you&#8216;ll end up with:
+</p>
+<pre>
+  params = { :controller =&gt; 'blog',
+             :action     =&gt; 'edit',
+             :id         =&gt; '22'
+          }
+</pre>
+<p>
+Think of creating routes as drawing a map for your requests. The map tells
+them where to go based on some predefined pattern:
+</p>
+<pre>
+  ActionController::Routing::Routes.draw do |map|
+    Pattern 1 tells some request to go to one place
+    Pattern 2 tell them to go to another
+    ...
+  end
+</pre>
+<p>
+The following symbols are special:
+</p>
+<pre>
+  :controller maps to your controller name
+  :action     maps to an action with your controllers
+</pre>
+<p>
+Other names simply map to a parameter as in the case of <tt>:id</tt>.
+</p>
+<h2>Route priority</h2>
+<p>
+Not all routes are created equally. Routes have priority defined by the
+order of appearance of the routes in the <tt>config/routes.rb</tt> file.
+The priority goes from top to bottom. The last route in that file is at the
+lowest priority and will be applied last. If no route matches, 404 is
+returned.
+</p>
+<p>
+Within blocks, the empty pattern is at the highest priority. In practice
+this works out nicely:
+</p>
+<pre>
+  ActionController::Routing::Routes.draw do |map|
+    map.with_options :controller =&gt; 'blog' do |blog|
+      blog.show '',  :action =&gt; 'list'
+    end
+    map.connect ':controller/:action/:view'
+  end
+</pre>
+<p>
+In this case, invoking blog controller (with an URL like
+&#8217;/blog/&#8217;) without parameters will activate the
+&#8216;list&#8217; action by default.
+</p>
+<h2>Defaults routes and default parameters</h2>
+<p>
+Setting a default route is straightforward in <a
+href="../Rails.html">Rails</a> - you simply append a Hash at the end of
+your mapping to set any default parameters.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  ActionController::Routing:Routes.draw do |map|
+    map.connect ':controller/:action/:id', :controller =&gt; 'blog'
+  end
+</pre>
+<p>
+This sets up <tt>blog</tt> as the default controller if no other is
+specified. This means visiting &#8217;/&#8217; would invoke the blog
+controller.
+</p>
+<p>
+More formally, you can define defaults in a route with the
+<tt>:defaults</tt> key.
+</p>
+<pre>
+  map.connect ':controller/:action/:id', :action =&gt; 'show', :defaults =&gt; { :page =&gt; 'Dashboard' }
+</pre>
+<p>
+Note: The default routes, as provided by the <a
+href="../Rails.html">Rails</a> generator, make all actions in every
+controller accessible via GET requests. You should consider removing them
+or commenting them out if you&#8216;re using named routes and resources.
+</p>
+<h2>Named routes</h2>
+<p>
+Routes can be named with the syntax <tt>map.name_of_route options</tt>,
+allowing for easy reference within your source as
+<tt>name_of_route_url</tt> for the full URL and <tt>name_of_route_path</tt>
+for the URI path.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  # In routes.rb
+  map.login 'login', :controller =&gt; 'accounts', :action =&gt; 'login'
+
+  # With render, redirect_to, tests, etc.
+  redirect_to login_url
+</pre>
+<p>
+Arguments can be passed as well.
+</p>
+<pre>
+  redirect_to show_item_path(:id =&gt; 25)
+</pre>
+<p>
+Use <tt>map.root</tt> as a shorthand to name a route for the root path
+&quot;&quot;.
+</p>
+<pre>
+  # In routes.rb
+  map.root :controller =&gt; 'blogs'
+
+  # would recognize http://www.example.com/ as
+  params = { :controller =&gt; 'blogs', :action =&gt; 'index' }
+
+  # and provide these named routes
+  root_url   # =&gt; 'http://www.example.com/'
+  root_path  # =&gt; ''
+</pre>
+<p>
+You can also specify an already-defined named route in your
+<tt>map.root</tt> call:
+</p>
+<pre>
+  # In routes.rb
+  map.new_session :controller =&gt; 'sessions', :action =&gt; 'new'
+  map.root :new_session
+</pre>
+<p>
+Note: when using <tt>with_options</tt>, the route is simply named after the
+method you call on the block parameter rather than map.
+</p>
+<pre>
+  # In routes.rb
+  map.with_options :controller =&gt; 'blog' do |blog|
+    blog.show    '',            :action  =&gt; 'list'
+    blog.delete  'delete/:id',  :action  =&gt; 'delete',
+    blog.edit    'edit/:id',    :action  =&gt; 'edit'
+  end
+
+  # provides named routes for show, delete, and edit
+  link_to @article.title, show_path(:id =&gt; @article.id)
+</pre>
+<h2>Pretty URLs</h2>
+<p>
+Routes can generate pretty URLs. For example:
+</p>
+<pre>
+  map.connect 'articles/:year/:month/:day',
+              :controller =&gt; 'articles',
+              :action     =&gt; 'find_by_date',
+              :year       =&gt; /\d{4}/,
+              :month      =&gt; /\d{1,2}/,
+              :day        =&gt; /\d{1,2}/
+</pre>
+<p>
+Using the route above, the URL &quot;<a
+href="http://localhost:3000/articles/2005/11/06">localhost:3000/articles/2005/11/06</a>&quot;
+maps to
+</p>
+<pre>
+  params = {:year =&gt; '2005', :month =&gt; '11', :day =&gt; '06'}
+</pre>
+<h2>Regular Expressions and parameters</h2>
+<p>
+You can specify a regular expression to define a format for a parameter.
+</p>
+<pre>
+  map.geocode 'geocode/:postalcode', :controller =&gt; 'geocode',
+              :action =&gt; 'show', :postalcode =&gt; /\d{5}(-\d{4})?/
+</pre>
+<p>
+or, more formally:
+</p>
+<pre>
+  map.geocode 'geocode/:postalcode', :controller =&gt; 'geocode',
+              :action =&gt; 'show', :requirements =&gt; { :postalcode =&gt; /\d{5}(-\d{4})?/ }
+</pre>
+<p>
+Formats can include the &#8216;ignorecase&#8217; and &#8216;extended
+syntax&#8217; regular expression modifiers:
+</p>
+<pre>
+  map.geocode 'geocode/:postalcode', :controller =&gt; 'geocode',
+              :action =&gt; 'show', :postalcode =&gt; /hx\d\d\s\d[a-z]{2}/i
+
+  map.geocode 'geocode/:postalcode', :controller =&gt; 'geocode',
+              :action =&gt; 'show',:requirements =&gt; {
+                :postalcode =&gt; /# Postcode format
+                                \d{5} #Prefix
+                                (-\d{4})? #Suffix
+                                /x
+              }
+</pre>
+<p>
+Using the multiline match modifier will raise an ArgumentError. Encoding
+regular expression modifiers are silently ignored. The match will always
+use the default encoding or ASCII.
+</p>
+<h2>Route globbing</h2>
+<p>
+Specifying <tt>*[string]</tt> as part of a rule like:
+</p>
+<pre>
+  map.connect '*path' , :controller =&gt; 'blog' , :action =&gt; 'unrecognized?'
+</pre>
+<p>
+will glob all remaining parts of the route that were not recognized
+earlier. This idiom must appear at the end of the path. The globbed values
+are in <tt>params[:path]</tt> in this case.
+</p>
+<h2>Route conditions</h2>
+<p>
+With conditions you can define restrictions on routes. Currently the only
+valid condition is <tt>:method</tt>.
+</p>
+<ul>
+<li><tt>:method</tt> - Allows you to specify which method can access the route.
+Possible values are <tt>:post</tt>, <tt>:get</tt>, <tt>:put</tt>,
+<tt>:delete</tt> and <tt>:any</tt>. The default value is <tt>:any</tt>,
+<tt>:any</tt> means that any method can access the route.
+
+</li>
+</ul>
+<p>
+Example:
+</p>
+<pre>
+  map.connect 'post/:id', :controller =&gt; 'posts', :action =&gt; 'show',
+              :conditions =&gt; { :method =&gt; :get }
+  map.connect 'post/:id', :controller =&gt; 'posts', :action =&gt; 'create_comment',
+              :conditions =&gt; { :method =&gt; :post }
+</pre>
+<p>
+Now, if you POST to <tt>/posts/:id</tt>, it will route to the
+<tt>create_comment</tt> action. A GET on the same URL will route to the
+<tt>show</tt> action.
+</p>
+<h2>Reloading routes</h2>
+<p>
+You can reload routes if you feel you must:
+</p>
+<pre>
+  ActionController::Routing::Routes.reload
+</pre>
+<p>
+This will clear all named routes and reload routes.rb if the file has been
+modified from last load. To absolutely force reloading, use
+<tt>reload!</tt>.
+</p>
+<h2>Testing Routes</h2>
+<p>
+The two main methods for testing your routes:
+</p>
+<h3><tt>assert_routing</tt></h3>
+<pre>
+  def test_movie_route_properly_splits
+   opts = {:controller =&gt; &quot;plugin&quot;, :action =&gt; &quot;checkout&quot;, :id =&gt; &quot;2&quot;}
+   assert_routing &quot;plugin/checkout/2&quot;, opts
+  end
+</pre>
+<p>
+<tt>assert_routing</tt> lets you test whether or not the route properly
+resolves into options.
+</p>
+<h3><tt>assert_recognizes</tt></h3>
+<pre>
+  def test_route_has_options
+   opts = {:controller =&gt; &quot;plugin&quot;, :action =&gt; &quot;show&quot;, :id =&gt; &quot;12&quot;}
+   assert_recognizes opts, &quot;/plugins/show/12&quot;
+  end
+</pre>
+<p>
+Note the subtle difference between the two: <tt>assert_routing</tt> tests
+that a URL fits options while <tt>assert_recognizes</tt> tests that a URL
+breaks into parameters properly.
+</p>
+<p>
+In tests you can simply pass the URL or named route to <tt>get</tt> or
+<tt>post</tt>.
+</p>
+<pre>
+  def send_to_jail
+    get '/jail'
+    assert_response :success
+    assert_template &quot;jail/front&quot;
+  end
+
+  def goes_to_login
+    get login_url
+    #...
+  end
+</pre>
+<h2>View a list of all your routes</h2>
+<p>
+Run <tt>rake routes</tt>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000373">controller_relative_to</a>&nbsp;&nbsp;
+      <a href="#M000374">inflections_with_route_reloading</a>&nbsp;&nbsp;
+      <a href="#M000370">normalize_paths</a>&nbsp;&nbsp;
+      <a href="#M000371">possible_controllers</a>&nbsp;&nbsp;
+      <a href="#M000372">use_controllers!</a>&nbsp;&nbsp;
+      <a href="#M000369">with_controllers</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="Routing/Helpers.html" class="link">ActionController::Routing::Helpers</a><br />
+Module <a href="Routing/Optimisation.html" class="link">ActionController::Routing::Optimisation</a><br />
+Module <a href="Routing/RouteSet.html" class="link">ActionController::Routing::RouteSet</a><br />
+
+    </div>
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SEPARATORS</td>
+          <td>=</td>
+          <td class="context-item-value">%w( / . ? )</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">HTTP_METHODS</td>
+          <td>=</td>
+          <td class="context-item-value">[:get, :head, :post, :put, :delete]</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ALLOWED_REQUIREMENTS_FOR_OPTIMISATION</td>
+          <td>=</td>
+          <td class="context-item-value">[:controller, :action].to_set</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">Routes</td>
+          <td>=</td>
+          <td class="context-item-value">RouteSet.new</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000373" class="method-detail">
+        <a name="M000373"></a>
+
+        <div class="method-heading">
+          <a href="#M000373" class="method-signature">
+          <span class="method-name">controller_relative_to</span><span class="method-args">(controller, previous)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a controller path for a new <tt>controller</tt> based on a
+<tt>previous</tt> controller path. Handles 4 scenarios:
+</p>
+<ul>
+<li>stay in the previous controller:
+
+<pre>
+  controller_relative_to( nil, &quot;groups/discussion&quot; ) # =&gt; &quot;groups/discussion&quot;
+</pre>
+</li>
+<li>stay in the previous namespace:
+
+<pre>
+  controller_relative_to( &quot;posts&quot;, &quot;groups/discussion&quot; ) # =&gt; &quot;groups/posts&quot;
+</pre>
+</li>
+<li>forced move to the root namespace:
+
+<pre>
+  controller_relative_to( &quot;/posts&quot;, &quot;groups/discussion&quot; ) # =&gt; &quot;posts&quot;
+</pre>
+</li>
+<li>previous namespace is root:
+
+<pre>
+  controller_relative_to( &quot;posts&quot;, &quot;anything_with_no_slashes&quot; ) # =&gt;&quot;posts&quot;
+</pre>
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000373-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000373-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/routing.rb, line 363</span>
+363:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">controller_relative_to</span>(<span class="ruby-identifier">controller</span>, <span class="ruby-identifier">previous</span>)
+364:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">controller</span>.<span class="ruby-identifier">nil?</span>           <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">previous</span>
+365:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">controller</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">==</span> <span class="ruby-value">?/</span>    <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">controller</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+366:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-regexp re">%r{^(.*)/}</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">previous</span> <span class="ruby-keyword kw">then</span> <span class="ruby-node">&quot;#{$1}/#{controller}&quot;</span>
+367:         <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">controller</span>
+368:         <span class="ruby-keyword kw">end</span>
+369:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000370" class="method-detail">
+        <a name="M000370"></a>
+
+        <div class="method-heading">
+          <a href="#M000370" class="method-signature">
+          <span class="method-name">normalize_paths</span><span class="method-args">(paths)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an array of paths, cleaned of double-slashes and relative path
+references.
+</p>
+<ul>
+<li>&quot;\\&quot; and &quot;//&quot; become &quot;\&quot; or &quot;/&quot;.
+
+</li>
+<li>&quot;/foo/bar/../config&quot; becomes &quot;/foo/config&quot;.
+
+</li>
+</ul>
+<p>
+The returned array is sorted by length, descending.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000370-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000370-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/routing.rb, line 299</span>
+299:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">normalize_paths</span>(<span class="ruby-identifier">paths</span>)
+300:         <span class="ruby-comment cmt"># do the hokey-pokey of path normalization...</span>
+301:         <span class="ruby-identifier">paths</span> = <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+302:           <span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>.
+303:             <span class="ruby-identifier">gsub</span>(<span class="ruby-value str">&quot;//&quot;</span>, <span class="ruby-value str">&quot;/&quot;</span>).           <span class="ruby-comment cmt"># replace double / chars with a single</span>
+304:             <span class="ruby-identifier">gsub</span>(<span class="ruby-value str">&quot;\\\\&quot;</span>, <span class="ruby-value str">&quot;\\&quot;</span>).        <span class="ruby-comment cmt"># replace double \ chars with a single</span>
+305:             <span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">%r{(.)[\\/]$}</span>, <span class="ruby-value str">'\1'</span>)  <span class="ruby-comment cmt"># drop final / or \ if path ends with it</span>
+306: 
+307:           <span class="ruby-comment cmt"># eliminate .. paths where possible</span>
+308:           <span class="ruby-identifier">re</span> = <span class="ruby-regexp re">%r{[^/\\]+[/\\]\.\.[/\\]}</span>
+309:           <span class="ruby-identifier">path</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-identifier">re</span>, <span class="ruby-value str">&quot;&quot;</span>) <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">re</span>)
+310:           <span class="ruby-identifier">path</span>
+311:         <span class="ruby-keyword kw">end</span>
+312: 
+313:         <span class="ruby-comment cmt"># start with longest path, first</span>
+314:         <span class="ruby-identifier">paths</span> = <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">uniq</span>.<span class="ruby-identifier">sort_by</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">length</span> }
+315:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000371" class="method-detail">
+        <a name="M000371"></a>
+
+        <div class="method-heading">
+          <a href="#M000371" class="method-signature">
+          <span class="method-name">possible_controllers</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the array of controller names currently available to <a
+href="Routing.html">ActionController::Routing</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000371-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000371-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/routing.rb, line 318</span>
+318:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">possible_controllers</span>
+319:         <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@possible_controllers</span>
+320:           <span class="ruby-ivar">@possible_controllers</span> = []
+321: 
+322:           <span class="ruby-identifier">paths</span> = <span class="ruby-identifier">controller_paths</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">directory?</span>(<span class="ruby-identifier">path</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">path</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;.&quot;</span> }
+323: 
+324:           <span class="ruby-identifier">seen_paths</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">h</span>, <span class="ruby-identifier">k</span><span class="ruby-operator">|</span> <span class="ruby-identifier">h</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-keyword kw">true</span>; <span class="ruby-keyword kw">false</span>}
+325:           <span class="ruby-identifier">normalize_paths</span>(<span class="ruby-identifier">paths</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">load_path</span><span class="ruby-operator">|</span>
+326:             <span class="ruby-constant">Dir</span>[<span class="ruby-node">&quot;#{load_path}/**/*_controller.rb&quot;</span>].<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">path</span><span class="ruby-operator">|</span>
+327:               <span class="ruby-keyword kw">next</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">seen_paths</span>[<span class="ruby-identifier">path</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">%r{^\.[/\\]}</span>, <span class="ruby-value str">&quot;&quot;</span>)]
+328: 
+329:               <span class="ruby-identifier">controller_name</span> = <span class="ruby-identifier">path</span>[(<span class="ruby-identifier">load_path</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)<span class="ruby-operator">..</span><span class="ruby-value">-1</span>]
+330: 
+331:               <span class="ruby-identifier">controller_name</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/_controller\.rb\Z/</span>, <span class="ruby-value str">''</span>)
+332:               <span class="ruby-ivar">@possible_controllers</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">controller_name</span>
+333:             <span class="ruby-keyword kw">end</span>
+334:           <span class="ruby-keyword kw">end</span>
+335: 
+336:           <span class="ruby-comment cmt"># remove duplicates</span>
+337:           <span class="ruby-ivar">@possible_controllers</span>.<span class="ruby-identifier">uniq!</span>
+338:         <span class="ruby-keyword kw">end</span>
+339:         <span class="ruby-ivar">@possible_controllers</span>
+340:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000372" class="method-detail">
+        <a name="M000372"></a>
+
+        <div class="method-heading">
+          <a href="#M000372" class="method-signature">
+          <span class="method-name">use_controllers!</span><span class="method-args">(controller_names)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replaces the internal list of controllers available to <a
+href="Routing.html">ActionController::Routing</a> with the passed argument.
+</p>
+<pre>
+  ActionController::Routing.use_controllers!([ &quot;posts&quot;, &quot;comments&quot;, &quot;admin/comments&quot; ])
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000372-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000372-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/routing.rb, line 344</span>
+344:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">use_controllers!</span>(<span class="ruby-identifier">controller_names</span>)
+345:         <span class="ruby-ivar">@possible_controllers</span> = <span class="ruby-identifier">controller_names</span>
+346:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000369" class="method-detail">
+        <a name="M000369"></a>
+
+        <div class="method-heading">
+          <a href="#M000369" class="method-signature">
+          <span class="method-name">with_controllers</span><span class="method-args">(names) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Expects an array of controller names as the first argument. Executes the
+passed block with only the named controllers named available. This method
+is used in internal <a href="../Rails.html">Rails</a> testing.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000369-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000369-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/routing.rb, line 287</span>
+287:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">with_controllers</span>(<span class="ruby-identifier">names</span>)
+288:         <span class="ruby-identifier">prior_controllers</span> = <span class="ruby-ivar">@possible_controllers</span>
+289:         <span class="ruby-identifier">use_controllers!</span> <span class="ruby-identifier">names</span>
+290:         <span class="ruby-keyword kw">yield</span>
+291:       <span class="ruby-keyword kw">ensure</span>
+292:         <span class="ruby-identifier">use_controllers!</span> <span class="ruby-identifier">prior_controllers</span>
+293:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000374" class="method-detail">
+        <a name="M000374"></a>
+
+        <div class="method-heading">
+          <a href="#M000374" class="method-signature">
+          <span class="method-name">inflections_with_route_reloading</span><span class="method-args">(&amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Ensures that routes are reloaded when <a href="../Rails.html">Rails</a>
+inflections are updated.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000374-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000374-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/routing.rb, line 376</span>
+376:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">inflections_with_route_reloading</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+377:         <span class="ruby-identifier">returning</span>(<span class="ruby-identifier">inflections_without_route_reloading</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)) {
+378:           <span class="ruby-constant">ActionController</span><span class="ruby-operator">::</span><span class="ruby-constant">Routing</span><span class="ruby-operator">::</span><span class="ruby-constant">Routes</span>.<span class="ruby-identifier">reload!</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+379:         }
+380:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

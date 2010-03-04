@@ -1,0 +1,960 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionView::Helpers::UrlHelper</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionView::Helpers::UrlHelper</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_view/helpers/url_helper_rb.html">
+                vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Provides a set of methods for making links and getting URLs that depend on
+the routing subsystem (see <a
+href="../../ActionController/Routing.html">ActionController::Routing</a>).
+This allows you to use the same format for links in views and controllers.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001379">button_to</a>&nbsp;&nbsp;
+      <a href="#M001384">current_page?</a>&nbsp;&nbsp;
+      <a href="#M001378">link_to</a>&nbsp;&nbsp;
+      <a href="#M001382">link_to_if</a>&nbsp;&nbsp;
+      <a href="#M001381">link_to_unless</a>&nbsp;&nbsp;
+      <a href="#M001380">link_to_unless_current</a>&nbsp;&nbsp;
+      <a href="#M001383">mail_to</a>&nbsp;&nbsp;
+      <a href="#M001377">url_for</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="JavaScriptHelper.html">JavaScriptHelper</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001379" class="method-detail">
+        <a name="M001379"></a>
+
+        <div class="method-heading">
+          <a href="#M001379" class="method-signature">
+          <span class="method-name">button_to</span><span class="method-args">(name, options = {}, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Generates a form containing a single button that submits to the URL created
+by the set of <tt>options</tt>. This is the safest method to ensure links
+that cause changes to your data are not triggered by search bots or
+accelerators. If the HTML button does not work with your layout, you can
+also consider using the <a href="UrlHelper.html#M001378">link_to</a> method
+with the <tt>:method</tt> modifier as described in the <a
+href="UrlHelper.html#M001378">link_to</a> documentation.
+</p>
+<p>
+The generated FORM element has a class name of <tt>button-to</tt> to allow
+styling of the form itself and its children. You can control the form
+submission and input element behavior using <tt>html_options</tt>. This
+method accepts the <tt>:method</tt> and <tt>:confirm</tt> modifiers
+described in the <a href="UrlHelper.html#M001378">link_to</a>
+documentation. If no <tt>:method</tt> modifier is given, it will default to
+performing a POST operation. You can also disable the button by passing
+<tt>:disabled =&gt; true</tt> in <tt>html_options</tt>. If you are using
+RESTful routes, you can pass the <tt>:method</tt> to change the HTTP verb
+used to submit the form.
+</p>
+<h4>Options</h4>
+<p>
+The <tt>options</tt> hash accepts the same options at <a
+href="UrlHelper.html#M001377">url_for</a>.
+</p>
+<p>
+There are a few special <tt>html_options</tt>:
+</p>
+<ul>
+<li><tt>:method</tt> - Specifies the anchor name to be appended to the path.
+
+</li>
+<li><tt>:disabled</tt> - Specifies the anchor name to be appended to the path.
+
+</li>
+<li><tt>:confirm</tt> - This will add a JavaScript confirm prompt with the
+question specified. If the user accepts, the link is processed normally,
+otherwise no action is taken.
+
+</li>
+</ul>
+<h4>Examples</h4>
+<pre>
+  &lt;%= button_to &quot;New&quot;, :action =&gt; &quot;new&quot; %&gt;
+  # =&gt; &quot;&lt;form method=&quot;post&quot; action=&quot;/controller/new&quot; class=&quot;button-to&quot;&gt;
+  #      &lt;div&gt;&lt;input value=&quot;New&quot; type=&quot;submit&quot; /&gt;&lt;/div&gt;
+  #    &lt;/form&gt;&quot;
+
+  button_to &quot;Delete Image&quot;, { :action =&gt; &quot;delete&quot;, :id =&gt; @image.id },
+            :confirm =&gt; &quot;Are you sure?&quot;, :method =&gt; :delete
+  # =&gt; &quot;&lt;form method=&quot;post&quot; action=&quot;/images/delete/1&quot; class=&quot;button-to&quot;&gt;
+  #      &lt;div&gt;
+  #        &lt;input type=&quot;hidden&quot; name=&quot;_method&quot; value=&quot;delete&quot; /&gt;
+  #        &lt;input onclick=&quot;return confirm('Are you sure?');&quot;
+  #              value=&quot;Delete&quot; type=&quot;submit&quot; /&gt;
+  #      &lt;/div&gt;
+  #    &lt;/form&gt;&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001379-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001379-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 286</span>
+286:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">button_to</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {})
+287:         <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">stringify_keys</span>
+288:         <span class="ruby-identifier">convert_boolean_attributes!</span>(<span class="ruby-identifier">html_options</span>, <span class="ruby-node">%w( disabled )</span>)
+289: 
+290:         <span class="ruby-identifier">method_tag</span> = <span class="ruby-value str">''</span>
+291:         <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">method</span> = <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">'method'</span>)) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-node">%w{put delete}</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">method</span>.<span class="ruby-identifier">to_s</span>)
+292:           <span class="ruby-identifier">method_tag</span> = <span class="ruby-identifier">tag</span>(<span class="ruby-value str">'input'</span>, <span class="ruby-identifier">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'hidden'</span>, <span class="ruby-identifier">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'_method'</span>, <span class="ruby-identifier">:value</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">method</span>.<span class="ruby-identifier">to_s</span>)
+293:         <span class="ruby-keyword kw">end</span>
+294: 
+295:         <span class="ruby-identifier">form_method</span> = <span class="ruby-identifier">method</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'get'</span> <span class="ruby-operator">?</span> <span class="ruby-value str">'get'</span> <span class="ruby-operator">:</span> <span class="ruby-value str">'post'</span>
+296: 
+297:         <span class="ruby-identifier">request_token_tag</span> = <span class="ruby-value str">''</span>
+298:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">form_method</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'post'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">protect_against_forgery?</span>
+299:           <span class="ruby-identifier">request_token_tag</span> = <span class="ruby-identifier">tag</span>(<span class="ruby-identifier">:input</span>, <span class="ruby-identifier">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;hidden&quot;</span>, <span class="ruby-identifier">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">request_forgery_protection_token</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">:value</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">form_authenticity_token</span>)
+300:         <span class="ruby-keyword kw">end</span>
+301: 
+302:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">confirm</span> = <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;confirm&quot;</span>)
+303:           <span class="ruby-identifier">html_options</span>[<span class="ruby-value str">&quot;onclick&quot;</span>] = <span class="ruby-node">&quot;return #{confirm_javascript_function(confirm)};&quot;</span>
+304:         <span class="ruby-keyword kw">end</span>
+305: 
+306:         <span class="ruby-identifier">url</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span> <span class="ruby-operator">:</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span>)
+307:         <span class="ruby-identifier">name</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">url</span>
+308: 
+309:         <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-value str">&quot;type&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;submit&quot;</span>, <span class="ruby-value str">&quot;value&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>)
+310: 
+311:         <span class="ruby-node">&quot;&lt;form method=\&quot;#{form_method}\&quot; action=\&quot;#{escape_once url}\&quot; class=\&quot;button-to\&quot;&gt;&lt;div&gt;&quot;</span> <span class="ruby-operator">+</span>
+312:           <span class="ruby-identifier">method_tag</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">tag</span>(<span class="ruby-value str">&quot;input&quot;</span>, <span class="ruby-identifier">html_options</span>) <span class="ruby-operator">+</span> <span class="ruby-identifier">request_token_tag</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;&lt;/div&gt;&lt;/form&gt;&quot;</span>
+313:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001384" class="method-detail">
+        <a name="M001384"></a>
+
+        <div class="method-heading">
+          <a href="#M001384" class="method-signature">
+          <span class="method-name">current_page?</span><span class="method-args">(options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+True if the current request URI was generated by the given
+<tt>options</tt>.
+</p>
+<h4>Examples</h4>
+<p>
+Let&#8216;s say we&#8216;re in the <tt>/shop/checkout?order=desc</tt>
+action.
+</p>
+<pre>
+  current_page?(:action =&gt; 'process')
+  # =&gt; false
+
+  current_page?(:controller =&gt; 'shop', :action =&gt; 'checkout')
+  # =&gt; true
+
+  current_page?(:controller =&gt; 'shop', :action =&gt; 'checkout', :order =&gt; 'asc)
+  # =&gt; false
+
+  current_page?(:action =&gt; 'checkout')
+  # =&gt; true
+
+  current_page?(:controller =&gt; 'library', :action =&gt; 'checkout')
+  # =&gt; false
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001384-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001384-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 518</span>
+518:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_page?</span>(<span class="ruby-identifier">options</span>)
+519:         <span class="ruby-identifier">url_string</span> = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">escapeHTML</span>(<span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span>))
+520:         <span class="ruby-identifier">request</span> = <span class="ruby-ivar">@controller</span>.<span class="ruby-identifier">request</span>
+521:         <span class="ruby-comment cmt"># We ignore any extra parameters in the request_uri if the </span>
+522:         <span class="ruby-comment cmt"># submitted url doesn't have any either.  This lets the function</span>
+523:         <span class="ruby-comment cmt"># work with things like ?order=asc </span>
+524:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">url_string</span>.<span class="ruby-identifier">index</span>(<span class="ruby-value str">&quot;?&quot;</span>)
+525:           <span class="ruby-identifier">request_uri</span> = <span class="ruby-identifier">request</span>.<span class="ruby-identifier">request_uri</span>
+526:         <span class="ruby-keyword kw">else</span>
+527:           <span class="ruby-identifier">request_uri</span> = <span class="ruby-identifier">request</span>.<span class="ruby-identifier">request_uri</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'?'</span>).<span class="ruby-identifier">first</span>
+528:         <span class="ruby-keyword kw">end</span>
+529:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">url_string</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^\w+:\/\//</span>
+530:           <span class="ruby-identifier">url_string</span> <span class="ruby-operator">==</span> <span class="ruby-node">&quot;#{request.protocol}#{request.host_with_port}#{request_uri}&quot;</span>
+531:         <span class="ruby-keyword kw">else</span>
+532:           <span class="ruby-identifier">url_string</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">request_uri</span>
+533:         <span class="ruby-keyword kw">end</span>
+534:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001378" class="method-detail">
+        <a name="M001378"></a>
+
+        <div class="method-heading">
+          <a href="#M001378" class="method-signature">
+          <span class="method-name">link_to</span><span class="method-args">(*args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a link tag of the given <tt>name</tt> using a URL created by the
+set of <tt>options</tt>. See the valid options in the documentation for <a
+href="UrlHelper.html#M001377">url_for</a>. It&#8216;s also possible to pass
+a string instead of an options hash to get a link tag that uses the value
+of the string as the href for the link, or use <tt>:back</tt> to link to
+the referrer - a JavaScript back link will be used in place of a referrer
+if none exists. If nil is passed as a name, the link itself will become the
+name.
+</p>
+<h4>Signatures</h4>
+<pre>
+  link_to(name, options = {}, html_options = nil)
+  link_to(options = {}, html_options = nil) do
+    # name
+  end
+</pre>
+<h4>Options</h4>
+<ul>
+<li><tt>:confirm =&gt; &#8216;question?&#8216;</tt> - This will add a
+JavaScript confirm prompt with the question specified. If the user accepts,
+the link is processed normally, otherwise no action is taken.
+
+</li>
+<li><tt>:popup =&gt; true || array of window options</tt> - This will force the
+link to open in a popup window. By passing true, a default browser window
+will be opened with the URL. You can also specify an array of options that
+are passed-thru to JavaScripts window.open method.
+
+</li>
+<li><tt>:method =&gt; symbol of HTTP verb</tt> - This modifier will dynamically
+create an HTML form and immediately submit the form for processing using
+the HTTP verb specified. Useful for having links perform a POST operation
+in dangerous actions like deleting a record (which search bots can follow
+while spidering your site). Supported verbs are <tt>:post</tt>,
+<tt>:delete</tt> and <tt>:put</tt>. Note that if the user has JavaScript
+disabled, the request will fall back to using GET. If you are relying on
+the POST behavior, you should check for it in your controller&#8216;s
+action by using the request object&#8216;s methods for <tt>post?</tt>,
+<tt>delete?</tt> or <tt>put?</tt>.
+
+</li>
+<li>The <tt>html_options</tt> will accept a hash of html attributes for the
+link tag.
+
+</li>
+</ul>
+<p>
+Note that if the user has JavaScript disabled, the request will fall back
+to using GET. If <tt>:href =&gt; &#8217;#&#8217;</tt> is used and the user
+has JavaScript disabled clicking the link will have no effect. If you are
+relying on the POST behavior, your should check for it in your
+controller&#8216;s action by using the request object&#8216;s methods for
+<tt>post?</tt>, <tt>delete?</tt> or <tt>put?</tt>.
+</p>
+<p>
+You can mix and match the <tt>html_options</tt> with the exception of
+<tt>:popup</tt> and <tt>:method</tt> which will raise an
+ActionView::ActionViewError exception.
+</p>
+<h4>Examples</h4>
+<p>
+Because it relies on <tt><a href="UrlHelper.html#M001377">url_for</a></tt>,
+<tt><a href="UrlHelper.html#M001378">link_to</a></tt> supports both
+older-style controller/action/id arguments and newer RESTful routes.
+Current <a href="../../Rails.html">Rails</a> style favors RESTful routes
+whenever possible, so base your application on resources and use
+</p>
+<pre>
+  link_to &quot;Profile&quot;, profile_path(@profile)
+  # =&gt; &lt;a href=&quot;/profiles/1&quot;&gt;Profile&lt;/a&gt;
+</pre>
+<p>
+or the even pithier
+</p>
+<pre>
+  link_to &quot;Profile&quot;, @profile
+  # =&gt; &lt;a href=&quot;/profiles/1&quot;&gt;Profile&lt;/a&gt;
+</pre>
+<p>
+in place of the older more verbose, non-resource-oriented
+</p>
+<pre>
+  link_to &quot;Profile&quot;, :controller =&gt; &quot;profiles&quot;, :action =&gt; &quot;show&quot;, :id =&gt; @profile
+  # =&gt; &lt;a href=&quot;/profiles/show/1&quot;&gt;Profile&lt;/a&gt;
+</pre>
+<p>
+Similarly,
+</p>
+<pre>
+  link_to &quot;Profiles&quot;, profiles_path
+  # =&gt; &lt;a href=&quot;/profiles&quot;&gt;Profiles&lt;/a&gt;
+</pre>
+<p>
+is better than
+</p>
+<pre>
+  link_to &quot;Profiles&quot;, :controller =&gt; &quot;profiles&quot;
+  # =&gt; &lt;a href=&quot;/profiles&quot;&gt;Profiles&lt;/a&gt;
+</pre>
+<p>
+You can use a block as well if your link target is hard to fit into the
+name parameter. ERb example:
+</p>
+<pre>
+  &lt;% link_to(@profile) do %&gt;
+    &lt;strong&gt;&lt;%= @profile.name %&gt;&lt;/strong&gt; -- &lt;span&gt;Check it out!!&lt;/span&gt;
+  &lt;% end %&gt;
+  # =&gt; &lt;a href=&quot;/profiles/1&quot;&gt;&lt;strong&gt;David&lt;/strong&gt; -- &lt;span&gt;Check it out!!&lt;/span&gt;&lt;/a&gt;
+</pre>
+<p>
+Classes and ids for CSS are easy to produce:
+</p>
+<pre>
+  link_to &quot;Articles&quot;, articles_path, :id =&gt; &quot;news&quot;, :class =&gt; &quot;article&quot;
+  # =&gt; &lt;a href=&quot;/articles&quot; class=&quot;article&quot; id=&quot;news&quot;&gt;Articles&lt;/a&gt;
+</pre>
+<p>
+Be careful when using the older argument style, as an extra literal hash is
+needed:
+</p>
+<pre>
+  link_to &quot;Articles&quot;, { :controller =&gt; &quot;articles&quot; }, :id =&gt; &quot;news&quot;, :class =&gt; &quot;article&quot;
+  # =&gt; &lt;a href=&quot;/articles&quot; class=&quot;article&quot; id=&quot;news&quot;&gt;Articles&lt;/a&gt;
+</pre>
+<p>
+Leaving the hash off gives the wrong link:
+</p>
+<pre>
+  link_to &quot;WRONG!&quot;, :controller =&gt; &quot;articles&quot;, :id =&gt; &quot;news&quot;, :class =&gt; &quot;article&quot;
+  # =&gt; &lt;a href=&quot;/articles/index/news?class=article&quot;&gt;WRONG!&lt;/a&gt;
+</pre>
+<p>
+<tt><a href="UrlHelper.html#M001378">link_to</a></tt> can also produce
+links with anchors or query strings:
+</p>
+<pre>
+  link_to &quot;Comment wall&quot;, profile_path(@profile, :anchor =&gt; &quot;wall&quot;)
+  # =&gt; &lt;a href=&quot;/profiles/1#wall&quot;&gt;Comment wall&lt;/a&gt;
+
+  link_to &quot;Ruby on Rails search&quot;, :controller =&gt; &quot;searches&quot;, :query =&gt; &quot;ruby on rails&quot;
+  # =&gt; &lt;a href=&quot;/searches?query=ruby+on+rails&quot;&gt;Ruby on Rails search&lt;/a&gt;
+
+  link_to &quot;Nonsense search&quot;, searches_path(:foo =&gt; &quot;bar&quot;, :baz =&gt; &quot;quux&quot;)
+  # =&gt; &lt;a href=&quot;/searches?foo=bar&amp;amp;baz=quux&quot;&gt;Nonsense search&lt;/a&gt;
+</pre>
+<p>
+The three options specific to <tt><a
+href="UrlHelper.html#M001378">link_to</a></tt> (<tt>:confirm</tt>,
+<tt>:popup</tt>, and <tt>:method</tt>) are used as follows:
+</p>
+<pre>
+  link_to &quot;Visit Other Site&quot;, &quot;http://www.rubyonrails.org/&quot;, :confirm =&gt; &quot;Are you sure?&quot;
+  # =&gt; &lt;a href=&quot;http://www.rubyonrails.org/&quot; onclick=&quot;return confirm('Are you sure?');&quot;&gt;Visit Other Site&lt;/a&gt;
+
+  link_to &quot;Help&quot;, { :action =&gt; &quot;help&quot; }, :popup =&gt; true
+  # =&gt; &lt;a href=&quot;/testing/help/&quot; onclick=&quot;window.open(this.href);return false;&quot;&gt;Help&lt;/a&gt;
+
+  link_to &quot;View Image&quot;, @image, :popup =&gt; ['new_window_name', 'height=300,width=600']
+  # =&gt; &lt;a href=&quot;/images/9&quot; onclick=&quot;window.open(this.href,'new_window_name','height=300,width=600');return false;&quot;&gt;View Image&lt;/a&gt;
+
+  link_to &quot;Delete Image&quot;, @image, :confirm =&gt; &quot;Are you sure?&quot;, :method =&gt; :delete
+  # =&gt; &lt;a href=&quot;/images/9&quot; onclick=&quot;if (confirm('Are you sure?')) { var f = document.createElement('form');
+       f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;
+       var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method');
+       m.setAttribute('value', 'delete'); f.appendChild(m);f.submit(); };return false;&quot;&gt;Delete Image&lt;/a&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001378-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001378-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 218</span>
+218:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">link_to</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+219:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+220:           <span class="ruby-identifier">options</span>      = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">||</span> {}
+221:           <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">second</span>
+222:           <span class="ruby-identifier">concat</span>(<span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">capture</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>), <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>))
+223:         <span class="ruby-keyword kw">else</span>
+224:           <span class="ruby-identifier">name</span>         = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span>
+225:           <span class="ruby-identifier">options</span>      = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">second</span> <span class="ruby-operator">||</span> {}
+226:           <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">third</span>
+227: 
+228:           <span class="ruby-identifier">url</span> = <span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span>)
+229: 
+230:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">html_options</span>
+231:             <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">stringify_keys</span>
+232:             <span class="ruby-identifier">href</span> = <span class="ruby-identifier">html_options</span>[<span class="ruby-value str">'href'</span>]
+233:             <span class="ruby-identifier">convert_options_to_javascript!</span>(<span class="ruby-identifier">html_options</span>, <span class="ruby-identifier">url</span>)
+234:             <span class="ruby-identifier">tag_options</span> = <span class="ruby-identifier">tag_options</span>(<span class="ruby-identifier">html_options</span>)
+235:           <span class="ruby-keyword kw">else</span>
+236:             <span class="ruby-identifier">tag_options</span> = <span class="ruby-keyword kw">nil</span>
+237:           <span class="ruby-keyword kw">end</span>
+238: 
+239:           <span class="ruby-identifier">href_attr</span> = <span class="ruby-node">&quot;href=\&quot;#{url}\&quot;&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">href</span>
+240:           <span class="ruby-node">&quot;&lt;a #{href_attr}#{tag_options}&gt;#{name || url}&lt;/a&gt;&quot;</span>
+241:         <span class="ruby-keyword kw">end</span>
+242:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001382" class="method-detail">
+        <a name="M001382"></a>
+
+        <div class="method-heading">
+          <a href="#M001382" class="method-signature">
+          <span class="method-name">link_to_if</span><span class="method-args">(condition, name, options = {}, html_options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a link tag of the given <tt>name</tt> using a URL created by the
+set of <tt>options</tt> if <tt>condition</tt> is true, in which case only
+the name is returned. To specialize the default behavior, you can pass a
+block that accepts the name or the full argument list for <a
+href="UrlHelper.html#M001381">link_to_unless</a> (see the examples in <a
+href="UrlHelper.html#M001381">link_to_unless</a>).
+</p>
+<h4>Examples</h4>
+<pre>
+  &lt;%= link_to_if(@current_user.nil?, &quot;Login&quot;, { :controller =&gt; &quot;sessions&quot;, :action =&gt; &quot;new&quot; }) %&gt;
+  # If the user isn't logged in...
+  # =&gt; &lt;a href=&quot;/sessions/new/&quot;&gt;Login&lt;/a&gt;
+
+  &lt;%=
+     link_to_if(@current_user.nil?, &quot;Login&quot;, { :controller =&gt; &quot;sessions&quot;, :action =&gt; &quot;new&quot; }) do
+       link_to(@current_user.login, { :controller =&gt; &quot;accounts&quot;, :action =&gt; &quot;show&quot;, :id =&gt; @current_user })
+     end
+  %&gt;
+  # If the user isn't logged in...
+  # =&gt; &lt;a href=&quot;/sessions/new/&quot;&gt;Login&lt;/a&gt;
+  # If they are logged in...
+  # =&gt; &lt;a href=&quot;/accounts/show/3&quot;&gt;my_username&lt;/a&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001382-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001382-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 410</span>
+410:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">link_to_if</span>(<span class="ruby-identifier">condition</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+411:         <span class="ruby-identifier">link_to_unless</span> <span class="ruby-operator">!</span><span class="ruby-identifier">condition</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+412:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001381" class="method-detail">
+        <a name="M001381"></a>
+
+        <div class="method-heading">
+          <a href="#M001381" class="method-signature">
+          <span class="method-name">link_to_unless</span><span class="method-args">(condition, name, options = {}, html_options = {}) {|name| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a link tag of the given <tt>name</tt> using a URL created by the
+set of <tt>options</tt> unless <tt>condition</tt> is true, in which case
+only the name is returned. To specialize the default behavior (i.e., show a
+login link rather than just the plaintext link text), you can pass a block
+that accepts the name or the full argument list for <a
+href="UrlHelper.html#M001381">link_to_unless</a>.
+</p>
+<h4>Examples</h4>
+<pre>
+  &lt;%= link_to_unless(@current_user.nil?, &quot;Reply&quot;, { :action =&gt; &quot;reply&quot; }) %&gt;
+  # If the user is logged in...
+  # =&gt; &lt;a href=&quot;/controller/reply/&quot;&gt;Reply&lt;/a&gt;
+
+  &lt;%=
+     link_to_unless(@current_user.nil?, &quot;Reply&quot;, { :action =&gt; &quot;reply&quot; }) do |name|
+       link_to(name, { :controller =&gt; &quot;accounts&quot;, :action =&gt; &quot;signup&quot; })
+     end
+  %&gt;
+  # If the user is logged in...
+  # =&gt; &lt;a href=&quot;/controller/reply/&quot;&gt;Reply&lt;/a&gt;
+  # If not...
+  # =&gt; &lt;a href=&quot;/accounts/signup&quot;&gt;Reply&lt;/a&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001381-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001381-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 378</span>
+378:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">link_to_unless</span>(<span class="ruby-identifier">condition</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+379:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">condition</span>
+380:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+381:             <span class="ruby-identifier">block</span>.<span class="ruby-identifier">arity</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">1</span> <span class="ruby-operator">?</span> <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">name</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>)
+382:           <span class="ruby-keyword kw">else</span>
+383:             <span class="ruby-identifier">name</span>
+384:           <span class="ruby-keyword kw">end</span>
+385:         <span class="ruby-keyword kw">else</span>
+386:           <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>)
+387:         <span class="ruby-keyword kw">end</span>
+388:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001380" class="method-detail">
+        <a name="M001380"></a>
+
+        <div class="method-heading">
+          <a href="#M001380" class="method-signature">
+          <span class="method-name">link_to_unless_current</span><span class="method-args">(name, options = {}, html_options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a link tag of the given <tt>name</tt> using a URL created by the
+set of <tt>options</tt> unless the current request URI is the same as the
+links, in which case only the name is returned (or the given block is
+yielded, if one exists). You can give <a
+href="UrlHelper.html#M001380">link_to_unless_current</a> a block which will
+specialize the default behavior (e.g., show a &quot;Start Here&quot; link
+rather than the link&#8216;s text).
+</p>
+<h4>Examples</h4>
+<p>
+Let&#8216;s say you have a navigation menu&#8230;
+</p>
+<pre>
+  &lt;ul id=&quot;navbar&quot;&gt;
+    &lt;li&gt;&lt;%= link_to_unless_current(&quot;Home&quot;, { :action =&gt; &quot;index&quot; }) %&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;%= link_to_unless_current(&quot;About Us&quot;, { :action =&gt; &quot;about&quot; }) %&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+</pre>
+<p>
+If in the &quot;about&quot; action, it will render&#8230;
+</p>
+<pre>
+  &lt;ul id=&quot;navbar&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;/controller/index&quot;&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;About Us&lt;/li&gt;
+  &lt;/ul&gt;
+</pre>
+<p>
+&#8230;but if in the &quot;index&quot; action, it will render:
+</p>
+<pre>
+  &lt;ul id=&quot;navbar&quot;&gt;
+    &lt;li&gt;Home&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;/controller/about&quot;&gt;About Us&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+</pre>
+<p>
+The implicit block given to <a
+href="UrlHelper.html#M001380">link_to_unless_current</a> is evaluated if
+the current action is the action given. So, if we had a comments page and
+wanted to render a &quot;Go Back&quot; link instead of a link to the
+comments page, we could do something like this&#8230;
+</p>
+<pre>
+   &lt;%=
+       link_to_unless_current(&quot;Comment&quot;, { :controller =&gt; 'comments', :action =&gt; 'new}) do
+          link_to(&quot;Go back&quot;, { :controller =&gt; 'posts', :action =&gt; 'index' })
+       end
+    %&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001380-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001380-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 354</span>
+354:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">link_to_unless_current</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">html_options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+355:         <span class="ruby-identifier">link_to_unless</span> <span class="ruby-identifier">current_page?</span>(<span class="ruby-identifier">options</span>), <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>, <span class="ruby-identifier">html_options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+356:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001383" class="method-detail">
+        <a name="M001383"></a>
+
+        <div class="method-heading">
+          <a href="#M001383" class="method-signature">
+          <span class="method-name">mail_to</span><span class="method-args">(email_address, name = nil, html_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a mailto link tag to the specified <tt>email_address</tt>, which is
+also used as the name of the link unless <tt>name</tt> is specified.
+Additional HTML attributes for the link can be passed in
+<tt>html_options</tt>.
+</p>
+<p>
+<a href="UrlHelper.html#M001383">mail_to</a> has several methods for
+hindering email harvesters and customizing the email itself by passing
+special keys to <tt>html_options</tt>.
+</p>
+<h4>Options</h4>
+<ul>
+<li><tt>:encode</tt> - This key will accept the strings &quot;javascript&quot;
+or &quot;hex&quot;. Passing &quot;javascript&quot; will dynamically create
+and encode the mailto: link then eval it into the DOM of the page. This
+method will not show the link on the page if the user has JavaScript
+disabled. Passing &quot;hex&quot; will hex encode the
+<tt>email_address</tt> before outputting the mailto: link.
+
+</li>
+<li><tt>:replace_at</tt> - When the link <tt>name</tt> isn&#8216;t provided,
+the <tt>email_address</tt> is used for the link label. You can use this
+option to obfuscate the <tt>email_address</tt> by substituting the @ sign
+with the string given as the value.
+
+</li>
+<li><tt>:replace_dot</tt> - When the link <tt>name</tt> isn&#8216;t provided,
+the <tt>email_address</tt> is used for the link label. You can use this
+option to obfuscate the <tt>email_address</tt> by substituting the . in the
+email with the string given as the value.
+
+</li>
+<li><tt>:subject</tt> - Preset the subject line of the email.
+
+</li>
+<li><tt>:body</tt> - Preset the body of the email.
+
+</li>
+<li><tt>:cc</tt> - Carbon Copy addition recipients on the email.
+
+</li>
+<li><tt>:bcc</tt> - Blind Carbon Copy additional recipients on the email.
+
+</li>
+</ul>
+<h4>Examples</h4>
+<pre>
+  mail_to &quot;me@domain.com&quot;
+  # =&gt; &lt;a href=&quot;mailto:me@domain.com&quot;&gt;me@domain.com&lt;/a&gt;
+
+  mail_to &quot;me@domain.com&quot;, &quot;My email&quot;, :encode =&gt; &quot;javascript&quot;
+  # =&gt; &lt;script type=&quot;text/javascript&quot;&gt;eval(decodeURIComponent('%64%6f%63...%27%29%3b'))&lt;/script&gt;
+
+  mail_to &quot;me@domain.com&quot;, &quot;My email&quot;, :encode =&gt; &quot;hex&quot;
+  # =&gt; &lt;a href=&quot;mailto:%6d%65@%64%6f%6d%61%69%6e.%63%6f%6d&quot;&gt;My email&lt;/a&gt;
+
+  mail_to &quot;me@domain.com&quot;, nil, :replace_at =&gt; &quot;_at_&quot;, :replace_dot =&gt; &quot;_dot_&quot;, :class =&gt; &quot;email&quot;
+  # =&gt; &lt;a href=&quot;mailto:me@domain.com&quot; class=&quot;email&quot;&gt;me_at_domain_dot_com&lt;/a&gt;
+
+  mail_to &quot;me@domain.com&quot;, &quot;My email&quot;, :cc =&gt; &quot;ccaddress@domain.com&quot;,
+           :subject =&gt; &quot;This is an example email&quot;
+  # =&gt; &lt;a href=&quot;mailto:me@domain.com?cc=ccaddress@domain.com&amp;subject=This%20is%20an%20example%20email&quot;&gt;My email&lt;/a&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001383-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001383-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 456</span>
+456:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mail_to</span>(<span class="ruby-identifier">email_address</span>, <span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">html_options</span> = {})
+457:         <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">stringify_keys</span>
+458:         <span class="ruby-identifier">encode</span> = <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;encode&quot;</span>).<span class="ruby-identifier">to_s</span>
+459:         <span class="ruby-identifier">cc</span>, <span class="ruby-identifier">bcc</span>, <span class="ruby-identifier">subject</span>, <span class="ruby-identifier">body</span> = <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;cc&quot;</span>), <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;bcc&quot;</span>), <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;subject&quot;</span>), <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;body&quot;</span>)
+460: 
+461:         <span class="ruby-identifier">string</span> = <span class="ruby-value str">''</span>
+462:         <span class="ruby-identifier">extras</span> = <span class="ruby-value str">''</span>
+463:         <span class="ruby-identifier">extras</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;cc=#{CGI.escape(cc).gsub(&quot;+&quot;, &quot;%20&quot;)}&amp;&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cc</span>.<span class="ruby-identifier">nil?</span>
+464:         <span class="ruby-identifier">extras</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;bcc=#{CGI.escape(bcc).gsub(&quot;+&quot;, &quot;%20&quot;)}&amp;&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">bcc</span>.<span class="ruby-identifier">nil?</span>
+465:         <span class="ruby-identifier">extras</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;body=#{CGI.escape(body).gsub(&quot;+&quot;, &quot;%20&quot;)}&amp;&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">body</span>.<span class="ruby-identifier">nil?</span>
+466:         <span class="ruby-identifier">extras</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;subject=#{CGI.escape(subject).gsub(&quot;+&quot;, &quot;%20&quot;)}&amp;&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">subject</span>.<span class="ruby-identifier">nil?</span>
+467:         <span class="ruby-identifier">extras</span> = <span class="ruby-value str">&quot;?&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">extras</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/&amp;?$/</span>,<span class="ruby-value str">&quot;&quot;</span>) <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">extras</span>.<span class="ruby-identifier">empty?</span>
+468: 
+469:         <span class="ruby-identifier">email_address</span> = <span class="ruby-identifier">email_address</span>.<span class="ruby-identifier">to_s</span>
+470: 
+471:         <span class="ruby-identifier">email_address_obfuscated</span> = <span class="ruby-identifier">email_address</span>.<span class="ruby-identifier">dup</span>
+472:         <span class="ruby-identifier">email_address_obfuscated</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/@/</span>, <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;replace_at&quot;</span>)) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;replace_at&quot;</span>)
+473:         <span class="ruby-identifier">email_address_obfuscated</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp re">/\./</span>, <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value str">&quot;replace_dot&quot;</span>)) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value str">&quot;replace_dot&quot;</span>)
+474: 
+475:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">encode</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;javascript&quot;</span>
+476:           <span class="ruby-node">&quot;document.write('#{content_tag(&quot;a&quot;, name || email_address_obfuscated, html_options.merge({ &quot;href&quot; =&gt; &quot;mailto:&quot;+email_address+extras }))}');&quot;</span>.<span class="ruby-identifier">each_byte</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+477:             <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%%%x&quot;</span>, <span class="ruby-identifier">c</span>)
+478:           <span class="ruby-keyword kw">end</span>
+479:           <span class="ruby-node">&quot;&lt;script type=\&quot;#{Mime::JS}\&quot;&gt;eval(decodeURIComponent('#{string}'))&lt;/script&gt;&quot;</span>
+480:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">encode</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;hex&quot;</span>
+481:           <span class="ruby-identifier">email_address_encoded</span> = <span class="ruby-value str">''</span>
+482:           <span class="ruby-identifier">email_address_obfuscated</span>.<span class="ruby-identifier">each_byte</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+483:             <span class="ruby-identifier">email_address_encoded</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;&amp;#%d;&quot;</span>, <span class="ruby-identifier">c</span>)
+484:           <span class="ruby-keyword kw">end</span>
+485: 
+486:           <span class="ruby-identifier">protocol</span> = <span class="ruby-value str">'mailto:'</span>
+487:           <span class="ruby-identifier">protocol</span>.<span class="ruby-identifier">each_byte</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;&amp;#%d;&quot;</span>, <span class="ruby-identifier">c</span>) }
+488: 
+489:           <span class="ruby-identifier">email_address</span>.<span class="ruby-identifier">each_byte</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+490:             <span class="ruby-identifier">char</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">chr</span>
+491:             <span class="ruby-identifier">string</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-identifier">char</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/\w/</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">sprintf</span>(<span class="ruby-value str">&quot;%%%x&quot;</span>, <span class="ruby-identifier">c</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">char</span>)
+492:           <span class="ruby-keyword kw">end</span>
+493:           <span class="ruby-identifier">content_tag</span> <span class="ruby-value str">&quot;a&quot;</span>, <span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">email_address_encoded</span>, <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">merge</span>({ <span class="ruby-value str">&quot;href&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;#{string}#{extras}&quot;</span> })
+494:         <span class="ruby-keyword kw">else</span>
+495:           <span class="ruby-identifier">content_tag</span> <span class="ruby-value str">&quot;a&quot;</span>, <span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">email_address_obfuscated</span>, <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">merge</span>({ <span class="ruby-value str">&quot;href&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;mailto:#{email_address}#{extras}&quot;</span> })
+496:         <span class="ruby-keyword kw">end</span>
+497:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001377" class="method-detail">
+        <a name="M001377"></a>
+
+        <div class="method-heading">
+          <a href="#M001377" class="method-signature">
+          <span class="method-name">url_for</span><span class="method-args">(options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the URL for the set of <tt>options</tt> provided. This takes the
+same options as <tt><a href="UrlHelper.html#M001377">url_for</a></tt> in
+Action Controller (see the documentation for
+ActionController::Base#url_for). Note that by default <tt>:only_path</tt>
+is <tt>true</tt> so you&#8216;ll get the relative /controller/action
+instead of the fully qualified URL like <a
+href="http://example.com/controller/action">example.com/controller/action</a>.
+</p>
+<p>
+When called from a view, <a href="UrlHelper.html#M001377">url_for</a>
+returns an HTML escaped url. If you need an unescaped url, pass <tt>:escape
+=&gt; false</tt> in the <tt>options</tt>.
+</p>
+<h4>Options</h4>
+<ul>
+<li><tt>:anchor</tt> - Specifies the anchor name to be appended to the path.
+
+</li>
+<li><tt>:only_path</tt> - If true, returns the relative URL (omitting the
+protocol, host name, and port) (<tt>true</tt> by default unless
+<tt>:host</tt> is specified).
+
+</li>
+<li><tt>:trailing_slash</tt> - If true, adds a trailing slash, as in
+&quot;/archive/2005/&quot;. Note that this is currently not recommended
+since it breaks caching.
+
+</li>
+<li><tt>:host</tt> - Overrides the default (current) host if provided.
+
+</li>
+<li><tt>:protocol</tt> - Overrides the default (current) protocol if provided.
+
+</li>
+<li><tt>:user</tt> - Inline HTTP authentication (only plucked out if
+<tt>:password</tt> is also present).
+
+</li>
+<li><tt>:password</tt> - Inline HTTP authentication (only plucked out if
+<tt>:user</tt> is also present).
+
+</li>
+<li><tt>:escape</tt> - Determines whether the returned URL will be HTML escaped
+or not (<tt>true</tt> by default).
+
+</li>
+</ul>
+<h4>Relying on named routes</h4>
+<p>
+If you instead of a hash pass a record (like an Active Record or Active
+Resource) as the options parameter, you&#8216;ll trigger the named route
+for that record. The lookup will happen on the name of the class. So
+passing a Workshop object will attempt to use the workshop_path route. If
+you have a nested route, such as admin_workshop_path you&#8216;ll have to
+call that explicitly (it&#8216;s impossible for <a
+href="UrlHelper.html#M001377">url_for</a> to guess that route).
+</p>
+<h4>Examples</h4>
+<pre>
+  &lt;%= url_for(:action =&gt; 'index') %&gt;
+  # =&gt; /blog/
+
+  &lt;%= url_for(:action =&gt; 'find', :controller =&gt; 'books') %&gt;
+  # =&gt; /books/find
+
+  &lt;%= url_for(:action =&gt; 'login', :controller =&gt; 'members', :only_path =&gt; false, :protocol =&gt; 'https') %&gt;
+  # =&gt; https://www.railsapplication.com/members/login/
+
+  &lt;%= url_for(:action =&gt; 'play', :anchor =&gt; 'player') %&gt;
+  # =&gt; /messages/play/#player
+
+  &lt;%= url_for(:action =&gt; 'checkout', :anchor =&gt; 'tax&amp;ship') %&gt;
+  # =&gt; /testing/jump/#tax&amp;amp;ship
+
+  &lt;%= url_for(:action =&gt; 'checkout', :anchor =&gt; 'tax&amp;ship', :escape =&gt; false) %&gt;
+  # =&gt; /testing/jump/#tax&amp;ship
+
+  &lt;%= url_for(Workshop.new) %&gt;
+  # relies on Workshop answering a new_record? call (and in this case returning true)
+  # =&gt; /workshops
+
+  &lt;%= url_for(@workshop) %&gt;
+  # calls @workshop.to_s
+  # =&gt; /workshops/5
+
+  &lt;%= url_for(&quot;http://www.example.com&quot;) %&gt;
+  # =&gt; http://www.example.com
+
+  &lt;%= url_for(:back) %&gt;
+  # if request.env[&quot;HTTP_REFERER&quot;] is set to &quot;http://www.example.com&quot;
+  # =&gt; http://www.example.com
+
+  &lt;%= url_for(:back) %&gt;
+  # if request.env[&quot;HTTP_REFERER&quot;] is not set or is blank
+  # =&gt; javascript:history.back()
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001377-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001377-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/url_helper.rb, line 76</span>
+76:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span> = {})
+77:         <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+78:         <span class="ruby-identifier">url</span> = <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">options</span>
+79:         <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+80:           <span class="ruby-identifier">escape</span> = <span class="ruby-keyword kw">true</span>
+81:           <span class="ruby-identifier">options</span>
+82:         <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Hash</span>
+83:           <span class="ruby-identifier">options</span> = { <span class="ruby-identifier">:only_path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:host</span>].<span class="ruby-identifier">nil?</span> }.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">options</span>.<span class="ruby-identifier">symbolize_keys</span>)
+84:           <span class="ruby-identifier">escape</span>  = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">key?</span>(<span class="ruby-identifier">:escape</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:escape</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword kw">true</span>
+85:           <span class="ruby-ivar">@controller</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:url_for</span>, <span class="ruby-identifier">options</span>)
+86:         <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:back</span>
+87:           <span class="ruby-identifier">escape</span> = <span class="ruby-keyword kw">false</span>
+88:           <span class="ruby-ivar">@controller</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">env</span>[<span class="ruby-value str">&quot;HTTP_REFERER&quot;</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">'javascript:history.back()'</span>
+89:         <span class="ruby-keyword kw">else</span>
+90:           <span class="ruby-identifier">escape</span> = <span class="ruby-keyword kw">false</span>
+91:           <span class="ruby-identifier">polymorphic_path</span>(<span class="ruby-identifier">options</span>)
+92:         <span class="ruby-keyword kw">end</span>
+93: 
+94:         <span class="ruby-identifier">escape</span> <span class="ruby-value">? </span><span class="ruby-identifier">escape_once</span>(<span class="ruby-identifier">url</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">url</span>
+95:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

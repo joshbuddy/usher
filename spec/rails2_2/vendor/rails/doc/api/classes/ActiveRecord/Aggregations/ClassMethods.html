@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActiveRecord::Aggregations::ClassMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActiveRecord::Aggregations::ClassMethods</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/activerecord/lib/active_record/aggregations_rb.html">
+                vendor/rails/activerecord/lib/active_record/aggregations.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Active Record implements aggregation through a macro-like class method
+called <tt><a href="ClassMethods.html#M001923">composed_of</a></tt> for
+representing attributes as value objects. It expresses relationships like
+&quot;Account [is] composed of Money [among other things]&quot; or
+&quot;Person [is] composed of [an] address&quot;. Each call to the macro
+adds a description of how the value objects are created from the attributes
+of the entity object (when the entity is initialized either as a new object
+or from finding an existing object) and how it can be turned back into
+attributes (when the entity is saved to the database). Example:
+</p>
+<pre>
+  class Customer &lt; ActiveRecord::Base
+    composed_of :balance, :class_name =&gt; &quot;Money&quot;, :mapping =&gt; %w(balance amount)
+    composed_of :address, :mapping =&gt; [ %w(address_street street), %w(address_city city) ]
+  end
+</pre>
+<p>
+The customer class now has the following methods to manipulate the value
+objects:
+</p>
+<ul>
+<li><tt>Customer#balance, Customer#balance=(money)</tt>
+
+</li>
+<li><tt>Customer#address, Customer#address=(address)</tt>
+
+</li>
+</ul>
+<p>
+These methods will operate with value objects like the ones described
+below:
+</p>
+<pre>
+ class Money
+   include Comparable
+   attr_reader :amount, :currency
+   EXCHANGE_RATES = { &quot;USD_TO_DKK&quot; =&gt; 6 }
+
+   def initialize(amount, currency = &quot;USD&quot;)
+     @amount, @currency = amount, currency
+   end
+
+   def exchange_to(other_currency)
+     exchanged_amount = (amount * EXCHANGE_RATES[&quot;#{currency}_TO_#{other_currency}&quot;]).floor
+     Money.new(exchanged_amount, other_currency)
+   end
+
+   def ==(other_money)
+     amount == other_money.amount &amp;&amp; currency == other_money.currency
+   end
+
+   def &lt;=&gt;(other_money)
+     if currency == other_money.currency
+       amount &lt;=&gt; amount
+     else
+       amount &lt;=&gt; other_money.exchange_to(currency).amount
+     end
+   end
+ end
+
+ class Address
+   attr_reader :street, :city
+   def initialize(street, city)
+     @street, @city = street, city
+   end
+
+   def close_to?(other_address)
+     city == other_address.city
+   end
+
+   def ==(other_address)
+     city == other_address.city &amp;&amp; street == other_address.street
+   end
+ end
+</pre>
+<p>
+Now it&#8216;s possible to access attributes from the database through the
+value objects instead. If you choose to name the composition the same as
+the attribute&#8216;s name, it will be the only way to access that
+attribute. That&#8216;s the case with our <tt>balance</tt> attribute. You
+interact with the value objects just like you would any other attribute,
+though:
+</p>
+<pre>
+  customer.balance = Money.new(20)     # sets the Money value object and the attribute
+  customer.balance                     # =&gt; Money value object
+  customer.balance.exchange_to(&quot;DKK&quot;)  # =&gt; Money.new(120, &quot;DKK&quot;)
+  customer.balance &gt; Money.new(10)     # =&gt; true
+  customer.balance == Money.new(20)    # =&gt; true
+  customer.balance &lt; Money.new(5)      # =&gt; false
+</pre>
+<p>
+Value objects can also be composed of multiple attributes, such as the case
+of Address. The order of the mappings will determine the order of the
+parameters. Example:
+</p>
+<pre>
+  customer.address_street = &quot;Hyancintvej&quot;
+  customer.address_city   = &quot;Copenhagen&quot;
+  customer.address        # =&gt; Address.new(&quot;Hyancintvej&quot;, &quot;Copenhagen&quot;)
+  customer.address = Address.new(&quot;May Street&quot;, &quot;Chicago&quot;)
+  customer.address_street # =&gt; &quot;May Street&quot;
+  customer.address_city   # =&gt; &quot;Chicago&quot;
+</pre>
+<h2>Writing value objects</h2>
+<p>
+Value objects are immutable and interchangeable objects that represent a
+given value, such as a Money object representing $5. Two Money objects both
+representing $5 should be equal (through methods such as <tt>==</tt> and
+<tt>&lt;=&gt;</tt> from Comparable if ranking makes sense). This is unlike
+entity objects where equality is determined by identity. An entity class
+such as Customer can easily have two different objects that both have an
+address on Hyancintvej. Entity identity is determined by object or
+relational unique identifiers (such as primary keys). Normal <a
+href="../Base.html">ActiveRecord::Base</a> classes are entity objects.
+</p>
+<p>
+It&#8216;s also important to treat the value objects as immutable.
+Don&#8216;t allow the Money object to have its amount changed after
+creation. Create a new Money object with the new value instead. This is
+exemplified by the Money#exchange_to method that returns a new value object
+instead of changing its own values. Active Record won&#8216;t persist value
+objects that have been changed through means other than the writer method.
+</p>
+<p>
+The immutable requirement is enforced by Active Record by freezing any
+object assigned as a value object. Attempting to change it afterwards will
+result in a ActiveSupport::FrozenObjectError.
+</p>
+<p>
+Read more about value objects on <a
+href="http://c2.com/cgi/wiki?ValueObject">c2.com/cgi/wiki?ValueObject</a>
+and on the dangers of not keeping value objects immutable on <a
+href="http://c2.com/cgi/wiki?ValueObjectsShouldBeImmutable">c2.com/cgi/wiki?ValueObjectsShouldBeImmutable</a>
+</p>
+<h2>Custom constructors and converters</h2>
+<p>
+By default value objects are initialized by calling the <tt>new</tt>
+constructor of the value class passing each of the mapped attributes, in
+the order specified by the <tt>:mapping</tt> option, as arguments. If the
+value class doesn&#8216;t support this convention then <tt><a
+href="ClassMethods.html#M001923">composed_of</a></tt> allows a custom
+constructor to be specified.
+</p>
+<p>
+When a new value is assigned to the value object the default assumption is
+that the new value is an instance of the value class. Specifying a custom
+converter allows the new value to be automatically converted to an instance
+of value class if necessary.
+</p>
+<p>
+For example, the NetworkResource model has <tt>network_address</tt> and
+<tt>cidr_range</tt> attributes that should be aggregated using the
+NetAddr::CIDR value class (<a
+href="http://netaddr.rubyforge.org">netaddr.rubyforge.org</a>). The
+constructor for the value class is called <tt>create</tt> and it expects a
+CIDR address string as a parameter. New values can be assigned to the value
+object using either another NetAddr::CIDR object, a string or an array. The
+<tt>:constructor</tt> and <tt>:converter</tt> options can be used to meet
+these requirements:
+</p>
+<pre>
+  class NetworkResource &lt; ActiveRecord::Base
+    composed_of :cidr,
+                :class_name =&gt; 'NetAddr::CIDR',
+                :mapping =&gt; [ %w(network_address network), %w(cidr_range bits) ],
+                :allow_nil =&gt; true,
+                :constructor =&gt; Proc.new { |network_address, cidr_range| NetAddr::CIDR.create(&quot;#{network_address}/#{cidr_range}&quot;) },
+                :converter =&gt; Proc.new { |value| NetAddr::CIDR.create(value.is_a?(Array) ? value.join('/') : value) }
+  end
+
+  # This calls the :constructor
+  network_resource = NetworkResource.new(:network_address =&gt; '192.168.0.1', :cidr_range =&gt; 24)
+
+  # These assignments will both use the :converter
+  network_resource.cidr = [ '192.168.2.1', 8 ]
+  network_resource.cidr = '192.168.0.1/24'
+
+  # This assignment won't use the :converter as the value is already an instance of the value class
+  network_resource.cidr = NetAddr::CIDR.create('192.168.2.1/8')
+
+  # Saving and then reloading will use the :constructor on reload
+  network_resource.save
+  network_resource.reload
+</pre>
+<h2>Finding records by a value object</h2>
+<p>
+Once a <tt><a href="ClassMethods.html#M001923">composed_of</a></tt>
+relationship is specified for a model, records can be loaded from the
+database by specifying an instance of the value object in the conditions
+hash. The following example finds all customers with
+<tt>balance_amount</tt> equal to 20 and <tt>balance_currency</tt> equal to
+&quot;USD&quot;:
+</p>
+<pre>
+  Customer.find(:all, :conditions =&gt; {:balance =&gt; Money.new(20, &quot;USD&quot;)})
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001923">composed_of</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001923" class="method-detail">
+        <a name="M001923"></a>
+
+        <div class="method-heading">
+          <a href="#M001923" class="method-signature">
+          <span class="method-name">composed_of</span><span class="method-args">(part_id, options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds reader and writer methods for manipulating a value object: <tt><a
+href="ClassMethods.html#M001923">composed_of</a> :address</tt> adds
+<tt>address</tt> and <tt>address=(new_address)</tt> methods.
+</p>
+<p>
+Options are:
+</p>
+<ul>
+<li><tt>:class_name</tt> - Specifies the class name of the association. Use it
+only if that name can&#8216;t be inferred from the part id. So <tt><a
+href="ClassMethods.html#M001923">composed_of</a> :address</tt> will by
+default be linked to the Address class, but if the real class name is
+CompanyAddress, you&#8216;ll have to specify it with this option.
+
+</li>
+<li><tt>:mapping</tt> - Specifies the mapping of entity attributes to
+attributes of the value object. Each mapping is represented as an array
+where the first item is the name of the entity attribute and the second
+item is the name the attribute in the value object. The order in which
+mappings are defined determine the order in which attributes are sent to
+the value class constructor.
+
+</li>
+<li><tt>:allow_nil</tt> - Specifies that the value object will not be
+instantiated when all mapped attributes are <tt>nil</tt>. Setting the value
+object to <tt>nil</tt> has the effect of writing <tt>nil</tt> to all mapped
+attributes. This defaults to <tt>false</tt>.
+
+</li>
+<li><tt>:constructor</tt> - A symbol specifying the name of the constructor
+method or a Proc that is called to initialize the value object. The
+constructor is passed all of the mapped attributes, in the order that they
+are defined in the <tt>:mapping option</tt>, as arguments and uses them to
+instantiate a <tt>:class_name</tt> object. The default is <tt>:new</tt>.
+
+</li>
+<li><tt>:converter</tt> - A symbol specifying the name of a class method of
+<tt>:class_name</tt> or a Proc that is called when a new value is assigned
+to the value object. The converter is passed the single value that is used
+in the assignment and is only called if the new value is not an instance of
+<tt>:class_name</tt>.
+
+</li>
+</ul>
+<p>
+Option examples:
+</p>
+<pre>
+  composed_of :temperature, :mapping =&gt; %w(reading celsius)
+  composed_of :balance, :class_name =&gt; &quot;Money&quot;, :mapping =&gt; %w(balance amount), :converter =&gt; Proc.new { |balance| balance.to_money }
+  composed_of :address, :mapping =&gt; [ %w(address_street street), %w(address_city city) ]
+  composed_of :gps_location
+  composed_of :gps_location, :allow_nil =&gt; true
+  composed_of :ip_address,
+              :class_name =&gt; 'IPAddr',
+              :mapping =&gt; %w(ip to_i),
+              :constructor =&gt; Proc.new { |ip| IPAddr.new(ip, Socket::AF_INET) },
+              :converter =&gt; Proc.new { |ip| ip.is_a?(Integer) ? IPAddr.new(ip, Socket::AF_INET) : IPAddr.new(ip.to_s) }
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001923-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001923-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/aggregations.rb, line 194</span>
+194:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">composed_of</span>(<span class="ruby-identifier">part_id</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+195:         <span class="ruby-identifier">options</span>.<span class="ruby-identifier">assert_valid_keys</span>(<span class="ruby-identifier">:class_name</span>, <span class="ruby-identifier">:mapping</span>, <span class="ruby-identifier">:allow_nil</span>, <span class="ruby-identifier">:constructor</span>, <span class="ruby-identifier">:converter</span>)
+196: 
+197:         <span class="ruby-identifier">name</span>        = <span class="ruby-identifier">part_id</span>.<span class="ruby-identifier">id2name</span>
+198:         <span class="ruby-identifier">class_name</span>  = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:class_name</span>]  <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">camelize</span>
+199:         <span class="ruby-identifier">mapping</span>     = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:mapping</span>]     <span class="ruby-operator">||</span> [ <span class="ruby-identifier">name</span>, <span class="ruby-identifier">name</span> ]
+200:         <span class="ruby-identifier">mapping</span>     = [ <span class="ruby-identifier">mapping</span> ] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+201:         <span class="ruby-identifier">allow_nil</span>   = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:allow_nil</span>]   <span class="ruby-operator">||</span> <span class="ruby-keyword kw">false</span>
+202:         <span class="ruby-identifier">constructor</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:constructor</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">:new</span>
+203:         <span class="ruby-identifier">converter</span>   = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:converter</span>]   <span class="ruby-operator">||</span> <span class="ruby-identifier">block</span>
+204: 
+205:         <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Deprecation</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-value str">'The conversion block has been deprecated, use the :converter option instead.'</span>, <span class="ruby-identifier">caller</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+206: 
+207:         <span class="ruby-identifier">reader_method</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">class_name</span>, <span class="ruby-identifier">mapping</span>, <span class="ruby-identifier">allow_nil</span>, <span class="ruby-identifier">constructor</span>)
+208:         <span class="ruby-identifier">writer_method</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">class_name</span>, <span class="ruby-identifier">mapping</span>, <span class="ruby-identifier">allow_nil</span>, <span class="ruby-identifier">converter</span>)
+209: 
+210:         <span class="ruby-identifier">create_reflection</span>(<span class="ruby-identifier">:composed_of</span>, <span class="ruby-identifier">part_id</span>, <span class="ruby-identifier">options</span>, <span class="ruby-keyword kw">self</span>)
+211:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

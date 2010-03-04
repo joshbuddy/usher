@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: Rails::Generator::Options</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">Rails::Generator::Options</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/railties/lib/rails_generator/options_rb.html">
+                vendor/rails/railties/lib/rails_generator/options.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002099">add_general_options!</a>&nbsp;&nbsp;
+      <a href="#M002098">add_options!</a>&nbsp;&nbsp;
+      <a href="#M002097">banner</a>&nbsp;&nbsp;
+      <a href="#M002092">default_options</a>&nbsp;&nbsp;
+      <a href="#M002093">full_options</a>&nbsp;&nbsp;
+      <a href="#M002089">included</a>&nbsp;&nbsp;
+      <a href="#M002091">mandatory_options</a>&nbsp;&nbsp;
+      <a href="#M002090">options</a>&nbsp;&nbsp;
+      <a href="#M002094">parse!</a>&nbsp;&nbsp;
+      <a href="#M002095">usage</a>&nbsp;&nbsp;
+      <a href="#M002096">usage_message</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Module <a href="Options/ClassMethods.html" class="link">Rails::Generator::Options::ClassMethods</a><br />
+
+    </div>
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">options</td>
+          <td class="context-item-value">&nbsp;[W]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M002089" class="method-detail">
+        <a name="M002089"></a>
+
+        <div class="method-heading">
+          <a href="#M002089" class="method-signature">
+          <span class="method-name">included</span><span class="method-args">(base)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002089-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002089-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 6</span>
+ 6:       <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">included</span>(<span class="ruby-identifier">base</span>)
+ 7:         <span class="ruby-identifier">base</span>.<span class="ruby-identifier">extend</span>(<span class="ruby-constant">ClassMethods</span>)
+ 8:         <span class="ruby-keyword kw">class</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">base</span>
+ 9:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:inherited</span>)
+10:             <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:inherited_without_options</span>, <span class="ruby-identifier">:inherited</span>
+11:           <span class="ruby-keyword kw">end</span>
+12:           <span class="ruby-identifier">alias_method</span> <span class="ruby-identifier">:inherited</span>, <span class="ruby-identifier">:inherited_with_options</span>
+13:         <span class="ruby-keyword kw">end</span>
+14:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002090" class="method-detail">
+        <a name="M002090"></a>
+
+        <div class="method-heading">
+          <a href="#M002090" class="method-signature">
+          <span class="method-name">options</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Each instance has an <a href="Options.html#M002090">options</a> hash
+that&#8216;s populated by parse.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002090-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002090-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 49</span>
+49:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">options</span>
+50:         <span class="ruby-ivar">@options</span> <span class="ruby-operator">||=</span> {}
+51:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M002099" class="method-detail">
+        <a name="M002099"></a>
+
+        <div class="method-heading">
+          <a href="#M002099" class="method-signature">
+          <span class="method-name">add_general_options!</span><span class="method-args">(opt)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds general <a href="Options.html#M002090">options</a> like -h and
+&#8212;quiet. Usually don&#8216;t override.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002099-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002099-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 119</span>
+119:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_general_options!</span>(<span class="ruby-identifier">opt</span>)
+120:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">''</span>
+121:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">'Rails Info:'</span>
+122:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-v'</span>, <span class="ruby-value str">'--version'</span>, <span class="ruby-value str">'Show the Rails version number and quit.'</span>)
+123:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-h'</span>, <span class="ruby-value str">'--help'</span>, <span class="ruby-value str">'Show this help message and quit.'</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:help</span>] = <span class="ruby-identifier">v</span> }
+124: 
+125:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">''</span>
+126:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">'General Options:'</span>
+127: 
+128:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-p'</span>, <span class="ruby-value str">'--pretend'</span>, <span class="ruby-value str">'Run but do not make any changes.'</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:pretend</span>] = <span class="ruby-identifier">v</span> }
+129:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-f'</span>, <span class="ruby-value str">'--force'</span>, <span class="ruby-value str">'Overwrite files that already exist.'</span>) { <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:collision</span>] = <span class="ruby-identifier">:force</span> }
+130:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-s'</span>, <span class="ruby-value str">'--skip'</span>, <span class="ruby-value str">'Skip files that already exist.'</span>) { <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:collision</span>] = <span class="ruby-identifier">:skip</span> }
+131:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-q'</span>, <span class="ruby-value str">'--quiet'</span>, <span class="ruby-value str">'Suppress normal output.'</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:quiet</span>] = <span class="ruby-identifier">v</span> }
+132:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-t'</span>, <span class="ruby-value str">'--backtrace'</span>, <span class="ruby-value str">'Debugging: show backtrace on errors.'</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:backtrace</span>] = <span class="ruby-identifier">v</span> }
+133:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-c'</span>, <span class="ruby-value str">'--svn'</span>, <span class="ruby-value str">'Modify files with subversion. (Note: svn must be in path)'</span>) <span class="ruby-keyword kw">do</span>
+134:             <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:svn</span>] = <span class="ruby-value">`svn status`</span>.<span class="ruby-identifier">inject</span>({}) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span>, <span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+135:               <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">e</span>.<span class="ruby-identifier">chomp</span>[<span class="ruby-value">7</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]] = <span class="ruby-keyword kw">true</span>
+136:               <span class="ruby-identifier">opt</span>
+137:             <span class="ruby-keyword kw">end</span>
+138:           <span class="ruby-keyword kw">end</span>
+139:           <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">on</span>(<span class="ruby-value str">'-g'</span>, <span class="ruby-value str">'--git'</span>, <span class="ruby-value str">'Modify files with git. (Note: git must be in path)'</span>) <span class="ruby-keyword kw">do</span>
+140:             <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:git</span>] = <span class="ruby-value">`git status`</span>.<span class="ruby-identifier">inject</span>({<span class="ruby-identifier">:new</span> =<span class="ruby-operator">&gt;</span> {}, <span class="ruby-identifier">:modified</span> =<span class="ruby-operator">&gt;</span> {}}) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span>, <span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+141:               <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:new</span>][<span class="ruby-identifier">e</span>.<span class="ruby-identifier">chomp</span>[<span class="ruby-value">14</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]] = <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/new file:/</span>
+142:               <span class="ruby-identifier">opt</span>[<span class="ruby-identifier">:modified</span>][<span class="ruby-identifier">e</span>.<span class="ruby-identifier">chomp</span>[<span class="ruby-value">14</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]] = <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">e</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/modified:/</span>
+143:               <span class="ruby-identifier">opt</span>
+144:             <span class="ruby-keyword kw">end</span>
+145:           <span class="ruby-keyword kw">end</span>
+146:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002098" class="method-detail">
+        <a name="M002098"></a>
+
+        <div class="method-heading">
+          <a href="#M002098" class="method-signature">
+          <span class="method-name">add_options!</span><span class="method-args">(opt)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Override to add your <a href="Options.html#M002090">options</a> to the
+parser:
+</p>
+<pre>
+  def add_options!(opt)
+    opt.on('-v', '--verbose') { |value| options[:verbose] = value }
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002098-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002098-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 115</span>
+115:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_options!</span>(<span class="ruby-identifier">opt</span>)
+116:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002097" class="method-detail">
+        <a name="M002097"></a>
+
+        <div class="method-heading">
+          <a href="#M002097" class="method-signature">
+          <span class="method-name">banner</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Override with your own <a href="Options.html#M002095">usage</a> <a
+href="Options.html#M002097">banner</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002097-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002097-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 107</span>
+107:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">banner</span>
+108:           <span class="ruby-node">&quot;Usage: #{$0} [options]&quot;</span>
+109:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002092" class="method-detail">
+        <a name="M002092"></a>
+
+        <div class="method-heading">
+          <a href="#M002092" class="method-signature">
+          <span class="method-name">default_options</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convenient access to class default <a
+href="Options.html#M002090">options</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002092-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002092-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 61</span>
+61:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">default_options</span>
+62:           <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">default_options</span>
+63:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002093" class="method-detail">
+        <a name="M002093"></a>
+
+        <div class="method-heading">
+          <a href="#M002093" class="method-signature">
+          <span class="method-name">full_options</span><span class="method-args">(runtime_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Merge together our instance <a href="Options.html#M002090">options</a>. In
+increasing precedence:
+</p>
+<pre>
+  default_options   (class default options)
+  options           (instance options)
+  runtime_options   (provided as argument)
+  mandatory_options (class mandatory options)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002093-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002093-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 70</span>
+70:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">full_options</span>(<span class="ruby-identifier">runtime_options</span> = {})
+71:           <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">full_options</span>(<span class="ruby-identifier">options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">runtime_options</span>))
+72:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002091" class="method-detail">
+        <a name="M002091"></a>
+
+        <div class="method-heading">
+          <a href="#M002091" class="method-signature">
+          <span class="method-name">mandatory_options</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Convenient access to class mandatory <a
+href="Options.html#M002090">options</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002091-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002091-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 56</span>
+56:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mandatory_options</span>
+57:           <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">mandatory_options</span>
+58:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002094" class="method-detail">
+        <a name="M002094"></a>
+
+        <div class="method-heading">
+          <a href="#M002094" class="method-signature">
+          <span class="method-name">parse!</span><span class="method-args">(args, runtime_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Parse arguments into the <a href="Options.html#M002090">options</a> hash.
+Classes may customize parsing behavior by overriding these methods:
+</p>
+<pre>
+  #banner                 Usage: ./script/generate [options]
+  #add_options!           Options:
+                            some options..
+  #add_general_options!   General Options:
+                            general options..
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002094-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002094-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 81</span>
+81:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parse!</span>(<span class="ruby-identifier">args</span>, <span class="ruby-identifier">runtime_options</span> = {})
+82:           <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">options</span> = {}
+83: 
+84:           <span class="ruby-ivar">@option_parser</span> = <span class="ruby-constant">OptionParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span><span class="ruby-operator">|</span>
+85:             <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">banner</span> = <span class="ruby-identifier">banner</span>
+86:             <span class="ruby-identifier">add_options!</span>(<span class="ruby-identifier">opt</span>)
+87:             <span class="ruby-identifier">add_general_options!</span>(<span class="ruby-identifier">opt</span>)
+88:             <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">parse!</span>(<span class="ruby-identifier">args</span>)
+89:           <span class="ruby-keyword kw">end</span>
+90: 
+91:           <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">args</span>
+92:         <span class="ruby-keyword kw">ensure</span>
+93:           <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">options</span> = <span class="ruby-identifier">full_options</span>(<span class="ruby-identifier">runtime_options</span>)
+94:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002095" class="method-detail">
+        <a name="M002095"></a>
+
+        <div class="method-heading">
+          <a href="#M002095" class="method-signature">
+          <span class="method-name">usage</span><span class="method-args">(message = usage_message)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Raise a <a href="Options.html#M002095">usage</a> error. Override <a
+href="Options.html#M002096">usage_message</a> to provide a blurb after the
+option parser summary.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002095-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002095-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 98</span>
+ 98:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">usage</span>(<span class="ruby-identifier">message</span> = <span class="ruby-identifier">usage_message</span>)
+ 99:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">UsageError</span>, <span class="ruby-node">&quot;#{@option_parser}\n#{message}&quot;</span>
+100:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002096" class="method-detail">
+        <a name="M002096"></a>
+
+        <div class="method-heading">
+          <a href="#M002096" class="method-signature">
+          <span class="method-name">usage_message</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002096-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002096-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/options.rb, line 102</span>
+102:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">usage_message</span>
+103:           <span class="ruby-value str">''</span>
+104:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

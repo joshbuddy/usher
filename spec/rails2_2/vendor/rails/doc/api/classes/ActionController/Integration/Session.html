@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ActionController::Integration::Session</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ActionController::Integration::Session</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_controller/integration_rb.html">
+                vendor/rails/actionpack/lib/action_controller/integration.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+An integration <a href="Session.html">Session</a> instance represents a set
+of requests and responses performed sequentially by some virtual user.
+Becase you can instantiate multiple sessions and run them side-by-side, you
+can also mimic (to some limited extent) multiple simultaneous users
+interacting with your system.
+</p>
+<p>
+Typically, you will instantiate a <a href="Session.html#M000271">new</a>
+session using IntegrationTest#open_session, rather than instantiating <a
+href="Session.html">Integration::Session</a> directly.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000286">delete</a>&nbsp;&nbsp;
+      <a href="#M000281">delete_via_redirect</a>&nbsp;&nbsp;
+      <a href="#M000276">follow_redirect!</a>&nbsp;&nbsp;
+      <a href="#M000283">get</a>&nbsp;&nbsp;
+      <a href="#M000278">get_via_redirect</a>&nbsp;&nbsp;
+      <a href="#M000287">head</a>&nbsp;&nbsp;
+      <a href="#M000275">host!</a>&nbsp;&nbsp;
+      <a href="#M000273">https!</a>&nbsp;&nbsp;
+      <a href="#M000274">https?</a>&nbsp;&nbsp;
+      <a href="#M000271">new</a>&nbsp;&nbsp;
+      <a href="#M000284">post</a>&nbsp;&nbsp;
+      <a href="#M000279">post_via_redirect</a>&nbsp;&nbsp;
+      <a href="#M000285">put</a>&nbsp;&nbsp;
+      <a href="#M000280">put_via_redirect</a>&nbsp;&nbsp;
+      <a href="#M000282">redirect?</a>&nbsp;&nbsp;
+      <a href="#M000277">request_via_redirect</a>&nbsp;&nbsp;
+      <a href="#M000272">reset!</a>&nbsp;&nbsp;
+      <a href="#M000290">url_for</a>&nbsp;&nbsp;
+      <a href="#M000289">xhr</a>&nbsp;&nbsp;
+      <a href="#M000288">xml_http_request</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="../../Test/Unit/Assertions.html">Test::Unit::Assertions</a></span>
+        <span class="include-name"><a href="../Assertions.html">ActionController::Assertions</a></span>
+        <span class="include-name"><a href="../TestProcess.html">ActionController::TestProcess</a></span>
+        <span class="include-name">ControllerCapture</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+    <div id="class-list">
+      <h3 class="section-bar">Classes and Modules</h3>
+
+      Class <a href="Session/MultiPartNeededException.html" class="link">ActionController::Integration::Session::MultiPartNeededException</a><br />
+
+    </div>
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">accept</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+The Accept header to send.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">controller</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+A reference to the controller instance used by the last request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">cookies</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+A map of the cookies returned by the last response, and which will be sent
+with the next request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">headers</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+A map of the headers returned by the last response.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">host</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+The hostname used in the last request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">path</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The URI of the last request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">remote_addr</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+The remote_addr used in the last request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+A reference to the request instance used by the last request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">request_count</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+A running counter of the number of requests processed.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">response</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+A reference to the response instance used by the last request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">status</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The integer HTTP status code of the last request.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">status_message</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The status message that accompanied the status code of the last request.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000271" class="method-detail">
+        <a name="M000271"></a>
+
+        <div class="method-heading">
+          <a href="#M000271" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create and initialize a <a href="Session.html#M000271">new</a> <a
+href="Session.html">Session</a> instance.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000271-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000271-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 63</span>
+63:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>
+64:         <span class="ruby-identifier">reset!</span>
+65:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000286" class="method-detail">
+        <a name="M000286"></a>
+
+        <div class="method-heading">
+          <a href="#M000286" class="method-signature">
+          <span class="method-name">delete</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a DELETE request with the given parameters. See <a
+href="Session.html#M000283">get</a>() for more details.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000286-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000286-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 199</span>
+199:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+200:         <span class="ruby-identifier">process</span> <span class="ruby-identifier">:delete</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>
+201:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000281" class="method-detail">
+        <a name="M000281"></a>
+
+        <div class="method-heading">
+          <a href="#M000281" class="method-signature">
+          <span class="method-name">delete_via_redirect</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a DELETE request, following any subsequent redirect. See <tt><a
+href="Session.html#M000277">request_via_redirect</a></tt> for more
+information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000281-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000281-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 159</span>
+159:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">delete_via_redirect</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+160:         <span class="ruby-identifier">request_via_redirect</span>(<span class="ruby-identifier">:delete</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>)
+161:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000276" class="method-detail">
+        <a name="M000276"></a>
+
+        <div class="method-heading">
+          <a href="#M000276" class="method-signature">
+          <span class="method-name">follow_redirect!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Follow a single redirect response. If the last response was not a redirect,
+an exception will be raised. Otherwise, the redirect is performed on the
+location header.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000276-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000276-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 123</span>
+123:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">follow_redirect!</span>
+124:         <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;not a redirect! #{@status} #{@status_message}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">redirect?</span>
+125:         <span class="ruby-identifier">get</span>(<span class="ruby-identifier">interpret_uri</span>(<span class="ruby-identifier">headers</span>[<span class="ruby-value str">'location'</span>].<span class="ruby-identifier">first</span>))
+126:         <span class="ruby-identifier">status</span>
+127:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000283" class="method-detail">
+        <a name="M000283"></a>
+
+        <div class="method-heading">
+          <a href="#M000283" class="method-signature">
+          <span class="method-name">get</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a GET request with the given parameters.
+</p>
+<ul>
+<li><tt>path</tt>: The URI (as a String) on which you want to perform a GET
+request.
+
+</li>
+<li><tt>parameters</tt>: The HTTP parameters that you want to pass. This may be
+<tt>nil</tt>, a Hash, or a String that is appropriately encoded
+(<tt>application/x-www-form-urlencoded</tt> or
+<tt>multipart/form-data</tt>).
+
+</li>
+<li><tt>headers</tt>: Additional HTTP headers to pass, as a Hash. The keys will
+automatically be upcased, with the prefix &#8216;HTTP_&#8217; added if
+needed.
+
+</li>
+</ul>
+<p>
+This method returns an <a
+href="../AbstractResponse.html">AbstractResponse</a> object, which one can
+use to inspect the details of the response. Furthermore, if this method was
+called from an <a
+href="../IntegrationTest.html">ActionController::IntegrationTest</a>
+object, then that object&#8216;s <tt>@response</tt> instance variable will
+point to the same response object.
+</p>
+<p>
+You can also perform POST, PUT, DELETE, and HEAD requests with <tt><a
+href="Session.html#M000284">post</a></tt>, <tt><a
+href="Session.html#M000285">put</a></tt>, <tt><a
+href="Session.html#M000286">delete</a></tt>, and <tt><a
+href="Session.html#M000287">head</a></tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000283-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000283-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 184</span>
+184:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+185:         <span class="ruby-identifier">process</span> <span class="ruby-identifier">:get</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>
+186:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000278" class="method-detail">
+        <a name="M000278"></a>
+
+        <div class="method-heading">
+          <a href="#M000278" class="method-signature">
+          <span class="method-name">get_via_redirect</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a GET request, following any subsequent redirect. See <tt><a
+href="Session.html#M000277">request_via_redirect</a></tt> for more
+information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000278-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000278-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 141</span>
+141:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_via_redirect</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+142:         <span class="ruby-identifier">request_via_redirect</span>(<span class="ruby-identifier">:get</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>)
+143:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000287" class="method-detail">
+        <a name="M000287"></a>
+
+        <div class="method-heading">
+          <a href="#M000287" class="method-signature">
+          <span class="method-name">head</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a HEAD request with the given parameters. See <a
+href="Session.html#M000283">get</a>() for more details.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000287-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000287-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 204</span>
+204:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">head</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+205:         <span class="ruby-identifier">process</span> <span class="ruby-identifier">:head</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>
+206:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000275" class="method-detail">
+        <a name="M000275"></a>
+
+        <div class="method-heading">
+          <a href="#M000275" class="method-signature">
+          <span class="method-name">host!</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Set the host name to use in the next request.
+</p>
+<pre>
+  session.host! &quot;www.example.com&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000275-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000275-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 116</span>
+116:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">host!</span>(<span class="ruby-identifier">name</span>)
+117:         <span class="ruby-ivar">@host</span> = <span class="ruby-identifier">name</span>
+118:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000273" class="method-detail">
+        <a name="M000273"></a>
+
+        <div class="method-heading">
+          <a href="#M000273" class="method-signature">
+          <span class="method-name">https!</span><span class="method-args">(flag=true)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Specify whether or not the session should mimic a secure HTTPS request.
+</p>
+<pre>
+  session.https!
+  session.https!(false)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000273-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000273-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 100</span>
+100:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">https!</span>(<span class="ruby-identifier">flag</span>=<span class="ruby-keyword kw">true</span>)
+101:         <span class="ruby-ivar">@https</span> = <span class="ruby-identifier">flag</span>
+102:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000274" class="method-detail">
+        <a name="M000274"></a>
+
+        <div class="method-heading">
+          <a href="#M000274" class="method-signature">
+          <span class="method-name">https?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return <tt>true</tt> if the session is mimicking a secure HTTPS request.
+</p>
+<pre>
+  if session.https?
+    ...
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000274-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000274-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 109</span>
+109:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">https?</span>
+110:         <span class="ruby-ivar">@https</span>
+111:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000284" class="method-detail">
+        <a name="M000284"></a>
+
+        <div class="method-heading">
+          <a href="#M000284" class="method-signature">
+          <span class="method-name">post</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a POST request with the given parameters. See <a
+href="Session.html#M000283">get</a>() for more details.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000284-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000284-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 189</span>
+189:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">post</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+190:         <span class="ruby-identifier">process</span> <span class="ruby-identifier">:post</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>
+191:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000279" class="method-detail">
+        <a name="M000279"></a>
+
+        <div class="method-heading">
+          <a href="#M000279" class="method-signature">
+          <span class="method-name">post_via_redirect</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a POST request, following any subsequent redirect. See <tt><a
+href="Session.html#M000277">request_via_redirect</a></tt> for more
+information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000279-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000279-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 147</span>
+147:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">post_via_redirect</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+148:         <span class="ruby-identifier">request_via_redirect</span>(<span class="ruby-identifier">:post</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>)
+149:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000285" class="method-detail">
+        <a name="M000285"></a>
+
+        <div class="method-heading">
+          <a href="#M000285" class="method-signature">
+          <span class="method-name">put</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a PUT request with the given parameters. See <a
+href="Session.html#M000283">get</a>() for more details.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000285-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000285-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 194</span>
+194:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">put</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+195:         <span class="ruby-identifier">process</span> <span class="ruby-identifier">:put</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>
+196:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000280" class="method-detail">
+        <a name="M000280"></a>
+
+        <div class="method-heading">
+          <a href="#M000280" class="method-signature">
+          <span class="method-name">put_via_redirect</span><span class="method-args">(path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a PUT request, following any subsequent redirect. See <tt><a
+href="Session.html#M000277">request_via_redirect</a></tt> for more
+information.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000280-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000280-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 153</span>
+153:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">put_via_redirect</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+154:         <span class="ruby-identifier">request_via_redirect</span>(<span class="ruby-identifier">:put</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>)
+155:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000282" class="method-detail">
+        <a name="M000282"></a>
+
+        <div class="method-heading">
+          <a href="#M000282" class="method-signature">
+          <span class="method-name">redirect?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns <tt>true</tt> if the last response was a redirect.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000282-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000282-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 164</span>
+164:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">redirect?</span>
+165:         <span class="ruby-identifier">status</span><span class="ruby-operator">/</span><span class="ruby-value">100</span> <span class="ruby-operator">==</span> <span class="ruby-value">3</span>
+166:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000277" class="method-detail">
+        <a name="M000277"></a>
+
+        <div class="method-heading">
+          <a href="#M000277" class="method-signature">
+          <span class="method-name">request_via_redirect</span><span class="method-args">(http_method, path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs a request using the specified method, following any subsequent
+redirect. Note that the redirects are followed until the response is not a
+redirect&#8212;this means you may run into an infinite loop if your
+redirect loops back to itself.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000277-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000277-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 133</span>
+133:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">request_via_redirect</span>(<span class="ruby-identifier">http_method</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+134:         <span class="ruby-identifier">send</span>(<span class="ruby-identifier">http_method</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>)
+135:         <span class="ruby-identifier">follow_redirect!</span> <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">redirect?</span>
+136:         <span class="ruby-identifier">status</span>
+137:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000272" class="method-detail">
+        <a name="M000272"></a>
+
+        <div class="method-heading">
+          <a href="#M000272" class="method-signature">
+          <span class="method-name">reset!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Resets the instance. This can be used to reset the state information in an
+existing session instance, so it can be used from a clean-slate condition.
+</p>
+<pre>
+  session.reset!
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000272-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000272-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 72</span>
+72:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset!</span>
+73:         <span class="ruby-ivar">@status</span> = <span class="ruby-ivar">@path</span> = <span class="ruby-ivar">@headers</span> = <span class="ruby-keyword kw">nil</span>
+74:         <span class="ruby-ivar">@result</span> = <span class="ruby-ivar">@status_message</span> = <span class="ruby-keyword kw">nil</span>
+75:         <span class="ruby-ivar">@https</span> = <span class="ruby-keyword kw">false</span>
+76:         <span class="ruby-ivar">@cookies</span> = {}
+77:         <span class="ruby-ivar">@controller</span> = <span class="ruby-ivar">@request</span> = <span class="ruby-ivar">@response</span> = <span class="ruby-keyword kw">nil</span>
+78:         <span class="ruby-ivar">@request_count</span> = <span class="ruby-value">0</span>
+79: 
+80:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">host</span>        = <span class="ruby-value str">&quot;www.example.com&quot;</span>
+81:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">remote_addr</span> = <span class="ruby-value str">&quot;127.0.0.1&quot;</span>
+82:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">accept</span>      = <span class="ruby-value str">&quot;text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5&quot;</span>
+83: 
+84:         <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@named_routes_configured</span>
+85:           <span class="ruby-comment cmt"># install the named routes in this session instance.</span>
+86:           <span class="ruby-identifier">klass</span> = <span class="ruby-keyword kw">class</span><span class="ruby-operator">&lt;&lt;</span><span class="ruby-keyword kw">self</span>; <span class="ruby-keyword kw">self</span>; <span class="ruby-keyword kw">end</span>
+87:           <span class="ruby-constant">Routing</span><span class="ruby-operator">::</span><span class="ruby-constant">Routes</span>.<span class="ruby-identifier">install_helpers</span>(<span class="ruby-identifier">klass</span>)
+88: 
+89:           <span class="ruby-comment cmt"># the helpers are made protected by default--we make them public for</span>
+90:           <span class="ruby-comment cmt"># easier access during testing and troubleshooting.</span>
+91:           <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">module_eval</span> { <span class="ruby-identifier">public</span> <span class="ruby-operator">*</span><span class="ruby-constant">Routing</span><span class="ruby-operator">::</span><span class="ruby-constant">Routes</span>.<span class="ruby-identifier">named_routes</span>.<span class="ruby-identifier">helpers</span> }
+92:           <span class="ruby-ivar">@named_routes_configured</span> = <span class="ruby-keyword kw">true</span>
+93:         <span class="ruby-keyword kw">end</span>
+94:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000290" class="method-detail">
+        <a name="M000290"></a>
+
+        <div class="method-heading">
+          <a href="#M000290" class="method-signature">
+          <span class="method-name">url_for</span><span class="method-args">(options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the URL for the given options, according to the rules specified in
+the application&#8216;s routes.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000290-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000290-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 226</span>
+226:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span>)
+227:         <span class="ruby-identifier">controller</span> <span class="ruby-value">? </span><span class="ruby-identifier">controller</span>.<span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">generic_url_rewriter</span>.<span class="ruby-identifier">rewrite</span>(<span class="ruby-identifier">options</span>)
+228:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000289" class="method-detail">
+        <a name="M000289"></a>
+
+        <div class="method-heading">
+          <span class="method-name">xhr</span><span class="method-args">(request_method, path, parameters = nil, headers = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Session.html#M000288">xml_http_request</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000288" class="method-detail">
+        <a name="M000288"></a>
+
+        <div class="method-heading">
+          <a href="#M000288" class="method-signature">
+          <span class="method-name">xml_http_request</span><span class="method-args">(request_method, path, parameters = nil, headers = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs an XMLHttpRequest request with the given parameters, mirroring a
+request from the Prototype library.
+</p>
+<p>
+The request_method is :<a href="Session.html#M000283">get</a>, :<a
+href="Session.html#M000284">post</a>, :<a
+href="Session.html#M000285">put</a>, :<a
+href="Session.html#M000286">delete</a> or :<a
+href="Session.html#M000287">head</a>; the parameters are <tt>nil</tt>, a
+hash, or a url-encoded or multipart string; the headers are a hash. Keys
+are automatically upcased and prefixed with &#8216;HTTP_&#8217; if not
+already.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000288-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000288-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/integration.rb, line 215</span>
+215:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">xml_http_request</span>(<span class="ruby-identifier">request_method</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">headers</span> = <span class="ruby-keyword kw">nil</span>)
+216:         <span class="ruby-identifier">headers</span> <span class="ruby-operator">||=</span> {}
+217:         <span class="ruby-identifier">headers</span>[<span class="ruby-value str">'X-Requested-With'</span>] = <span class="ruby-value str">'XMLHttpRequest'</span>
+218:         <span class="ruby-identifier">headers</span>[<span class="ruby-value str">'Accept'</span>] <span class="ruby-operator">||=</span> <span class="ruby-value str">'text/javascript, text/html, application/xml, text/xml, */*'</span>
+219: 
+220:         <span class="ruby-identifier">process</span>(<span class="ruby-identifier">request_method</span>, <span class="ruby-identifier">path</span>, <span class="ruby-identifier">parameters</span>, <span class="ruby-identifier">headers</span>)
+221:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

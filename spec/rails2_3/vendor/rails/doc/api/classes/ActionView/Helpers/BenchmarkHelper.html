@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionView::Helpers::BenchmarkHelper</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionView::Helpers::BenchmarkHelper</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_view/helpers/benchmark_helper_rb.html">
+                vendor/rails/actionpack/lib/action_view/helpers/benchmark_helper.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+This helper offers a method to measure the execution time of a block in a
+template.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001614">benchmark</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001614" class="method-detail">
+        <a name="M001614"></a>
+
+        <div class="method-heading">
+          <a href="#M001614" class="method-signature">
+          <span class="method-name">benchmark</span><span class="method-args">(message = &quot;Benchmarking&quot;, options = {}) {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Allows you to measure the execution time of a block in a template and
+records the result to the log. Wrap this block around expensive operations
+or possible bottlenecks to get a time reading for the operation. For
+example, let&#8216;s say you thought your file processing method was taking
+too long; you could wrap it in a <a
+href="BenchmarkHelper.html#M001614">benchmark</a> block.
+</p>
+<pre>
+ &lt;% benchmark &quot;Process data files&quot; do %&gt;
+   &lt;%= expensive_files_operation %&gt;
+ &lt;% end %&gt;
+</pre>
+<p>
+That would add something like &quot;<a
+href="../../Process.html">Process</a> data files (345.2ms)&quot; to the
+log, which you can then use to compare timings when optimizing your code.
+</p>
+<p>
+You may give an optional logger level as the :level option. (:debug, :info,
+:warn, :error); the default value is :info.
+</p>
+<pre>
+ &lt;% benchmark &quot;Low-level files&quot;, :level =&gt; :debug do %&gt;
+   &lt;%= lowlevel_files_operation %&gt;
+ &lt;% end %&gt;
+</pre>
+<p>
+Finally, you can pass true as the third argument to silence all log
+activity inside the block. This is great for boiling down a noisy block to
+just a single statement:
+</p>
+<pre>
+ &lt;% benchmark &quot;Process data files&quot;, :level =&gt; :info, :silence =&gt; true do %&gt;
+   &lt;%= expensive_and_chatty_files_operation %&gt;
+ &lt;% end %&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001614-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001614-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/benchmark_helper.rb, line 34</span>
+34:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">benchmark</span>(<span class="ruby-identifier">message</span> = <span class="ruby-value str">&quot;Benchmarking&quot;</span>, <span class="ruby-identifier">options</span> = {})
+35:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">controller</span>.<span class="ruby-identifier">logger</span>
+36:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Symbol</span>)
+37:             <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Deprecation</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-node">&quot;use benchmark('#{message}', :level =&gt; :#{options}) instead&quot;</span>, <span class="ruby-identifier">caller</span>)
+38:             <span class="ruby-identifier">options</span> = { <span class="ruby-identifier">:level</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>, <span class="ruby-identifier">:silence</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span> }
+39:           <span class="ruby-keyword kw">else</span>
+40:             <span class="ruby-identifier">options</span>.<span class="ruby-identifier">assert_valid_keys</span>(<span class="ruby-identifier">:level</span>, <span class="ruby-identifier">:silence</span>)
+41:             <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:level</span>] <span class="ruby-operator">||=</span> <span class="ruby-identifier">:info</span>
+42:           <span class="ruby-keyword kw">end</span>
+43:           
+44:           <span class="ruby-identifier">result</span> = <span class="ruby-keyword kw">nil</span>
+45:           <span class="ruby-identifier">ms</span> = <span class="ruby-constant">Benchmark</span>.<span class="ruby-identifier">ms</span> { <span class="ruby-identifier">result</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:silence</span>] <span class="ruby-operator">?</span> <span class="ruby-identifier">controller</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">silence</span> { <span class="ruby-keyword kw">yield</span> } <span class="ruby-operator">:</span> <span class="ruby-keyword kw">yield</span> }
+46:           <span class="ruby-identifier">controller</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:level</span>], <span class="ruby-value str">'%s (%.1fms)'</span> <span class="ruby-operator">%</span> [ <span class="ruby-identifier">message</span>, <span class="ruby-identifier">ms</span> ])
+47:           <span class="ruby-identifier">result</span>
+48:         <span class="ruby-keyword kw">else</span>
+49:           <span class="ruby-keyword kw">yield</span>
+50:         <span class="ruby-keyword kw">end</span>
+51:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

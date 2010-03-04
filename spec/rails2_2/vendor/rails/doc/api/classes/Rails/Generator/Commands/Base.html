@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Rails::Generator::Commands::Base</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Rails::Generator::Commands::Base</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/vendor/rails/railties/lib/rails_generator/commands_rb.html">
+                vendor/rails/railties/lib/rails_generator/commands.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                DelegateClass(Rails::Generator::Base)
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="../../Generator.html">Generator</a> commands delegate <a
+href="../Base.html">Rails::Generator::Base</a> and implement a standard set
+of actions. Their behavior is defined by the way they respond to these
+actions: <a href="Create.html">Create</a> brings life; <a
+href="Destroy.html">Destroy</a> brings death; <a href="List.html">List</a>
+passively observes.
+</p>
+<p>
+<a href="../Commands.html">Commands</a> are invoked by replaying (or
+rewinding) the generator&#8216;s manifest of actions. See <a
+href="../Manifest.html">Rails::Generator::Manifest</a> and
+Rails::Generator::Base#manifest method that generator subclasses are
+required to override.
+</p>
+<p>
+<a href="../Commands.html">Commands</a> allows generators to &quot;plug
+in&quot; invocation behavior, which corresponds to the GoF Strategy
+pattern.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M002115">class_collisions</a>&nbsp;&nbsp;
+      <a href="#M002117">current_migration_number</a>&nbsp;&nbsp;
+      <a href="#M002114">dependency</a>&nbsp;&nbsp;
+      <a href="#M002120">existing_migrations</a>&nbsp;&nbsp;
+      <a href="#M002123">gsub_file</a>&nbsp;&nbsp;
+      <a href="#M002113">invoke!</a>&nbsp;&nbsp;
+      <a href="#M002119">migration_directory</a>&nbsp;&nbsp;
+      <a href="#M002121">migration_exists?</a>&nbsp;&nbsp;
+      <a href="#M002118">next_migration_number</a>&nbsp;&nbsp;
+      <a href="#M002122">next_migration_string</a>&nbsp;&nbsp;
+      <a href="#M002116">readme</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M002115" class="method-detail">
+        <a name="M002115"></a>
+
+        <div class="method-heading">
+          <a href="#M002115" class="method-signature">
+          <span class="method-name">class_collisions</span><span class="method-args">(*class_names)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Does nothing for all commands except <a href="Create.html">Create</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002115-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002115-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 52</span>
+52:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">class_collisions</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">class_names</span>)
+53:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002114" class="method-detail">
+        <a name="M002114"></a>
+
+        <div class="method-heading">
+          <a href="#M002114" class="method-signature">
+          <span class="method-name">dependency</span><span class="method-args">(generator_name, args, runtime_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002114-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002114-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 45</span>
+45:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dependency</span>(<span class="ruby-identifier">generator_name</span>, <span class="ruby-identifier">args</span>, <span class="ruby-identifier">runtime_options</span> = {})
+46:           <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">dependency</span>(<span class="ruby-identifier">generator_name</span>) <span class="ruby-keyword kw">do</span>
+47:             <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">instance</span>(<span class="ruby-identifier">generator_name</span>, <span class="ruby-identifier">args</span>, <span class="ruby-identifier">full_options</span>(<span class="ruby-identifier">runtime_options</span>))).<span class="ruby-identifier">invoke!</span>
+48:           <span class="ruby-keyword kw">end</span>
+49:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002113" class="method-detail">
+        <a name="M002113"></a>
+
+        <div class="method-heading">
+          <a href="#M002113" class="method-signature">
+          <span class="method-name">invoke!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replay action manifest. <a href="RewindBase.html">RewindBase</a> subclass
+rewinds manifest.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002113-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002113-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 41</span>
+41:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">invoke!</span>
+42:           <span class="ruby-identifier">manifest</span>.<span class="ruby-identifier">replay</span>(<span class="ruby-keyword kw">self</span>)
+43:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002116" class="method-detail">
+        <a name="M002116"></a>
+
+        <div class="method-heading">
+          <a href="#M002116" class="method-signature">
+          <span class="method-name">readme</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Does nothing for all commands except <a href="Create.html">Create</a>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002116-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002116-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 56</span>
+56:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">readme</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+57:         <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M002117" class="method-detail">
+        <a name="M002117"></a>
+
+        <div class="method-heading">
+          <a href="#M002117" class="method-signature">
+          <span class="method-name">current_migration_number</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002117-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002117-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 60</span>
+60:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_migration_number</span>
+61:             <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">glob</span>(<span class="ruby-node">&quot;#{RAILS_ROOT}/#{@migration_directory}/[0-9]*_*.rb&quot;</span>).<span class="ruby-identifier">inject</span>(<span class="ruby-value">0</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">max</span>, <span class="ruby-identifier">file_path</span><span class="ruby-operator">|</span>
+62:               <span class="ruby-identifier">n</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">file_path</span>).<span class="ruby-identifier">split</span>(<span class="ruby-value str">'_'</span>, <span class="ruby-value">2</span>).<span class="ruby-identifier">first</span>.<span class="ruby-identifier">to_i</span>
+63:               <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">max</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">n</span> <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">max</span> <span class="ruby-keyword kw">end</span>
+64:             <span class="ruby-keyword kw">end</span>
+65:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002120" class="method-detail">
+        <a name="M002120"></a>
+
+        <div class="method-heading">
+          <a href="#M002120" class="method-signature">
+          <span class="method-name">existing_migrations</span><span class="method-args">(file_name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002120-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002120-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 75</span>
+75:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">existing_migrations</span>(<span class="ruby-identifier">file_name</span>)
+76:             <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">glob</span>(<span class="ruby-node">&quot;#{@migration_directory}/[0-9]*_*.rb&quot;</span>).<span class="ruby-identifier">grep</span>(<span class="ruby-node">/[0-9]+_#{file_name}.rb$/</span>)
+77:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002123" class="method-detail">
+        <a name="M002123"></a>
+
+        <div class="method-heading">
+          <a href="#M002123" class="method-signature">
+          <span class="method-name">gsub_file</span><span class="method-args">(relative_destination, regexp, *args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002123-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002123-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 91</span>
+91:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">gsub_file</span>(<span class="ruby-identifier">relative_destination</span>, <span class="ruby-identifier">regexp</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+92:             <span class="ruby-identifier">path</span> = <span class="ruby-identifier">destination_path</span>(<span class="ruby-identifier">relative_destination</span>)
+93:             <span class="ruby-identifier">content</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">path</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-identifier">regexp</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+94:             <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">path</span>, <span class="ruby-value str">'wb'</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">write</span>(<span class="ruby-identifier">content</span>) }
+95:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002119" class="method-detail">
+        <a name="M002119"></a>
+
+        <div class="method-heading">
+          <a href="#M002119" class="method-signature">
+          <span class="method-name">migration_directory</span><span class="method-args">(relative_path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002119-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002119-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 71</span>
+71:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">migration_directory</span>(<span class="ruby-identifier">relative_path</span>)
+72:             <span class="ruby-identifier">directory</span>(<span class="ruby-ivar">@migration_directory</span> = <span class="ruby-identifier">relative_path</span>)
+73:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002121" class="method-detail">
+        <a name="M002121"></a>
+
+        <div class="method-heading">
+          <a href="#M002121" class="method-signature">
+          <span class="method-name">migration_exists?</span><span class="method-args">(file_name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002121-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002121-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 79</span>
+79:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">migration_exists?</span>(<span class="ruby-identifier">file_name</span>)
+80:             <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">existing_migrations</span>(<span class="ruby-identifier">file_name</span>).<span class="ruby-identifier">empty?</span>
+81:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002118" class="method-detail">
+        <a name="M002118"></a>
+
+        <div class="method-heading">
+          <a href="#M002118" class="method-signature">
+          <span class="method-name">next_migration_number</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002118-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002118-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 67</span>
+67:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">next_migration_number</span>
+68:             <span class="ruby-identifier">current_migration_number</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+69:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M002122" class="method-detail">
+        <a name="M002122"></a>
+
+        <div class="method-heading">
+          <a href="#M002122" class="method-signature">
+          <span class="method-name">next_migration_string</span><span class="method-args">(padding = 3)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M002122-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M002122-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/railties/lib/rails_generator/commands.rb, line 83</span>
+83:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">next_migration_string</span>(<span class="ruby-identifier">padding</span> = <span class="ruby-value">3</span>)
+84:             <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">timestamped_migrations</span>
+85:               <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">&quot;%Y%m%d%H%M%S&quot;</span>)
+86:             <span class="ruby-keyword kw">else</span>
+87:               <span class="ruby-node">&quot;%.#{padding}d&quot;</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">next_migration_number</span>
+88:             <span class="ruby-keyword kw">end</span>
+89:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActiveSupport::CoreExtensions::String::Multibyte</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActiveSupport::CoreExtensions::String::Multibyte</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../../files/vendor/rails/activesupport/lib/active_support/core_ext/string/multibyte_rb.html">
+                vendor/rails/activesupport/lib/active_support/core_ext/string/multibyte.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Implements multibyte methods for easier access to multibyte characters in a
+String instance.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001041">chars</a>&nbsp;&nbsp;
+      <a href="#M001040">is_utf8?</a>&nbsp;&nbsp;
+      <a href="#M001043">is_utf8?</a>&nbsp;&nbsp;
+      <a href="#M001042">mb_chars</a>&nbsp;&nbsp;
+      <a href="#M001039">mb_chars</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001041" class="method-detail">
+        <a name="M001041"></a>
+
+        <div class="method-heading">
+          <a href="#M001041" class="method-signature">
+          <span class="method-name">chars</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001041-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001041-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/multibyte.rb, line 57</span>
+57:             <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">chars</span>
+58:               <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Deprecation</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-value str">'String#chars has been deprecated in favor of String#mb_chars.'</span>, <span class="ruby-identifier">caller</span>)
+59:               <span class="ruby-identifier">mb_chars</span>
+60:             <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001040" class="method-detail">
+        <a name="M001040"></a>
+
+        <div class="method-heading">
+          <a href="#M001040" class="method-signature">
+          <span class="method-name">is_utf8?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns true if the string has UTF-8 semantics (a String used for purely
+byte resources is unlikely to have them), returns false otherwise.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001040-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001040-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/multibyte.rb, line 52</span>
+52:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">is_utf8?</span>
+53:             <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Multibyte</span><span class="ruby-operator">::</span><span class="ruby-constant">Chars</span>.<span class="ruby-identifier">consumes?</span>(<span class="ruby-keyword kw">self</span>)
+54:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001043" class="method-detail">
+        <a name="M001043"></a>
+
+        <div class="method-heading">
+          <a href="#M001043" class="method-signature">
+          <span class="method-name">is_utf8?</span><span class="method-args">(</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001043-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001043-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/multibyte.rb, line 67</span>
+67:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">is_utf8?</span> <span class="ruby-comment cmt">#:nodoc</span>
+68:             <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">encoding</span>
+69:             <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Encoding</span><span class="ruby-operator">::</span><span class="ruby-constant">UTF_8</span>
+70:               <span class="ruby-identifier">valid_encoding?</span>
+71:             <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Encoding</span><span class="ruby-operator">::</span><span class="ruby-constant">ASCII_8BIT</span>, <span class="ruby-constant">Encoding</span><span class="ruby-operator">::</span><span class="ruby-constant">US_ASCII</span>
+72:               <span class="ruby-identifier">dup</span>.<span class="ruby-identifier">force_encoding</span>(<span class="ruby-constant">Encoding</span><span class="ruby-operator">::</span><span class="ruby-constant">UTF_8</span>).<span class="ruby-identifier">valid_encoding?</span>
+73:             <span class="ruby-keyword kw">else</span>
+74:               <span class="ruby-keyword kw">false</span>
+75:             <span class="ruby-keyword kw">end</span>
+76:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001042" class="method-detail">
+        <a name="M001042"></a>
+
+        <div class="method-heading">
+          <a href="#M001042" class="method-signature">
+          <span class="method-name">mb_chars</span><span class="method-args">(</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001042-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001042-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/multibyte.rb, line 63</span>
+63:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mb_chars</span> <span class="ruby-comment cmt">#:nodoc</span>
+64:             <span class="ruby-keyword kw">self</span>
+65:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001039" class="method-detail">
+        <a name="M001039"></a>
+
+        <div class="method-heading">
+          <a href="#M001039" class="method-signature">
+          <span class="method-name">mb_chars</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <h2><a href="Multibyte.html">Multibyte</a> proxy</h2>
+<p>
+<tt><a href="Multibyte.html#M001039">mb_chars</a></tt> is a multibyte safe
+proxy for string methods.
+</p>
+<p>
+In Ruby 1.8 and older it creates and returns an instance of the <a
+href="../../Multibyte/Chars.html">ActiveSupport::Multibyte::Chars</a> class
+which encapsulates the original string. A Unicode safe version of all the
+String methods are defined on this proxy class. If the proxy class
+doesn&#8216;t respond to a certain method, it&#8216;s forwarded to the
+encapsuled string.
+</p>
+<pre>
+  name = 'Claus Müller'
+  name.reverse  #=&gt; &quot;rell??M sualC&quot;
+  name.length   #=&gt; 13
+
+  name.mb_chars.reverse.to_s   #=&gt; &quot;rellüM sualC&quot;
+  name.mb_chars.length         #=&gt; 12
+</pre>
+<p>
+In Ruby 1.9 and newer <tt><a
+href="Multibyte.html#M001039">mb_chars</a></tt> returns <tt>self</tt>
+because String is (mostly) encoding aware. This means that it becomes easy
+to run one version of your code on multiple Ruby versions.
+</p>
+<h2>Method chaining</h2>
+<p>
+All the methods on the Chars proxy which normally return a string will
+return a Chars object. This allows method chaining on the result of any of
+these methods.
+</p>
+<pre>
+  name.mb_chars.reverse.length #=&gt; 12
+</pre>
+<h2>Interoperability and configuration</h2>
+<p>
+The Chars object tries to be as interchangeable with String objects as
+possible: sorting and comparing between String and Char work like expected.
+The bang! methods change the internal string representation in the Chars
+object. Interoperability problems can be resolved easily with a
+<tt>to_s</tt> call.
+</p>
+<p>
+For more information about the methods defined on the Chars proxy see <a
+href="../../Multibyte/Chars.html">ActiveSupport::Multibyte::Chars</a>. For
+information about how to change the default <a
+href="Multibyte.html">Multibyte</a> behaviour see ActiveSupport::Multibyte.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001039-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001039-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/activesupport/lib/active_support/core_ext/string/multibyte.rb, line 42</span>
+42:           <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mb_chars</span>
+43:             <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Multibyte</span>.<span class="ruby-identifier">proxy_class</span>.<span class="ruby-identifier">wants?</span>(<span class="ruby-keyword kw">self</span>)
+44:               <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Multibyte</span>.<span class="ruby-identifier">proxy_class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>)
+45:             <span class="ruby-keyword kw">else</span>
+46:               <span class="ruby-keyword kw">self</span>
+47:             <span class="ruby-keyword kw">end</span>
+48:           <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

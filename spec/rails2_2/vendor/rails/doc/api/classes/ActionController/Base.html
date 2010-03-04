@@ -1,0 +1,2161 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ActionController::Base</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ActionController::Base</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/base_rb.html">
+                vendor/rails/actionpack/lib/action_controller/base.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/cgi_process_rb.html">
+                vendor/rails/actionpack/lib/action_controller/cgi_process.rb
+                </a>
+        <br />
+                <a href="../../files/vendor/rails/actionpack/lib/action_controller/test_process_rb.html">
+                vendor/rails/actionpack/lib/action_controller/test_process.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Action Controllers are the core of a web request in <a
+href="../Rails.html">Rails</a>. They are made up of one or more actions
+that are executed on request and then either <a
+href="Base.html#M000512">render</a> a template or redirect to another
+action. An action is defined as a public method on the controller, which
+will automatically be made accessible to the web-server through <a
+href="../Rails.html">Rails</a> Routes.
+</p>
+<p>
+A sample controller could look like this:
+</p>
+<pre>
+  class GuestBookController &lt; ActionController::Base
+    def index
+      @entries = Entry.find(:all)
+    end
+
+    def sign
+      Entry.create(params[:entry])
+      redirect_to :action =&gt; &quot;index&quot;
+    end
+  end
+</pre>
+<p>
+Actions, by default, <a href="Base.html#M000512">render</a> a template in
+the <tt>app/views</tt> directory corresponding to the name of the
+controller and action after executing code in the action. For example, the
+<tt>index</tt> action of the GuestBookController would <a
+href="Base.html#M000512">render</a> the template
+<tt>app/views/guestbook/index.erb</tt> by default after populating the
+<tt>@entries</tt> instance variable.
+</p>
+<p>
+Unlike index, the sign action will not <a
+href="Base.html#M000512">render</a> a template. After performing its main
+purpose (creating a new entry in the guest book), it initiates a redirect
+instead. This redirect works by returning an external &quot;302 Moved&quot;
+HTTP response that takes the user to the index action.
+</p>
+<p>
+The index and sign represent the two basic action archetypes used in Action
+Controllers. Get-and-show and do-and-redirect. Most actions are variations
+of these themes.
+</p>
+<h2>Requests</h2>
+<p>
+Requests are processed by the Action Controller framework by extracting the
+value of the &quot;action&quot; key in the request parameters. This value
+should hold the name of the action to be performed. Once the action has
+been identified, the remaining request parameters, the session (if one is
+available), and the full request with all the HTTP headers are made
+available to the action through instance variables. Then the action is
+performed.
+</p>
+<p>
+The full request object is available with the request accessor and is
+primarily used to query for HTTP headers. These queries are made by
+accessing the environment hash, like this:
+</p>
+<pre>
+  def server_ip
+    location = request.env[&quot;SERVER_ADDR&quot;]
+    render :text =&gt; &quot;This server hosted at #{location}&quot;
+  end
+</pre>
+<h2>Parameters</h2>
+<p>
+All request parameters, whether they come from a GET or POST request, or
+from the URL, are available through the params method which returns a hash.
+For example, an action that was performed through
+<tt>/weblog/list?category=All&amp;limit=5</tt> will include <tt>{
+&quot;category&quot; =&gt; &quot;All&quot;, &quot;limit&quot; =&gt; 5
+}</tt> in params.
+</p>
+<p>
+It&#8216;s also possible to construct multi-dimensional parameter hashes by
+specifying keys using brackets, such as:
+</p>
+<pre>
+  &lt;input type=&quot;text&quot; name=&quot;post[name]&quot; value=&quot;david&quot;&gt;
+  &lt;input type=&quot;text&quot; name=&quot;post[address]&quot; value=&quot;hyacintvej&quot;&gt;
+</pre>
+<p>
+A request stemming from a form holding these inputs will include <tt>{
+&quot;post&quot; =&gt; { &quot;name&quot; =&gt; &quot;david&quot;,
+&quot;address&quot; =&gt; &quot;hyacintvej&quot; } }</tt>. If the address
+input had been named &quot;post[address][street]&quot;, the params would
+have included <tt>{ &quot;post&quot; =&gt; { &quot;address&quot; =&gt; {
+&quot;street&quot; =&gt; &quot;hyacintvej&quot; } } }</tt>. There&#8216;s
+no limit to the depth of the nesting.
+</p>
+<h2>Sessions</h2>
+<p>
+Sessions allows you to store objects in between requests. This is useful
+for objects that are not yet ready to be persisted, such as a Signup object
+constructed in a multi-paged process, or objects that don&#8216;t change
+much and are needed all the time, such as a User object for a system that
+requires login. The session should not be used, however, as a cache for
+objects where it&#8216;s likely they could be changed unknowingly.
+It&#8216;s usually too much work to keep it all synchronized &#8212;
+something databases already excel at.
+</p>
+<p>
+You can place objects in the session by using the <tt>session</tt> method,
+which accesses a hash:
+</p>
+<pre>
+  session[:person] = Person.authenticate(user_name, password)
+</pre>
+<p>
+And retrieved again through the same hash:
+</p>
+<pre>
+  Hello #{session[:person]}
+</pre>
+<p>
+For removing objects from the session, you can either assign a single key
+to <tt>nil</tt>:
+</p>
+<pre>
+  # removes :person from session
+  session[:person] = nil
+</pre>
+<p>
+or you can remove the entire session with <tt><a
+href="Base.html#M000522">reset_session</a></tt>.
+</p>
+<p>
+Sessions are stored by default in a browser cookie that&#8216;s
+cryptographically signed, but unencrypted. This prevents the user from
+tampering with the session but also allows him to see its contents.
+</p>
+<p>
+Do not put secret information in cookie-based sessions!
+</p>
+<p>
+Other options for session storage are:
+</p>
+<ul>
+<li>ActiveRecordStore - Sessions are stored in your database, which works
+better than PStore with multiple app servers and, unlike CookieStore, hides
+your session contents from the user. To use ActiveRecordStore, set
+
+<pre>
+  config.action_controller.session_store = :active_record_store
+</pre>
+<p>
+in your <tt>config/environment.rb</tt> and run <tt>rake
+db:sessions:create</tt>.
+</p>
+</li>
+<li>MemCacheStore - Sessions are stored as entries in your memcached cache. Set
+the session store type in <tt>config/environment.rb</tt>:
+
+<pre>
+  config.action_controller.session_store = :mem_cache_store
+</pre>
+<p>
+This assumes that memcached has been installed and configured properly. See
+the MemCacheStore docs for more information.
+</p>
+</li>
+</ul>
+<h2>Responses</h2>
+<p>
+Each action results in a response, which holds the headers and document to
+be sent to the user&#8216;s browser. The actual response object is
+generated automatically through the use of renders and redirects and
+requires no user intervention.
+</p>
+<h2>Renders</h2>
+<p>
+Action Controller sends content to the user by using one of five rendering
+methods. The most versatile and common is the rendering of a template.
+Included in the Action Pack is the Action View, which enables rendering of
+ERb templates. It&#8216;s automatically configured. The controller passes
+objects to the view by assigning instance variables:
+</p>
+<pre>
+  def show
+    @post = Post.find(params[:id])
+  end
+</pre>
+<p>
+Which are then automatically available to the view:
+</p>
+<pre>
+  Title: &lt;%= @post.title %&gt;
+</pre>
+<p>
+You don&#8216;t have to rely on the automated rendering. Especially actions
+that could result in the rendering of different templates will use the
+manual rendering methods:
+</p>
+<pre>
+  def search
+    @results = Search.find(params[:query])
+    case @results
+      when 0 then render :action =&gt; &quot;no_results&quot;
+      when 1 then render :action =&gt; &quot;show&quot;
+      when 2..10 then render :action =&gt; &quot;show_many&quot;
+    end
+  end
+</pre>
+<p>
+Read more about writing ERb and <a href="../Builder.html">Builder</a>
+templates in <a
+href="../ActionView/Base.html">classes/ActionView/Base.html</a>.
+</p>
+<h2>Redirects</h2>
+<p>
+Redirects are used to move from one action to another. For example, after a
+<tt>create</tt> action, which stores a blog entry to a database, we might
+like to show the user the new entry. Because we&#8216;re following good DRY
+principles (Don&#8216;t Repeat Yourself), we&#8216;re going to reuse (and
+redirect to) a <tt>show</tt> action that we&#8216;ll assume has already
+been created. The code might look like this:
+</p>
+<pre>
+  def create
+    @entry = Entry.new(params[:entry])
+    if @entry.save
+      # The entry was saved correctly, redirect to show
+      redirect_to :action =&gt; 'show', :id =&gt; @entry.id
+    else
+      # things didn't go so well, do something else
+    end
+  end
+</pre>
+<p>
+In this case, after saving our new entry to the database, the user is
+redirected to the <tt>show</tt> method which is then executed.
+</p>
+<h2>Calling multiple redirects or renders</h2>
+<p>
+An action may contain only a single <a href="Base.html#M000512">render</a>
+or a single redirect. Attempting to try to do either again will result in a
+DoubleRenderError:
+</p>
+<pre>
+  def do_something
+    redirect_to :action =&gt; &quot;elsewhere&quot;
+    render :action =&gt; &quot;overthere&quot; # raises DoubleRenderError
+  end
+</pre>
+<p>
+If you need to redirect on the condition of something, then be sure to add
+&quot;and return&quot; to halt execution.
+</p>
+<pre>
+  def do_something
+    redirect_to(:action =&gt; &quot;elsewhere&quot;) and return if monkeys.nil?
+    render :action =&gt; &quot;overthere&quot; # won't be called if monkeys is nil
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000511">append_view_path</a>&nbsp;&nbsp;
+      <a href="#M000500">append_view_path</a>&nbsp;&nbsp;
+      <a href="#M000504">controller_class_name</a>&nbsp;&nbsp;
+      <a href="#M000492">controller_class_name</a>&nbsp;&nbsp;
+      <a href="#M000493">controller_name</a>&nbsp;&nbsp;
+      <a href="#M000505">controller_name</a>&nbsp;&nbsp;
+      <a href="#M000506">controller_path</a>&nbsp;&nbsp;
+      <a href="#M000494">controller_path</a>&nbsp;&nbsp;
+      <a href="#M000515">default_url_options</a>&nbsp;&nbsp;
+      <a href="#M000520">expires_in</a>&nbsp;&nbsp;
+      <a href="#M000521">expires_now</a>&nbsp;&nbsp;
+      <a href="#M000501">filter_parameter_logging</a>&nbsp;&nbsp;
+      <a href="#M000519">fresh_when</a>&nbsp;&nbsp;
+      <a href="#M000514">head</a>&nbsp;&nbsp;
+      <a href="#M000495">hidden_actions</a>&nbsp;&nbsp;
+      <a href="#M000496">hide_action</a>&nbsp;&nbsp;
+      <a href="#M000510">prepend_view_path</a>&nbsp;&nbsp;
+      <a href="#M000499">prepend_view_path</a>&nbsp;&nbsp;
+      <a href="#M000523">process_cgi</a>&nbsp;&nbsp;
+      <a href="#M000524">process_test</a>&nbsp;&nbsp;
+      <a href="#M000525">process_with_test</a>&nbsp;&nbsp;
+      <a href="#M000516">redirect_to</a>&nbsp;&nbsp;
+      <a href="#M000517">redirect_to_full_url</a>&nbsp;&nbsp;
+      <a href="#M000512">render</a>&nbsp;&nbsp;
+      <a href="#M000513">render_to_string</a>&nbsp;&nbsp;
+      <a href="#M000522">reset_session</a>&nbsp;&nbsp;
+      <a href="#M000502">send_response</a>&nbsp;&nbsp;
+      <a href="#M000507">session_enabled?</a>&nbsp;&nbsp;
+      <a href="#M000518">stale?</a>&nbsp;&nbsp;
+      <a href="#M000503">url_for</a>&nbsp;&nbsp;
+      <a href="#M000508">view_paths</a>&nbsp;&nbsp;
+      <a href="#M000497">view_paths</a>&nbsp;&nbsp;
+      <a href="#M000498">view_paths=</a>&nbsp;&nbsp;
+      <a href="#M000509">view_paths=</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name">StatusCodes</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DEFAULT_RENDER_STATUS_CODE</td>
+          <td>=</td>
+          <td class="context-item-value">&quot;200 OK&quot;</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">action_name</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc">
+Returns the name of the action this controller is processing.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">assigns</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000500" class="method-detail">
+        <a name="M000500"></a>
+
+        <div class="method-heading">
+          <a href="#M000500" class="method-signature">
+          <span class="method-name">append_view_path</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds a view_path to the end of the <a
+href="Base.html#M000497">view_paths</a> array. If the current class has no
+view paths, copy them from the superclass. This change will be visible for
+all future requests.
+</p>
+<pre>
+  ArticleController.append_view_path(&quot;views/default&quot;)
+  ArticleController.append_view_path([&quot;views/default&quot;, &quot;views/custom&quot;])
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000500-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000500-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 456</span>
+456:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">append_view_path</span>(<span class="ruby-identifier">path</span>)
+457:         <span class="ruby-ivar">@view_paths</span> = <span class="ruby-identifier">superclass</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">dup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@view_paths</span>.<span class="ruby-identifier">nil?</span>
+458:         <span class="ruby-ivar">@view_paths</span>.<span class="ruby-identifier">push</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">path</span>)
+459:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000492" class="method-detail">
+        <a name="M000492"></a>
+
+        <div class="method-heading">
+          <a href="#M000492" class="method-signature">
+          <span class="method-name">controller_class_name</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts the class name from something like
+&quot;OneModule::TwoModule::NeatController&quot; to
+&quot;NeatController&quot;.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000492-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000492-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 396</span>
+396:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">controller_class_name</span>
+397:         <span class="ruby-ivar">@controller_class_name</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">demodulize</span>
+398:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000493" class="method-detail">
+        <a name="M000493"></a>
+
+        <div class="method-heading">
+          <a href="#M000493" class="method-signature">
+          <span class="method-name">controller_name</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts the class name from something like
+&quot;OneModule::TwoModule::NeatController&quot; to &quot;neat&quot;.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000493-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000493-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 401</span>
+401:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">controller_name</span>
+402:         <span class="ruby-ivar">@controller_name</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">controller_class_name</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/Controller$/</span>, <span class="ruby-value str">''</span>).<span class="ruby-identifier">underscore</span>
+403:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000494" class="method-detail">
+        <a name="M000494"></a>
+
+        <div class="method-heading">
+          <a href="#M000494" class="method-signature">
+          <span class="method-name">controller_path</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts the class name from something like
+&quot;OneModule::TwoModule::NeatController&quot; to
+&quot;one_module/two_module/neat&quot;.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000494-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000494-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 406</span>
+406:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">controller_path</span>
+407:         <span class="ruby-ivar">@controller_path</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/Controller$/</span>, <span class="ruby-value str">''</span>).<span class="ruby-identifier">underscore</span>
+408:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000501" class="method-detail">
+        <a name="M000501"></a>
+
+        <div class="method-heading">
+          <a href="#M000501" class="method-signature">
+          <span class="method-name">filter_parameter_logging</span><span class="method-args">(*filter_words) {|key, value| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Replace sensitive parameter data from the request log. Filters parameters
+that have any of the arguments as a substring. Looks in all subhashes of
+the param hash for keys to filter. If a block is given, each key and value
+of the parameter hash and all subhashes is passed to it, the value or key
+can be replaced using String#replace or similar method.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  filter_parameter_logging
+  =&gt; Does nothing, just slows the logging process down
+
+  filter_parameter_logging :password
+  =&gt; replaces the value to all keys matching /password/i with &quot;[FILTERED]&quot;
+
+  filter_parameter_logging :foo, &quot;bar&quot;
+  =&gt; replaces the value to all keys matching /foo|bar/i with &quot;[FILTERED]&quot;
+
+  filter_parameter_logging { |k,v| v.reverse! if k =~ /secret/i }
+  =&gt; reverses the value to all keys matching /secret/i
+
+  filter_parameter_logging(:foo, &quot;bar&quot;) { |k,v| v.reverse! if k =~ /secret/i }
+  =&gt; reverses the value to all keys matching /secret/i, and
+     replaces the value to all keys matching /foo|bar/i with &quot;[FILTERED]&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000501-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000501-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 484</span>
+484:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">filter_parameter_logging</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">filter_words</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+485:         <span class="ruby-identifier">parameter_filter</span> = <span class="ruby-constant">Regexp</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">filter_words</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span> <span class="ruby-identifier">s</span>.<span class="ruby-identifier">to_s</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">'|'</span>), <span class="ruby-keyword kw">true</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">filter_words</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+486: 
+487:         <span class="ruby-identifier">define_method</span>(<span class="ruby-identifier">:filter_parameters</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">unfiltered_parameters</span><span class="ruby-operator">|</span>
+488:           <span class="ruby-identifier">filtered_parameters</span> = {}
+489: 
+490:           <span class="ruby-identifier">unfiltered_parameters</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+491:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">key</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">parameter_filter</span>
+492:               <span class="ruby-identifier">filtered_parameters</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-value str">'[FILTERED]'</span>
+493:             <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+494:               <span class="ruby-identifier">filtered_parameters</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">filter_parameters</span>(<span class="ruby-identifier">value</span>)
+495:             <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">block_given?</span>
+496:               <span class="ruby-identifier">key</span> = <span class="ruby-identifier">key</span>.<span class="ruby-identifier">dup</span>
+497:               <span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">dup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>
+498:               <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>
+499:               <span class="ruby-identifier">filtered_parameters</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">value</span>
+500:             <span class="ruby-keyword kw">else</span>
+501:               <span class="ruby-identifier">filtered_parameters</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">value</span>
+502:             <span class="ruby-keyword kw">end</span>
+503:           <span class="ruby-keyword kw">end</span>
+504: 
+505:           <span class="ruby-identifier">filtered_parameters</span>
+506:         <span class="ruby-keyword kw">end</span>
+507:         <span class="ruby-identifier">protected</span> <span class="ruby-identifier">:filter_parameters</span>
+508:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000495" class="method-detail">
+        <a name="M000495"></a>
+
+        <div class="method-heading">
+          <a href="#M000495" class="method-signature">
+          <span class="method-name">hidden_actions</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return an array containing the names of public methods that have been
+marked hidden from the action processor. By default, all methods defined in
+<a href="Base.html">ActionController::Base</a> and included modules are
+hidden. More methods can be hidden using <tt>hide_actions</tt>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000495-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000495-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 413</span>
+413:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hidden_actions</span>
+414:         <span class="ruby-identifier">read_inheritable_attribute</span>(<span class="ruby-identifier">:hidden_actions</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">write_inheritable_attribute</span>(<span class="ruby-identifier">:hidden_actions</span>, [])
+415:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000496" class="method-detail">
+        <a name="M000496"></a>
+
+        <div class="method-heading">
+          <a href="#M000496" class="method-signature">
+          <span class="method-name">hide_action</span><span class="method-args">(*names)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Hide each of the given methods from being callable as actions.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000496-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000496-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 418</span>
+418:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hide_action</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">names</span>)
+419:         <span class="ruby-identifier">write_inheritable_attribute</span>(<span class="ruby-identifier">:hidden_actions</span>, <span class="ruby-identifier">hidden_actions</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">names</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">name</span><span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span> })
+420:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000499" class="method-detail">
+        <a name="M000499"></a>
+
+        <div class="method-heading">
+          <a href="#M000499" class="method-signature">
+          <span class="method-name">prepend_view_path</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds a view_path to the front of the <a
+href="Base.html#M000497">view_paths</a> array. If the current class has no
+view paths, copy them from the superclass. This change will be visible for
+all future requests.
+</p>
+<pre>
+  ArticleController.prepend_view_path(&quot;views/default&quot;)
+  ArticleController.prepend_view_path([&quot;views/default&quot;, &quot;views/custom&quot;])
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000499-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000499-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 444</span>
+444:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepend_view_path</span>(<span class="ruby-identifier">path</span>)
+445:         <span class="ruby-ivar">@view_paths</span> = <span class="ruby-identifier">superclass</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">dup</span> <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-keyword kw">defined?</span>(<span class="ruby-ivar">@view_paths</span>) <span class="ruby-operator">||</span> <span class="ruby-ivar">@view_paths</span>.<span class="ruby-identifier">nil?</span>
+446:         <span class="ruby-ivar">@view_paths</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">path</span>)
+447:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000523" class="method-detail">
+        <a name="M000523"></a>
+
+        <div class="method-heading">
+          <a href="#M000523" class="method-signature">
+          <span class="method-name">process_cgi</span><span class="method-args">(cgi = CGI.new, session_options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="../Process.html">Process</a> a request extracted from a CGI object
+and return a response. Pass false as <tt>session_options</tt> to disable
+sessions (large performance increase if sessions are not needed). The
+<tt>session_options</tt> are the same as for CGI::Session:
+</p>
+<ul>
+<li><tt>:database_manager</tt> - standard options are CGI::Session::FileStore,
+CGI::Session::MemoryStore, and CGI::Session::PStore (default).
+Additionally, there is CGI::Session::DRbStore and
+CGI::Session::ActiveRecordStore. Read more about these in
+lib/action_controller/session.
+
+</li>
+<li><tt>:session_key</tt> - the parameter name used for the session id.
+Defaults to &#8216;_session_id&#8217;.
+
+</li>
+<li><tt>:session_id</tt> - the session id to use. If not provided, then it is
+retrieved from the <tt>session_key</tt> cookie, or automatically generated
+for a new session.
+
+</li>
+<li><tt>:new_session</tt> - if true, force creation of a new session. If not
+set, a new session is only created if none currently exists. If false, a
+new session is never created, and if none currently exists and the
+<tt>session_id</tt> option is not set, an ArgumentError is raised.
+
+</li>
+<li><tt>:session_expires</tt> - the time the current session expires, as a Time
+object. If not set, the session will continue indefinitely.
+
+</li>
+<li><tt>:session_domain</tt> - the hostname domain for which this session is
+valid. If not set, defaults to the hostname of the server.
+
+</li>
+<li><tt>:session_secure</tt> - if <tt>true</tt>, this session will only work
+over HTTPS.
+
+</li>
+<li><tt>:session_path</tt> - the path for which this session applies. Defaults
+to the directory of the CGI script.
+
+</li>
+<li><tt>:cookie_only</tt> - if <tt>true</tt> (the default), session IDs will
+only be accepted from cookies and not from the query string or POST
+parameters. This protects against session fixation attacks.
+
+</li>
+</ul>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000523-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000523-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/cgi_process.rb, line 26</span>
+26:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">process_cgi</span>(<span class="ruby-identifier">cgi</span> = <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">new</span>, <span class="ruby-identifier">session_options</span> = {})
+27:       <span class="ruby-identifier">new</span>.<span class="ruby-identifier">process_cgi</span>(<span class="ruby-identifier">cgi</span>, <span class="ruby-identifier">session_options</span>)
+28:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000524" class="method-detail">
+        <a name="M000524"></a>
+
+        <div class="method-heading">
+          <a href="#M000524" class="method-signature">
+          <span class="method-name">process_test</span><span class="method-args">(request)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+<a href="../Process.html">Process</a> a test request called with a
+TestRequest object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000524-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000524-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/test_process.rb, line 9</span>
+ 9:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">process_test</span>(<span class="ruby-identifier">request</span>)
+10:       <span class="ruby-identifier">new</span>.<span class="ruby-identifier">process_test</span>(<span class="ruby-identifier">request</span>)
+11:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000497" class="method-detail">
+        <a name="M000497"></a>
+
+        <div class="method-heading">
+          <a href="#M000497" class="method-signature">
+          <span class="method-name">view_paths</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+View load paths determine the bases from which template references can be
+made. So a call to <a
+href="Base.html#M000512">render</a>(&quot;test/template&quot;) will be
+looked up in the view load paths array and the closest match will be
+returned.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000497-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000497-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 425</span>
+425:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">view_paths</span>
+426:         <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span> <span class="ruby-ivar">@view_paths</span>
+427:           <span class="ruby-ivar">@view_paths</span>
+428:         <span class="ruby-keyword kw">else</span>
+429:           <span class="ruby-identifier">superclass</span>.<span class="ruby-identifier">view_paths</span>
+430:         <span class="ruby-keyword kw">end</span>
+431:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000498" class="method-detail">
+        <a name="M000498"></a>
+
+        <div class="method-heading">
+          <a href="#M000498" class="method-signature">
+          <span class="method-name">view_paths=</span><span class="method-args">(value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000498-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000498-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 433</span>
+433:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">view_paths=</span>(<span class="ruby-identifier">value</span>)
+434:         <span class="ruby-ivar">@view_paths</span> = <span class="ruby-constant">ActionView</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">process_view_paths</span>(<span class="ruby-identifier">value</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>
+435:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000511" class="method-detail">
+        <a name="M000511"></a>
+
+        <div class="method-heading">
+          <a href="#M000511" class="method-signature">
+          <span class="method-name">append_view_path</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds a view_path to the end of the <a
+href="Base.html#M000497">view_paths</a> array. This change affects the
+current request only.
+</p>
+<pre>
+  self.append_view_path(&quot;views/default&quot;)
+  self.append_view_path([&quot;views/default&quot;, &quot;views/custom&quot;])
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000511-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000511-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 678</span>
+678:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">append_view_path</span>(<span class="ruby-identifier">path</span>)
+679:         <span class="ruby-ivar">@template</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">push</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">path</span>)
+680:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000504" class="method-detail">
+        <a name="M000504"></a>
+
+        <div class="method-heading">
+          <a href="#M000504" class="method-signature">
+          <span class="method-name">controller_class_name</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts the class name from something like
+&quot;OneModule::TwoModule::NeatController&quot; to
+&quot;NeatController&quot;.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000504-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000504-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 633</span>
+633:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">controller_class_name</span>
+634:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">controller_class_name</span>
+635:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000505" class="method-detail">
+        <a name="M000505"></a>
+
+        <div class="method-heading">
+          <a href="#M000505" class="method-signature">
+          <span class="method-name">controller_name</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts the class name from something like
+&quot;OneModule::TwoModule::NeatController&quot; to &quot;neat&quot;.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000505-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000505-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 638</span>
+638:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">controller_name</span>
+639:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">controller_name</span>
+640:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000506" class="method-detail">
+        <a name="M000506"></a>
+
+        <div class="method-heading">
+          <a href="#M000506" class="method-signature">
+          <span class="method-name">controller_path</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Converts the class name from something like
+&quot;OneModule::TwoModule::NeatController&quot; to
+&quot;one_module/two_module/neat&quot;.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000506-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000506-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 643</span>
+643:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">controller_path</span>
+644:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">controller_path</span>
+645:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000510" class="method-detail">
+        <a name="M000510"></a>
+
+        <div class="method-heading">
+          <a href="#M000510" class="method-signature">
+          <span class="method-name">prepend_view_path</span><span class="method-args">(path)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Adds a view_path to the front of the <a
+href="Base.html#M000497">view_paths</a> array. This change affects the
+current request only.
+</p>
+<pre>
+  self.prepend_view_path(&quot;views/default&quot;)
+  self.prepend_view_path([&quot;views/default&quot;, &quot;views/custom&quot;])
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000510-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000510-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 668</span>
+668:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">prepend_view_path</span>(<span class="ruby-identifier">path</span>)
+669:         <span class="ruby-ivar">@template</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">unshift</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">path</span>)
+670:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000525" class="method-detail">
+        <a name="M000525"></a>
+
+        <div class="method-heading">
+          <a href="#M000525" class="method-signature">
+          <span class="method-name">process_with_test</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000525-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000525-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/test_process.rb, line 17</span>
+17:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process_with_test</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+18:       <span class="ruby-identifier">returning</span> <span class="ruby-identifier">process_without_test</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>) <span class="ruby-keyword kw">do</span>
+19:         <span class="ruby-ivar">@assigns</span> = {}
+20:         (<span class="ruby-identifier">instance_variable_names</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@@protected_instance_variables</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">var</span><span class="ruby-operator">|</span>
+21:           <span class="ruby-identifier">value</span> = <span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-identifier">var</span>)
+22:           <span class="ruby-ivar">@assigns</span>[<span class="ruby-identifier">var</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]] = <span class="ruby-identifier">value</span>
+23:           <span class="ruby-identifier">response</span>.<span class="ruby-identifier">template</span>.<span class="ruby-identifier">assigns</span>[<span class="ruby-identifier">var</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">-1</span>]] = <span class="ruby-identifier">value</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">response</span>
+24:         <span class="ruby-keyword kw">end</span>
+25:       <span class="ruby-keyword kw">end</span>
+26:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000502" class="method-detail">
+        <a name="M000502"></a>
+
+        <div class="method-heading">
+          <a href="#M000502" class="method-signature">
+          <span class="method-name">send_response</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000502-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000502-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 531</span>
+531:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">send_response</span>
+532:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">prepare!</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">component_request?</span>
+533:         <span class="ruby-identifier">response</span>
+534:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000507" class="method-detail">
+        <a name="M000507"></a>
+
+        <div class="method-heading">
+          <a href="#M000507" class="method-signature">
+          <span class="method-name">session_enabled?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000507-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000507-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 647</span>
+647:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">session_enabled?</span>
+648:         <span class="ruby-identifier">request</span>.<span class="ruby-identifier">session_options</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">request</span>.<span class="ruby-identifier">session_options</span>[<span class="ruby-identifier">:disabled</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">false</span>
+649:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000503" class="method-detail">
+        <a name="M000503"></a>
+
+        <div class="method-heading">
+          <a href="#M000503" class="method-signature">
+          <span class="method-name">url_for</span><span class="method-args">(options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a URL that has been rewritten according to the options hash and the
+defined routes. (For doing a complete redirect, use <tt><a
+href="Base.html#M000516">redirect_to</a></tt>).
+</p>
+<p>
+<tt><a href="Base.html#M000503">url_for</a></tt> is used to:
+</p>
+<p>
+All keys given to <tt><a href="Base.html#M000503">url_for</a></tt> are
+forwarded to the Route module, save for the following:
+</p>
+<ul>
+<li><tt>:anchor</tt> - Specifies the anchor name to be appended to the path.
+For example, <tt><a href="Base.html#M000503">url_for</a> :controller =&gt;
+&#8216;posts&#8217;, :action =&gt; &#8216;show&#8217;, :id =&gt; 10,
+:anchor =&gt; &#8216;comments&#8216;</tt> will produce
+&quot;/posts/show/10#comments&quot;.
+
+</li>
+<li><tt>:only_path</tt> - If true, returns the relative URL (omitting the
+protocol, host name, and port) (<tt>false</tt> by default).
+
+</li>
+<li><tt>:trailing_slash</tt> - If true, adds a trailing slash, as in
+&quot;/archive/2005/&quot;. Note that this is currently not recommended
+since it breaks caching.
+
+</li>
+<li><tt>:host</tt> - Overrides the default (current) host if provided.
+
+</li>
+<li><tt>:protocol</tt> - Overrides the default (current) protocol if provided.
+
+</li>
+<li><tt>:port</tt> - Optionally specify the port to connect to.
+
+</li>
+<li><tt>:user</tt> - Inline HTTP authentication (only plucked out if
+<tt>:password</tt> is also present).
+
+</li>
+<li><tt>:password</tt> - Inline HTTP authentication (only plucked out if
+<tt>:user</tt> is also present).
+
+</li>
+<li><tt>:skip_relative_url_root</tt> - If true, the url is not constructed
+using the <tt>relative_url_root</tt> of the request so the path will
+include the web server relative installation directory.
+
+</li>
+</ul>
+<p>
+The URL is generated from the remaining keys in the hash. A URL contains
+two key parts: the &lt;base&gt; and a query string. Routes composes a query
+string as the key/value pairs not included in the &lt;base&gt;.
+</p>
+<p>
+The default Routes setup supports a typical <a
+href="../Rails.html">Rails</a> path of &quot;controller/action/id&quot;
+where action and id are optional, with action defaulting to
+&#8216;index&#8217; when not given. Here are some typical <a
+href="Base.html#M000503">url_for</a> statements and their corresponding
+URLs:
+</p>
+<pre>
+  url_for :controller =&gt; 'posts', :action =&gt; 'recent'                # =&gt; 'proto://host.com/posts/recent'
+  url_for :controller =&gt; 'posts', :action =&gt; 'index'                 # =&gt; 'proto://host.com/posts'
+  url_for :controller =&gt; 'posts', :action =&gt; 'index', :port=&gt;'8033'  # =&gt; 'proto://host.com:8033/posts'
+  url_for :controller =&gt; 'posts', :action =&gt; 'show', :id =&gt; 10       # =&gt; 'proto://host.com/posts/show/10'
+  url_for :controller =&gt; 'posts', :user =&gt; 'd', :password =&gt; '123'   # =&gt; 'proto://d:123@host.com/posts'
+</pre>
+<p>
+When generating a new URL, missing values may be filled in from the current
+request&#8216;s parameters. For example, <tt><a
+href="Base.html#M000503">url_for</a> :action =&gt;
+&#8216;some_action&#8216;</tt> will retain the current controller, as
+expected. This behavior extends to other parameters, including
+<tt>:controller</tt>, <tt>:id</tt>, and any other parameters that are
+placed into a Route&#8216;s path.   The URL helpers such as <tt><a
+href="Base.html#M000503">url_for</a></tt> have a limited form of memory:
+when generating a new URL, they can look for missing values in the current
+request&#8216;s parameters. Routes attempts to guess when a value should
+and should not be taken from the defaults. There are a few simple rules on
+how this is performed:
+</p>
+<ul>
+<li>If the controller name begins with a slash no defaults are used:
+
+<pre>
+  url_for :controller =&gt; '/home'
+</pre>
+<p>
+In particular, a leading slash ensures no namespace is assumed. Thus, while
+<tt><a href="Base.html#M000503">url_for</a> :controller =&gt;
+&#8216;users&#8216;</tt> may resolve to <tt>Admin::UsersController</tt> if
+the current controller lives under that module, <tt><a
+href="Base.html#M000503">url_for</a> :controller =&gt;
+&#8217;/users&#8216;</tt> ensures you link to <tt>::UsersController</tt> no
+matter what.
+</p>
+</li>
+<li>If the controller changes, the action will default to index unless provided
+
+</li>
+</ul>
+<p>
+The final rule is applied while the URL is being generated and is best
+illustrated by an example. Let us consider the route given by
+<tt>map.connect &#8216;people/:last/:first/:action&#8217;, :action =&gt;
+&#8216;bio&#8217;, :controller =&gt; &#8216;people&#8216;</tt>.
+</p>
+<p>
+Suppose that the current URL is &quot;people/hh/david/contacts&quot;.
+Let&#8216;s consider a few different cases of URLs which are generated from
+this page.
+</p>
+<ul>
+<li><tt><a href="Base.html#M000503">url_for</a> :action =&gt;
+&#8216;bio&#8216;</tt> &#8212; During the generation of this URL, default
+values will be used for the first and
+
+</li>
+</ul>
+<p>
+last components, and the action shall change. The generated URL will be,
+&quot;people/hh/david/bio&quot;.
+</p>
+<ul>
+<li><tt><a href="Base.html#M000503">url_for</a> :first =&gt;
+&#8216;davids-little-brother&#8216;</tt> This generates the URL
+&#8216;people/hh/davids-little-brother&#8217; &#8212; note that this URL
+leaves out the assumed action of &#8216;bio&#8217;.
+
+</li>
+</ul>
+<p>
+However, you might ask why the action from the current request,
+&#8216;contacts&#8217;, isn&#8216;t carried over into the new URL. The
+answer has to do with the order in which the parameters appear in the
+generated path. In a nutshell, since the value that appears in the slot for
+<tt>:first</tt> is not equal to default value for <tt>:first</tt> we stop
+using defaults. On its own, this rule can account for much of the typical
+<a href="../Rails.html">Rails</a> URL behavior.   Although a convenience,
+defaults can occasionally get in your way. In some cases a default persists
+longer than desired. The default may be cleared by adding <tt>:name =&gt;
+nil</tt> to <tt><a href="Base.html#M000503">url_for</a></tt>&#8216;s
+options. This is often required when writing form helpers, since the
+defaults in play may vary greatly depending upon where the helper is used
+from. The following line will redirect to PostController&#8216;s default
+action, regardless of the page it is displayed on:
+</p>
+<pre>
+  url_for :controller =&gt; 'posts', :action =&gt; nil
+</pre>
+<p>
+If you explicitly want to create a URL that&#8216;s almost the same as the
+current URL, you can do so using the <tt>:overwrite_params</tt> options.
+Say for your posts you have different views for showing and printing them.
+Then, in the show view, you get the URL for the print view like this
+</p>
+<pre>
+  url_for :overwrite_params =&gt; { :action =&gt; 'print' }
+</pre>
+<p>
+This takes the current URL as is and only exchanges the action. In
+contrast, <tt><a href="Base.html#M000503">url_for</a> :action =&gt;
+&#8216;print&#8216;</tt> would have slashed-off the path components after
+the changed action.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000503-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000503-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 620</span>
+620:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span> = {})
+621:         <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+622:         <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">options</span>
+623:           <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+624:             <span class="ruby-identifier">options</span>
+625:           <span class="ruby-keyword kw">when</span> <span class="ruby-constant">Hash</span>
+626:             <span class="ruby-ivar">@url</span>.<span class="ruby-identifier">rewrite</span>(<span class="ruby-identifier">rewrite_options</span>(<span class="ruby-identifier">options</span>))
+627:           <span class="ruby-keyword kw">else</span>
+628:             <span class="ruby-identifier">polymorphic_url</span>(<span class="ruby-identifier">options</span>)
+629:         <span class="ruby-keyword kw">end</span>
+630:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000508" class="method-detail">
+        <a name="M000508"></a>
+
+        <div class="method-heading">
+          <a href="#M000508" class="method-signature">
+          <span class="method-name">view_paths</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+View load paths for controller.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000508-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000508-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 654</span>
+654:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">view_paths</span>
+655:         <span class="ruby-ivar">@template</span>.<span class="ruby-identifier">view_paths</span>
+656:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000509" class="method-detail">
+        <a name="M000509"></a>
+
+        <div class="method-heading">
+          <a href="#M000509" class="method-signature">
+          <span class="method-name">view_paths=</span><span class="method-args">(value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000509-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000509-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 658</span>
+658:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">view_paths=</span>(<span class="ruby-identifier">value</span>)
+659:         <span class="ruby-ivar">@template</span>.<span class="ruby-identifier">view_paths</span> = <span class="ruby-constant">ActionView</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">process_view_paths</span>(<span class="ruby-identifier">value</span>)
+660:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M000515" class="method-detail">
+        <a name="M000515"></a>
+
+        <div class="method-heading">
+          <a href="#M000515" class="method-signature">
+          <span class="method-name">default_url_options</span><span class="method-args">(options = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Overwrite to implement a number of default options that all <a
+href="Base.html#M000503">url_for</a>-based methods will use. The default
+options should come in the form of a hash, just like the one you would use
+for <a href="Base.html#M000503">url_for</a> directly. Example:
+</p>
+<pre>
+  def default_url_options(options)
+    { :project =&gt; @project.active? ? @project.url_name : &quot;unknown&quot; }
+  end
+</pre>
+<p>
+As you can infer from the example, this is mostly useful for situations
+where you want to centralize dynamic decisions about the urls as they stem
+from the business domain. Please note that any individual <a
+href="Base.html#M000503">url_for</a> call can always override the defaults
+set by this method.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000515-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000515-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1025</span>
+1025:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">default_url_options</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword kw">nil</span>)
+1026:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000520" class="method-detail">
+        <a name="M000520"></a>
+
+        <div class="method-heading">
+          <a href="#M000520" class="method-signature">
+          <span class="method-name">expires_in</span><span class="method-args">(seconds, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets a HTTP 1.1 Cache-Control header. Defaults to issuing a
+&quot;private&quot; instruction, so that intermediate caches
+shouldn&#8216;t cache the response.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  expires_in 20.minutes
+  expires_in 3.hours, :private =&gt; false
+  expires in 3.hours, 'max-stale' =&gt; 5.hours, :private =&gt; nil, :public =&gt; true
+</pre>
+<p>
+This method will overwrite an existing Cache-Control header. See <a
+href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a>
+for more possibilities.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000520-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000520-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1150</span>
+1150:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expires_in</span>(<span class="ruby-identifier">seconds</span>, <span class="ruby-identifier">options</span> = {}) <span class="ruby-comment cmt">#:doc:</span>
+1151:         <span class="ruby-identifier">cache_options</span> = { <span class="ruby-value str">'max-age'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">seconds</span>, <span class="ruby-value str">'private'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span> }.<span class="ruby-identifier">symbolize_keys</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">options</span>.<span class="ruby-identifier">symbolize_keys</span>)
+1152:         <span class="ruby-identifier">cache_options</span>.<span class="ruby-identifier">delete_if</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">false</span> }
+1153:         <span class="ruby-identifier">cache_control</span> = <span class="ruby-identifier">cache_options</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{k.to_s}=#{v.to_s}&quot;</span>}
+1154:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">headers</span>[<span class="ruby-value str">&quot;Cache-Control&quot;</span>] = <span class="ruby-identifier">cache_control</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">', '</span>)
+1155:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000521" class="method-detail">
+        <a name="M000521"></a>
+
+        <div class="method-heading">
+          <a href="#M000521" class="method-signature">
+          <span class="method-name">expires_now</span><span class="method-args">(</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets a HTTP 1.1 Cache-Control header of &quot;no-cache&quot; so no caching
+should occur by the browser or intermediate caches (like caching proxy
+servers).
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000521-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000521-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1159</span>
+1159:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">expires_now</span> <span class="ruby-comment cmt">#:doc:</span>
+1160:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">headers</span>[<span class="ruby-value str">&quot;Cache-Control&quot;</span>] = <span class="ruby-value str">&quot;no-cache&quot;</span>
+1161:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000519" class="method-detail">
+        <a name="M000519"></a>
+
+        <div class="method-heading">
+          <a href="#M000519" class="method-signature">
+          <span class="method-name">fresh_when</span><span class="method-args">(options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the etag, last_modified, or both on the response and renders a
+&quot;304 Not Modified&quot; response if the request is already fresh.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  def show
+    @article = Article.find(params[:id])
+    fresh_when(:etag =&gt; @article, :last_modified =&gt; @article.created_at.utc)
+  end
+</pre>
+<p>
+This will <a href="Base.html#M000512">render</a> the show template if the
+request isn&#8216;t sending a matching etag or If-Modified-Since header and
+just a &quot;304 Not Modified&quot; response if there&#8216;s a match.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000519-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000519-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1129</span>
+1129:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">fresh_when</span>(<span class="ruby-identifier">options</span>)
+1130:         <span class="ruby-identifier">options</span>.<span class="ruby-identifier">assert_valid_keys</span>(<span class="ruby-identifier">:etag</span>, <span class="ruby-identifier">:last_modified</span>)
+1131: 
+1132:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">etag</span>          = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:etag</span>]          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:etag</span>]
+1133:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">last_modified</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:last_modified</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:last_modified</span>]
+1134: 
+1135:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">request</span>.<span class="ruby-identifier">fresh?</span>(<span class="ruby-identifier">response</span>)
+1136:           <span class="ruby-identifier">head</span> <span class="ruby-identifier">:not_modified</span>
+1137:         <span class="ruby-keyword kw">end</span>
+1138:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000514" class="method-detail">
+        <a name="M000514"></a>
+
+        <div class="method-heading">
+          <a href="#M000514" class="method-signature">
+          <span class="method-name">head</span><span class="method-args">(*args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a response that has no content (merely headers). The options
+argument is interpreted to be a hash of header names and values. This
+allows you to easily return a response that consists only of significant
+headers:
+</p>
+<pre>
+  head :created, :location =&gt; person_path(@person)
+</pre>
+<p>
+It can also be used to return exceptional conditions:
+</p>
+<pre>
+  return head(:method_not_allowed) unless request.post?
+  return head(:bad_request) unless valid_request?
+  render
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000514-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000514-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 967</span>
+967:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">head</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+968:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">2</span>
+969:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;too many arguments to head&quot;</span>
+970:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span>
+971:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;too few arguments to head&quot;</span>
+972:         <span class="ruby-keyword kw">end</span>
+973:         <span class="ruby-identifier">options</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">extract_options!</span>
+974:         <span class="ruby-identifier">status</span> = <span class="ruby-identifier">interpret_status</span>(<span class="ruby-identifier">args</span>.<span class="ruby-identifier">shift</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:status</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">:ok</span>)
+975: 
+976:         <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+977:           <span class="ruby-identifier">headers</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">dasherize</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/-/</span>).<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">capitalize</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;-&quot;</span>)] = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+978:         <span class="ruby-keyword kw">end</span>
+979: 
+980:         <span class="ruby-identifier">render</span> <span class="ruby-identifier">:nothing</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-identifier">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">status</span>
+981:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000516" class="method-detail">
+        <a name="M000516"></a>
+
+        <div class="method-heading">
+          <a href="#M000516" class="method-signature">
+          <span class="method-name">redirect_to</span><span class="method-args">(options = {}, response_status = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Redirects the browser to the target specified in <tt>options</tt>. This
+parameter can take one of three forms:
+</p>
+<ul>
+<li><tt>Hash</tt> - The URL will be generated by calling <a
+href="Base.html#M000503">url_for</a> with the <tt>options</tt>.
+
+</li>
+<li><tt>Record</tt> - The URL will be generated by calling <a
+href="Base.html#M000503">url_for</a> with the <tt>options</tt>, which will
+reference a named URL for that record.
+
+</li>
+<li><tt>String</tt> starting with <tt>protocol://</tt> (like <tt>http://</tt>)
+- Is passed straight through as the target for redirection.
+
+</li>
+<li><tt>String</tt> not containing a protocol - The current protocol and host
+is prepended to the string.
+
+</li>
+<li><tt>:back</tt> - Back to the page that issued the request. Useful for forms
+that are triggered from multiple places. Short-hand for <tt><a
+href="Base.html#M000516">redirect_to</a>(request.env[&quot;HTTP_REFERER&quot;])</tt>
+
+</li>
+</ul>
+<p>
+Examples:
+</p>
+<pre>
+  redirect_to :action =&gt; &quot;show&quot;, :id =&gt; 5
+  redirect_to post
+  redirect_to &quot;http://www.rubyonrails.org&quot;
+  redirect_to &quot;/images/screenshot.jpg&quot;
+  redirect_to articles_url
+  redirect_to :back
+</pre>
+<p>
+The redirection happens as a &quot;302 Moved&quot; header unless otherwise
+specified.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  redirect_to post_url(@post), :status=&gt;:found
+  redirect_to :action=&gt;'atom', :status=&gt;:moved_permanently
+  redirect_to post_url(@post), :status=&gt;301
+  redirect_to :action=&gt;'atom', :status=&gt;302
+</pre>
+<p>
+When using <tt><a href="Base.html#M000516">redirect_to</a> :back</tt>, if
+there is no referrer, RedirectBackError will be raised. You may specify
+some fallback behavior for this case by rescuing RedirectBackError.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000516-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000516-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1056</span>
+1056:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">redirect_to</span>(<span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">response_status</span> = {}) <span class="ruby-comment cmt">#:doc:</span>
+1057:         <span class="ruby-identifier">raise</span> <span class="ruby-constant">ActionControllerError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value str">&quot;Cannot redirect to nil!&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span>
+1058: 
+1059:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>]
+1060:           <span class="ruby-identifier">status</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">:status</span>)
+1061:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">response_status</span>[<span class="ruby-identifier">:status</span>]
+1062:           <span class="ruby-identifier">status</span> = <span class="ruby-identifier">response_status</span>[<span class="ruby-identifier">:status</span>]
+1063:         <span class="ruby-keyword kw">else</span>
+1064:           <span class="ruby-identifier">status</span> = <span class="ruby-value">302</span>
+1065:         <span class="ruby-keyword kw">end</span>
+1066: 
+1067:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">redirected_to</span> = <span class="ruby-identifier">options</span>
+1068:         <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;Redirected to #{options}&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info?</span>
+1069: 
+1070:         <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">options</span>
+1071:           <span class="ruby-comment cmt"># The scheme name consist of a letter followed by any combination of</span>
+1072:           <span class="ruby-comment cmt"># letters, digits, and the plus (&quot;+&quot;), period (&quot;.&quot;), or hyphen (&quot;-&quot;)</span>
+1073:           <span class="ruby-comment cmt"># characters; and is terminated by a colon (&quot;:&quot;).</span>
+1074:           <span class="ruby-keyword kw">when</span> <span class="ruby-regexp re">%r{^\w[\w\d+.-]*:.*}</span>
+1075:             <span class="ruby-identifier">redirect_to_full_url</span>(<span class="ruby-identifier">options</span>, <span class="ruby-identifier">status</span>)
+1076:           <span class="ruby-keyword kw">when</span> <span class="ruby-constant">String</span>
+1077:             <span class="ruby-identifier">redirect_to_full_url</span>(<span class="ruby-identifier">request</span>.<span class="ruby-identifier">protocol</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">request</span>.<span class="ruby-identifier">host_with_port</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">options</span>, <span class="ruby-identifier">status</span>)
+1078:           <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:back</span>
+1079:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">referer</span> = <span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers</span>[<span class="ruby-value str">&quot;Referer&quot;</span>]
+1080:               <span class="ruby-identifier">redirect_to</span>(<span class="ruby-identifier">referer</span>, <span class="ruby-identifier">:status=</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">status</span>)
+1081:             <span class="ruby-keyword kw">else</span>
+1082:               <span class="ruby-identifier">raise</span> <span class="ruby-constant">RedirectBackError</span>
+1083:             <span class="ruby-keyword kw">end</span>
+1084:           <span class="ruby-keyword kw">else</span>
+1085:             <span class="ruby-identifier">redirect_to_full_url</span>(<span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">options</span>), <span class="ruby-identifier">status</span>)
+1086:         <span class="ruby-keyword kw">end</span>
+1087:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000517" class="method-detail">
+        <a name="M000517"></a>
+
+        <div class="method-heading">
+          <a href="#M000517" class="method-signature">
+          <span class="method-name">redirect_to_full_url</span><span class="method-args">(url, status)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000517-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000517-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1089</span>
+1089:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">redirect_to_full_url</span>(<span class="ruby-identifier">url</span>, <span class="ruby-identifier">status</span>)
+1090:         <span class="ruby-identifier">raise</span> <span class="ruby-constant">DoubleRenderError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">performed?</span>
+1091:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">redirect</span>(<span class="ruby-identifier">url</span>, <span class="ruby-identifier">interpret_status</span>(<span class="ruby-identifier">status</span>))
+1092:         <span class="ruby-ivar">@performed_redirect</span> = <span class="ruby-keyword kw">true</span>
+1093:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000512" class="method-detail">
+        <a name="M000512"></a>
+
+        <div class="method-heading">
+          <a href="#M000512" class="method-signature">
+          <span class="method-name">render</span><span class="method-args">(options = nil, extra_options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Renders the content that will be returned to the browser as the response
+body.
+</p>
+<h3>Rendering an action</h3>
+<p>
+Action rendering is the most common form and the type used automatically by
+Action Controller when nothing else is specified. By default, actions are
+rendered within the current layout (if one exists).
+</p>
+<pre>
+  # Renders the template for the action &quot;goal&quot; within the current controller
+  render :action =&gt; &quot;goal&quot;
+
+  # Renders the template for the action &quot;short_goal&quot; within the current controller,
+  # but without the current active layout
+  render :action =&gt; &quot;short_goal&quot;, :layout =&gt; false
+
+  # Renders the template for the action &quot;long_goal&quot; within the current controller,
+  # but with a custom layout
+  render :action =&gt; &quot;long_goal&quot;, :layout =&gt; &quot;spectacular&quot;
+</pre>
+<h3>Rendering partials</h3>
+<p>
+Partial rendering in a controller is most commonly used together with Ajax
+calls that only update one or a few elements on a page without reloading.
+Rendering of partials from the controller makes it possible to use the same
+partial template in both the full-page rendering (by calling it from within
+the template) and when sub-page updates happen (from the controller action
+responding to Ajax calls). By default, the current layout is not used.
+</p>
+<pre>
+  # Renders the same partial with a local variable.
+  render :partial =&gt; &quot;person&quot;, :locals =&gt; { :name =&gt; &quot;david&quot; }
+
+  # Renders the partial, making @new_person available through
+  # the local variable 'person'
+  render :partial =&gt; &quot;person&quot;, :object =&gt; @new_person
+
+  # Renders a collection of the same partial by making each element
+  # of @winners available through the local variable &quot;person&quot; as it
+  # builds the complete response.
+  render :partial =&gt; &quot;person&quot;, :collection =&gt; @winners
+
+  # Renders a collection of partials but with a custom local variable name
+  render :partial =&gt; &quot;admin_person&quot;, :collection =&gt; @winners, :as =&gt; :person
+
+  # Renders the same collection of partials, but also renders the
+  # person_divider partial between each person partial.
+  render :partial =&gt; &quot;person&quot;, :collection =&gt; @winners, :spacer_template =&gt; &quot;person_divider&quot;
+
+  # Renders a collection of partials located in a view subfolder
+  # outside of our current controller.  In this example we will be
+  # rendering app/views/shared/_note.r(html|xml)  Inside the partial
+  # each element of @new_notes is available as the local var &quot;note&quot;.
+  render :partial =&gt; &quot;shared/note&quot;, :collection =&gt; @new_notes
+
+  # Renders the partial with a status code of 500 (internal error).
+  render :partial =&gt; &quot;broken&quot;, :status =&gt; 500
+</pre>
+<p>
+Note that the partial filename must also be a valid Ruby variable name, so
+e.g. 2005 and register-user are invalid.
+</p>
+<h2>Automatic etagging</h2>
+<p>
+Rendering will automatically insert the etag header on 200 OK responses.
+The etag is calculated using MD5 of the response body. If a request comes
+in that has a matching etag, the response will be changed to a 304 Not
+Modified and the response body will be set to an empty string. No etag
+header will be inserted if it&#8216;s already set.
+</p>
+<h3>Rendering a template</h3>
+<p>
+Template rendering works just like action rendering except that it takes a
+path relative to the template root. The current layout is automatically
+applied.
+</p>
+<pre>
+  # Renders the template located in [TEMPLATE_ROOT]/weblog/show.r(html|xml) (in Rails, app/views/weblog/show.erb)
+  render :template =&gt; &quot;weblog/show&quot;
+
+  # Renders the template with a local variable
+  render :template =&gt; &quot;weblog/show&quot;, :locals =&gt; {:customer =&gt; Customer.new}
+</pre>
+<h3>Rendering a file</h3>
+<p>
+File rendering works just like action rendering except that it takes a
+filesystem path. By default, the path is assumed to be absolute, and the
+current layout is not applied.
+</p>
+<pre>
+  # Renders the template located at the absolute filesystem path
+  render :file =&gt; &quot;/path/to/some/template.erb&quot;
+  render :file =&gt; &quot;c:/path/to/some/template.erb&quot;
+
+  # Renders a template within the current layout, and with a 404 status code
+  render :file =&gt; &quot;/path/to/some/template.erb&quot;, :layout =&gt; true, :status =&gt; 404
+  render :file =&gt; &quot;c:/path/to/some/template.erb&quot;, :layout =&gt; true, :status =&gt; 404
+</pre>
+<h3>Rendering text</h3>
+<p>
+Rendering of text is usually used for tests or for rendering prepared
+content, such as a cache. By default, text rendering is not done within the
+active layout.
+</p>
+<pre>
+  # Renders the clear text &quot;hello world&quot; with status code 200
+  render :text =&gt; &quot;hello world!&quot;
+
+  # Renders the clear text &quot;Explosion!&quot;  with status code 500
+  render :text =&gt; &quot;Explosion!&quot;, :status =&gt; 500
+
+  # Renders the clear text &quot;Hi there!&quot; within the current active layout (if one exists)
+  render :text =&gt; &quot;Hi there!&quot;, :layout =&gt; true
+
+  # Renders the clear text &quot;Hi there!&quot; within the layout
+  # placed in &quot;app/views/layouts/special.r(html|xml)&quot;
+  render :text =&gt; &quot;Hi there!&quot;, :layout =&gt; &quot;special&quot;
+</pre>
+<p>
+The <tt>:text</tt> option can also accept a Proc object, which can be used
+to manually control the page generation. This should generally be avoided,
+as it violates the separation between code and content, and because almost
+everything that can be done with this method can also be done more cleanly
+using one of the other rendering methods, most notably templates.
+</p>
+<pre>
+  # Renders &quot;Hello from code!&quot;
+  render :text =&gt; proc { |response, output| output.write(&quot;Hello from code!&quot;) }
+</pre>
+<h3>Rendering XML</h3>
+<p>
+Rendering XML sets the content type to application/xml.
+</p>
+<pre>
+  # Renders '&lt;name&gt;David&lt;/name&gt;'
+  render :xml =&gt; {:name =&gt; &quot;David&quot;}.to_xml
+</pre>
+<p>
+It&#8216;s not necessary to call <tt>to_xml</tt> on the object you want to
+<a href="Base.html#M000512">render</a>, since <tt><a
+href="Base.html#M000512">render</a></tt> will automatically do that for
+you:
+</p>
+<pre>
+  # Also renders '&lt;name&gt;David&lt;/name&gt;'
+  render :xml =&gt; {:name =&gt; &quot;David&quot;}
+</pre>
+<h3>Rendering JSON</h3>
+<p>
+Rendering JSON sets the content type to application/json and optionally
+wraps the JSON in a callback. It is expected that the response will be
+parsed (or eval&#8216;d) for use as a data structure.
+</p>
+<pre>
+  # Renders '{&quot;name&quot;: &quot;David&quot;}'
+  render :json =&gt; {:name =&gt; &quot;David&quot;}.to_json
+</pre>
+<p>
+It&#8216;s not necessary to call <tt>to_json</tt> on the object you want to
+<a href="Base.html#M000512">render</a>, since <tt><a
+href="Base.html#M000512">render</a></tt> will automatically do that for
+you:
+</p>
+<pre>
+  # Also renders '{&quot;name&quot;: &quot;David&quot;}'
+  render :json =&gt; {:name =&gt; &quot;David&quot;}
+</pre>
+<p>
+Sometimes the result isn&#8216;t handled directly by a script (such as when
+the request comes from a SCRIPT tag), so the <tt>:callback</tt> option is
+provided for these cases.
+</p>
+<pre>
+  # Renders 'show({&quot;name&quot;: &quot;David&quot;})'
+  render :json =&gt; {:name =&gt; &quot;David&quot;}.to_json, :callback =&gt; 'show'
+</pre>
+<h3>Rendering an inline template</h3>
+<p>
+Rendering of an inline template works as a cross between text and action
+rendering where the source for the template is supplied inline, like text,
+but its interpreted with ERb or <a href="../Builder.html">Builder</a>, like
+action. By default, ERb is used for rendering and the current layout is not
+used.
+</p>
+<pre>
+  # Renders &quot;hello, hello, hello, again&quot;
+  render :inline =&gt; &quot;&lt;%= 'hello, ' * 3 + 'again' %&gt;&quot;
+
+  # Renders &quot;&lt;p&gt;Good seeing you!&lt;/p&gt;&quot; using Builder
+  render :inline =&gt; &quot;xml.p { 'Good seeing you!' }&quot;, :type =&gt; :builder
+
+  # Renders &quot;hello david&quot;
+  render :inline =&gt; &quot;&lt;%= 'hello ' + name %&gt;&quot;, :locals =&gt; { :name =&gt; &quot;david&quot; }
+</pre>
+<h3>Rendering inline JavaScriptGenerator page updates</h3>
+<p>
+In addition to rendering JavaScriptGenerator page updates with Ajax in RJS
+templates (see <a href="../ActionView/Base.html">ActionView::Base</a> for
+details), you can also pass the <tt>:update</tt> parameter to <tt><a
+href="Base.html#M000512">render</a></tt>, along with a block, to <a
+href="Base.html#M000512">render</a> page updates inline.
+</p>
+<pre>
+  render :update do |page|
+    page.replace_html  'user_list', :partial =&gt; 'user', :collection =&gt; @users
+    page.visual_effect :highlight, 'user_list'
+  end
+</pre>
+<h3>Rendering vanilla JavaScript</h3>
+<p>
+In addition to using RJS with <a href="Base.html#M000512">render</a>
+:update, you can also just <a href="Base.html#M000512">render</a> vanilla
+JavaScript with :js.
+</p>
+<pre>
+  # Renders &quot;alert('hello')&quot; and sets the mime type to text/javascript
+  render :js =&gt; &quot;alert('hello')&quot;
+</pre>
+<h3>Rendering with status and location headers</h3>
+<p>
+All renders take the <tt>:status</tt> and <tt>:location</tt> options and
+turn them into headers. They can even be used together:
+</p>
+<pre>
+  render :xml =&gt; post.to_xml, :status =&gt; :created, :location =&gt; post_url(post)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000512-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000512-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 864</span>
+864:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">extra_options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt">#:doc:</span>
+865:         <span class="ruby-identifier">raise</span> <span class="ruby-constant">DoubleRenderError</span>, <span class="ruby-value str">&quot;Can only render or redirect once per action&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">performed?</span>
+866: 
+867:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">nil?</span>
+868:           <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">:file</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">default_template_name</span>, <span class="ruby-identifier">:layout</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span>)
+869:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">extra_options</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+870:           <span class="ruby-identifier">raise</span> <span class="ruby-constant">RenderError</span>, <span class="ruby-node">&quot;You called render with invalid options : #{options.inspect}, #{extra_options.inspect}&quot;</span>
+871:         <span class="ruby-keyword kw">else</span>
+872:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:update</span>
+873:             <span class="ruby-identifier">options</span> = <span class="ruby-identifier">extra_options</span>.<span class="ruby-identifier">merge</span>({ <span class="ruby-identifier">:update</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">true</span> })
+874:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">options</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+875:             <span class="ruby-identifier">raise</span> <span class="ruby-constant">RenderError</span>, <span class="ruby-node">&quot;You called render with invalid options : #{options.inspect}&quot;</span>
+876:           <span class="ruby-keyword kw">end</span>
+877:         <span class="ruby-keyword kw">end</span>
+878: 
+879:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">layout</span> = <span class="ruby-identifier">layout</span> = <span class="ruby-identifier">pick_layout</span>(<span class="ruby-identifier">options</span>)
+880:         <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-node">&quot;Rendering template within #{layout}&quot;</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">logger</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">layout</span>
+881: 
+882:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">content_type</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:content_type</span>]
+883:           <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content_type</span> = <span class="ruby-identifier">content_type</span>.<span class="ruby-identifier">to_s</span>
+884:         <span class="ruby-keyword kw">end</span>
+885: 
+886:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">location</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:location</span>]
+887:           <span class="ruby-identifier">response</span>.<span class="ruby-identifier">headers</span>[<span class="ruby-value str">&quot;Location&quot;</span>] = <span class="ruby-identifier">url_for</span>(<span class="ruby-identifier">location</span>)
+888:         <span class="ruby-keyword kw">end</span>
+889: 
+890:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">:text</span>)
+891:           <span class="ruby-identifier">text</span> = <span class="ruby-identifier">layout</span> <span class="ruby-value">? </span><span class="ruby-ivar">@template</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">:text</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:text</span>], <span class="ruby-identifier">:layout</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">layout</span>)) <span class="ruby-operator">:</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:text</span>]
+892:           <span class="ruby-identifier">render_for_text</span>(<span class="ruby-identifier">text</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+893: 
+894:         <span class="ruby-keyword kw">else</span>
+895:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:file</span>]
+896:             <span class="ruby-identifier">render_for_file</span>(<span class="ruby-identifier">file</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>], <span class="ruby-identifier">layout</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:locals</span>] <span class="ruby-operator">||</span> {})
+897: 
+898:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">template</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:template</span>]
+899:             <span class="ruby-identifier">render_for_file</span>(<span class="ruby-identifier">template</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>], <span class="ruby-identifier">layout</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:locals</span>] <span class="ruby-operator">||</span> {})
+900: 
+901:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">inline</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:inline</span>]
+902:             <span class="ruby-identifier">render_for_text</span>(<span class="ruby-ivar">@template</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">:layout</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">layout</span>)), <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+903: 
+904:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:action</span>]
+905:             <span class="ruby-identifier">render_for_file</span>(<span class="ruby-identifier">default_template_name</span>(<span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>), <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>], <span class="ruby-identifier">layout</span>)
+906: 
+907:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">xml</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:xml</span>]
+908:             <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content_type</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Mime</span><span class="ruby-operator">::</span><span class="ruby-constant">XML</span>
+909:             <span class="ruby-identifier">render_for_text</span>(<span class="ruby-identifier">xml</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:to_xml</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">xml</span>.<span class="ruby-identifier">to_xml</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">xml</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+910: 
+911:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">js</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:js</span>]
+912:             <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content_type</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Mime</span><span class="ruby-operator">::</span><span class="ruby-constant">JS</span>
+913:             <span class="ruby-identifier">render_for_text</span>(<span class="ruby-identifier">js</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+914: 
+915:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">json</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:json</span>]
+916:             <span class="ruby-identifier">json</span> = <span class="ruby-identifier">json</span>.<span class="ruby-identifier">to_json</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">json</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">String</span>)
+917:             <span class="ruby-identifier">json</span> = <span class="ruby-node">&quot;#{options[:callback]}(#{json})&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:callback</span>].<span class="ruby-identifier">blank?</span>
+918:             <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content_type</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Mime</span><span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>
+919:             <span class="ruby-identifier">render_for_text</span>(<span class="ruby-identifier">json</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+920: 
+921:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:partial</span>]
+922:             <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:partial</span>] = <span class="ruby-identifier">default_template_name</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:partial</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span>
+923:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">layout</span>
+924:               <span class="ruby-identifier">render_for_text</span>(<span class="ruby-ivar">@template</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">:text</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@template</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">options</span>), <span class="ruby-identifier">:layout</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">layout</span>), <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+925:             <span class="ruby-keyword kw">else</span>
+926:               <span class="ruby-identifier">render_for_text</span>(<span class="ruby-ivar">@template</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">options</span>), <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+927:             <span class="ruby-keyword kw">end</span>
+928: 
+929:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:update</span>]
+930:             <span class="ruby-ivar">@template</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:_evaluate_assigns_and_ivars</span>)
+931: 
+932:             <span class="ruby-identifier">generator</span> = <span class="ruby-constant">ActionView</span><span class="ruby-operator">::</span><span class="ruby-constant">Helpers</span><span class="ruby-operator">::</span><span class="ruby-constant">PrototypeHelper</span><span class="ruby-operator">::</span><span class="ruby-constant">JavaScriptGenerator</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@template</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+933:             <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content_type</span> = <span class="ruby-constant">Mime</span><span class="ruby-operator">::</span><span class="ruby-constant">JS</span>
+934:             <span class="ruby-identifier">render_for_text</span>(<span class="ruby-identifier">generator</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+935: 
+936:           <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:nothing</span>]
+937:             <span class="ruby-identifier">render_for_text</span>(<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>])
+938: 
+939:           <span class="ruby-keyword kw">else</span>
+940:             <span class="ruby-identifier">render_for_file</span>(<span class="ruby-identifier">default_template_name</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:status</span>], <span class="ruby-identifier">layout</span>)
+941:           <span class="ruby-keyword kw">end</span>
+942:         <span class="ruby-keyword kw">end</span>
+943:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000513" class="method-detail">
+        <a name="M000513"></a>
+
+        <div class="method-heading">
+          <a href="#M000513" class="method-signature">
+          <span class="method-name">render_to_string</span><span class="method-args">(options = nil, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Renders according to the same rules as <tt><a
+href="Base.html#M000512">render</a></tt>, but returns the result in a
+string instead of sending it as the response body to the browser.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000513-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000513-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 947</span>
+947:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">render_to_string</span>(<span class="ruby-identifier">options</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment cmt">#:doc:</span>
+948:         <span class="ruby-identifier">render</span>(<span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+949:       <span class="ruby-keyword kw">ensure</span>
+950:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">content_type</span> = <span class="ruby-keyword kw">nil</span>
+951:         <span class="ruby-identifier">erase_render_results</span>
+952:         <span class="ruby-identifier">reset_variables_added_to_assigns</span>
+953:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000522" class="method-detail">
+        <a name="M000522"></a>
+
+        <div class="method-heading">
+          <a href="#M000522" class="method-signature">
+          <span class="method-name">reset_session</span><span class="method-args">(</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Resets the session by clearing out all the objects stored within and
+initializing a new session object.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000522-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000522-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1164</span>
+1164:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset_session</span> <span class="ruby-comment cmt">#:doc:</span>
+1165:         <span class="ruby-identifier">request</span>.<span class="ruby-identifier">reset_session</span>
+1166:         <span class="ruby-ivar">@_session</span> = <span class="ruby-identifier">request</span>.<span class="ruby-identifier">session</span>
+1167:         <span class="ruby-identifier">response</span>.<span class="ruby-identifier">session</span> = <span class="ruby-ivar">@_session</span>
+1168:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000518" class="method-detail">
+        <a name="M000518"></a>
+
+        <div class="method-heading">
+          <a href="#M000518" class="method-signature">
+          <span class="method-name">stale?</span><span class="method-args">(options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Sets the etag and/or last_modified on the response and checks it against
+the client request. If the request doesn&#8216;t match the options
+provided, the request is considered stale and should be generated from
+scratch. Otherwise, it&#8216;s fresh and we don&#8216;t need to generate
+anything and a reply of &quot;304 Not Modified&quot; is sent.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  def show
+    @article = Article.find(params[:id])
+
+    if stale?(:etag =&gt; @article, :last_modified =&gt; @article.created_at.utc)
+      @statistics = @article.really_expensive_call
+      respond_to do |format|
+        # all the supported formats
+      end
+    end
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000518-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000518-source">
+<pre>
+      <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_controller/base.rb, line 1112</span>
+1112:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">stale?</span>(<span class="ruby-identifier">options</span>)
+1113:         <span class="ruby-identifier">fresh_when</span>(<span class="ruby-identifier">options</span>)
+1114:         <span class="ruby-operator">!</span><span class="ruby-identifier">request</span>.<span class="ruby-identifier">fresh?</span>(<span class="ruby-identifier">response</span>)
+1115:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

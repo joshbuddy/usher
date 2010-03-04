@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionController::Caching::Sweeping</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionController::Caching::Sweeping</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_controller/caching/sweeping_rb.html">
+                vendor/rails/actionpack/lib/action_controller/caching/sweeping.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Sweepers are the terminators of the caching world and responsible for
+expiring caches when model objects change. They do this by being
+half-observers, half-filters and implementing callbacks for both roles. A
+Sweeper example:
+</p>
+<pre>
+  class ListSweeper &lt; ActionController::Caching::Sweeper
+    observe List, Item
+
+    def after_save(record)
+      list = record.is_a?(List) ? record : record.list
+      expire_page(:controller =&gt; &quot;lists&quot;, :action =&gt; %w( show public feed ), :id =&gt; list.id)
+      expire_action(:controller =&gt; &quot;lists&quot;, :action =&gt; &quot;all&quot;)
+      list.shares.each { |share| expire_page(:controller =&gt; &quot;lists&quot;, :action =&gt; &quot;show&quot;, :id =&gt; share.url_key) }
+    end
+  end
+</pre>
+<p>
+The sweeper is assigned in the controllers that wish to have its job
+performed using the <tt>cache_sweeper</tt> class method:
+</p>
+<pre>
+  class ListsController &lt; ApplicationController
+    caches_action :index, :show, :public, :feed
+    cache_sweeper :list_sweeper, :only =&gt; [ :edit, :destroy, :share ]
+  end
+</pre>
+<p>
+In the example above, four actions are cached and three actions are
+responsible for expiring those caches.
+</p>
+<p>
+You can also name an explicit class in the declaration of a sweeper, which
+is needed if the sweeper is in a module:
+</p>
+<pre>
+  class ListsController &lt; ApplicationController
+    caches_action :index, :show, :public, :feed
+    cache_sweeper OpenBar::Sweeper, :only =&gt; [ :edit, :destroy, :share ]
+  end
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

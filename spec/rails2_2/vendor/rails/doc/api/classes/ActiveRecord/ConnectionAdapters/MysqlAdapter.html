@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ActiveRecord::ConnectionAdapters::MysqlAdapter</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ActiveRecord::ConnectionAdapters::MysqlAdapter</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter_rb.html">
+                vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="AbstractAdapter.html">
+                AbstractAdapter
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The MySQL adapter will work with both Ruby/MySQL, which is a Ruby-based
+MySQL adapter that comes bundled with Active Record, and with the faster
+C-based MySQL/Ruby adapter (available both as a gem and from <a
+href="http://www.tmtm.org/en/mysql/ruby">www.tmtm.org/en/mysql/ruby</a>/).
+</p>
+<p>
+Options:
+</p>
+<ul>
+<li><tt>:host</tt> - Defaults to &quot;localhost&quot;.
+
+</li>
+<li><tt>:port</tt> - Defaults to 3306.
+
+</li>
+<li><tt>:socket</tt> - Defaults to &quot;/tmp/mysql.sock&quot;.
+
+</li>
+<li><tt>:username</tt> - Defaults to &quot;root&quot;
+
+</li>
+<li><tt>:password</tt> - Defaults to nothing.
+
+</li>
+<li><tt>:database</tt> - The name of the database. No default, must be
+provided.
+
+</li>
+<li><tt>:encoding</tt> - (Optional) Sets the client encoding by executing
+&quot;SET NAMES &lt;encoding&gt;&quot; after connection.
+
+</li>
+<li><tt>:sslca</tt> - Necessary to use MySQL with an SSL connection.
+
+</li>
+<li><tt>:sslkey</tt> - Necessary to use MySQL with an SSL connection.
+
+</li>
+<li><tt>:sslcert</tt> - Necessary to use MySQL with an SSL connection.
+
+</li>
+<li><tt>:sslcapath</tt> - Necessary to use MySQL with an SSL connection.
+
+</li>
+<li><tt>:sslcipher</tt> - Necessary to use MySQL with an SSL connection.
+
+</li>
+</ul>
+<p>
+By default, the <a href="MysqlAdapter.html">MysqlAdapter</a> will consider
+all columns of type <tt>tinyint(1)</tt> as boolean. If you wish to disable
+this emulation (which was the default behavior in versions 0.13.1 and
+earlier) you can add the following line to your environment.rb file:
+</p>
+<pre>
+  ActiveRecord::ConnectionAdapters::MysqlAdapter.emulate_booleans = false
+</pre>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001744">active?</a>&nbsp;&nbsp;
+      <a href="#M001758">case_sensitive_equality_operator</a>&nbsp;&nbsp;
+      <a href="#M001755">change_column_null</a>&nbsp;&nbsp;
+      <a href="#M001751">charset</a>&nbsp;&nbsp;
+      <a href="#M001752">collation</a>&nbsp;&nbsp;
+      <a href="#M001749">create_database</a>&nbsp;&nbsp;
+      <a href="#M001750">current_database</a>&nbsp;&nbsp;
+      <a href="#M001746">disconnect!</a>&nbsp;&nbsp;
+      <a href="#M001753">drop_table</a>&nbsp;&nbsp;
+      <a href="#M001759">limited_update_conditions</a>&nbsp;&nbsp;
+      <a href="#M001740">new</a>&nbsp;&nbsp;
+      <a href="#M001741">quote</a>&nbsp;&nbsp;
+      <a href="#M001743">quoted_false</a>&nbsp;&nbsp;
+      <a href="#M001742">quoted_true</a>&nbsp;&nbsp;
+      <a href="#M001745">reconnect!</a>&nbsp;&nbsp;
+      <a href="#M001754">rename_table</a>&nbsp;&nbsp;
+      <a href="#M001747">reset!</a>&nbsp;&nbsp;
+      <a href="#M001748">select_rows</a>&nbsp;&nbsp;
+      <a href="#M001757">show_variable</a>&nbsp;&nbsp;
+      <a href="#M001756">type_to_sql</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">ADAPTER_NAME</td>
+          <td>=</td>
+          <td class="context-item-value">'MySQL'.freeze</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LOST_CONNECTION_ERROR_MESSAGES</td>
+          <td>=</td>
+          <td class="context-item-value">[         &quot;Server shutdown in progress&quot;,         &quot;Broken pipe&quot;,         &quot;Lost connection to MySQL server during query&quot;,         &quot;MySQL server has gone away&quot; ]</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">QUOTED_FALSE</td>
+          <td>=</td>
+          <td class="context-item-value">'1'.freeze, '0'.freeze</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NATIVE_DATABASE_TYPES</td>
+          <td>=</td>
+          <td class="context-item-value">{         :primary_key =&gt; &quot;int(11) DEFAULT NULL auto_increment PRIMARY KEY&quot;.freeze,         :string      =&gt; { :name =&gt; &quot;varchar&quot;, :limit =&gt; 255 },         :text        =&gt; { :name =&gt; &quot;text&quot; },         :integer     =&gt; { :name =&gt; &quot;int&quot;, :limit =&gt; 4 },         :float       =&gt; { :name =&gt; &quot;float&quot; },         :decimal     =&gt; { :name =&gt; &quot;decimal&quot; },         :datetime    =&gt; { :name =&gt; &quot;datetime&quot; },         :timestamp   =&gt; { :name =&gt; &quot;datetime&quot; },         :time        =&gt; { :name =&gt; &quot;time&quot; },         :date        =&gt; { :name =&gt; &quot;date&quot; },         :binary      =&gt; { :name =&gt; &quot;blob&quot; },         :boolean     =&gt; { :name =&gt; &quot;tinyint&quot;, :limit =&gt; 1 }</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001740" class="method-detail">
+        <a name="M001740"></a>
+
+        <div class="method-heading">
+          <a href="#M001740" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(connection, logger, connection_options, config)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001740-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001740-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 196</span>
+196:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">connection</span>, <span class="ruby-identifier">logger</span>, <span class="ruby-identifier">connection_options</span>, <span class="ruby-identifier">config</span>)
+197:         <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">connection</span>, <span class="ruby-identifier">logger</span>)
+198:         <span class="ruby-ivar">@connection_options</span>, <span class="ruby-ivar">@config</span> = <span class="ruby-identifier">connection_options</span>, <span class="ruby-identifier">config</span>
+199:         <span class="ruby-ivar">@quoted_column_names</span>, <span class="ruby-ivar">@quoted_table_names</span> = {}, {}
+200:         <span class="ruby-identifier">connect</span>
+201:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001744" class="method-detail">
+        <a name="M001744"></a>
+
+        <div class="method-heading">
+          <a href="#M001744" class="method-signature">
+          <span class="method-name">active?</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+CONNECTION MANAGEMENT ====================================
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001744-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001744-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 264</span>
+264:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">active?</span>
+265:         <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:stat</span>)
+266:           <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">stat</span>
+267:         <span class="ruby-keyword kw">else</span>
+268:           <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">query</span> <span class="ruby-value str">'select 1'</span>
+269:         <span class="ruby-keyword kw">end</span>
+270: 
+271:         <span class="ruby-comment cmt"># mysql-ruby doesn't raise an exception when stat fails.</span>
+272:         <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:errno</span>)
+273:           <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">errno</span>.<span class="ruby-identifier">zero?</span>
+274:         <span class="ruby-keyword kw">else</span>
+275:           <span class="ruby-keyword kw">true</span>
+276:         <span class="ruby-keyword kw">end</span>
+277:       <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Mysql</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>
+278:         <span class="ruby-keyword kw">false</span>
+279:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001758" class="method-detail">
+        <a name="M001758"></a>
+
+        <div class="method-heading">
+          <a href="#M001758" class="method-signature">
+          <span class="method-name">case_sensitive_equality_operator</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001758-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001758-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 529</span>
+529:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">case_sensitive_equality_operator</span>
+530:         <span class="ruby-value str">&quot;= BINARY&quot;</span>
+531:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001755" class="method-detail">
+        <a name="M001755"></a>
+
+        <div class="method-heading">
+          <a href="#M001755" class="method-signature">
+          <span class="method-name">change_column_null</span><span class="method-args">(table_name, column_name, null, default = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001755-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001755-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 459</span>
+459:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">change_column_null</span>(<span class="ruby-identifier">table_name</span>, <span class="ruby-identifier">column_name</span>, <span class="ruby-identifier">null</span>, <span class="ruby-identifier">default</span> = <span class="ruby-keyword kw">nil</span>)
+460:         <span class="ruby-identifier">column</span> = <span class="ruby-identifier">column_for</span>(<span class="ruby-identifier">table_name</span>, <span class="ruby-identifier">column_name</span>)
+461: 
+462:         <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">null</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">default</span>.<span class="ruby-identifier">nil?</span>
+463:           <span class="ruby-identifier">execute</span>(<span class="ruby-node">&quot;UPDATE #{quote_table_name(table_name)} SET #{quote_column_name(column_name)}=#{quote(default)} WHERE #{quote_column_name(column_name)} IS NULL&quot;</span>)
+464:         <span class="ruby-keyword kw">end</span>
+465: 
+466:         <span class="ruby-identifier">change_column</span> <span class="ruby-identifier">table_name</span>, <span class="ruby-identifier">column_name</span>, <span class="ruby-identifier">column</span>.<span class="ruby-identifier">sql_type</span>, <span class="ruby-identifier">:null</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">null</span>
+467:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001751" class="method-detail">
+        <a name="M001751"></a>
+
+        <div class="method-heading">
+          <a href="#M001751" class="method-signature">
+          <span class="method-name">charset</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the database character set.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001751-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001751-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 405</span>
+405:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">charset</span>
+406:         <span class="ruby-identifier">show_variable</span> <span class="ruby-value str">'character_set_database'</span>
+407:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001752" class="method-detail">
+        <a name="M001752"></a>
+
+        <div class="method-heading">
+          <a href="#M001752" class="method-signature">
+          <span class="method-name">collation</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the database <a href="MysqlAdapter.html#M001752">collation</a>
+strategy.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001752-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001752-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 410</span>
+410:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">collation</span>
+411:         <span class="ruby-identifier">show_variable</span> <span class="ruby-value str">'collation_database'</span>
+412:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001749" class="method-detail">
+        <a name="M001749"></a>
+
+        <div class="method-heading">
+          <a href="#M001749" class="method-signature">
+          <span class="method-name">create_database</span><span class="method-args">(name, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Create a <a href="MysqlAdapter.html#M001740">new</a> MySQL database with
+optional <tt>:<a href="MysqlAdapter.html#M001751">charset</a></tt> and
+<tt>:<a href="MysqlAdapter.html#M001752">collation</a></tt>. Charset
+defaults to utf8.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  create_database 'charset_test', :charset =&gt; 'latin1', :collation =&gt; 'latin1_bin'
+  create_database 'matt_development'
+  create_database 'matt_development', :charset =&gt; :big5
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001749-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001749-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 388</span>
+388:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_database</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+389:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:collation</span>]
+390:           <span class="ruby-identifier">execute</span> <span class="ruby-node">&quot;CREATE DATABASE `#{name}` DEFAULT CHARACTER SET `#{options[:charset] || 'utf8'}` COLLATE `#{options[:collation]}`&quot;</span>
+391:         <span class="ruby-keyword kw">else</span>
+392:           <span class="ruby-identifier">execute</span> <span class="ruby-node">&quot;CREATE DATABASE `#{name}` DEFAULT CHARACTER SET `#{options[:charset] || 'utf8'}`&quot;</span>
+393:         <span class="ruby-keyword kw">end</span>
+394:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001750" class="method-detail">
+        <a name="M001750"></a>
+
+        <div class="method-heading">
+          <a href="#M001750" class="method-signature">
+          <span class="method-name">current_database</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001750-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001750-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 400</span>
+400:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">current_database</span>
+401:         <span class="ruby-identifier">select_value</span> <span class="ruby-value str">'SELECT DATABASE() as db'</span>
+402:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001746" class="method-detail">
+        <a name="M001746"></a>
+
+        <div class="method-heading">
+          <a href="#M001746" class="method-signature">
+          <span class="method-name">disconnect!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001746-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001746-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 286</span>
+286:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">disconnect!</span>
+287:         <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">close</span> <span class="ruby-keyword kw">rescue</span> <span class="ruby-keyword kw">nil</span>
+288:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001753" class="method-detail">
+        <a name="M001753"></a>
+
+        <div class="method-heading">
+          <a href="#M001753" class="method-signature">
+          <span class="method-name">drop_table</span><span class="method-args">(table_name, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001753-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001753-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 420</span>
+420:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">drop_table</span>(<span class="ruby-identifier">table_name</span>, <span class="ruby-identifier">options</span> = {})
+421:         <span class="ruby-keyword kw">super</span>(<span class="ruby-identifier">table_name</span>, <span class="ruby-identifier">options</span>)
+422:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001759" class="method-detail">
+        <a name="M001759"></a>
+
+        <div class="method-heading">
+          <a href="#M001759" class="method-signature">
+          <span class="method-name">limited_update_conditions</span><span class="method-args">(where_sql, quoted_table_name, quoted_primary_key)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001759-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001759-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 533</span>
+533:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">limited_update_conditions</span>(<span class="ruby-identifier">where_sql</span>, <span class="ruby-identifier">quoted_table_name</span>, <span class="ruby-identifier">quoted_primary_key</span>)
+534:         <span class="ruby-identifier">where_sql</span>
+535:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001741" class="method-detail">
+        <a name="M001741"></a>
+
+        <div class="method-heading">
+          <a href="#M001741" class="method-signature">
+          <span class="method-name">quote</span><span class="method-args">(value, column = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+QUOTING ==================================================
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001741-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001741-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 218</span>
+218:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">quote</span>(<span class="ruby-identifier">value</span>, <span class="ruby-identifier">column</span> = <span class="ruby-keyword kw">nil</span>)
+219:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">column</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:binary</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:string_to_binary</span>)
+220:           <span class="ruby-identifier">s</span> = <span class="ruby-identifier">column</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">string_to_binary</span>(<span class="ruby-identifier">value</span>).<span class="ruby-identifier">unpack</span>(<span class="ruby-value str">&quot;H*&quot;</span>)[<span class="ruby-value">0</span>]
+221:           <span class="ruby-node">&quot;x'#{s}'&quot;</span>
+222:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">BigDecimal</span>)
+223:           <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>(<span class="ruby-value str">&quot;F&quot;</span>)
+224:         <span class="ruby-keyword kw">else</span>
+225:           <span class="ruby-keyword kw">super</span>
+226:         <span class="ruby-keyword kw">end</span>
+227:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001743" class="method-detail">
+        <a name="M001743"></a>
+
+        <div class="method-heading">
+          <a href="#M001743" class="method-signature">
+          <span class="method-name">quoted_false</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001743-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001743-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 245</span>
+245:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">quoted_false</span>
+246:         <span class="ruby-constant">QUOTED_FALSE</span>
+247:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001742" class="method-detail">
+        <a name="M001742"></a>
+
+        <div class="method-heading">
+          <a href="#M001742" class="method-signature">
+          <span class="method-name">quoted_true</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001742-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001742-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 241</span>
+241:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">quoted_true</span>
+242:         <span class="ruby-constant">QUOTED_TRUE</span>
+243:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001745" class="method-detail">
+        <a name="M001745"></a>
+
+        <div class="method-heading">
+          <a href="#M001745" class="method-signature">
+          <span class="method-name">reconnect!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001745-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001745-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 281</span>
+281:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reconnect!</span>
+282:         <span class="ruby-identifier">disconnect!</span>
+283:         <span class="ruby-identifier">connect</span>
+284:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001754" class="method-detail">
+        <a name="M001754"></a>
+
+        <div class="method-heading">
+          <a href="#M001754" class="method-signature">
+          <span class="method-name">rename_table</span><span class="method-args">(table_name, new_name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001754-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001754-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 450</span>
+450:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rename_table</span>(<span class="ruby-identifier">table_name</span>, <span class="ruby-identifier">new_name</span>)
+451:         <span class="ruby-identifier">execute</span> <span class="ruby-node">&quot;RENAME TABLE #{quote_table_name(table_name)} TO #{quote_table_name(new_name)}&quot;</span>
+452:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001747" class="method-detail">
+        <a name="M001747"></a>
+
+        <div class="method-heading">
+          <a href="#M001747" class="method-signature">
+          <span class="method-name">reset!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001747-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001747-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 290</span>
+290:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reset!</span>
+291:         <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:change_user</span>)
+292:           <span class="ruby-comment cmt"># See http://bugs.mysql.com/bug.php?id=33540 -- the workaround way to</span>
+293:           <span class="ruby-comment cmt"># reset the connection is to change the user to the same user.</span>
+294:           <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">change_user</span>(<span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:username</span>], <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:password</span>], <span class="ruby-ivar">@config</span>[<span class="ruby-identifier">:database</span>])
+295:           <span class="ruby-identifier">configure_connection</span>
+296:         <span class="ruby-keyword kw">end</span>
+297:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001748" class="method-detail">
+        <a name="M001748"></a>
+
+        <div class="method-heading">
+          <a href="#M001748" class="method-signature">
+          <span class="method-name">select_rows</span><span class="method-args">(sql, name = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+DATABASE STATEMENTS ======================================
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001748-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001748-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 301</span>
+301:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">select_rows</span>(<span class="ruby-identifier">sql</span>, <span class="ruby-identifier">name</span> = <span class="ruby-keyword kw">nil</span>)
+302:         <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">query_with_result</span> = <span class="ruby-keyword kw">true</span>
+303:         <span class="ruby-identifier">result</span> = <span class="ruby-identifier">execute</span>(<span class="ruby-identifier">sql</span>, <span class="ruby-identifier">name</span>)
+304:         <span class="ruby-identifier">rows</span> = []
+305:         <span class="ruby-identifier">result</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> <span class="ruby-identifier">rows</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">row</span> }
+306:         <span class="ruby-identifier">result</span>.<span class="ruby-identifier">free</span>
+307:         <span class="ruby-identifier">rows</span>
+308:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001757" class="method-detail">
+        <a name="M001757"></a>
+
+        <div class="method-heading">
+          <a href="#M001757" class="method-signature">
+          <span class="method-name">show_variable</span><span class="method-args">(name)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+SHOW VARIABLES LIKE &#8216;name&#8216;
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001757-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001757-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 515</span>
+515:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">show_variable</span>(<span class="ruby-identifier">name</span>)
+516:         <span class="ruby-identifier">variables</span> = <span class="ruby-identifier">select_all</span>(<span class="ruby-node">&quot;SHOW VARIABLES LIKE '#{name}'&quot;</span>)
+517:         <span class="ruby-identifier">variables</span>.<span class="ruby-identifier">first</span>[<span class="ruby-value str">'Value'</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">variables</span>.<span class="ruby-identifier">empty?</span>
+518:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001756" class="method-detail">
+        <a name="M001756"></a>
+
+        <div class="method-heading">
+          <a href="#M001756" class="method-signature">
+          <span class="method-name">type_to_sql</span><span class="method-args">(type, limit = nil, precision = nil, scale = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Maps logical <a href="../../Rails.html">Rails</a> types to MySQL-specific
+data types.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001756-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001756-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/activerecord/lib/active_record/connection_adapters/mysql_adapter.rb, line 500</span>
+500:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">type_to_sql</span>(<span class="ruby-identifier">type</span>, <span class="ruby-identifier">limit</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">precision</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">scale</span> = <span class="ruby-keyword kw">nil</span>)
+501:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">super</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'integer'</span>
+502: 
+503:         <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">limit</span>
+504:         <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span>; <span class="ruby-value str">'tinyint'</span>
+505:         <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span>; <span class="ruby-value str">'smallint'</span>
+506:         <span class="ruby-keyword kw">when</span> <span class="ruby-value">3</span>; <span class="ruby-value str">'mediumint'</span>
+507:         <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>, <span class="ruby-value">4</span>, <span class="ruby-value">11</span>; <span class="ruby-value str">'int(11)'</span>  <span class="ruby-comment cmt"># compatibility with MySQL default</span>
+508:         <span class="ruby-keyword kw">when</span> <span class="ruby-value">5</span><span class="ruby-operator">..</span><span class="ruby-value">8</span>; <span class="ruby-value str">'bigint'</span>
+509:         <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">raise</span>(<span class="ruby-constant">ActiveRecordError</span>, <span class="ruby-node">&quot;No integer type has byte size #{limit}&quot;</span>)
+510:         <span class="ruby-keyword kw">end</span>
+511:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

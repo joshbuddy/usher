@@ -8,7 +8,7 @@ begin
     s.email = "joshbuddy@gmail.com"
     s.homepage = "http://github.com/joshbuddy/usher"
     s.authors = ["Joshua Hull", 'Jakub Šťastný', 'Daniel Neighman', 'Daniel Vartanov'].sort
-    s.files = FileList["[A-Z]*", "{lib,spec,rails}/**/*"]
+    s.files = FileList["[A-Z]*", "{lib}/**/*"]
     s.add_dependency 'fuzzyhash', '>=0.0.11'
     s.rubyforge_project = 'joshbuddy-usher'
   end
@@ -19,13 +19,27 @@ end
 
 require 'spec'
 require 'spec/rake/spectask'
-task :spec => 'spec:all'
+task :spec => ['spec:private', 'spec:rails2_2', 'spec:rails2_3']
 namespace(:spec) do
-  Spec::Rake::SpecTask.new(:all) do |t|
+  Spec::Rake::SpecTask.new(:private) do |t|
     t.spec_opts ||= []
     t.spec_opts << "-rubygems"
     t.spec_opts << "--options" << "spec/spec.opts"
-    t.spec_files = FileList['spec/**/*_spec.rb']
+    t.spec_files = FileList['spec/private/**/*_spec.rb']
+  end
+
+  Spec::Rake::SpecTask.new(:rails2_2) do |t|
+    t.spec_opts ||= []
+    t.spec_opts << "-rubygems"
+    t.spec_opts << "--options" << "spec/spec.opts"
+    t.spec_files = FileList['spec/rails2_2/**/*_spec.rb']
+  end
+
+  Spec::Rake::SpecTask.new(:rails2_3) do |t|
+    t.spec_opts ||= []
+    t.spec_opts << "-rubygems"
+    t.spec_opts << "--options" << "spec/spec.opts"
+    t.spec_files = FileList['spec/rails2_3/**/*_spec.rb']
   end
 
 end

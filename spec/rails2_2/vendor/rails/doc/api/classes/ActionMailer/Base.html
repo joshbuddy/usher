@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ActionMailer::Base</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ActionMailer::Base</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/vendor/rails/actionmailer/lib/action_mailer/base_rb.html">
+                vendor/rails/actionmailer/lib/action_mailer/base.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                <a href="../Object.html">
+                Object
+               </a>
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Action Mailer allows you to send email from your application using a mailer
+model and views.
+</p>
+<h1>Mailer Models</h1>
+<p>
+To use Action Mailer, you need to create a mailer model.
+</p>
+<pre>
+  $ script/generate mailer Notifier
+</pre>
+<p>
+The generated model inherits from <a
+href="Base.html">ActionMailer::Base</a>. Emails are defined by creating
+methods within the model which are then used to set variables to be used in
+the mail template, to change options on the mail, or to add attachments.
+</p>
+<p>
+Examples:
+</p>
+<pre>
+ class Notifier &lt; ActionMailer::Base
+   def signup_notification(recipient)
+     recipients recipient.email_address_with_name
+     from       &quot;system@example.com&quot;
+     subject    &quot;New account information&quot;
+     body       :account =&gt; recipient
+   end
+ end
+</pre>
+<p>
+Mailer methods have the following configuration methods available.
+</p>
+<ul>
+<li><tt>recipients</tt> - Takes one or more email addresses. These addresses
+are where your email will be delivered to. Sets the <tt>To:</tt> header.
+
+</li>
+<li><tt>subject</tt> - The subject of your email. Sets the <tt>Subject:</tt>
+header.
+
+</li>
+<li><tt>from</tt> - Who the email you are sending is from. Sets the
+<tt>From:</tt> header.
+
+</li>
+<li><tt>cc</tt> - Takes one or more email addresses. These addresses will <a
+href="Base.html#M001342">receive</a> a carbon copy of your email. Sets the
+<tt>Cc:</tt> header.
+
+</li>
+<li><tt>bcc</tt> - Takes one or more email addresses. These addresses will <a
+href="Base.html#M001342">receive</a> a blind carbon copy of your email.
+Sets the <tt>Bcc:</tt> header.
+
+</li>
+<li><tt>reply_to</tt> - Takes one or more email addresses. These addresses will
+be listed as the default recipients when replying to your email. Sets the
+<tt>Reply-To:</tt> header.
+
+</li>
+<li><tt>sent_on</tt> - The date on which the message was sent. If not set, the
+header wil be set by the delivery agent.
+
+</li>
+<li><tt>content_type</tt> - Specify the content type of the message. Defaults
+to <tt>text/plain</tt>.
+
+</li>
+<li><tt>headers</tt> - Specify additional headers to be set for the message,
+e.g. <tt>headers &#8216;X-Mail-Count&#8217; =&gt; 107370</tt>.
+
+</li>
+</ul>
+<p>
+When a <tt>headers &#8216;return-path&#8216;</tt> is specified, that value
+will be used as the &#8216;envelope from&#8217; address. Setting this is
+useful when you want delivery notifications sent to a different address
+than the one in <tt>from</tt>.
+</p>
+<p>
+The <tt>body</tt> method has special behavior. It takes a hash which
+generates an instance variable named after each key in the hash containing
+the value that that key points to.
+</p>
+<p>
+So, for example, <tt>body :account =&gt; recipient</tt> would result in an
+instance variable <tt>@account</tt> with the value of <tt>recipient</tt>
+being accessible in the view.
+</p>
+<h1>Mailer views</h1>
+<p>
+Like Action Controller, each mailer class has a corresponding view
+directory in which each method of the class looks for a template with its
+name. To define a template to be used with a mailing, create an
+<tt>.erb</tt> file with the same name as the method in your mailer model.
+For example, in the mailer defined above, the template at
+<tt>app/views/notifier/signup_notification.erb</tt> would be used to
+generate the email.
+</p>
+<p>
+Variables defined in the model are accessible as instance variables in the
+view.
+</p>
+<p>
+Emails by default are sent in plain text, so a sample view for our model
+example might look like this:
+</p>
+<pre>
+  Hi &lt;%= @account.name %&gt;,
+  Thanks for joining our service! Please check back often.
+</pre>
+<p>
+You can even use Action Pack helpers in these views. For example:
+</p>
+<pre>
+  You got a new note!
+  &lt;%= truncate(note.body, 25) %&gt;
+</pre>
+<h1>Generating URLs</h1>
+<p>
+URLs can be generated in mailer views using <tt>url_for</tt> or named
+routes. Unlike controllers from Action Pack, the mailer instance
+doesn&#8216;t have any context about the incoming request, so you&#8216;ll
+need to provide all of the details needed to generate a URL.
+</p>
+<p>
+When using <tt>url_for</tt> you&#8216;ll need to provide the
+<tt>:host</tt>, <tt>:controller</tt>, and <tt>:action</tt>:
+</p>
+<pre>
+  &lt;%= url_for(:host =&gt; &quot;example.com&quot;, :controller =&gt; &quot;welcome&quot;, :action =&gt; &quot;greeting&quot;) %&gt;
+</pre>
+<p>
+When using named routes you only need to supply the <tt>:host</tt>:
+</p>
+<pre>
+  &lt;%= users_url(:host =&gt; &quot;example.com&quot;) %&gt;
+</pre>
+<p>
+You will want to avoid using the <tt>name_of_route_path</tt> form of named
+routes because it doesn&#8216;t make sense to generate relative URLs in
+email messages.
+</p>
+<p>
+It is also possible to set a default host that will be used in all mailers
+by setting the <tt>:host</tt> option in the
+<tt>ActionMailer::Base.default_url_options</tt> hash as follows:
+</p>
+<pre>
+  ActionMailer::Base.default_url_options[:host] = &quot;example.com&quot;
+</pre>
+<p>
+This can also be set as a configuration option in
+<tt>config/environment.rb</tt>:
+</p>
+<pre>
+  config.action_mailer.default_url_options = { :host =&gt; &quot;example.com&quot; }
+</pre>
+<p>
+If you do decide to set a default <tt>:host</tt> for your mailers you will
+want to use the <tt>:only_path =&gt; false</tt> option when using
+<tt>url_for</tt>. This will ensure that absolute URLs are generated because
+the <tt>url_for</tt> view helper will, by default, generate relative URLs
+when a <tt>:host</tt> option isn&#8216;t explicitly provided.
+</p>
+<h1>Sending mail</h1>
+<p>
+Once a mailer action and template are defined, you can <a
+href="Base.html#M001343">deliver</a> your message or create it and save it
+for delivery later:
+</p>
+<pre>
+  Notifier.deliver_signup_notification(david) # sends the email
+  mail = Notifier.create_signup_notification(david)  # =&gt; a tmail object
+  Notifier.deliver(mail)
+</pre>
+<p>
+You never instantiate your mailer class. Rather, your delivery instance
+methods are automatically wrapped in class methods that start with the word
+<tt>deliver_</tt> followed by the name of the mailer method that you would
+like to <a href="Base.html#M001343">deliver</a>. The
+<tt>signup_notification</tt> method defined above is delivered by invoking
+<tt>Notifier.deliver_signup_notification</tt>.
+</p>
+<h1>HTML email</h1>
+<p>
+To send mail as HTML, make sure your view (the <tt>.erb</tt> file)
+generates HTML and set the content type to html.
+</p>
+<pre>
+  class MyMailer &lt; ActionMailer::Base
+    def signup_notification(recipient)
+      recipients   recipient.email_address_with_name
+      subject      &quot;New account information&quot;
+      from         &quot;system@example.com&quot;
+      body         :account =&gt; recipient
+      content_type &quot;text/html&quot;
+    end
+  end
+</pre>
+<h1>Multipart email</h1>
+<p>
+You can explicitly specify multipart messages:
+</p>
+<pre>
+  class ApplicationMailer &lt; ActionMailer::Base
+    def signup_notification(recipient)
+      recipients      recipient.email_address_with_name
+      subject         &quot;New account information&quot;
+      from            &quot;system@example.com&quot;
+      content_type    &quot;multipart/alternative&quot;
+
+      part :content_type =&gt; &quot;text/html&quot;,
+        :body =&gt; render_message(&quot;signup-as-html&quot;, :account =&gt; recipient)
+
+      part &quot;text/plain&quot; do |p|
+        p.body = render_message(&quot;signup-as-plain&quot;, :account =&gt; recipient)
+        p.transfer_encoding = &quot;base64&quot;
+      end
+    end
+  end
+</pre>
+<p>
+Multipart messages can also be used implicitly because Action Mailer will
+automatically detect and use multipart templates, where each template is
+named after the name of the action, followed by the content type. Each such
+detected template will be added as separate part to the message.
+</p>
+<p>
+For example, if the following templates existed:
+</p>
+<ul>
+<li>signup_notification.text.plain.erb
+
+</li>
+<li>signup_notification.text.html.erb
+
+</li>
+<li>signup_notification.text.xml.builder
+
+</li>
+<li>signup_notification.text.x-yaml.erb
+
+</li>
+</ul>
+<p>
+Each would be rendered and added as a separate part to the message, with
+the corresponding content type. The content type for the entire message is
+automatically set to <tt>multipart/alternative</tt>, which indicates that
+the email contains multiple different representations of the same email
+body. The same body hash is passed to each template.
+</p>
+<p>
+Implicit template rendering is not performed if any attachments or parts
+have been added to the email. This means that you&#8216;ll have to manually
+add each part to the email and set the content type of the email to
+<tt>multipart/alternative</tt>.
+</p>
+<h1>Attachments</h1>
+<p>
+Attachments can be added by using the <tt>attachment</tt> method.
+</p>
+<p>
+Example:
+</p>
+<pre>
+  class ApplicationMailer &lt; ActionMailer::Base
+    # attachments
+    def signup_notification(recipient)
+      recipients      recipient.email_address_with_name
+      subject         &quot;New account information&quot;
+      from            &quot;system@example.com&quot;
+
+      attachment :content_type =&gt; &quot;image/jpeg&quot;,
+        :body =&gt; File.read(&quot;an-image.jpg&quot;)
+
+      attachment &quot;application/pdf&quot; do |a|
+        a.body = generate_your_pdf_here()
+      end
+    end
+  end
+</pre>
+<h1>Configuration options</h1>
+<p>
+These options are specified on the class level, like <tt><a
+href="Base.html#M001345">ActionMailer::Base.template_root</a> =
+&quot;/my/templates&quot;</tt>
+</p>
+<ul>
+<li><tt><a href="Base.html#M001345">template_root</a></tt> - Determines the
+base from which template references will be made.
+
+</li>
+<li><tt>logger</tt> - the logger is used for generating information on the
+mailing run if available. Can be set to nil for no logging. Compatible with
+both Ruby&#8216;s own <a href="../Logger.html">Logger</a> and Log4r
+loggers.
+
+</li>
+<li><tt>smtp_settings</tt> - Allows detailed configuration for <tt>:smtp</tt>
+delivery method:
+
+<ul>
+<li><tt>:address</tt> - Allows you to use a remote mail server. Just change it
+from its default &quot;localhost&quot; setting.
+
+</li>
+<li><tt>:port</tt> - On the off chance that your mail server doesn&#8216;t run
+on port 25, you can change it.
+
+</li>
+<li><tt>:domain</tt> - If you need to specify a HELO domain, you can do it
+here.
+
+</li>
+<li><tt>:user_name</tt> - If your mail server requires authentication, set the
+username in this setting.
+
+</li>
+<li><tt>:password</tt> - If your mail server requires authentication, set the
+password in this setting.
+
+</li>
+<li><tt>:authentication</tt> - If your mail server requires authentication, you
+need to specify the authentication type here. This is a symbol and one of
+<tt>:plain</tt>, <tt>:login</tt>, <tt>:cram_md5</tt>.
+
+</li>
+</ul>
+</li>
+<li><tt>sendmail_settings</tt> - Allows you to override options for the
+<tt>:sendmail</tt> delivery method.
+
+<ul>
+<li><tt>:location</tt> - The location of the sendmail executable. Defaults to
+<tt>/usr/sbin/sendmail</tt>.
+
+</li>
+<li><tt>:arguments</tt> - The command line arguments. Defaults to <tt>-i
+-t</tt>.
+
+</li>
+</ul>
+</li>
+<li><tt>raise_delivery_errors</tt> - Whether or not errors should be raised if
+the email fails to be delivered.
+
+</li>
+<li><tt>delivery_method</tt> - Defines a delivery method. Possible values are
+<tt>:smtp</tt> (default), <tt>:sendmail</tt>, and <tt>:test</tt>.
+
+</li>
+<li><tt>perform_deliveries</tt> - Determines whether <tt>deliver_*</tt> methods
+are actually carried out. By default they are, but this can be turned off
+to help functional testing.
+
+</li>
+<li><tt>deliveries</tt> - Keeps an array of all the emails sent out through the
+Action Mailer with <tt>delivery_method :test</tt>. Most useful for unit and
+functional testing.
+
+</li>
+<li><tt>default_charset</tt> - The default charset used for the body and to
+encode the subject. Defaults to UTF-8. You can also pick a different
+charset from inside a method with <tt>charset</tt>.
+
+</li>
+<li><tt>default_content_type</tt> - The default content type used for the main
+part of the message. Defaults to &quot;text/plain&quot;. You can also pick
+a different content type from inside a method with <tt>content_type</tt>.
+
+</li>
+<li><tt>default_mime_version</tt> - The default mime version used for the
+message. Defaults to <tt>1.0</tt>. You can also pick a different value from
+inside a method with <tt>mime_version</tt>.
+
+</li>
+<li><tt>default_implicit_parts_order</tt> - When a message is built implicitly
+(i.e. multiple parts are assembled from templates which specify the content
+type in their filenames) this variable controls how the parts are ordered.
+Defaults to <tt>[&quot;text/html&quot;, &quot;text/enriched&quot;,
+&quot;text/plain&quot;]</tt>. Items that appear first in the array have
+higher priority in the mail client and appear last in the mime encoded
+message. You can also pick a different order from inside a method with
+<tt>implicit_parts_order</tt>.
+
+</li>
+</ul>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001340">controller_name</a>&nbsp;&nbsp;
+      <a href="#M001341">controller_path</a>&nbsp;&nbsp;
+      <a href="#M001343">deliver</a>&nbsp;&nbsp;
+      <a href="#M001347">deliver!</a>&nbsp;&nbsp;
+      <a href="#M001339">mailer_name</a>&nbsp;&nbsp;
+      <a href="#M001337">mailer_name</a>&nbsp;&nbsp;
+      <a href="#M001338">mailer_name=</a>&nbsp;&nbsp;
+      <a href="#M001342">receive</a>&nbsp;&nbsp;
+      <a href="#M001344">register_template_extension</a>&nbsp;&nbsp;
+      <a href="#M001345">template_root</a>&nbsp;&nbsp;
+      <a href="#M001346">template_root=</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name">AdvAttrAccessor</span>
+        <span class="include-name">PartContainer</span>
+        <span class="include-name"><a href="../ActionController/UrlWriter.html">ActionController::UrlWriter</a></span>
+        <span class="include-name">ActionController::Layout</span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">action_name</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">default_template_name</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">mail</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+The mail object instance referenced by this mailer.
+
+</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">mailer_name</td>
+          <td class="context-item-value">&nbsp;[W]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">template_name</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M001343" class="method-detail">
+        <a name="M001343"></a>
+
+        <div class="method-heading">
+          <a href="#M001343" class="method-signature">
+          <span class="method-name">deliver</span><span class="method-args">(mail)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Deliver the given mail object directly. This can be used to <a
+href="Base.html#M001343">deliver</a> a preconstructed mail object, like:
+</p>
+<pre>
+  email = MyMailer.create_some_mail(parameters)
+  email.set_some_obscure_header &quot;frobnicate&quot;
+  MyMailer.deliver(email)
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001343-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001343-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 425</span>
+425:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">deliver</span>(<span class="ruby-identifier">mail</span>)
+426:         <span class="ruby-identifier">new</span>.<span class="ruby-identifier">deliver!</span>(<span class="ruby-identifier">mail</span>)
+427:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001339" class="method-detail">
+        <a name="M001339"></a>
+
+        <div class="method-heading">
+          <a href="#M001339" class="method-signature">
+          <span class="method-name">mailer_name</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001339-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001339-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 376</span>
+376:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mailer_name</span>
+377:         <span class="ruby-ivar">@mailer_name</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">underscore</span>
+378:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001342" class="method-detail">
+        <a name="M001342"></a>
+
+        <div class="method-heading">
+          <a href="#M001342" class="method-signature">
+          <span class="method-name">receive</span><span class="method-args">(raw_email)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Receives a raw email, parses it into an email object, decodes it,
+instantiates a new mailer, and passes the email object to the mailer
+object&#8216;s <tt><a href="Base.html#M001342">receive</a></tt> method. If
+you want your mailer to be able to process incoming messages, you&#8216;ll
+need to implement a <tt><a href="Base.html#M001342">receive</a></tt> method
+that accepts the email object as a parameter:
+</p>
+<pre>
+  class MyMailer &lt; ActionMailer::Base
+    def receive(mail)
+      ...
+    end
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001342-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001342-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 412</span>
+412:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">receive</span>(<span class="ruby-identifier">raw_email</span>)
+413:         <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Received mail:\n #{raw_email}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">nil?</span>
+414:         <span class="ruby-identifier">mail</span> = <span class="ruby-constant">TMail</span><span class="ruby-operator">::</span><span class="ruby-constant">Mail</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">raw_email</span>)
+415:         <span class="ruby-identifier">mail</span>.<span class="ruby-identifier">base64_decode</span>
+416:         <span class="ruby-identifier">new</span>.<span class="ruby-identifier">receive</span>(<span class="ruby-identifier">mail</span>)
+417:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001344" class="method-detail">
+        <a name="M001344"></a>
+
+        <div class="method-heading">
+          <a href="#M001344" class="method-signature">
+          <span class="method-name">register_template_extension</span><span class="method-args">(extension)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001344-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001344-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 429</span>
+429:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">register_template_extension</span>(<span class="ruby-identifier">extension</span>)
+430:         <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">Deprecation</span>.<span class="ruby-identifier">warn</span>(
+431:           <span class="ruby-value str">&quot;ActionMailer::Base.register_template_extension has been deprecated.&quot;</span> <span class="ruby-operator">+</span>
+432:           <span class="ruby-value str">&quot;Use ActionView::Base.register_template_extension instead&quot;</span>, <span class="ruby-identifier">caller</span>)
+433:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001345" class="method-detail">
+        <a name="M001345"></a>
+
+        <div class="method-heading">
+          <a href="#M001345" class="method-signature">
+          <span class="method-name">template_root</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001345-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001345-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 435</span>
+435:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">template_root</span>
+436:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">view_paths</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">view_paths</span>.<span class="ruby-identifier">first</span>
+437:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001346" class="method-detail">
+        <a name="M001346"></a>
+
+        <div class="method-heading">
+          <a href="#M001346" class="method-signature">
+          <span class="method-name">template_root=</span><span class="method-args">(root)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001346-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001346-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 439</span>
+439:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">template_root=</span>(<span class="ruby-identifier">root</span>)
+440:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">view_paths</span> = <span class="ruby-constant">ActionView</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">process_view_paths</span>(<span class="ruby-identifier">root</span>)
+441:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001340" class="method-detail">
+        <a name="M001340"></a>
+
+        <div class="method-heading">
+          <span class="method-name">controller_name</span><span class="method-args">(value = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Base.html#M001337">mailer_name</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001341" class="method-detail">
+        <a name="M001341"></a>
+
+        <div class="method-heading">
+          <span class="method-name">controller_path</span><span class="method-args">(value = nil)</span>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Alias for <a href="Base.html#M001337">mailer_name</a>
+</p>
+        </div>
+      </div>
+
+      <div id="method-M001347" class="method-detail">
+        <a name="M001347"></a>
+
+        <div class="method-heading">
+          <a href="#M001347" class="method-signature">
+          <span class="method-name">deliver!</span><span class="method-args">(mail = @mail)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Delivers a TMail::Mail object. By default, it delivers the cached mail
+object (from the <tt>create!</tt> method). If no cached mail object exists,
+and no alternate has been given as the parameter, this will fail.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001347-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001347-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 518</span>
+518:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">deliver!</span>(<span class="ruby-identifier">mail</span> = <span class="ruby-ivar">@mail</span>)
+519:       <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;no mail object available for delivery!&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">mail</span>
+520:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">nil?</span>
+521:         <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>  <span class="ruby-node">&quot;Sent mail to #{Array(recipients).join(', ')}&quot;</span>
+522:         <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-node">&quot;\n#{mail.encoded}&quot;</span>
+523:       <span class="ruby-keyword kw">end</span>
+524: 
+525:       <span class="ruby-keyword kw">begin</span>
+526:         <span class="ruby-identifier">__send__</span>(<span class="ruby-node">&quot;perform_delivery_#{delivery_method}&quot;</span>, <span class="ruby-identifier">mail</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">perform_deliveries</span>
+527:       <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>  <span class="ruby-comment cmt"># Net::SMTP errors or sendmail pipe errors</span>
+528:         <span class="ruby-identifier">raise</span> <span class="ruby-identifier">e</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">raise_delivery_errors</span>
+529:       <span class="ruby-keyword kw">end</span>
+530: 
+531:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">mail</span>
+532:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001337" class="method-detail">
+        <a name="M001337"></a>
+
+        <div class="method-heading">
+          <a href="#M001337" class="method-signature">
+          <span class="method-name">mailer_name</span><span class="method-args">(value = nil)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Override the mailer name, which defaults to an inflected version of the
+mailer&#8216;s class name. If you want to use a template in a non-standard
+location, you can use this to specify that location.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001337-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001337-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 357</span>
+357:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mailer_name</span>(<span class="ruby-identifier">value</span> = <span class="ruby-keyword kw">nil</span>)
+358:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">value</span>
+359:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">mailer_name</span> = <span class="ruby-identifier">value</span>
+360:       <span class="ruby-keyword kw">else</span>
+361:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">mailer_name</span>
+362:       <span class="ruby-keyword kw">end</span>
+363:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001338" class="method-detail">
+        <a name="M001338"></a>
+
+        <div class="method-heading">
+          <a href="#M001338" class="method-signature">
+          <span class="method-name">mailer_name=</span><span class="method-args">(value)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001338-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001338-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionmailer/lib/action_mailer/base.rb, line 365</span>
+365:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mailer_name=</span>(<span class="ruby-identifier">value</span>)
+366:       <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">mailer_name</span> = <span class="ruby-identifier">value</span>
+367:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: ActionView::Helpers::JavaScriptHelper</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">ActionView::Helpers::JavaScriptHelper</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/vendor/rails/actionpack/lib/action_view/helpers/javascript_helper_rb.html">
+                vendor/rails/actionpack/lib/action_view/helpers/javascript_helper.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+Provides functionality for working with JavaScript in your views.
+</p>
+<h2>Ajax, controls and visual effects</h2>
+<ul>
+<li>For information on using Ajax, see <a
+href="PrototypeHelper.html">ActionView::Helpers::PrototypeHelper</a>.
+
+</li>
+<li>For information on using controls and visual effects, see <a
+href="ScriptaculousHelper.html">ActionView::Helpers::ScriptaculousHelper</a>.
+
+</li>
+</ul>
+<h2>Including the JavaScript libraries into your pages</h2>
+<p>
+<a href="../../Rails.html">Rails</a> includes the Prototype JavaScript
+framework and the Scriptaculous JavaScript controls and visual effects
+library. If you wish to use these libraries and their helpers (<a
+href="PrototypeHelper.html">ActionView::Helpers::PrototypeHelper</a> and <a
+href="ScriptaculousHelper.html">ActionView::Helpers::ScriptaculousHelper</a>),
+you must do one of the following:
+</p>
+<ul>
+<li>Use <tt>&lt;%= javascript_include_tag :defaults %&gt;</tt> in the HEAD
+section of your page (recommended): This function will return references to
+the JavaScript files created by the <tt>rails</tt> command in your
+<tt>public/javascripts</tt> directory. Using it is recommended as the
+browser can then cache the libraries instead of fetching all the functions
+anew on every request.
+
+</li>
+<li>Use <tt>&lt;%= javascript_include_tag &#8216;prototype&#8217; %&gt;</tt>:
+As above, but will only include the Prototype core library, which means you
+are able to use all basic AJAX functionality. For the Scriptaculous-based
+JavaScript helpers, like visual effects, autocompletion, drag and drop and
+so on, you should use the method described above.
+
+</li>
+</ul>
+<p>
+For documentation on <tt>javascript_include_tag</tt> see <a
+href="AssetTagHelper.html">ActionView::Helpers::AssetTagHelper</a>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M001559">array_or_string_for_javascript</a>&nbsp;&nbsp;
+      <a href="#M001555">button_to_function</a>&nbsp;&nbsp;
+      <a href="#M001556">escape_javascript</a>&nbsp;&nbsp;
+      <a href="#M001557">javascript_tag</a>&nbsp;&nbsp;
+      <a href="#M001554">link_to_function</a>&nbsp;&nbsp;
+      <a href="#M001558">options_for_javascript</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="PrototypeHelper.html">PrototypeHelper</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">JAVASCRIPT_PATH</td>
+          <td>=</td>
+          <td class="context-item-value">File.join(File.dirname(__FILE__), 'javascripts')</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">JS_ESCAPE_MAP</td>
+          <td>=</td>
+          <td class="context-item-value">{         '\\'    =&gt; '\\\\',         '&lt;/'    =&gt; '&lt;\/',         &quot;\r\n&quot;  =&gt; '\n',         &quot;\n&quot;    =&gt; '\n',         &quot;\r&quot;    =&gt; '\n',         '&quot;'     =&gt; '\\&quot;',         &quot;'&quot;     =&gt; &quot;\\'&quot; }</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M001555" class="method-detail">
+        <a name="M001555"></a>
+
+        <div class="method-heading">
+          <a href="#M001555" class="method-signature">
+          <span class="method-name">button_to_function</span><span class="method-args">(name, *args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a button with the given <tt>name</tt> text that&#8216;ll trigger a
+JavaScript <tt>function</tt> using the onclick handler.
+</p>
+<p>
+The first argument <tt>name</tt> is used as the button&#8216;s value or
+display text.
+</p>
+<p>
+The next arguments are optional and may include the javascript function
+definition and a hash of html_options.
+</p>
+<p>
+The <tt>function</tt> argument can be omitted in favor of an
+<tt>update_page</tt> block, which evaluates to a string when the template
+is rendered (instead of making an Ajax request first).
+</p>
+<p>
+The <tt>html_options</tt> will accept a hash of html attributes for the
+link tag. Some examples are :class =&gt; &quot;nav_button&quot;, :id =&gt;
+&quot;articles_nav_button&quot;
+</p>
+<p>
+Note: if you choose to specify the javascript function in a block, but
+would like to pass html_options, set the <tt>function</tt> parameter to nil
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  button_to_function &quot;Greeting&quot;, &quot;alert('Hello world!')&quot;
+  button_to_function &quot;Delete&quot;, &quot;if (confirm('Really?')) do_delete()&quot;
+  button_to_function &quot;Details&quot; do |page|
+    page[:details].visual_effect :toggle_slide
+  end
+  button_to_function &quot;Details&quot;, :class =&gt; &quot;details_button&quot; do |page|
+    page[:details].visual_effect :toggle_slide
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001555-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001555-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/javascript_helper.rb, line 122</span>
+122:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">button_to_function</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+123:         <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">extract_options!</span>.<span class="ruby-identifier">symbolize_keys</span>
+124: 
+125:         <span class="ruby-identifier">function</span> = <span class="ruby-identifier">block_given?</span> <span class="ruby-value">? </span><span class="ruby-identifier">update_page</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">''</span>
+126:         <span class="ruby-identifier">onclick</span> = <span class="ruby-node">&quot;#{&quot;#{html_options[:onclick]}; &quot; if html_options[:onclick]}#{function};&quot;</span>
+127: 
+128:         <span class="ruby-identifier">tag</span>(<span class="ruby-identifier">:input</span>, <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'button'</span>, <span class="ruby-identifier">:value</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">:onclick</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">onclick</span>))
+129:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001556" class="method-detail">
+        <a name="M001556"></a>
+
+        <div class="method-heading">
+          <a href="#M001556" class="method-signature">
+          <span class="method-name">escape_javascript</span><span class="method-args">(javascript)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Escape carrier returns and single and double quotes for JavaScript
+segments.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001556-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001556-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/javascript_helper.rb, line 141</span>
+141:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">escape_javascript</span>(<span class="ruby-identifier">javascript</span>)
+142:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">javascript</span>
+143:           <span class="ruby-identifier">javascript</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/(\\|&lt;\/|\r\n|[\n\r&quot;'])/</span>) { <span class="ruby-constant">JS_ESCAPE_MAP</span>[<span class="ruby-identifier">$1</span>] }
+144:         <span class="ruby-keyword kw">else</span>
+145:           <span class="ruby-value str">''</span>
+146:         <span class="ruby-keyword kw">end</span>
+147:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001557" class="method-detail">
+        <a name="M001557"></a>
+
+        <div class="method-heading">
+          <a href="#M001557" class="method-signature">
+          <span class="method-name">javascript_tag</span><span class="method-args">(content_or_options_with_block = nil, html_options = {}, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a JavaScript tag with the <tt>content</tt> inside. Example:
+</p>
+<pre>
+  javascript_tag &quot;alert('All is good')&quot;
+</pre>
+<p>
+Returns:
+</p>
+<pre>
+  &lt;script type=&quot;text/javascript&quot;&gt;
+  //&lt;![CDATA[
+  alert('All is good')
+  //]]&gt;
+  &lt;/script&gt;
+</pre>
+<p>
+<tt>html_options</tt> may be a hash of attributes for the &lt;script&gt;
+tag. Example:
+</p>
+<pre>
+  javascript_tag &quot;alert('All is good')&quot;, :defer =&gt; 'defer'
+  # =&gt; &lt;script defer=&quot;defer&quot; type=&quot;text/javascript&quot;&gt;alert('All is good')&lt;/script&gt;
+</pre>
+<p>
+Instead of passing the content as an argument, you can also use a block in
+which case, you pass your <tt>html_options</tt> as the first parameter.
+</p>
+<pre>
+  &lt;% javascript_tag :defer =&gt; 'defer' do -%&gt;
+    alert('All is good')
+  &lt;% end -%&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001557-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001557-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/javascript_helper.rb, line 168</span>
+168:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">javascript_tag</span>(<span class="ruby-identifier">content_or_options_with_block</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">html_options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+169:         <span class="ruby-identifier">content</span> =
+170:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+171:             <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">content_or_options_with_block</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">content_or_options_with_block</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)
+172:             <span class="ruby-identifier">capture</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+173:           <span class="ruby-keyword kw">else</span>
+174:             <span class="ruby-identifier">content_or_options_with_block</span>
+175:           <span class="ruby-keyword kw">end</span>
+176: 
+177:         <span class="ruby-identifier">tag</span> = <span class="ruby-identifier">content_tag</span>(<span class="ruby-identifier">:script</span>, <span class="ruby-identifier">javascript_cdata_section</span>(<span class="ruby-identifier">content</span>), <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Mime</span><span class="ruby-operator">::</span><span class="ruby-constant">JS</span>))
+178: 
+179:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_called_from_erb?</span>(<span class="ruby-identifier">block</span>)
+180:           <span class="ruby-identifier">concat</span>(<span class="ruby-identifier">tag</span>)
+181:         <span class="ruby-keyword kw">else</span>
+182:           <span class="ruby-identifier">tag</span>
+183:         <span class="ruby-keyword kw">end</span>
+184:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001554" class="method-detail">
+        <a name="M001554"></a>
+
+        <div class="method-heading">
+          <a href="#M001554" class="method-signature">
+          <span class="method-name">link_to_function</span><span class="method-args">(name, *args, &amp;block)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a link of the given <tt>name</tt> that will trigger a JavaScript
+<tt>function</tt> using the onclick handler and return false after the
+fact.
+</p>
+<p>
+The first argument <tt>name</tt> is used as the link text.
+</p>
+<p>
+The next arguments are optional and may include the javascript function
+definition and a hash of html_options.
+</p>
+<p>
+The <tt>function</tt> argument can be omitted in favor of an
+<tt>update_page</tt> block, which evaluates to a string when the template
+is rendered (instead of making an Ajax request first).
+</p>
+<p>
+The <tt>html_options</tt> will accept a hash of html attributes for the
+link tag. Some examples are :class =&gt; &quot;nav_button&quot;, :id =&gt;
+&quot;articles_nav_button&quot;
+</p>
+<p>
+Note: if you choose to specify the javascript function in a block, but
+would like to pass html_options, set the <tt>function</tt> parameter to nil
+</p>
+<p>
+Examples:
+</p>
+<pre>
+  link_to_function &quot;Greeting&quot;, &quot;alert('Hello world!')&quot;
+    Produces:
+      &lt;a onclick=&quot;alert('Hello world!'); return false;&quot; href=&quot;#&quot;&gt;Greeting&lt;/a&gt;
+
+  link_to_function(image_tag(&quot;delete&quot;), &quot;if (confirm('Really?')) do_delete()&quot;)
+    Produces:
+      &lt;a onclick=&quot;if (confirm('Really?')) do_delete(); return false;&quot; href=&quot;#&quot;&gt;
+        &lt;img src=&quot;/images/delete.png?&quot; alt=&quot;Delete&quot;/&gt;
+      &lt;/a&gt;
+
+  link_to_function(&quot;Show me more&quot;, nil, :id =&gt; &quot;more_link&quot;) do |page|
+    page[:details].visual_effect  :toggle_blind
+    page[:more_link].replace_html &quot;Show me less&quot;
+  end
+    Produces:
+      &lt;a href=&quot;#&quot; id=&quot;more_link&quot; onclick=&quot;try {
+        $(&amp;quot;details&amp;quot;).visualEffect(&amp;quot;toggle_blind&amp;quot;);
+        $(&amp;quot;more_link&amp;quot;).update(&amp;quot;Show me less&amp;quot;);
+      }
+      catch (e) {
+        alert('RJS error:\n\n' + e.toString());
+        alert('$(\&amp;quot;details\&amp;quot;).visualEffect(\&amp;quot;toggle_blind\&amp;quot;);
+        \n$(\&amp;quot;more_link\&amp;quot;).update(\&amp;quot;Show me less\&amp;quot;);');
+        throw e
+      };
+      return false;&quot;&gt;Show me more&lt;/a&gt;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001554-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001554-source">
+<pre>
+    <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/javascript_helper.rb, line 88</span>
+88:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">link_to_function</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+89:         <span class="ruby-identifier">html_options</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">extract_options!</span>.<span class="ruby-identifier">symbolize_keys</span>
+90: 
+91:         <span class="ruby-identifier">function</span> = <span class="ruby-identifier">block_given?</span> <span class="ruby-value">? </span><span class="ruby-identifier">update_page</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">''</span>
+92:         <span class="ruby-identifier">onclick</span> = <span class="ruby-node">&quot;#{&quot;#{html_options[:onclick]}; &quot; if html_options[:onclick]}#{function}; return false;&quot;</span>
+93:         <span class="ruby-identifier">href</span> = <span class="ruby-identifier">html_options</span>[<span class="ruby-identifier">:href</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">'#'</span>
+94: 
+95:         <span class="ruby-identifier">content_tag</span>(<span class="ruby-identifier">:a</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">html_options</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">:href</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">href</span>, <span class="ruby-identifier">:onclick</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">onclick</span>))
+96:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Protected Instance methods</h3>
+
+      <div id="method-M001559" class="method-detail">
+        <a name="M001559"></a>
+
+        <div class="method-heading">
+          <a href="#M001559" class="method-signature">
+          <span class="method-name">array_or_string_for_javascript</span><span class="method-args">(option)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001559-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001559-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/javascript_helper.rb, line 199</span>
+199:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">array_or_string_for_javascript</span>(<span class="ruby-identifier">option</span>)
+200:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">option</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Array</span>)
+201:           <span class="ruby-node">&quot;['#{option.join('\',\'')}']&quot;</span>
+202:         <span class="ruby-keyword kw">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">option</span>.<span class="ruby-identifier">nil?</span>
+203:           <span class="ruby-node">&quot;'#{option}'&quot;</span>
+204:         <span class="ruby-keyword kw">end</span>
+205:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M001558" class="method-detail">
+        <a name="M001558"></a>
+
+        <div class="method-heading">
+          <a href="#M001558" class="method-signature">
+          <span class="method-name">options_for_javascript</span><span class="method-args">(options)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M001558-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M001558-source">
+<pre>
+     <span class="ruby-comment cmt"># File vendor/rails/actionpack/lib/action_view/helpers/javascript_helper.rb, line 191</span>
+191:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">options_for_javascript</span>(<span class="ruby-identifier">options</span>)
+192:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">empty?</span>
+193:           <span class="ruby-value str">'{}'</span>
+194:         <span class="ruby-keyword kw">else</span>
+195:           <span class="ruby-node">&quot;{#{options.keys.map { |k| &quot;#{k}:#{options[k]}&quot; }.sort.join(', ')}}&quot;</span>
+196:         <span class="ruby-keyword kw">end</span>
+197:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
