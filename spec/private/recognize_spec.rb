@@ -332,6 +332,12 @@ describe "Usher route recognition" do
     @route_set.recognize(build_request(:method => "get", :path => "/asdf")).should be_nil
   end
 
+  it "should match a variable inbetween two secondary delimiters" do
+    @route_set.add_route("/o.:slug.gif").to(:test)
+    response = @route_set.recognize(build_request(:method => "get", :path => "/o.help.gif"))
+    response.destination.should == :test
+    response.params.should == [[:slug, "help"]]
+  end
   describe "partial recognition" do
     it "should partially match a route" do
       route = @route_set.add_route("/foo")
