@@ -99,24 +99,21 @@ class Usher
           Response.new(terminates, params, path.join, original_path[0, original_path.size - path.join.size]) :
           Response.new(terminates, params, nil, original_path)
       # terminates or is partial
-      elsif !path.empty? and greedy and match_with_result_output = greedy.match_with_result(whole_path = path.join)
+      elsif greedy && !path.empty? and match_with_result_output = greedy.match_with_result(whole_path = path.join)
         next_path, matched_part = match_with_result_output
         whole_path.slice!(0, matched_part.size)
         params << matched_part if next_path.value.is_a?(Route::Variable)
         next_path.find(request_object, original_path, whole_path.empty? ? whole_path : route_set.splitter.split(whole_path), params)
-      elsif !path.empty? and normal and next_part = normal[path.first] || normal[nil]
+      elsif normal && !path.empty? and next_part = normal[path.first] || normal[nil]
         part = path.shift
         case next_part.value
         when String
         when Route::Variable::Single
-          # get the variable
-          variable = next_part.value
-          # do a validity check
-          variable.valid!(part)
-          # because its a variable, we need to add it to the params array
-          parameter_value = part
+          variable = next_part.value # get the variable
+          variable.valid!(part)      # do a validity check
+          parameter_value = part     # because its a variable, we need to add it to the params array
           if variable.look_ahead
-            until path.empty? || (variable.look_ahead === path.first)           # variables have a look ahead notion,
+            until (variable.look_ahead === path.first) || path.empty?           # variables have a look ahead notion,
               next_path_part = path.shift                                       # and until they are satified,
               parameter_value << next_path_part
             end
@@ -135,10 +132,8 @@ class Usher
               next_part.value.valid!(part)
               params.last << part
             end
-            if path.empty?
+            unless part = path.shift
               break
-            else
-              part = path.shift
             end
           end
         end
