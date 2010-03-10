@@ -24,13 +24,13 @@ class Usher
   #   set.add_route('/test')
   #   set.empty? => false
   def empty?
-    @routes.empty?
+    routes.empty?
   end
 
   # Returns the number of routes
   #
   def route_count
-    @routes.size
+    routes.size
   end
 
   # Resets the route set back to its initial state
@@ -119,7 +119,7 @@ class Usher
   #   set.delete_named_route(:test_route, '/test')
   def delete_named_route(name, path, options = nil)
     delete_route(path, options)
-    @named_routes.delete(name)
+    named_routes.delete(name)
   end
 
   # Attaches a +route+ to a +name+
@@ -128,7 +128,7 @@ class Usher
   #   route = set.add_route('/test')
   #   set.name(:test, route)
   def name(name, route)
-    @named_routes[name.to_sym] = route
+    named_routes[name.to_sym] = route
     route
   end
 
@@ -206,9 +206,9 @@ class Usher
   # * Any other key is interpreted as a requirement for the variable of its name.
   def add_route(path, options = nil)
     route = get_route(path, options)
-    @root.add(route)
-    @routes << route
-    @grapher.add_route(route)
+    root.add(route)
+    routes << route
+    grapher.add_route(route)
     route.parent_route = parent_route if parent_route
     route
   end
@@ -219,8 +219,8 @@ class Usher
   #   set.delete_route('/test')
   def delete_route(path, options = nil)
     route = get_route(path, options)
-    @root.delete(route)
-    @routes = @root.unique_routes
+    root.delete(route)
+    @routes = root.unique_routes
     rebuild_grapher!
     route
   end
@@ -232,11 +232,7 @@ class Usher
   #   route = set.add_route('/test')
   #   set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request, path = request.path)
-    response = @root.find(request, path, @splitter.split(path))
-    if response && !response.path.dynamic?
-      response.path.cached_response ||= response
-    end
-    response
+    root.find(request, path, splitter.split(path))
   end
 
   # Recognizes a +path+ and returns +nil+ or an Usher::Node::Response, which is a struct containing a Usher::Route::Path and an array of arrays containing the extracted parameters. Convenience method for when recognizing on the request object is unneeded.
@@ -255,7 +251,7 @@ class Usher
   #   route = set.add_route('/:controller/:action')
   #   set.path_for_options({:controller => 'test', :action => 'action'}) == path.route => true
   def path_for_options(options)
-    @grapher.find_matching_path(options)
+    grapher.find_matching_path(options)
   end
 
   def parent_route=(route)
@@ -273,10 +269,10 @@ class Usher
       original.routes.each do |route|
         new_route = route.dup
         new_route.router = self
-        @root.add(new_route)
-        @routes << new_route
+        root.add(new_route)
+        routes << new_route
         if name = inverted_named_routes[route]
-          @named_routes[name] = new_route
+          named_routes[name] = new_route
         end
       end
       send(:generator=, original.generator.class.new) if original.can_generate?
@@ -353,7 +349,7 @@ class Usher
 
   def rebuild_grapher!
     @grapher = Grapher.new(self)
-    @routes.each{|r| @grapher.add_route(r)}
+    routes.each{|r| grapher.add_route(r)}
   end
   
 end
