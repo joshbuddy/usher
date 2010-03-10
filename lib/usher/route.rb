@@ -142,9 +142,7 @@ class Usher
       self
     end
 
-    def partial_match?
-      @match_partially
-    end
+    alias_method :partial_match?, :match_partially
 
     private
       attr_writer :grapher
