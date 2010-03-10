@@ -31,19 +31,22 @@ class Usher
           processed_path = parse(unprocessed_path, requirements, default_values)
         when Regexp
           processed_path = [Route::Static::Greedy.new(unprocessed_path)]
+        when nil
+          match_partially = true
         else
           match_partially = false
         end
         
-        unless processed_path.first.is_a?(Route::Util::Group)
+        if processed_path && !processed_path.first.is_a?(Route::Util::Group)
           group = Usher::Route::Util::Group.new(:all, nil)
           processed_path.each{|p| group << p}
           processed_path = group
         end
-        paths = Route::Util.expand_path(processed_path)
+        
+        paths = processed_path.nil? ? [nil] : Route::Util.expand_path(processed_path)
 
         paths.each do |path|
-          path.each_with_index do |part, index|
+          path && path.each_with_index do |part, index|
             part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
             case part
             when Usher::Route::Variable::Glob

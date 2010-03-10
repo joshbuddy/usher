@@ -94,8 +94,8 @@ class Usher
 
     def find(request_object, original_path, path, params = [])
       # terminates or is partial
-      if terminates? && (path.empty? || terminates.route.partial_match? || (route_set.ignore_trailing_delimiters? && path.all?{|p| route_set.delimiters.include?(p)}))
-        terminates.cached_response or terminates.route.partial_match? ?
+      if terminates? && (path.nil? || path.empty? || terminates.route.partial_match? || (route_set.ignore_trailing_delimiters? && path.all?{|p| route_set.delimiters.include?(p)}))
+        terminates.route.partial_match? ?
           Response.new(terminates, params, path.join, original_path[0, original_path.size - path.join.size]) :
           Response.new(terminates, params, nil, original_path)
       # terminates or is partial

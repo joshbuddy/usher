@@ -338,6 +338,14 @@ describe "Usher route recognition" do
     response.destination.should == :test
     response.params.should == [[:slug, "help"]]
   end
+  
+  it "should match a route with no path" do
+    route = @route_set.add_route(nil, :conditions => {:protocol => 'http'}).to(:test)
+    @route_set.recognize(build_request({:method => 'post', :protocol => 'http', :path => '/foo'})).destination.should == :test
+    @route_set.recognize(build_request({:method => 'post', :protocol => 'http', :path => '/bar'})).destination.should == :test
+    @route_set.recognize(build_request({:method => 'post', :protocol => 'https', :path => '/foo'})).should be_nil
+  end
+  
   describe "partial recognition" do
     it "should partially match a route" do
       route = @route_set.add_route("/foo")

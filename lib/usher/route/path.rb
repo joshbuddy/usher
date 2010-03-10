@@ -2,7 +2,7 @@ class Usher
   class Route
     class Path
 
-      attr_accessor :route, :cached_response
+      attr_accessor :route
       attr_reader :parts
 
       def initialize(route, parts)
@@ -67,7 +67,7 @@ class Usher
       private
       def parts=(parts)
         @parts = parts
-        @dynamic = @parts.any?{|p| p.is_a?(Variable)}
+        @dynamic = @parts && @parts.any?{|p| p.is_a?(Variable)}
       end
 
     end
