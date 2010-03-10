@@ -35,7 +35,7 @@ RBench.run(TIMES) do
   end
 
   report "4 levels, 1 greedy" do
-    u.recognize_path('/greedy/controller/action/id').params_as_hash
+    u.recognize_path('/greedy/controller/action/id')
   end
 
 end

@@ -234,7 +234,7 @@ class Usher
   def recognize(request, path = request.path)
     response = @root.find(request, path, @splitter.split(path))
     if response && !response.path.dynamic?
-      response.path.cached_response = response
+      response.path.cached_response ||= response
     end
     response
   end

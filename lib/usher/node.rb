@@ -95,13 +95,9 @@ class Usher
     def find(request_object, original_path, path, params = [])
       # terminates or is partial
       if terminates? && (path.empty? || terminates.route.partial_match? || (route_set.ignore_trailing_delimiters? && path.all?{|p| route_set.delimiters.include?(p)}))
-        if terminates.cached_response
-          terminates.cached_response
-        else
-          terminates.route.partial_match? ?
-            Response.new(terminates, params, path.join, original_path[0, original_path.size - path.join.size]) :
-            Response.new(terminates, params, nil, original_path)
-        end
+        terminates.cached_response or terminates.route.partial_match? ?
+          Response.new(terminates, params, path.join, original_path[0, original_path.size - path.join.size]) :
+          Response.new(terminates, params, nil, original_path)
       # terminates or is partial
       elsif !path.empty? and greedy and match_with_result_output = greedy.match_with_result(whole_path = path.join)
         next_path, matched_part = match_with_result_output
@@ -148,20 +144,22 @@ class Usher
         end
         next_part.find(request_object, original_path, path, params)
       elsif request_method_type
-        return_value = if (specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup))
-          route_set.priority_lookups? ? [ret] : ret
-        end
-
-        if route_set.priority_lookups? || return_value.nil? and general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup)
-          return_value = route_set.priority_lookups? && return_value ? [return_value, ret] : ret
-        end
-
-        unless route_set.priority_lookups?
-          return_value
+        if route_set.priority_lookups?
+          route_candidates = []
+          if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup)
+            route_candidates << ret
+          end
+          if general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup)
+            route_candidates << ret
+          end
+          route_candidates.sort!{|r1, r2| r1.path.route.priority <=> r2.path.route.priority}
+          route_candidates.last
         else
-          return_value = Array(return_value).flatten.compact
-          return_value.sort!{|r1, r2| r1.path.route.priority <=> r2.path.route.priority}
-          return_value.last
+          if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup)
+            ret
+          elsif general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup)
+            ret
+          end
         end
       else
         nil
