@@ -333,8 +333,8 @@ class Usher
       end
     end
 
-    if conditions
-      conditions.keys.all?{|k| request_methods.include?(k)} or raise
+    if conditions && !conditions.empty?
+      conditions.keys.all?{|k| request_methods.include?(k)} or raise("You are trying to use request methods that don't exist in the request_methods supplied #{conditions.keys.join(', ')} -> #{conditions.keys.select{|k| request_methods.include?(k)}.join(", ")}")
     end
 
     if priority

@@ -5,6 +5,8 @@ module CallWithMockRequestMixin
   def call_with_mock_request(url = "/sample", method = "GET", params = Hash.new)
     params.merge!(:method => method)
     request = Rack::MockRequest.new(self)
+    p request
+    p request.request(method, url, params)
     request.request(method, url, params)
   end
 end
