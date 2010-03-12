@@ -67,7 +67,7 @@ class Usher
           end
         end
 
-        Route.new(
+        router.route_class.new(
           unprocessed_path,
           paths,
           router, 

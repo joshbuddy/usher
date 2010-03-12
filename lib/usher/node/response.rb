@@ -1,6 +1,6 @@
 class Usher
   class Node
-    class Response < Struct.new(:path, :params_as_array, :remaining_path, :matched_path)
+    class Response < Struct.new(:path, :params_as_array, :remaining_path, :matched_path, :only_trailing_delimiters)
 
       def params
         @params ||= path.convert_params_array(params_as_array)

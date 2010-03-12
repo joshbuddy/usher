@@ -7,6 +7,21 @@ route_set.extend(CallWithMockRequestMixin)
 
 describe "Usher (for rack) route dispatching" do
   before(:each) do
+    @route_set = Usher::Interface.for(:rack, :redirect_on_trailing_delimiters => true)
+    @route_set.extend(CallWithMockRequestMixin)
+    @app = MockApp.new("Hello World!")
+    @route_set.add('/sample').to(@app)
+  end
+
+  it "should dispatch a request" do
+    response = @route_set.call_with_mock_request('/sample/')
+    response.headers["Location"].should == "/sample"
+  end
+
+end
+
+describe "Usher (for rack) route dispatching" do
+  before(:each) do
     route_set.reset!
     @app = MockApp.new("Hello World!")
   end

@@ -1,15 +1,14 @@
 require "rack"
-require File.join(File.dirname(__FILE__), 'rack', 'route')
+require File.join('usher', 'interface', 'rack', 'route')
 
 class Usher
   module Interface
     class Rack
-
+      
       ENV_KEY_RESPONSE = 'usher.response'
       ENV_KEY_PARAMS = 'usher.params'
       ENV_KEY_DEFAULT_ROUTER = 'usher.router'
-      
-      
+
       # Middleware for using Usher's rack interface to recognize the request, then, pass on to the next application.
       # Values are stored in <tt>env</tt> normally.
       #
@@ -62,6 +61,7 @@ class Usher
       end
 
       attr_reader :router, :router_key
+      attr_accessor :redirect_on_trailing_delimiters
 
       # Constructor for Rack interface for Usher. 
       # <tt>app</tt> - the default application to route to if no matching route is found. The default is a 404 response.
@@ -71,14 +71,22 @@ class Usher
       # * <tt>request_methods</tt> - Request methods on <tt>Rack::Request</tt> to use in determining recognition. (Default <tt>[:request_method, :host, :port, :scheme]</tt>)
       # * <tt>generator</tt> - Route generator to use. (Default <tt>Usher::Util::Generators::URL.new</tt>)
       # * <tt>allow_identical_variable_names</tt> - Option to prevent routes with identical variable names to be added. eg, /:variable/:variable would raise an exception if this option is not enabled. (Default <tt>false</tt>)
-      def initialize(app = nil, options = nil, &blk)
-        @_app = app || proc{|env| ::Rack::Response.new("No route found", 404).finish }
-        @use_destinations = options && options.key?(:use_destinations) ? options[:use_destinations] : true
-        @router_key = options && options[:router_key] || ENV_KEY_DEFAULT_ROUTER
-        request_methods = options && options[:request_methods] || [:request_method, :host, :port, :scheme]
-        generator = options && options[:generator] || Usher::Util::Generators::URL.new
-        allow_identical_variable_names = options && options.key(:allow_identical_variable_names) ? options[:allow_identical_variable_names] : false
-        @router = Usher.new(:request_methods => request_methods, :generator => generator, :allow_identical_variable_names => allow_identical_variable_names)
+      def initialize(options = {}, &blk)
+        @_app = options[:default_app] || proc{|env| ::Rack::Response.new("No route found", 404).finish }
+        @use_destinations = options.key?(:use_destinations) ? options.delete(:use_destinations) : true
+        @router_key = options.delete(:router_key) || ENV_KEY_DEFAULT_ROUTER
+        request_methods = options.delete(:request_methods) || [:request_method, :host, :port, :scheme]
+        generator = options.delete(:generator) || Usher::Util::Generators::URL.new
+        allow_identical_variable_names = options.key?(:allow_identical_variable_names) ? options[:allow_identical_variable_names] : false
+        self.redirect_on_trailing_delimiters = options.delete(:redirect_on_trailing_delimiters)
+        if redirect_on_trailing_delimiters
+          options[:ignore_trailing_delimiters] = true
+        end
+        usher_options = {:request_methods => request_methods, :generator => generator, :allow_identical_variable_names => allow_identical_variable_names}
+        usher_options.merge!(options)
+        @router = Usher.new(usher_options)
+        @router.route_class = Rack::Route
+
         instance_eval(&blk) if blk
       end
       
@@ -161,8 +169,14 @@ class Usher
         env[router_key] = self
         request = ::Rack::Request.new(env)
         response = @router.recognize(request, request.path_info)
-        after_match(request, response) if response
-        determine_respondant(response).call(env)
+        if request.get? and redirect_on_trailing_delimiters and response.only_trailing_delimiters
+          response = ::Rack::Response.new
+          response.redirect(request.path_info[0, request.path_info.size - 1], 302)
+          response.finish
+        else
+          after_match(request, response) if response
+          determine_respondant(response).call(env)
+        end
       end
 
       def generate(route, options = nil)

@@ -11,10 +11,11 @@ require File.join('usher', 'util')
 require File.join('usher', 'delimiters')
 
 class Usher
-  attr_reader :root, :named_routes, :routes, :splitter,
-              :delimiters, :delimiters_regex, :priority_lookups,
-              :parent_route, :generator, :grapher
-
+  attr_reader   :root, :named_routes, :routes, :splitter,
+                :delimiters, :delimiters_regex, :priority_lookups,
+                :parent_route, :generator, :grapher
+  attr_accessor :route_class
+  
   alias_method :priority_lookups?, :priority_lookups
 
   # Returns whether the route set is empty
@@ -71,6 +72,7 @@ class Usher
   # Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
   # :action => 'action', it would pick that route to use for generation.
   def initialize(options = nil)
+    self.route_class                     = Usher::Route
     self.generator                       = options && options.delete(:generator)
     self.delimiters                      = Delimiters.new(options && options.delete(:delimiters) || ['/', '.'])
     self.valid_regex                     = options && options.delete(:valid_regex) || '[0-9A-Za-z\$\-_\+!\*\',]+'
