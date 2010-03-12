@@ -78,7 +78,7 @@ class Usher
         request_methods = options.delete(:request_methods) || [:request_method, :host, :port, :scheme]
         generator = options.delete(:generator) || Usher::Util::Generators::URL.new
         allow_identical_variable_names = options.key?(:allow_identical_variable_names) ? options[:allow_identical_variable_names] : false
-        self.redirect_on_trailing_delimiters = options.delete(:redirect_on_trailing_delimiters)
+        self.redirect_on_trailing_delimiters = options.key?(:redirect_on_trailing_delimiters) ? options.delete(:redirect_on_trailing_delimiters) : false
         if redirect_on_trailing_delimiters
           options[:ignore_trailing_delimiters] = true
         end
