@@ -169,7 +169,7 @@ class Usher
         env[router_key] = self
         request = ::Rack::Request.new(env)
         response = @router.recognize(request, request.path_info)
-        if request.get? and redirect_on_trailing_delimiters and response.only_trailing_delimiters
+        if redirect_on_trailing_delimiters and response.only_trailing_delimiters and request.get?
           response = ::Rack::Response.new
           response.redirect(request.path_info[0, request.path_info.size - 1], 302)
           response.finish
@@ -210,9 +210,10 @@ class Usher
       #
       # @api private
       def determine_respondant(response)
-        if use_destinations? && response && response.destination && response.destination.respond_to?(:call)
+        usable_response = use_destinations? && response && response.destination
+        if usable_response && response.destination.respond_to?(:call)
           response.destination
-        elsif use_destinations? && response && response.destination && response.destination.respond_to?(:args) && response.destination.args.first.respond_to?(:call)
+        elsif usable_response && response.destination.respond_to?(:args) && response.destination.args.first.respond_to?(:call)
           response.args.first
         else
           _app

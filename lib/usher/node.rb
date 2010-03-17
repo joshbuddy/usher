@@ -8,8 +8,7 @@ class Usher
     attr_accessor :terminates, :request_method_type, :parent, :value, :request_methods
 
     def initialize(parent, value)
-      @parent = parent
-      @value = value
+      @parent, @value = parent, value
       @request = nil
       @normal = nil
       @greedy = nil
@@ -41,7 +40,7 @@ class Usher
     end
 
     def depth
-      @depth ||= @parent.is_a?(Node) ? @parent.depth + 1 : 0
+      @depth ||= parent.is_a?(Node) ? parent.depth + 1 : 0
     end
 
     def greedy?
@@ -109,16 +108,15 @@ class Usher
         case next_part.value
         when String
         when Route::Variable::Single
-          variable = next_part.value # get the variable
-          variable.valid!(part)      # do a validity check
-          parameter_value = part     # because its a variable, we need to add it to the params array
+          variable = next_part.value                                  # get the variable
+          variable.valid!(part)                                       # do a validity check
           if variable.look_ahead
-            until (variable.look_ahead === path.first) || path.empty?           # variables have a look ahead notion,
-              next_path_part = path.shift                                       # and until they are satified,
-              parameter_value << next_path_part
+            until (variable.look_ahead === path.first) || path.empty? # variables have a look ahead notion,
+              next_path_part = path.shift                             # and until they are satified,
+              part << next_path_part
             end
           end
-          params << parameter_value
+          params << part                                              # because its a variable, we need to add it to the params array
         when Route::Variable::Glob
           params << []
           loop do

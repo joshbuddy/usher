@@ -60,7 +60,7 @@ class Usher
     end
 
     def recognizable?
-      self.recognizable
+      @recognizable
     end
 
     def dup
