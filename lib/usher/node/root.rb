@@ -12,28 +12,16 @@ class Usher
       end
       
       def add(route)
-        route.paths.each do |path|
-          set_path_with_destination(path)
-        end
+        route.paths.each { |path| set_path_with_destination(path) }
       end
 
       def delete(route)
-        route.paths.each do |path|
-          set_path_with_destination(path, nil)
-        end
+        route.paths.each { |path| set_path_with_destination(path, nil) }
       end
 
       def unique_routes(node = self, routes = [])
         routes << node.terminates.route if node.terminates
-        node.normal.values.each do |v|
-          unique_routes(v, routes)
-        end if node.normal
-        node.greedy.values.each do |v|
-          unique_routes(v, routes)
-        end if node.greedy
-        node.request.values.each do |v|
-          unique_routes(v, routes)
-        end if node.request
+        [:normal, :greedy, :request].each { |type| node.send(type).values.each { |v| unique_routes(v, routes) } if node.send(type) }
         routes.uniq!
         routes
       end
@@ -132,9 +120,7 @@ class Usher
       end
 
       def request_methods_for_path(path)
-        request_methods.collect do |type|
-          Route::RequestMethod.new(type, path.route.conditions && path.route.conditions[type])
-        end
+        request_methods.collect { |type| Route::RequestMethod.new(type, path.route.conditions && path.route.conditions[type]) }
       end
       
     end
