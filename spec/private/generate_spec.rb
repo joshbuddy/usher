@@ -44,6 +44,11 @@ describe "Usher URL generation" do
     @route_set.generator.generate(:sample, ['maz', 'zoo']).should == '/sample/maz/zoo'
   end
 
+  it "should generate a mutliple vairable URL from an array where the same variable name is repeated" do
+    @route_set.add_named_route(:sample, '/sample/:first/:first', :controller => 'sample')
+    @route_set.generator.generate(:sample, ['maz', 'zoo']).should == '/sample/maz/zoo'
+  end
+
   it "should generate append extra hash variables to the end" do
     @route_set.add_named_route(:sample, '/sample/:first/:second', :controller => 'sample')
     @route_set.generator.generate(:sample, {:first => 'maz', :second => 'zoo', :third => 'zanz'}).should == '/sample/maz/zoo?third=zanz'
