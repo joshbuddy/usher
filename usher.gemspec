@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.has_rdoc = true
 
   # files
-  s.files = `git ls-files`.split("\n")
+  s.files = `git ls-files`.split("\n") - `git ls-files spec/rails2_2/vendor`.split("\n") - `git ls-files spec/rails2_3/vendor`.split("\n")
   s.require_paths = ["lib"]
 
   # dependencies
