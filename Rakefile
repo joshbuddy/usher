@@ -1,22 +1,5 @@
 # encoding: utf-8
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |s|
-    s.name = "usher"
-    s.description = s.summary = "Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure"
-    s.email = "joshbuddy@gmail.com"
-    s.homepage = "http://github.com/joshbuddy/usher"
-    s.authors = ["Joshua Hull", 'Jakub Šťastný', 'Daniel Neighman', 'Daniel Vartanov'].sort
-    s.files = FileList["[A-Z]*", "{lib}/**/*"]
-    s.add_dependency 'fuzzyhash', '>=0.0.11'
-    s.rubyforge_project = 'joshbuddy-usher'
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
-end
-
 require 'spec'
 require 'spec/rake/spectask'
 task :spec => ['spec:private', 'spec:rails2_2', 'spec:rails2_3']
