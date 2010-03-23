@@ -9,22 +9,18 @@ class Usher
 
     def initialize(parent, value)
       @parent, @value = parent, value
-      @request = nil
-      @normal = nil
-      @greedy = nil
-      @request_method_type = nil
     end
 
     def activate_normal!
-      @normal ||= Hash.new
+      @normal ||= {}
     end
 
     def activate_greedy!
-      @greedy ||= Hash.new
+      @greedy ||= {}
     end
 
     def activate_request!
-      @request ||= Hash.new
+      @request ||= {}
     end
 
     def upgrade_normal!
@@ -41,10 +37,6 @@ class Usher
 
     def depth
       @depth ||= parent.is_a?(Node) ? parent.depth + 1 : 0
-    end
-
-    def greedy?
-      @greedy
     end
 
     def terminates?
@@ -71,24 +63,26 @@ class Usher
       @route_set ||= root.route_set
     end
 
-    def pp
-      $stdout << " " * depth
-      $stdout << "#{terminates? ? '* ' : ''}#{depth}: #{value.inspect}\n"
+    def inspect
+      out = ''
+      out << " " * depth
+      out << "#{terminates? ? '* ' : ''}#{depth}: #{value.inspect}\n"
       normal.each do |k,v|
-        $stdout << " " * (depth + 1)
-        $stdout << ". #{k.inspect} ==> \n"
-        v.pp
+        out << " " * (depth + 1)
+        out << ". #{k.inspect} ==> \n"
+        out << v.inspect
       end if normal
       greedy.each do |k,v|
-        $stdout << " " * (depth + 1)
-        $stdout << "g #{k.inspect} ==> \n"
-        v.pp
+        out << " " * (depth + 1)
+        out << "g #{k.inspect} ==> \n"
+        out << v.inspect
       end if greedy
       request.each do |k,v|
-        $stdout << " " * (depth + 1)
-        $stdout << "r #{k.inspect} ==> \n"
-        v.pp
+        out << " " * (depth + 1)
+        out << "r #{k.inspect} ==> \n"
+        out << v.inspect
       end if request
+      out
     end
 
     def find(request_object, original_path, path, params = [])
@@ -110,21 +104,17 @@ class Usher
         when Route::Variable::Single
           variable = next_part.value                                  # get the variable
           variable.valid!(part)                                       # do a validity check
-          if variable.look_ahead
-            until (variable.look_ahead === path.first) || path.empty? # variables have a look ahead notion,
-              next_path_part = path.shift                             # and until they are satified,
-              part << next_path_part
-            end
-          end
+          until (variable.look_ahead === path.first) || path.empty? # variables have a look ahead notion,
+            next_path_part = path.shift                             # and until they are satified,
+            part << next_path_part
+          end if variable.look_ahead
           params << part                                              # because its a variable, we need to add it to the params array
         when Route::Variable::Glob
           params << []
           loop do
             if (next_part.value.look_ahead === part || (!route_set.delimiters.unescaped.include?(part) && next_part.value.regex_matcher && !next_part.value.regex_matcher.match(part)))
               path.unshift(part)
-              if route_set.delimiters.unescaped.include?(next_part.parent.value)
-                path.unshift(next_part.parent.value)
-              end
+              path.unshift(next_part.parent.value) if route_set.delimiters.unescaped.include?(next_part.parent.value)
               break
             elsif !route_set.delimiters.unescaped.include?(part)
               next_part.value.valid!(part)

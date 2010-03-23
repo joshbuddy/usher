@@ -50,12 +50,12 @@ class Usher
     end
 
     def unrecognizable!
-      self.recognizable = false
+      @recognizable = false
       self
     end
 
     def recognizable!
-      self.recognizable = true
+      @recognizable = true
       self
     end
 
