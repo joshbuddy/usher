@@ -101,7 +101,9 @@ describe "Usher route recognition" do
 
   it "should recognize a format-style variable" do
     target_route = @route_set.add_route('/sample.:format', :controller => 'sample', :action => 'action')
-    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, ['html'], nil, "/sample.html")
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'}))
+    response.path.should == target_route.paths.first
+    response.params.should == [[:format, 'html']]
   end
 
   it "should recognize a glob-style variable" do
@@ -236,12 +238,16 @@ describe "Usher route recognition" do
 
   it "should recognize a format-style literal" do
     target_route = @route_set.add_route('/:action.html', :controller => 'sample', :action => 'action')
-    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, ['sample'], nil, "/sample.html")
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'}))
+    response.path.should == target_route.paths.first
+    response.params.should == [[:action, 'sample']]
   end
 
   it "should recognize a format-style variable along side another variable" do
     target_route = @route_set.add_route('/:action.:format', :controller => 'sample', :action => 'action')
-    @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'})).should == Usher::Node::Response.new(target_route.paths.first, ['sample', 'html'], nil, '/sample.html')
+    response = @route_set.recognize(build_request({:method => 'get', :path => '/sample.html', :domain => 'admin.host.com'}))
+    response.path.should == target_route.paths.first
+    response.params.should == [[:action, 'sample'], [:format, 'html']]
   end
 
   it "should use a requirement (proc) on incoming variables" do
@@ -315,14 +321,14 @@ describe "Usher route recognition" do
 
     @route_set.recognize(build_request({:method => 'post', :protocol => 'https', :path => '/foo'})).path.route.should == route_higher
 
-    @route_set.clear!
+    @route_set.reset!
 
     route_higher = @route_set.add_route("/foo", :conditions => {:protocol => 'https'}, :priority => 2)
     route_lower = @route_set.add_route("/foo", :conditions => {:method => 'post'}, :priority => 1)
 
     @route_set.recognize(build_request({:method => 'post', :protocol => 'https', :path => '/foo'})).path.route.should == route_higher
 
-    @route_set.clear!
+    @route_set.reset!
   end
 
   it "should only match the specified path of the route when a condition is specified" do

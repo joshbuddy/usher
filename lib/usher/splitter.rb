@@ -3,21 +3,19 @@ class Usher
 
     def self.for_delimiters(delimiters_array)
       delimiters = Delimiters.new(delimiters_array)
-      delimiters_array.any?{|d| d.size > 1} ?
+      delimiters.any?{|d| d.size > 1} ?
         MultiCharacterSplitterInstance.new(delimiters) :
         SingleCharacterSplitterInstance.new(delimiters)
     end
 
     class SingleCharacterSplitterInstance
     
-      attr_reader :url_split_regex
-    
       def initialize(delimiters)
-        @url_split_regex = Regexp.new("[^#{delimiters.collect{|d| Regexp.quote(d)}.join}]+|[#{delimiters.collect{|d| Regexp.quote(d)}.join}]")
+        @url_split_regex = Regexp.new("[^#{delimiters.regexp_char_class}]+|[#{delimiters.regexp_char_class}]")
       end
       
       def split(path)
-        path.scan(url_split_regex)
+        path.scan(@url_split_regex)
       end
     end
     
@@ -36,7 +34,7 @@ class Usher
       protected
 
       def delimiters_regexp
-        Regexp.new("(#{@delimiters.unescaped.collect{|d| Regexp.quote(d)}.join('|')})")
+        @delimiters.regexp
       end
       
     end    

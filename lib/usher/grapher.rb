@@ -14,14 +14,16 @@ class Usher
       @key_count = Hash.new(0)
       @cache = {}
       @routes = []
+      @processed = false
     end
 
     def add_route(route)
+      reset! if @processed
       routes << route
     end
 
     def process_routes
-      return if @processed 
+      return if @processed
       routes.each do |route|
         route.paths.each do |path|
           if path.dynamic?

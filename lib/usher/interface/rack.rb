@@ -1,64 +1,15 @@
-require "rack"
+require 'rack'
 require File.join('usher', 'interface', 'rack', 'route')
+require File.join('usher', 'interface', 'rack', 'middleware')
+require File.join('usher', 'interface', 'rack', 'builder')
 
 class Usher
   module Interface
     class Rack
       
-      ENV_KEY_RESPONSE = 'usher.response'
-      ENV_KEY_PARAMS = 'usher.params'
-      ENV_KEY_DEFAULT_ROUTER = 'usher.router'
-
-      # Middleware for using Usher's rack interface to recognize the request, then, pass on to the next application.
-      # Values are stored in <tt>env</tt> normally.
-      #
-      class Middleware
-
-        def initialize(app, router)
-          @app = app
-          @router = router
-        end
-
-        def call(env)
-          @router.call(env)
-          @app.call(env)
-        end
-
-      end
-      
-      # Replacement for <tt>Rack::Builder</tt> which using Usher to map requests instead of a simple Hash.
-      # As well, add convenience methods for the request methods.
-      #
-      class Builder < ::Rack::Builder
-        def initialize(&block)
-          @usher = Usher::Interface::Rack.new
-          super
-        end
-
-        def map(path, options = nil, &block)
-          @usher.add(path, options).to(&block)
-          @ins << @usher unless @ins.last == @usher
-        end
-
-        # it returns route, and because you may want to work with the route,
-        # for example give it a name, we returns the route with GET request
-        def get(path, options = nil, &block)
-          self.map(path, options.merge!(:conditions => {:request_method => "HEAD"}), &block)
-          self.map(path, options.merge!(:conditions => {:request_method => "GET"}), &block)
-        end
-
-        def post(path, options = nil, &block)
-          self.map(path, options.merge!(:conditions => {:request_method => "POST"}), &block)
-        end
-
-        def put(path, options = nil, &block)
-          self.map(path, options.merge!(:conditions => {:request_method => "PUT"}), &block)
-        end
-
-        def delete(path, options = nil, &block)
-          self.map(path, options.merge!(:conditions => {:request_method => "DELETE"}), &block)
-        end
-      end
+      ENV_KEY_RESPONSE       = 'usher.response'.freeze
+      ENV_KEY_PARAMS         = 'usher.params'.freeze
+      ENV_KEY_DEFAULT_ROUTER = 'usher.router'.freeze
 
       attr_reader :router, :router_key
       attr_accessor :redirect_on_trailing_delimiters

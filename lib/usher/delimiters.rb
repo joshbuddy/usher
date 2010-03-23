@@ -11,14 +11,16 @@ class Usher
     end
   
     def first_in(array)
-      # TODO: should we optimize this O(n*m)? hash or modified or KNP or at leaset sort + b-search. But they are so short
-
-      array.each do |element|
-        return element if self.unescaped.any? { |delimiter| delimiter == element }
-      end
-      nil    
+      array.find { |e| e if unescaped.any? { |delimiter| delimiter == e } }
     end
 
-    # TODO: Delimiters#regex and so on  
+    def regexp
+      @regexp ||= Regexp.new("(#{unescaped.collect{|d| Regexp.quote(d)}.join('|')})")
+    end
+    
+    def regexp_char_class
+      @regexp_char_class ||= collect{|d| Regexp.quote(d)}.join
+    end
+    
   end
 end

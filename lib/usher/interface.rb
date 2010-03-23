@@ -1,10 +1,10 @@
 class Usher
   module Interface
 
-    InterfaceRegistry = {}
+    Registry = {}
 
     def self.register(name, cls)
-      InterfaceRegistry[name] = cls
+      Registry[name] = cls
     end
 
     register(:email,    File.join(File.dirname(__FILE__), 'interface', 'email'))
@@ -19,11 +19,11 @@ class Usher
 
     def self.class_for(name)
       name = name.to_sym
-      if InterfaceRegistry[name]
-        require InterfaceRegistry[name]
-        Usher::Interface.const_get(File.basename(InterfaceRegistry[name]).to_s.split(/_/).map{|e| e.capitalize}.join)
+      if Registry[name]
+        require Registry[name]
+        Usher::Interface.const_get(File.basename(Registry[name]).to_s.split(/_/).map{|e| e.capitalize}.join)
       else
-        raise ArgumentError, "Interface #{name.inspect} doesn't exist. Choose one of: #{InterfaceRegistry.keys.inspect}"
+        raise ArgumentError, "Interface #{name.inspect} doesn't exist. Choose one of: #{Registry.keys.inspect}"
       end
     end
 

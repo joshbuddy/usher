@@ -12,12 +12,9 @@ require File.join('usher', 'delimiters')
 
 class Usher
   attr_reader   :root, :named_routes, :routes, :splitter,
-                :delimiters, :delimiters_regex, :priority_lookups,
-                :parent_route, :generator, :grapher
+                :delimiters, :delimiters_regex, :parent_route, :generator, :grapher, :parser
   attr_accessor :route_class
   
-  alias_method :priority_lookups?, :priority_lookups
-
   # Returns whether the route set is empty
   #
   #   set = Usher.new
@@ -47,8 +44,8 @@ class Usher
     @routes = []
     @grapher = Grapher.new(self)
     @priority_lookups = false
+    @parser = Util::Parser.for_delimiters(self, valid_regex)
   end
-  alias clear! reset!
 
   # Creates a route set, with options
   #
@@ -94,17 +91,13 @@ class Usher
   def consider_destination_keys?
     @consider_destination_keys
   end
-  
-  def parser
-    @parser ||= Util::Parser.for_delimiters(self, valid_regex)
+
+  def priority_lookups?
+    @priority_lookups
   end
 
   def can_generate?
-    !@generator.nil?
-  end
-
-  def generator
-    @generator
+    !generator.nil?
   end
 
   # Adds a route referencable by +name+. See add_route for format +path+ and +options+.
@@ -222,8 +215,8 @@ class Usher
   def delete_route(path, options = nil)
     route = get_route(path, options)
     root.delete(route)
-    @routes = root.unique_routes
-    rebuild_grapher!
+    routes.replace(root.unique_routes)
+    build_grapher!
     route
   end
 
@@ -266,7 +259,6 @@ class Usher
     original = self
     inverted_named_routes = original.named_routes.invert
     replacement.instance_eval do
-      @parser = nil
       reset!
       original.routes.each do |route|
         new_route = route.dup
@@ -278,7 +270,7 @@ class Usher
         end
       end
       send(:generator=, original.generator.class.new) if original.can_generate?
-      rebuild_grapher!
+      build_grapher!
     end
     replacement
   end
@@ -295,7 +287,8 @@ class Usher
 
   attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys, :allow_identical_variable_names
   attr_reader :valid_regex
-
+  attr_writer :parser
+  
   def generator=(generator)
     if generator
       @generator = generator
@@ -336,7 +329,7 @@ class Usher
     end
 
     if conditions && !conditions.empty?
-      conditions.keys.all?{|k| request_methods.include?(k)} or raise("You are trying to use request methods that don't exist in the request_methods supplied #{conditions.keys.join(', ')} -> #{conditions.keys.select{|k| request_methods.include?(k)}.join(", ")}")
+      conditions.keys.all?{|k| request_methods.include?(k)} or raise("You are trying to use request methods that don't exist in the request_methods supplied #{conditions.keys.join(', ')} -> #{(conditions.keys - request_methods).join(", ")}")
     end
 
     if priority
@@ -349,9 +342,9 @@ class Usher
     route
   end
 
-  def rebuild_grapher!
+  def build_grapher!
     @grapher = Grapher.new(self)
     routes.each{|r| grapher.add_route(r)}
   end
-  
+
 end
