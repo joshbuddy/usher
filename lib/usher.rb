@@ -10,6 +10,17 @@ require File.join('usher', 'exceptions')
 require File.join('usher', 'util')
 require File.join('usher', 'delimiters')
 
+# Main class for routing.
+# If you're going to be routing for a specific context, like rails or rack, you probably want to use an interface. Otherwise, this
+# is the main class that actually does all the work.
+#   u = Usher.new
+#   u.add_route('one/two').to(:one)
+#   u.add_route('two/three').to(:two)
+#   u.add_route('two/:variable').to(:variable)
+#   u.recognize_path('one/two').destination
+#   ==> :one
+#   u.recognize_path('two/whatwasthat').params_as_hash
+#   ==> {:variable => 'whatwasthat'}
 class Usher
   attr_reader   :root, :named_routes, :routes, :splitter,
                 :delimiters, :delimiters_regex, :parent_route, :generator, :grapher, :parser
@@ -25,7 +36,7 @@ class Usher
     routes.empty?
   end
 
-  # Returns the number of routes
+  # Returns the number of routes currently mapped
   #
   def route_count
     routes.size
@@ -79,23 +90,28 @@ class Usher
     self.allow_identical_variable_names  = options && options.key?(:allow_identical_variable_names) ? options.delete(:allow_identical_variable_names) : true
     reset!
   end
-
+  
+  # Returns +true+ or +false+ if the allow_identical_variable_names feature is enabled.
   def allow_identical_variable_names?
     @allow_identical_variable_names
   end
   
+  # Returns +true+ or +false+ if the ignore_trailing_delimiters feature is enabled.
   def ignore_trailing_delimiters?
     @ignore_trailing_delimiters
   end
   
+  # Returns +true+ or +false+ if the consider_destination_keys feature is enabled.
   def consider_destination_keys?
     @consider_destination_keys
   end
 
+  # Returns +true+ or +false+ if the priority_lookups feature is enabled.
   def priority_lookups?
     @priority_lookups
   end
 
+  # Returns +true+ or +false+ if generation is enabled.
   def can_generate?
     !generator.nil?
   end
@@ -249,11 +265,13 @@ class Usher
     grapher.find_matching_path(options)
   end
 
+  # The assignes the parent route this router belongs to.
   def parent_route=(route)
     @parent_route = route
     routes.each{|r| r.parent_route = route}
   end
 
+  # Duplicates the router.
   def dup
     replacement = super
     original = self
@@ -313,6 +331,7 @@ class Usher
     @priority_lookups = true
   end
 
+  # Returns the route this path, options belongs to. Used internally by add_route, delete_route.
   def get_route(path, options = nil)
     conditions = options && options.delete(:conditions) || nil
     requirements = options && options.delete(:requirements) || nil
@@ -342,6 +361,7 @@ class Usher
     route
   end
 
+  # Rebuild the grapher
   def build_grapher!
     @grapher = Grapher.new(self)
     routes.each{|r| grapher.add_route(r)}
