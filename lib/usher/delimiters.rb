@@ -1,4 +1,5 @@
 class Usher
+  # Array of delimiters with convenience methods.
   class Delimiters < Array
 
     attr_reader :unescaped

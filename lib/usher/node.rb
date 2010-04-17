@@ -11,30 +11,6 @@ class Usher
       @parent, @value = parent, value
     end
 
-    def activate_normal!
-      @normal ||= {}
-    end
-
-    def activate_greedy!
-      @greedy ||= {}
-    end
-
-    def activate_request!
-      @request ||= {}
-    end
-
-    def upgrade_normal!
-      @normal = FuzzyHash.new(@normal)
-    end
-
-    def upgrade_greedy!
-      @greedy = FuzzyHash.new(@greedy)
-    end
-
-    def upgrade_request!
-      @request = FuzzyHash.new(@request)
-    end
-
     def depth
       @depth ||= parent.is_a?(Node) ? parent.depth + 1 : 0
     end
@@ -140,6 +116,30 @@ class Usher
         nil
       end
     end
+    
+    def activate_normal!
+      @normal ||= {}
+    end
 
+    def activate_greedy!
+      @greedy ||= {}
+    end
+
+    def activate_request!
+      @request ||= {}
+    end
+
+    def upgrade_normal!
+      @normal = FuzzyHash.new(@normal)
+    end
+
+    def upgrade_greedy!
+      @greedy = FuzzyHash.new(@greedy)
+    end
+
+    def upgrade_request!
+      @request = FuzzyHash.new(@request)
+    end
+    
   end
 end

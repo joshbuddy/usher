@@ -1,30 +1,20 @@
 class Usher
+  # Various interfaces for Usher.
   module Interface
 
-    Registry = {}
-
-    def self.register(name, cls)
-      Registry[name] = cls
-    end
-
-    register(:email,    File.join(File.dirname(__FILE__), 'interface', 'email'))
-    register(:merb,     File.join(File.dirname(__FILE__), 'interface', 'merb'))
-    register(:rails20,  File.join(File.dirname(__FILE__), 'interface', 'rails20'))
-    register(:rails22,  File.join(File.dirname(__FILE__), 'interface', 'rails22'))
-    register(:rails23,  File.join(File.dirname(__FILE__), 'interface', 'rails23'))
-    register(:rack,     File.join(File.dirname(__FILE__), 'interface', 'rack'))
-    register(:rails3,   File.join(File.dirname(__FILE__), 'interface', 'rails3'))
-    register(:text,     File.join(File.dirname(__FILE__), 'interface', 'text'))
-    register(:sinatra,  File.join(File.dirname(__FILE__), 'interface', 'sinatra'))
+    autoload(:Email,    File.join(File.dirname(__FILE__), 'interface', 'email'))
+    autoload(:Merb,     File.join(File.dirname(__FILE__), 'interface', 'merb'))
+    autoload(:Rails20,  File.join(File.dirname(__FILE__), 'interface', 'rails20'))
+    autoload(:Rails22,  File.join(File.dirname(__FILE__), 'interface', 'rails22'))
+    autoload(:Rails23,  File.join(File.dirname(__FILE__), 'interface', 'rails23'))
+    autoload(:Rack,     File.join(File.dirname(__FILE__), 'interface', 'rack'))
+    autoload(:Rails3,   File.join(File.dirname(__FILE__), 'interface', 'rails3'))
+    autoload(:Text,     File.join(File.dirname(__FILE__), 'interface', 'text'))
+    autoload(:Sinatra,  File.join(File.dirname(__FILE__), 'interface', 'sinatra'))
 
     def self.class_for(name)
-      name = name.to_sym
-      if Registry[name]
-        require Registry[name]
-        Usher::Interface.const_get(File.basename(Registry[name]).to_s.split(/_/).map{|e| e.capitalize}.join)
-      else
-        raise ArgumentError, "Interface #{name.inspect} doesn't exist. Choose one of: #{Registry.keys.inspect}"
-      end
+      Usher::Interface.const_get(name.to_s.split(/_/).map{|e| e.capitalize}.join) or
+        raise ArgumentError, "Interface #{name.inspect} doesn't exist."
     end
 
     # Usher::Interface.for(:rack, &block)
