@@ -113,6 +113,7 @@ class Usher
                 HTML
               end
             end
+
             @_configured = true
           end
         end # ClassMethods
