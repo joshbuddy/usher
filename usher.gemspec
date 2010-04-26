@@ -19,6 +19,12 @@ Gem::Specification.new do |s|
 
   # dependencies
   s.add_dependency "fuzzyhash", ">= 0.0.11"
+  
+  # development dependencies
+  s.add_development_dependency "yard"
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "code_stats"
+  s.add_development_dependency "rake"
 
   # RubyForge
   s.rubyforge_project = "joshbuddy-usher"
