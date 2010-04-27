@@ -6,7 +6,7 @@ require 'yard'
 
 YARD::Rake::YardocTask.new do |t|
   t.files   = ['lib/**/*.rb']   # optional
-  t.options = ['--extra', '--opts'] # optional
+  t.options = ['-c', '--markup=markdown'] # optional
 end
 
 task :spec => ['spec:private', 'spec:rails2_2:cleanup', 'spec:rails2_3:cleanup']

@@ -13,42 +13,43 @@ require File.join('usher', 'delimiters')
 # Main class for routing.
 # If you're going to be routing for a specific context, like rails or rack, you probably want to use an interface. Otherwise, this
 # is the main class that actually does all the work.
-#   u = Usher.new
-#   u.add_route('one/two').to(:one)
-#   u.add_route('two/three').to(:two)
-#   u.add_route('two/:variable').to(:variable)
-#   u.recognize_path('one/two').destination
-#   ==> :one
-#   u.recognize_path('two/whatwasthat').params_as_hash
-#   ==> {:variable => 'whatwasthat'}
+# @example
+#     u = Usher.new
+#     u.add_route('one/two').to(:one)
+#     u.add_route('two/three').to(:two)
+#     u.add_route('two/:variable').to(:variable)
+#     u.recognize_path('one/two').destination
+#     ==> :one
+#     u.recognize_path('two/whatwasthat').params_as_hash
+#     ==> {:variable => 'whatwasthat'}
 class Usher
   attr_reader   :root, :named_routes, :routes, :splitter,
                 :delimiters, :delimiters_regex, :parent_route, :generator, :grapher, :parser
   attr_accessor :route_class
   
-  # Returns whether the route set is empty
-  #
-  #   set = Usher.new
-  #   set.empty? => true
-  #   set.add_route('/test')
-  #   set.empty? => false
+  # @return [Boolean] Whether the route set is empty
+  # @example
+  #     set = Usher.new
+  #     set.empty? => true
+  #     set.add_route('/test')
+  #     set.empty? => false
   def empty?
     routes.empty?
   end
 
-  # Returns the number of routes currently mapped
+  # @return [Number] The number of routes currently mapped
   #
   def route_count
     routes.size
   end
 
   # Resets the route set back to its initial state
-  #
-  #   set = Usher.new
-  #   set.add_route('/test')
-  #   set.empty? => false
-  #   set.reset!
-  #   set.empty? => true
+  # @example
+  #     set = Usher.new
+  #     set.add_route('/test')
+  #     set.empty? => false
+  #     set.reset!
+  #     set.empty? => true
   def reset!
     @root = Node::Root.new(self, request_methods)
     @named_routes = {}
@@ -59,26 +60,16 @@ class Usher
   end
 
   # Creates a route set, with options
-  #
-  # <tt>:delimiters</tt>: Array of Strings. (default <tt>['/', '.']</tt>). Delimiters used in path separation. Array must be single character strings.
-  #
-  # <tt>:valid_regex</tt>: String. (default <tt>'[0-9A-Za-z\$\-_\+!\*\',]+'</tt>). String that can be interpolated into regex to match
-  # valid character sequences within path.
-  #
-  # <tt>:request_methods</tt>: Array of Symbols. (default <tt>[:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains]</tt>)
-  # Array of methods called against the request object for the purposes of matching route requirements.
-  #
-  # <tt>:generator</tt>: +nil+ or Generator instance. (default: +nil+) Take a look at <tt>Usher::Util::Generators for examples.</tt>.
-  #
-  # <tt>:ignore_trailing_delimiters</tt>: +true+ or +false+. (default: +false+) Ignore trailing delimiters in recognizing paths.
-  #
-  # <tt>:consider_destination_keys</tt>: +true+ or +false+. (default: +false+) When generating, and using hash destinations, you can have
-  # Usher use the destination hash to match incoming params.
-  #
-  # <tt>:allow_identical_variable_names</tt>: +true+ or +false+. (default: +true+) When adding routes, allow identical variable names to be used.
-  #
-  # Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
-  # :action => 'action', it would pick that route to use for generation.
+  # @param [Hash] options the options to create a router with
+  # @option options [Array<String>] :delimiters (['/', '.']) Delimiters used in path separation. Array must be single character strings.
+  # @option options [String] :valid_regex ('[0-9A-Za-z\$\-_\+!\*\',]+') String that can be interpolated into regex to match valid character sequences within path.
+  # @option options [Array<Symbol>] :request_methods ([:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains])  Array of methods called against the request object for the purposes of matching route requirements.
+  # @option options [nil or Generator] :generator (nil) Take a look at `Usher::Util::Generators for examples.`.
+  # @option options [Boolean] :ignore_trailing_delimiters (false) Ignore trailing delimiters in recognizing paths.
+  # @option options [Boolean] :consider_destination_keys (false) When generating, and using hash destinations, you can have Usher use the destination hash to match incoming params.
+  #   Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
+  #   :action => 'action', it would pick that route to use for generation.
+  # @option options [Boolean] :allow_identical_variable_names (true) When adding routes, allow identical variable names to be used.
   def initialize(options = nil)
     self.route_class                     = Usher::Route
     self.generator                       = options && options.delete(:generator)
@@ -91,130 +82,142 @@ class Usher
     reset!
   end
   
-  # Returns +true+ or +false+ if the allow_identical_variable_names feature is enabled.
+  # @return [Boolean] State of allow_identical_variable_names feature.
   def allow_identical_variable_names?
     @allow_identical_variable_names
   end
   
-  # Returns +true+ or +false+ if the ignore_trailing_delimiters feature is enabled.
+  # @return [Boolean] State of ignore_trailing_delimiters feature.
   def ignore_trailing_delimiters?
     @ignore_trailing_delimiters
   end
   
-  # Returns +true+ or +false+ if the consider_destination_keys feature is enabled.
+  # @return [Boolean] State of consider_destination_keys feature.
   def consider_destination_keys?
     @consider_destination_keys
   end
 
-  # Returns +true+ or +false+ if the priority_lookups feature is enabled.
+  # @return [Boolean] State of priority_lookups feature.
   def priority_lookups?
     @priority_lookups
   end
 
-  # Returns +true+ or +false+ if generation is enabled.
+  # @return [Boolean] Able to generate
   def can_generate?
     !generator.nil?
   end
 
-  # Adds a route referencable by +name+. See add_route for format +path+ and +options+.
-  #
-  #   set = Usher.new
-  #   set.add_named_route(:test_route, '/test')
+  # Adds a route referencable by `name`. See {#add_route} for format `path` and `options`.
+  # @param name Name of route
+  # @param path Path of route
+  # @param options Options for route
+  # @return (Route) Route added
+  # @example
+  #     set = Usher.new
+  #     set.add_named_route(:test_route, '/test')
   def add_named_route(name, path, options = nil)
     add_route(path, options).name(name)
   end
 
-  # Deletes a route referencable by +name+. At least the path and conditions have to match the route you intend to delete.
-  #
-  #   set = Usher.new
-  #   set.delete_named_route(:test_route, '/test')
+  # Deletes a route referencable by `name`. At least the path and conditions have to match the route you intend to delete.
+  # @param name Name of route
+  # @param path Path of route
+  # @param options Options for route
+  # @return (Route) Route added
+  # @example
+  #     set = Usher.new
+  #     set.delete_named_route(:test_route, '/test')
   def delete_named_route(name, path, options = nil)
     delete_route(path, options)
     named_routes.delete(name)
   end
 
-  # Attaches a +route+ to a +name+
-  #
-  #   set = Usher.new
-  #   route = set.add_route('/test')
-  #   set.name(:test, route)
+  # Attaches a `route` to a `name`
+  # @param name Name of route
+  # @param route Route to attach to
+  # @return (Route) Route named
+  # @example
+  #     set = Usher.new
+  #     route = set.add_route('/test')
+  #     set.name(:test, route)
   def name(name, route)
     named_routes[name.to_sym] = route
     route
   end
 
-  # Creates a route from +path+ and +options+
+  # Creates a route from `path` and `options`
+  # @param [String] path
   #
-  # === +path+
-  # A path consists a mix of dynamic and static parts delimited by <tt>/</tt>
-  #
-  # ==== Dynamic
-  # Dynamic parts are prefixed with either :, *.  :variable matches only one part of the path, whereas *variable can match one or
-  # more parts.
-  #
-  # <b>Example:</b>
-  # <tt>/path/:variable/path</tt> would match
-  #
-  # * <tt>/path/test/path</tt>
-  # * <tt>/path/something_else/path</tt>
-  # * <tt>/path/one_more/path</tt>
-  #
-  # In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key <tt>:variable</tt>.
-  # However, <tt>/path/test/one_more/path</tt> would not be matched.
-  #
-  # <b>Example:</b>
-  # <tt>/path/*variable/path</tt> would match
-  #
-  # * <tt>/path/one/two/three/path</tt>
-  # * <tt>/path/four/five/path</tt>
-  #
-  # In the above examples, ['one', 'two', 'three'] and ['four', 'five'] respectively would be bound to the key :variable.
-  #
-  # As well, variables can have a regex matcher.
-  #
-  # <b>Example:</b>
-  # <tt>/product/{:id,\d+}</tt> would match
-  #
-  # * <tt>/product/123</tt>
-  # * <tt>/product/4521</tt>
-  #
-  # But not
-  # * <tt>/product/AE-35</tt>
-  #
-  # As well, the same logic applies for * variables as well, where only parts matchable by the supplied regex will
-  # actually be bound to the variable
-  #
-  # Variables can also have a greedy regex matcher. These matchers ignore all delimiters, and continue matching for as long as much as their
-  # regex allows.
-  #
-  # <b>Example:</b>
-  # <tt>/product/{!id,hello/world|hello}</tt> would match
-  #
-  # * <tt>/product/hello/world</tt>
-  # * <tt>/product/hello</tt>
-  #
-  # ==== Static
-  #
-  # Static parts of literal character sequences. For instance, <tt>/path/something.html</tt> would match only the same path.
-  # As well, static parts can have a regex pattern in them as well, such as <tt>/path/something.{html|xml}</tt> which would match only
-  # <tt>/path/something.html</tt> and <tt>/path/something.xml</tt>
-  #
-  # ==== Optional sections
-  #
-  # Sections of a route can be marked as optional by surrounding it with brackets. For instance, in the above static example, <tt>/path/something(.html)</tt> would match both <tt>/path/something</tt> and <tt>/path/something.html</tt>.
-  #
-  # ==== One and only one sections
-  #
-  # Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes.
-  # For instance, the path, <tt>/path/something(.xml|.html)</tt> would only match <tt>/path/something.xml</tt> and
-  # <tt>/path/something.html</tt>. Generally its more efficent to use one and only sections over using regex.
-  #
-  # === +options+
-  # * +requirements+ - After transformation, tests the condition using ===. If it returns false, it raises an <tt>Usher::ValidationException</tt>
-  # * +conditions+ - Accepts any of the +request_methods+ specificied in the construction of Usher. This can be either a <tt>string</tt> or a regular expression.
-  # * +default_values+ - Provides values for variables in your route for generation. If you're using URL generation, then any values supplied here that aren't included in your path will be appended to the query string.
-  # * +priority+ - If there are two routes which equally match, the route with the highest priority will match first.
-  # * Any other key is interpreted as a requirement for the variable of its name.
+  #   A path consists a mix of dynamic and static parts delimited by `/`
+  #   ## Dynamic
+  #   Dynamic parts are prefixed with either :, *.  :variable matches only one part of the path, whereas *variable can match one or
+  #   more parts.
+  # 
+  #   ### Example
+  #   `/path/:variable/path` would match
+  #   
+  #    *  `/path/test/path`
+  #    *  `/path/something_else/path`
+  #    *  `/path/one_more/path`
+  # 
+  #   In the above examples, 'test', 'something_else' and 'one_more' respectively would be bound to the key `:variable`.
+  #   However, `/path/test/one_more/path` would not be matched.
+  # 
+  #   ### example
+  #   `/path/*variable/path` would match
+  # 
+  #    *  `/path/one/two/three/path`
+  #    *  `/path/four/five/path` 
+  # 
+  #   In the above examples, `['one', 'two', 'three']` and `['four', 'five']` respectively would be bound to the key `:variable`.
+  # 
+  #   As well, variables can have a regex matcher.
+  # 
+  #   ### Example
+  #   `/product/{:id,\d+}` would match
+  # 
+  #   *  `/product/123`
+  #   *  `/product/4521`
+  # 
+  #   But not
+  # 
+  #   *  `/product/AE-35`
+  # 
+  #   As well, the same logic applies for * variables as well, where only parts matchable by the supplied regex will
+  #   actually be bound to the variable
+  # 
+  #   Variables can also have a greedy regex matcher. These matchers ignore all delimiters, and continue matching for as long as much as their
+  #   regex allows.
+  # 
+  #   ### Example
+  #   `/product/{!id,hello/world|hello}` would match
+  # 
+  #   *  `/product/hello/world`
+  #   *  `/product/hello`
+  # 
+  #   ## Static
+  # 
+  #   Static parts of literal character sequences. For instance, `/path/something.html` would match only the same path.
+  #   As well, static parts can have a regex pattern in them as well, such as `/path/something.{html|xml}` which would match only
+  #   `/path/something.html` and `/path/something.xml`
+  # 
+  #   ## Optional sections
+  # 
+  #   Sections of a route can be marked as optional by surrounding it with brackets. For instance, in the above static example, `/path/something(.html)` would match both `/path/something` and `/path/something.html`.
+  # 
+  #   ## One and only one sections
+  # 
+  #   Sections of a route can be marked as "one and only one" by surrounding it with brackets and separating parts of the route with pipes.
+  #   For instance, the path, `/path/something(.xml|.html)` would only match `/path/something.xml` and
+  #   `/path/something.html`. Generally its more efficent to use one and only sections over using regex.
+  #   
+  # @param [Hash] options
+  #   Any other key is interpreted as a requirement for the variable of its name.
+  # @option options [Object] :requirements After transformation, tests the condition using ===. If it returns false, it raises an {ValidationException}
+  # @option options [String, Regexp] :conditions Accepts any of the `request_methods` specificied in the construction of Usher. This can be either a `String` or a regular expression.
+  # @option options [Hash<Symbol, String>] :default_values Provides values for variables in your route for generation. If you're using URL generation, then any values supplied here that aren't included in your path will be appended to the query string.
+  # @option options [Number] :priority If there are two routes which equally match, the route with the highest priority will match first.
+  # @return [Route] The route added
   def add_route(path, options = nil)
     route = get_route(path, options)
     root.add(route)
@@ -225,9 +228,11 @@ class Usher
   end
 
   # Deletes a route. At least the path and conditions have to match the route you intend to delete.
-  #
-  #   set = Usher.new
-  #   set.delete_route('/test')
+  # @param path [String] The path to delete
+  # @param options [Hash] The options used to identify the path
+  # @example 
+  #      set.delete_route('/test')
+  # @return [Route] The route deleted
   def delete_route(path, options = nil)
     route = get_route(path, options)
     root.delete(route)
@@ -236,42 +241,51 @@ class Usher
     route
   end
 
-  # Recognizes a +request+ and returns +nil+ or an Usher::Node::Response, which is a struct containing a Usher::Route::Path and an array of arrays containing the extracted parameters.
-  #
-  #   Request = Struct.new(:path)
-  #   set = Usher.new
-  #   route = set.add_route('/test')
-  #   set.recognize(Request.new('/test')).path.route == route => true
+  # Recognizes a `request`
+  # @param request [#path] The request object. Must minimally respond to #path if no path argument is supplied here.
+  # @param path [String] The path to be recognized.
+  # @return [nil, Node::Response] The recognition response if the request object was recognized
+  # @example
+  #     Request = Struct.new(:path)
+  #     set = Usher.new
+  #     route = set.add_route('/test')
+  #     set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request, path = request.path)
     root.find(request, path, splitter.split(path))
   end
 
-  # Recognizes a +path+ and returns +nil+ or an Usher::Node::Response, which is a struct containing a Usher::Route::Path and an array of arrays containing the extracted parameters. Convenience method for when recognizing on the request object is unneeded.
-  #
-  #   Request = Struct.new(:path)
-  #   set = Usher.new
-  #   route = set.add_route('/test')
-  #   set.recognize_path('/test').path.route == route => true
+  # Recognizes a `path`
+  # @param path [String] The path to be recognized.
+  # @return [nil, Node::Response] The recognition response if the request object was recognized
+  # @example
+  #     Request = Struct.new(:path)
+  #     set = Usher.new
+  #     route = set.add_route('/test')
+  #     set.recognize_path('/test').path.route == route => true
   def recognize_path(path)
     recognize(nil, path)
   end
 
-  # Recognizes a set of +parameters+ and gets the closest matching Usher::Route::Path or +nil+ if no route exists.
-  #
-  #   set = Usher.new
-  #   route = set.add_route('/:controller/:action')
-  #   set.path_for_options({:controller => 'test', :action => 'action'}) == path.route => true
+  # Recognizes a set of `parameters` and gets the closest matching Usher::Route::Path or `nil` if no route exists.
+  # @param options [Hash<Symbol, String>] A set of parameters
+  # @return [nil, Route::Path] A path matched or `nil` if not found.
+  # @example
+  #     set = Usher.new
+  #     route = set.add_route('/:controller/:action')
+  #     set.path_for_options({:controller => 'test', :action => 'action'}) == path.route => true
   def path_for_options(options)
     grapher.find_matching_path(options)
   end
 
   # The assignes the parent route this router belongs to.
+  # @param route [Route] The route to use to assign as this routers parent route
   def parent_route=(route)
     @parent_route = route
     routes.each{|r| r.parent_route = route}
   end
 
   # Duplicates the router.
+  # @return [Usher] The duplicated router
   def dup
     replacement = super
     original = self
@@ -332,6 +346,9 @@ class Usher
   end
 
   # Returns the route this path, options belongs to. Used internally by add_route, delete_route.
+  # @see #add_route, #delete_route
+  # @param path [String] path
+  # @param options [Hash] options
   def get_route(path, options = nil)
     conditions = options && options.delete(:conditions) || nil
     requirements = options && options.delete(:requirements) || nil
@@ -361,7 +378,7 @@ class Usher
     route
   end
 
-  # Rebuild the grapher
+  # Rebuilds the grapher
   def build_grapher!
     @grapher = Grapher.new(self)
     routes.each{|r| grapher.add_route(r)}

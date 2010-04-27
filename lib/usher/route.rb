@@ -93,17 +93,18 @@ class Usher
 
     CompoundDestination = Struct.new(:args, :block, :options)
 
-    # Sets destination on a route. Returns +self+.
-    #
-    # This method acceps varargs. If you pass in more than one variable, it will be returned to you wrapped in a +CompoundDestination+.
-    # If you send it varargs and the last member is a Hash, it will pop off the hash, and will be stored under <tt>#options</tt>.
-    # Otherwise, if you use send a single variable, or call it with a block, these will be returned to you by <tt>#destination</tt>.
-    #
-    #   Request = Struct.new(:path)
-    #   set = Usher.new
-    #   route = set.add_route('/test')
-    #   route.to(:controller => 'testing', :action => 'index')
-    #   set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
+    # Sets destination on a route.
+    # @return [self]
+    # @param [Object] args 
+    #   If you pass in more than one variable, it will be returned to you wrapped in a {CompoundDestination}
+    #   If you send it varargs and the last member is a Hash, it will pop off the hash, and will be stored under {CompoundDestination#options}
+    #   Otherwise, if you use send a single variable, or call it with a block, these will be returned to you by {CompoundDestination#destination}
+    # @example
+    #     Request = Struct.new(:path)
+    #     set = Usher.new
+    #     route = set.add_route('/test')
+    #     route.to(:controller => 'testing', :action => 'index')
+    #     set.recognize(Request.new('/test')).first.params => {:controller => 'testing', :action => 'index'}
     #
     #
     #
@@ -126,11 +127,13 @@ class Usher
       self
     end
 
-    # Sets route as referenceable from +name+. Returns +self+.
-    #
-    #   set = Usher.new
-    #   route = set.add_route('/test').name(:route)
-    #   set.generate_url(:route) => '/test'
+    # Sets route as referenceable from `name`
+    # @param [Symbol] name The name of the route
+    # @return [self] The route named
+    # @example
+    #     set = Usher.new
+    #     route = set.add_route('/test').name(:route)
+    #     set.generate_url(:route) => '/test'
     def name(name)
       @named = name
       @router.name(name, self)
