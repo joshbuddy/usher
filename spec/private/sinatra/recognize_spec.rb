@@ -32,6 +32,25 @@ describe "Usher (for Sinatra) route recognition" do
       response.body.should == "foo"
     end
 
+    it "should ignore trailing delimiters in a more advanced route" do
+      @app.get("/foo") { "foo" }
+      @app.get("/foo/bar") { "bar" }
+      response = @app.call_with_mock_request('/foo')
+      response.status.should == 200
+      response.body.should == "foo"
+      response = @app.call_with_mock_request('/foo/bar')
+      response.status.should == 200
+      response.body.should == "bar"
+      pending "check why this fails" do
+        response = @app.call_with_mock_request('/foo/')
+        response.status.should == 200
+        response.body.should == "foo"
+      end
+      response = @app.call_with_mock_request('/foo/bar/')
+      response.status.should == 200
+      response.body.should == "bar"
+    end
+
     it "should use sinatra optionals trailing delimiters" do
       @app.get("/foo/?") { "foo" }
       response = @app.call_with_mock_request('/foo')

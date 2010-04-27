@@ -34,7 +34,7 @@ class Usher
     def root
       @root ||= ancestors.last
     end
-    
+
     def route_set
       @route_set ||= root.route_set
     end
@@ -116,7 +116,7 @@ class Usher
         nil
       end
     end
-    
+
     def activate_normal!
       @normal ||= {}
     end
@@ -140,6 +140,6 @@ class Usher
     def upgrade_request!
       @request = FuzzyHash.new(@request)
     end
-    
+
   end
 end
