@@ -52,11 +52,26 @@ describe "Usher (for Sinatra) route recognition" do
       response.body.should == "/hi"
     end
 
+    it "should map a basic route ignoring trailing delimiters" do
+      @app.get('/hi', :name => :hi) { generate(:hi) } 
+      response = @app.call_with_mock_request('/hi/')
+      response.status.should == 200
+      response.body.should == "/hi"
+    end
+
     it "should map a basic route with params" do
       @app.get('/hi/:id', :name => :hi) { generate(:hi, :id => 18) } 
       response = @app.call_with_mock_request('/hi/1')
       response.status.should == 200
       response.body.should == "/hi/18"
+    end
+
+    it "should map route with params" do
+      pending "we should fix that"
+      @app.get('/hi-:id', :name => :hi) { generate(:hi, :id => 18) } 
+      response = @app.call_with_mock_request('/hi-1')
+      response.status.should == 200
+      response.body.should == "/hi-18"
     end
   end
 
