@@ -14,7 +14,7 @@ class Usher
 
       module CaseEqualsValidator
         def valid!(val)
-          @validator === val or raise(ValidationException.new("#{val} does not conform to #{@validator}"))
+          @validator === val.to_s or raise(ValidationException.new("#{val} does not conform to #{@validator}"))
         end
       end
       

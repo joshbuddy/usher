@@ -37,6 +37,10 @@ class Usher
               value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new("expected a value for #{part.name}"))
               part.valid!(value)
               result << value.to_s
+            when Route::Static::Greedy
+              result << part.generate_with
+            else
+              raise
             end
           end
           result
@@ -59,6 +63,10 @@ class Usher
               value = (params && params.shift) || part.default_value || raise(MissingParameterException.new)
               part.valid!(value)
               result << value.to_s
+            when Route::Static::Greedy
+              result << value.generate_with
+            else
+              raise
             end
           end
           result

@@ -41,11 +41,9 @@ describe "Usher (for Sinatra) route recognition" do
       response = @app.call_with_mock_request('/foo/bar')
       response.status.should == 200
       response.body.should == "bar"
-      pending "check why this fails" do
-        response = @app.call_with_mock_request('/foo/')
-        response.status.should == 200
-        response.body.should == "foo"
-      end
+      response = @app.call_with_mock_request('/foo/')
+      response.status.should == 200
+      response.body.should == "foo"
       response = @app.call_with_mock_request('/foo/bar/')
       response.status.should == 200
       response.body.should == "bar"
@@ -86,7 +84,6 @@ describe "Usher (for Sinatra) route recognition" do
     end
 
     it "should map route with params" do
-      pending "we should fix that"
       @app.get('/hi-:id', :name => :hi) { generate(:hi, :id => 18) } 
       response = @app.call_with_mock_request('/hi-1')
       response.status.should == 200

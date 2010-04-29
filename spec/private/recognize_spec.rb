@@ -59,12 +59,6 @@ describe "Usher route recognition" do
       @route_set.recognize(build_request({:path => '/'})).path.route.destination.should == :test
     end
 
-    it "should allow adding a pure regex" do
-      @route_set.add_route(/\/test\/(testing|gold)/).to(:test)
-      @route_set.recognize(build_request({:path => '/test/testing'})).path.route.destination.should == :test
-      @route_set.recognize(build_request({:path => '/test/gold'})).path.route.destination.should == :test
-    end
-
     it "should correctly fix that tree if conditionals are used later" do
       noop_route = @route_set.add_route('/noop', :controller => 'products', :action => 'noop')
       product_show_route = @route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
@@ -168,7 +162,7 @@ describe "Usher route recognition" do
   end
 
   it "should recgonize a regex static part containing {}'s" do
-    target_route = @route_set.add_route('/test/part/{^o{2,3}$}')
+    target_route = @route_set.add_route('/test/part/{oo,^o{2,3}$}')
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/oo'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/ooo'})).path.route.should == target_route
     @route_set.recognize(build_request({:method => 'get', :path => '/test/part/oooo'})).should == nil

@@ -74,7 +74,9 @@ class Usher
           def router
             @router ||= Usher.new(:request_methods => [:request_method, :host, :port, :scheme],
                                   :ignore_trailing_delimiters => true,
-                                  :generator => Usher::Util::Generators::URL.new)
+                                  :generator => Usher::Util::Generators::URL.new,
+                                  :delimiters => ['/', '.', '-'],
+                                  :valid_regex => '[0-9A-Za-z\$_\+!\*\',]+')
             block_given? ? yield(@router) : @router
           end
 

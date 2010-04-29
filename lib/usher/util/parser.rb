@@ -124,20 +124,23 @@ class Usher
               pattern << regex_part
             end
             pattern.slice!(pattern.length - 1)
-            regex = Regexp.new(pattern)
             if variable
-              variable_type = variable.slice!(0).chr.to_sym
-              variable_class = case variable_type
-              when :'!' then Usher::Route::Variable::Greedy
-              when :*   then Usher::Route::Variable::Glob
-              when :':' then Usher::Route::Variable::Single
+              variable_class = case variable.slice!(0)
+              when ?! then Usher::Route::Variable::Greedy
+              when ?* then Usher::Route::Variable::Glob
+              when ?: then Usher::Route::Variable::Single
               end
               variable_name = variable[0, variable.size - 1].to_sym
-              current_group << variable_class.new(variable_name, regex, requirements && requirements[variable_name])
+              current_group << variable_class.new(variable_name, Regexp.new(pattern), requirements && requirements[variable_name])
             elsif simple
-              current_group << Usher::Route::Static::Greedy.new(Regexp.new(pattern))
+              static = Usher::Route::Static::Greedy.new(pattern)
+              static.generate_with = pattern
+              current_group << static
             else
-              current_group << regex
+              simple_parts = pattern.split(',', 2)
+              static = Usher::Route::Static::Greedy.new(Regexp.new(simple_parts.last))
+              static.generate_with = simple_parts.first
+              current_group << static
             end
           when ?(
             new_group = Usher::Route::Util::Group.new(:any, current_group)

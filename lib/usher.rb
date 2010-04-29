@@ -79,6 +79,9 @@ class Usher
     self.ignore_trailing_delimiters      = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
     self.consider_destination_keys       = options && options.key?(:consider_destination_keys) ? options.delete(:consider_destination_keys) : false
     self.allow_identical_variable_names  = options && options.key?(:allow_identical_variable_names) ? options.delete(:allow_identical_variable_names) : true
+    unless options.nil? || options.empty?
+      raise "unrecognized options -- #{options.keys.join(', ')}"
+    end
     reset!
   end
   
@@ -308,7 +311,7 @@ class Usher
   end
 
   def inspect
-    "#<Usher:0x%x route_count=%d delimiters=%s request_methods=%s ignore_trailing_delimiters? %s consider_destination_keys? %s can_generate? %s priority_lookups? %s>" % [self.object_id, route_count, self.delimiters.inspect, request_methods.inspect, ignore_trailing_delimiters.inspect, consider_destination_keys.inspect, can_generate?.inspect, priority_lookups.inspect]
+    "#<Usher:0x%x route_count=%d delimiters=%s request_methods=%s ignore_trailing_delimiters? %s consider_destination_keys? %s can_generate? %s priority_lookups? %s>" % [self.object_id, route_count, self.delimiters.inspect, request_methods.inspect, ignore_trailing_delimiters?.inspect, consider_destination_keys?.inspect, can_generate?.inspect, priority_lookups?.inspect]
   end
 
   def to_s

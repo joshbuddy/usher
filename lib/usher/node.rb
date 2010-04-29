@@ -53,9 +53,17 @@ class Usher
 
     def find(request_object, original_path, path, params = [])
       # terminates or is partial
-      if terminates? && (path.empty? || terminates.route.partial_match? || (route_set.ignore_trailing_delimiters? and only_trailing_delimiters = path.all?{|p| route_set.delimiters.include?(p)}))
+
+      only_trailing_delimiters = false
+
+      if (terminates? || request_method_type) && route_set.ignore_trailing_delimiters?
+        only_trailing_delimiters = path.all?{|p| route_set.delimiters.include?(p)}
+        path.clear if only_trailing_delimiters
+      end
+
+      if terminates? && (path.empty? || terminates.route.partial_match? || only_trailing_delimiters)
         response = terminates.route.partial_match? ?
-          Response.new(terminates, params, path.join, original_path[0, original_path.size - path.join.size],only_trailing_delimiters) :
+          Response.new(terminates, params, path.join, original_path[0, original_path.size - path.join.size], only_trailing_delimiters) :
           Response.new(terminates, params, nil, original_path, only_trailing_delimiters)
       # terminates or is partial
       elsif !path.empty? and greedy and match_with_result_output = greedy.match_with_result(whole_path = path.join)
