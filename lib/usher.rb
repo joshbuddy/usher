@@ -254,7 +254,16 @@ class Usher
   #     route = set.add_route('/test')
   #     set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request, path = request.path)
-    root.find(request, path, splitter.split(path))
+    if ignore_trailing_delimiters? and path.size > 1
+      path_size = path.size
+      path = path.gsub(/#{Regexp.quote(delimiters.first)}$/, '')
+      response = root.find(request, path, splitter.split(path))
+      response.only_trailing_delimiters = (path.size != path_size) if response
+      response
+    else
+      root.find(request, path, splitter.split(path))
+    end
+
   end
 
   # Recognizes a `path`
