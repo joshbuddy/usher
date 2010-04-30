@@ -5,7 +5,7 @@ require "base64"
 
 Gem::Specification.new do |s|
   s.name = "usher"
-  s.version = "0.7.1"
+  s.version = "0.7.2"
   s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub Šťastný", "Joshua Hull"]
   s.homepage = "http://github.com/joshbuddy/usher"
   s.summary = "Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure"
@@ -25,7 +25,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "code_stats"
   s.add_development_dependency "rake"
-
-  # RubyForge
-  s.rubyforge_project = "joshbuddy-usher"
 end
