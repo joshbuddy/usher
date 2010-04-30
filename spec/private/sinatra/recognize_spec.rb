@@ -125,4 +125,16 @@ describe "Usher (for Sinatra) route recognition" do
       @app.router.recognize_path("/foo/:bar").should == nil
     end
   end
+
+  describe "priority" do
+
+    it "should set correctly priorities" do
+      pending "match the wrong route"
+      @app.get("/:id/:right", :priority => 10) { "right" }
+      @app.get("/:id/:wrong") { "wrong" }
+      response = @app.call_with_mock_request('/foo/bar')
+      response.status.should == 200
+      response.body.should == "right"
+    end
+  end
 end
