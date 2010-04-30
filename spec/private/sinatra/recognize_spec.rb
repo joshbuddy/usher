@@ -55,12 +55,6 @@ describe "Usher (for Sinatra) route recognition" do
       response = @app.call_with_mock_request('/foo/bar')
       response.status.should == 200
       response.body.should == "bar"
-      # response = @app.call_with_mock_request('/foo')
-      # response.status.should == 200
-      # response.body.should == ""
-      # sponse = @app.call_with_mock_request('/foo/')
-      # response.status.should == 200
-      # response.body.should == ""
       response = @app.call_with_mock_request('/bar/foo')
       response.status.should == 200
       response.body.should == "foo"
@@ -120,6 +114,15 @@ describe "Usher (for Sinatra) route recognition" do
       response = @app.call_with_mock_request('/bar')
       response.status.should == 404
       response.body.should_not match(/__sinatra__/)
+    end
+  end
+
+  describe "recognize paths" do
+
+    it "should recognize basic routes" do
+      pending "undefined method `request_method' for nil:NilClass"
+      @app.get("/foo/:bar") { "foo" }
+      @app.router.recognize_path("/foo/:bar").should == nil
     end
   end
 end
