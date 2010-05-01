@@ -26,6 +26,10 @@ class Usher
         routes
       end
 
+      def lookup(request_object, path)
+        find(request_object, path, route_set.splitter.split(path))
+      end
+      
       private
       
       def set_path_with_destination(path, destination = path)

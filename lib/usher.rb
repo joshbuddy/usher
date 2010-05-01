@@ -51,7 +51,7 @@ class Usher
   #     set.reset!
   #     set.empty? => true
   def reset!
-    @root = Node::Root.new(self, request_methods)
+    @root = class_for_root.new(self, request_methods)
     @named_routes = {}
     @routes = []
     @grapher = Grapher.new(self)
@@ -254,16 +254,7 @@ class Usher
   #     route = set.add_route('/test')
   #     set.recognize(Request.new('/test')).path.route == route => true
   def recognize(request, path = request.path)
-    if ignore_trailing_delimiters? and path.size > 1
-      path_size = path.size
-      path = path.gsub(/#{Regexp.quote(delimiters.first)}$/, '')
-      response = root.find(request, path, splitter.split(path))
-      response.only_trailing_delimiters = (path.size != path_size) if response
-      response
-    else
-      root.find(request, path, splitter.split(path))
-    end
-
+    root.lookup(request, path)
   end
 
   # Recognizes a `path`
@@ -396,4 +387,8 @@ class Usher
     routes.each{|r| grapher.add_route(r)}
   end
 
+  def class_for_root
+    ignore_trailing_delimiters? ? Node::RootIgnoringTrailingDelimiters : Node::Root
+  end
+  
 end

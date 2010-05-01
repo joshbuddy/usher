@@ -21,55 +21,13 @@ class Usher
         end
 
         def generate_path_for_base_params_with_hash(path, params)
-          result = ''
-          path.parts.each do |part|
-            case part
-            when String
-              result << part
-            when Route::Variable::Glob
-              value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new("expected a value for #{part.name}"))
-              value.each_with_index do |current_value, index|
-                part.valid!(current_value)
-                result << current_value.to_s
-                result << usher.delimiters.first if index != value.size - 1
-              end
-            when Route::Variable
-              value = (params && params.delete(part.name)) || part.default_value || raise(MissingParameterException.new("expected a value for #{part.name}"))
-              part.valid!(value)
-              result << value.to_s
-            when Route::Static::Greedy
-              result << part.generate_with
-            else
-              raise
-            end
-          end
-          result
+          path.generate_from_hash(params)
         end
         
         def generate_path_for_base_params_with_array(path, params)
-          result = ''
-          path.parts.each do |part|
-            case part
-            when String
-              result << part
-            when Route::Variable::Glob
-              value = (params && params.shift) || part.default_value || raise(MissingParameterException.new)
-              value.each_with_index do |current_value, index|
-                part.valid!(current_value)
-                result << current_value.to_s
-                result << usher.delimiters.first if index != value.size - 1
-              end
-            when Route::Variable
-              value = (params && params.shift) || part.default_value || raise(MissingParameterException.new)
-              part.valid!(value)
-              result << value.to_s
-            when Route::Static::Greedy
-              result << value.generate_with
-            else
-              raise
-            end
-          end
-          result
+          res = path.generate(*params)
+          params.clear
+          res
         end
         
       end

@@ -1,4 +1,5 @@
 require File.join('usher', 'node', 'root')
+require File.join('usher', 'node', 'root_ignoring_trailing_delimiters')
 require File.join('usher', 'node', 'response')
 
 class Usher
@@ -50,6 +51,8 @@ class Usher
       end
       out
     end
+
+    protected
 
     def find(request_object, original_path, path, params = [])
       # terminates or is partial
