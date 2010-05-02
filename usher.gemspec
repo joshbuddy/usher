@@ -6,7 +6,7 @@ require "base64"
 Gem::Specification.new do |s|
   s.name = "usher"
   s.version = "0.7.3"
-  s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub Šťastný", "Joshua Hull"]
+  s.authors = ["Daniel Neighman", "Daniel Vartanov", "Jakub Šťastný", "Joshua Hull", "Davide D'Agostino"].sort
   s.homepage = "http://github.com/joshbuddy/usher"
   s.summary = "Pure ruby general purpose router with interfaces for rails, rack, email or choose your own adventure"
   s.cert_chain = nil
