@@ -5,7 +5,7 @@ class Usher
     attr_reader :unescaped
     
     # Creates a list of delimiters
-    # @param arr [Array<String>] delimters to use
+    # @param ary [Array<String>] delimters to use
     def initialize(ary)
       super ary
       @unescaped = self.map do |delimiter|

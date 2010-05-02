@@ -30,7 +30,7 @@ Any probably more!
 
 From the rdoc:
 
-Creates a route from +path+ and +options+
+Creates a route from `path` and `options`
 
 ### `path`
 A path consists a mix of dynamic and static parts delimited by `/`

@@ -1,17 +1,18 @@
 class Usher
   module Interface
     class Rack
+      # Route specific for Rack with redirection support built in.
       class Route < Usher::Route
         
-        attr_accessor :redirect_on_trailing_slash
-        
+        # Redirect route to some other path. 
         def redirect(path, status = 302)
           unless (300..399).include?(status)
             raise ArgumentError, "Status has to be an integer between 300 and 399"
           end
           @destination = lambda do |env|
+            params = env[Usher::Interface::Rack::ENV_KEY_PARAMS]
             response = ::Rack::Response.new
-            response.redirect(path, status)
+            response.redirect(eval(%|"#{path}"|), status)
             response.finish
           end
           self

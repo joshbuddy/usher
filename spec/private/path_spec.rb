@@ -45,12 +45,6 @@ describe "Usher route adding" do
     route_set.named_routes.size == 0
   end
 
-  it "should calculate depths for nodes" do
-    route_set.add_named_route(:route, '/bad/route/three/four')
-    route_set.root.depth.should == 0
-    route_set.root.normal['/'].depth.should == 1
-  end
-
   describe "merging paths" do
     before do
       @r1 = route_set.add_route("/foo/bar")

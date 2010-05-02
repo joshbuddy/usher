@@ -8,7 +8,7 @@ u.add_route('/simple/again')
 u.add_route('/simple/again/and/again')
 u.add_route('/dynamic/:variable')
 u.add_route('/rails/:controller/:action/:id')
-u.add_route('/greedy/{!:greed,.*}')
+u.add_route('/greedy/{!greed,.*}')
 
 TIMES = 50_000
 

@@ -3,6 +3,19 @@ require File.join('usher', 'node', 'root_ignoring_trailing_delimiters')
 require File.join('usher', 'node', 'response')
 
 class Usher
+  
+  # The node class used to walk the tree looking for a matching route. The node has three different things that it looks for.
+  # ## Normal
+  # The normal hash is used to normally find matching parts. As well, the reserved key, `nil` is used to denote a variable match.
+  # ## Greedy
+  # The greedy hash is used when you want to match on the entire path. This match can trancend delimiters (unlike the normal match)
+  # and match as much of the path as needed.
+  # ## Request
+  # The request hash is used to find request method restrictions after the entire path has been consumed.
+  # 
+  # Once the node finishes looking for matches, it looks for a `terminates` on the node that is usable. If it finds one, it wraps it into a {Node::Response}
+  # and returns that. All actual matching though should normally be done off of {Node::Root#lookup}
+  # @see Root
   class Node
 
     attr_reader :normal, :greedy, :request
@@ -11,6 +24,21 @@ class Usher
     def initialize(parent, value)
       @parent, @value = parent, value
     end
+
+    def inspect
+      out = ''
+      out << " " * depth
+      out << "#{terminates? ? '* ' : ''}#{depth}: #{value.inspect}\n"
+      [:normal, :greedy, :request].each do |node_type|
+        send(node_type).each do |k,v|
+          out << (" " * (depth + 1)) << "#{node_type.to_s[0].chr} #{k.inspect} ==> \n" << v.inspect
+        end if send(node_type)
+      end
+      out
+    end
+
+    protected
+
 
     def depth
       @depth ||= parent.is_a?(Node) ? parent.depth + 1 : 0
@@ -40,20 +68,6 @@ class Usher
       @route_set ||= root.route_set
     end
 
-    def inspect
-      out = ''
-      out << " " * depth
-      out << "#{terminates? ? '* ' : ''}#{depth}: #{value.inspect}\n"
-      [:normal, :greedy, :request].each do |node_type|
-        send(node_type).each do |k,v|
-          out << (" " * (depth + 1)) << "#{node_type.to_s[0].chr} #{k.inspect} ==> \n" << v.inspect
-        end if send(node_type)
-      end
-      out
-    end
-
-    protected
-
     def find(request_object, original_path, path, params = [])
       # terminates or is partial
 
@@ -72,7 +86,7 @@ class Usher
         case child_node.value
         when String
         when Route::Variable::Single
-          variable = child_node.value                                # get the variable
+          variable = child_node.value                               # get the variable
           variable.valid!(part)                                     # do a validity check
           until path.empty? || (variable.look_ahead === path.first) # variables have a look ahead notion,
             next_path_part = path.shift                             # and until they are satified,

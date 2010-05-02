@@ -21,6 +21,13 @@ describe "Rack interface extensions for Usher::Route" do
       status, headers, body = @route_set.call(@env)
       headers["Location"].should eql("/")
     end
+
+    it "should redirect '/:id.html' to '/:id'" do
+      @route_set.get("/:id.html").redirect('/#{params[:id]}')
+      @env = Rack::MockRequest.env_for("/123.html")
+      status, headers, body = @route_set.call(@env)
+      headers["Location"].should eql("/123")
+    end
   end
 
   describe "chaining" do

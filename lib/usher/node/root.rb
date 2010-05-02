@@ -1,7 +1,7 @@
 class Usher
   class Node
     class Root < Node
-      
+
       def initialize(route_set, request_methods)
         super(route_set, nil)
         self.request_methods = request_methods

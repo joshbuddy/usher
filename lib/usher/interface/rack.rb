@@ -120,7 +120,7 @@ class Usher
         env[router_key] = self
         request = ::Rack::Request.new(env)
         response = @router.recognize(request, request.path_info)
-        if redirect_on_trailing_delimiters and response.only_trailing_delimiters and request.get?
+        if redirect_on_trailing_delimiters and response.only_trailing_delimiters and (request.get? || request.head?)
           response = ::Rack::Response.new
           response.redirect(request.path_info[0, request.path_info.size - 1], 302)
           response.finish
