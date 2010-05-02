@@ -2,7 +2,14 @@ class Usher
   class Route
     class Variable
 
+      module Validator
+        def validates?
+          true
+        end
+      end
+
       module ProcValidator
+        include Validator
         def valid!(val)
           begin
             @validator.call(val)
@@ -13,6 +20,7 @@ class Usher
       end
 
       module CaseEqualsValidator
+        include Validator
         def valid!(val)
           @validator === val.to_s or raise(ValidationException.new("#{val} does not conform to #{@validator}"))
         end
@@ -38,6 +46,10 @@ class Usher
       private :initialize
 
       def valid!(val)
+      end
+      
+      def validates?
+        false
       end
       
       def ==(o)

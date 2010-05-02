@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'rbench'
 require 'lib/usher'
+#require 'usher'
 
 u = Usher.new(:generator => Usher::Util::Generators::URL.new)
 u.add_route('/simple')                                                                                     .name(:simple)

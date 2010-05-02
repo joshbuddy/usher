@@ -25,9 +25,7 @@ class Usher
         end
         
         def generate_path_for_base_params_with_array(path, params)
-          res = path.generate(*params)
-          params.clear
-          res
+          path.generate(*params.slice!(0, path.dynamic_parts.size))
         end
         
       end

@@ -115,7 +115,7 @@ class Usher
             generating_method << ")\n"
             dynamic_indicies.each do |di|
               dp = parts.at(di)
-              generating_method << "parts.at(#{di}).valid!(arg#{di})\n"
+              generating_method << "@parts.at(#{di}).valid!(arg#{di})\n" if dp.validates?
             end
           else
             generating_method << "\n"
@@ -130,7 +130,9 @@ class Usher
           if parts && dynamic?
             generating_method << dynamic_indicies.map { |di|
               dp = parts.at(di)
-              "params && params.delete(:#{dp.name}) || parts.at(#{di}).default_value || raise(MissingParameterException.new(\"expected a value for #{dp.name}\"))"
+              arg = "params && params.delete(:#{dp.name}) "
+              arg << "|| @parts.at(#{di}).default_value " if dp.default_value
+              arg << "|| raise(MissingParameterException.new(\"expected a value for #{dp.name}\"))"
             }.join(', ')
           end
           generating_method << ")\nend\n\n"
