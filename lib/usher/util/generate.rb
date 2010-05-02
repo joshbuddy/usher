@@ -108,7 +108,7 @@ class Usher
             if usher.consider_destination_keys? && path.route.destination_keys
               params.delete_if{|k, v| path.route.destination_keys.include?(k)}
             end
-            result << '?' << Rack::Utils.build_query(params) unless params.empty?
+            result << '?' << generate_querystring(params) unless params.empty?
           end
           result
         end
@@ -170,6 +170,24 @@ class Usher
 
           (url[-1] == ?/) ? url[0..-2] : url
         end
+
+        def generate_querystring(params)
+          extra_params_result = ''
+          params.each do |k,v|
+            case v
+            when Array
+              v.each do |v_part|
+                extra_params_result << '&' unless extra_params_result.empty?
+                extra_params_result << Rack::Utils.escape("#{k.to_s}[]") << '=' << Rack::Utils.escape(v_part.to_s)
+              end
+            else
+              extra_params_result << '&' unless extra_params_result.empty?
+              extra_params_result << Rack::Utils.escape(k.to_s) << '=' << Rack::Utils.escape(v.to_s)
+            end
+          end
+          extra_params_result
+        end
+
 
         def path_for_routing_lookup(routing_lookup, params = {})
           path = case routing_lookup
