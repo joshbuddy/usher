@@ -3,7 +3,6 @@ class Usher
     class Generators
 
       class Generic
-
         attr_accessor :usher
 
         def generate(name, params)
@@ -14,20 +13,11 @@ class Usher
           raise UnrecognizedException.new unless path
           case params
           when nil, Hash
-            generate_path_for_base_params_with_hash(path, params)
+            path.generate_from_hash(params)
           else
-            generate_path_for_base_params_with_array(path, Array(params))
+            path.generate(*Array(params).slice!(0, path.dynamic_parts.size))
           end
         end
-
-        def generate_path_for_base_params_with_hash(path, params)
-          path.generate_from_hash(params)
-        end
-        
-        def generate_path_for_base_params_with_array(path, params)
-          path.generate(*params.slice!(0, path.dynamic_parts.size))
-        end
-        
       end
 
       class URL < Generic
@@ -114,14 +104,11 @@ class Usher
           
           params = extra_params if extra_params
           
-          unless !generate_extra || params.nil? || params.empty?
+          if generate_extra && params && !params.empty?
             if usher.consider_destination_keys? && path.route.destination_keys
               params.delete_if{|k, v| path.route.destination_keys.include?(k)}
             end
-            unless params.empty?
-              result << '?' unless result[??]
-              result << generate_extra_params(params)
-            end
+            result << '?' << Rack::Utils.build_query(params) unless params.empty?
           end
           result
         end
@@ -198,28 +185,7 @@ class Usher
             params.is_a?(Hash) ? usher.path_for_options(params) : raise
           end
         end
-
-
-        def generate_extra_params(params)
-          extra_params_result = ''
-
-          params.each do |k,v|
-            case v
-            when Array
-              v.each do |v_part|
-                extra_params_result << '&' unless extra_params_result.empty?
-                extra_params_result << Rack::Utils.escape("#{k.to_s}[]") << '=' << Rack::Utils.escape(v_part.to_s)
-              end
-            else
-              extra_params_result << '&' unless extra_params_result.empty?
-              extra_params_result << Rack::Utils.escape(k.to_s) << '=' << Rack::Utils.escape(v.to_s)
-            end
-          end
-          extra_params_result
-        end
-
       end
-
     end
   end
 end
