@@ -9,12 +9,12 @@ class Usher
           unless (300..399).include?(status)
             raise ArgumentError, "Status has to be an integer between 300 and 399"
           end
-          @destination = lambda do |env|
+          to { |env|
             params = env[Usher::Interface::Rack::ENV_KEY_PARAMS]
             response = ::Rack::Response.new
             response.redirect(eval(%|"#{path}"|), status)
             response.finish
-          end
+          }
           self
         end
         
