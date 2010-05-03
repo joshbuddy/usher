@@ -17,6 +17,11 @@ class Usher
           end
           self
         end
+        
+        def static_from(root)
+          match_partially!
+          @destination = ::Rack::File.new(root)
+        end
       end
     end
   end

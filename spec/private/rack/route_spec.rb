@@ -30,6 +30,15 @@ describe "Rack interface extensions for Usher::Route" do
     end
   end
 
+  describe "static file serving" do
+    it "should serve from a static directory" do
+      @route_set.get("/static").static_from(File.dirname(__FILE__))
+      @env = Rack::MockRequest.env_for("/static/#{File.basename(__FILE__)}")
+      status, headers, body = @route_set.call(@env)
+      body.path.should == File.join(File.dirname(__FILE__), File.basename(__FILE__))
+    end
+  end
+
   describe "chaining" do
     it "should be chainable" do
       @route_set.get("/index.html").redirect("/").name(:root)
