@@ -18,7 +18,7 @@ class Usher
           self
         end
         
-        def static_from(root)
+        def serves_static_from(root)
           match_partially!
           @destination = ::Rack::File.new(root)
         end

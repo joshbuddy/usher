@@ -32,7 +32,7 @@ describe "Rack interface extensions for Usher::Route" do
 
   describe "static file serving" do
     it "should serve from a static directory" do
-      @route_set.get("/static").static_from(File.dirname(__FILE__))
+      @route_set.get("/static").serves_static_from(File.dirname(__FILE__))
       @env = Rack::MockRequest.env_for("/static/#{File.basename(__FILE__)}")
       status, headers, body = @route_set.call(@env)
       body.path.should == File.join(File.dirname(__FILE__), File.basename(__FILE__))
