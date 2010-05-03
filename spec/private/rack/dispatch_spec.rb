@@ -66,6 +66,13 @@ describe "Usher (for rack) route dispatching" do
     end
   end
 
+  it "should returns HTTP 405 if the method mis-matches" do
+    route_set.reset!
+    route_set.add('/sample', :conditions => {:request_method => 'POST'}).to(@app)
+    response = route_set.call_with_mock_request('/sample', 'GET')
+    response.status.should eql(405)
+  end
+
   it "should returns HTTP 404 if route doesn't exist" do
     response = route_set.call_with_mock_request("/not-existing-url")
     response.status.should eql(404)

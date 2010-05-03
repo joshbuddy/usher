@@ -22,11 +22,15 @@ class Usher
 
         private
           def route!(base=self.class, pass_block=nil)
-            if base.router and match = base.router.recognize(@request, @request.path_info)
-              @block_params = match.params.map { |p| p.last }
-              (@params ||= {}).merge!(match.params_as_hash)
-              pass_block = catch(:pass) do
-                route_eval(&match.destination)
+            if base.router and match = catch(:request_method) { base.router.recognize(@request, @request.path_info) }
+              if match.is_a?(Symbol)
+                route_missing #FIXME this should really respond with a 405
+              else
+                @block_params = match.params.map { |p| p.last }
+                (@params ||= {}).merge!(match.params_as_hash)
+                pass_block = catch(:pass) do
+                  route_eval(&match.destination)
+                end
               end
             end
 

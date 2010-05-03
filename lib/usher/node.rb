@@ -120,17 +120,23 @@ class Usher
             route_candidates << ret
           end
           route_candidates.sort!{|r1, r2| r1.path.route.priority <=> r2.path.route.priority}
-          route_candidates.last
+          request_method_respond(route_candidates.last, request_method_type)
         else
           if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup)
             ret
           elsif general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup)
-            ret
+            request_method_respond(ret, request_method_type)
+          else
+            request_method_respond(nil, request_method_type)
           end
         end
       else
         nil
       end
+    end
+
+    def request_method_respond(ret, request_method_respond)
+      ret || (route_set.throw_on_request_method_miss? ? throw(:request_method, request_method_type) : nil)
     end
 
     def activate_normal!
