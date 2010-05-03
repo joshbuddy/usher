@@ -24,7 +24,7 @@ class Usher
           def route!(base=self.class, pass_block=nil)
             if base.router and match = catch(:request_method) { base.router.recognize(@request, @request.path_info) }
               if match.is_a?(Symbol)
-                route_missing #FIXME this should really respond with a 405
+                route_eval { status 405 }
               else
                 @block_params = match.params.map { |p| p.last }
                 (@params ||= {}).merge!(match.params_as_hash)
@@ -80,7 +80,8 @@ class Usher
                                   :ignore_trailing_delimiters => true,
                                   :generator => Usher::Util::Generators::URL.new,
                                   :delimiters => ['/', '.', '-'],
-                                  :valid_regex => '[0-9A-Za-z\$_\+!\*\',]+')
+                                  :valid_regex => '[0-9A-Za-z\$_\+!\*\',]+',
+                                  :throw_on_request_method_miss => true)
             block_given? ? yield(@router) : @router
           end
 
@@ -114,6 +115,25 @@ class Usher
                     Try this:
                     <pre>#{request.request_method.downcase} '#{request.path_info}' do\n  "Hello World"\nend</pre>
                   </div>
+                </body>
+                </html>
+                HTML
+              end
+              error 405 do
+                content_type 'text/html'
+
+                (<<-HTML).gsub(/^ {17}/, '')
+                <!DOCTYPE html>
+                <html>
+                <head>
+                  <style type="text/css">
+                  body { text-align:center;font-family:helvetica,arial;font-size:22px;
+                    color:#888;margin:20px}
+                  #c {margin:0 auto;width:500px;text-align:left}
+                  </style>
+                </head>
+                <body>
+                  <h2>Sinatra sorta knows this ditty, but the request method is not allowed.</h2>
                 </body>
                 </html>
                 HTML

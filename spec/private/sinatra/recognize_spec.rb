@@ -117,4 +117,14 @@ describe "Usher (for Sinatra) route recognition" do
     end
   end
 
+  describe "method not allowed" do
+
+    it "should correctly generate a not found page without images and return a 405" do
+      @app.post('/bar') { 'found' }
+      response = @app.call_with_mock_request('/bar')
+      response.status.should == 405
+      response.body.should_not match(/__sinatra__/)
+    end
+  end
+
 end
