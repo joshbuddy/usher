@@ -121,8 +121,10 @@ describe "Usher (for Sinatra) route recognition" do
 
     it "should correctly generate a not found page without images and return a 405" do
       @app.post('/bar') { 'found' }
+      @app.put('/bar') { 'found' }
       response = @app.call_with_mock_request('/bar')
       response.status.should == 405
+      response.headers['Allow'].should == 'POST, PUT'
       response.body.should_not match(/__sinatra__/)
     end
   end

@@ -3,6 +3,12 @@ class Usher
     # The response from {Usher::Node::Root#lookup}. Adds some convenience methods for common parameter manipulation.
     class Response < Struct.new(:path, :params_as_array, :remaining_path, :matched_path, :only_trailing_delimiters)
       
+      # The success of the response
+      # @return [Boolean] Always returns true
+      def succeeded?
+        true
+      end
+
       # The params from recognition
       # @return [Array<Symbol, String>] The parameters detected from recognition returned as an array of arrays.
       def params

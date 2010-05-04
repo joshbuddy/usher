@@ -24,7 +24,6 @@ class Usher
       # * <tt>allow_identical_variable_names</tt> - Option to prevent routes with identical variable names to be added. eg, /:variable/:variable would raise an exception if this option is not enabled. (Default <tt>false</tt>)
       def initialize(options = {}, &blk)
         @_app = options[:default_app] || proc{|env| ::Rack::Response.new("No route found", 404).finish }
-        @method_not_allowed_response = ::Rack::Response.new("Method not allowed", 405).finish
         @use_destinations = options.key?(:use_destinations) ? options.delete(:use_destinations) : true
         @router_key = options.delete(:router_key) || ENV_KEY_DEFAULT_ROUTER
         request_methods = options.delete(:request_methods) || [:request_method, :host, :port, :scheme]
@@ -34,7 +33,7 @@ class Usher
         if redirect_on_trailing_delimiters
           options[:ignore_trailing_delimiters] = true
         end
-        usher_options = {:request_methods => request_methods, :generator => generator, :allow_identical_variable_names => allow_identical_variable_names, :throw_on_request_method_miss => true}
+        usher_options = {:request_methods => request_methods, :generator => generator, :allow_identical_variable_names => allow_identical_variable_names, :detailed_failure => true}
         usher_options.merge!(options)
         @router = Usher.new(usher_options)
         @router.route_class = Rack::Route
@@ -120,15 +119,13 @@ class Usher
       def call(env)
         env[router_key] = self
         request = ::Rack::Request.new(env)
-        response = catch(:request_method) {@router.recognize(request, request.path_info)}
-        if response.is_a?(Symbol)
-          @method_not_allowed_response
-        elsif redirect_on_trailing_delimiters and response.only_trailing_delimiters and (request.get? || request.head?)
+        response = @router.recognize(request, request.path_info)
+        if response.succeeded? && redirect_on_trailing_delimiters and response.only_trailing_delimiters and (request.get? || request.head?)
           response = ::Rack::Response.new
           response.redirect(request.path_info[0, request.path_info.size - 1], 302)
           response.finish
         else
-          after_match(request, response) if response
+          after_match(request, response) if response.succeeded?
           determine_respondant(response).call(env)
         end
       end
@@ -164,11 +161,15 @@ class Usher
       #
       # @api private
       def determine_respondant(response)
-        usable_response = use_destinations? && response && response.destination
+        usable_response = response.succeeded? && use_destinations? && response && response.destination
         if usable_response && response.destination.respond_to?(:call)
           response.destination
         elsif usable_response && response.destination.respond_to?(:args) && response.destination.args.first.respond_to?(:call)
           response.args.first
+        elsif !response.succeeded? && response.request_method?
+          rack_response = ::Rack::Response.new("Method not allowed", 405)
+          rack_response['Allow'] = response.acceptable_responses_only_strings.join(", ")
+          proc { |env| rack_response.finish }
         else
           _app
         end

@@ -67,7 +67,7 @@ class Usher
   # @option options [nil or Generator] :generator (nil) Take a look at `Usher::Util::Generators for examples.`.
   # @option options [Boolean] :ignore_trailing_delimiters (false) Ignore trailing delimiters in recognizing paths.
   # @option options [Boolean] :consider_destination_keys (false) When generating, and using hash destinations, you can have Usher use the destination hash to match incoming params.
-  # @option options [Boolean] :throw_on_request_method_miss (false) When a route fails to match in the request method stage, have to throw where the mismatch occurred.
+  # @option options [Boolean] :detailed_failure (false) When a route fails to match, return a {Node::FailedResponse} instead of a `nil`
   #   Example, you create a route with a destination of :controller => 'test', :action => 'action'. If you made a call to generator with :controller => 'test', 
   #   :action => 'action', it would pick that route to use for generation.
   # @option options [Boolean] :allow_identical_variable_names (true) When adding routes, allow identical variable names to be used.
@@ -80,7 +80,7 @@ class Usher
     self.ignore_trailing_delimiters      = options && options.key?(:ignore_trailing_delimiters) ? options.delete(:ignore_trailing_delimiters) : false
     self.consider_destination_keys       = options && options.key?(:consider_destination_keys) ? options.delete(:consider_destination_keys) : false
     self.allow_identical_variable_names  = options && options.key?(:allow_identical_variable_names) ? options.delete(:allow_identical_variable_names) : true
-    self.throw_on_request_method_miss    = options && options.key?(:throw_on_request_method_miss) ? options.delete(:throw_on_request_method_miss) : false
+    self.detailed_failure                = options && options.key?(:detailed_failure) ? options.delete(:detailed_failure) : false
 
     unless options.nil? || options.empty?
       raise "unrecognized options -- #{options.keys.join(', ')}"
@@ -93,9 +93,9 @@ class Usher
     @allow_identical_variable_names
   end
   
-  # @return [Boolean] State of throw_on_request_method_miss feature.
-  def throw_on_request_method_miss?
-    @throw_on_request_method_miss
+  # @return [Boolean] State of detailed_failure feature.
+  def detailed_failure?
+    @detailed_failure
   end
   
   # @return [Boolean] State of ignore_trailing_delimiters feature.
@@ -328,7 +328,7 @@ class Usher
 
   private
 
-  attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys, :allow_identical_variable_names, :throw_on_request_method_miss
+  attr_accessor :request_methods, :ignore_trailing_delimiters, :consider_destination_keys, :allow_identical_variable_names, :detailed_failure
   attr_reader :valid_regex
   attr_writer :parser
   

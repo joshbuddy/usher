@@ -22,15 +22,19 @@ class Usher
 
         private
           def route!(base=self.class, pass_block=nil)
-            if base.router and match = catch(:request_method) { base.router.recognize(@request, @request.path_info) }
-              if match.is_a?(Symbol)
-                route_eval { status 405 }
-              else
+            if base.router and match = base.router.recognize(@request, @request.path_info)
+              if match.succeeded?
                 @block_params = match.params.map { |p| p.last }
                 (@params ||= {}).merge!(match.params_as_hash)
                 pass_block = catch(:pass) do
                   route_eval(&match.destination)
                 end
+              elsif match.request_method?
+                route_eval { 
+                  response['Allow'] = match.acceptable_responses_only_strings.join(", ")
+                  status 405
+                }
+                return
               end
             end
 
@@ -81,7 +85,7 @@ class Usher
                                   :generator => Usher::Util::Generators::URL.new,
                                   :delimiters => ['/', '.', '-'],
                                   :valid_regex => '[0-9A-Za-z\$_\+!\*\',]+',
-                                  :throw_on_request_method_miss => true)
+                                  :detailed_failure => true)
             block_given? ? yield(@router) : @router
           end
 

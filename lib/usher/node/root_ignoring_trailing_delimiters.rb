@@ -13,7 +13,7 @@ class Usher
         if path.size > 1
           new_path = path.gsub(@stripper, '')
           response = lookup_without_stripping(request_object, new_path)
-          response.only_trailing_delimiters = (new_path.size != path.size) if response
+          response.only_trailing_delimiters = (new_path.size != path.size) if response && response.succeeded?
           response
         else
           lookup_without_stripping(request_object, path)

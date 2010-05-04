@@ -1,6 +1,7 @@
 require File.join('usher', 'node', 'root')
 require File.join('usher', 'node', 'root_ignoring_trailing_delimiters')
 require File.join('usher', 'node', 'response')
+require File.join('usher', 'node', 'failed_response')
 
 class Usher
   
@@ -131,12 +132,12 @@ class Usher
           end
         end
       else
-        nil
+        route_set.detailed_failure? ? FailedResponse.new(self, :normal_or_greedy, nil) : nil
       end
     end
 
     def request_method_respond(ret, request_method_respond)
-      ret || (route_set.throw_on_request_method_miss? ? throw(:request_method, request_method_type) : nil)
+      ret || (route_set.detailed_failure? ? FailedResponse.new(self, :request_method, request_method_respond) : nil)
     end
 
     def activate_normal!
