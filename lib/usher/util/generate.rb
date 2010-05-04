@@ -178,7 +178,7 @@ class Usher
             when Array
               v.each do |v_part|
                 extra_params_result << '&' unless extra_params_result.empty?
-                extra_params_result << Rack::Utils.escape("#{k.to_s}[]") << '=' << Rack::Utils.escape(v_part.to_s)
+                extra_params_result << Rack::Utils.escape(k.to_s) << '%5B%5D=' << Rack::Utils.escape(v_part.to_s)
               end
             else
               extra_params_result << '&' unless extra_params_result.empty?
