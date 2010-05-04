@@ -6,16 +6,9 @@ class Usher
 
       attr_reader :router
 
-      def self.for_delimiters(router, valid_regex)
-        new(
-          router,
-          Regexp.new('((:|\*)?' + valid_regex + '|' + router.delimiters_regex + '|\(|\)|\||\{)')
-        )
-      end
-
-      def initialize(router, split_regex)
+      def initialize(router, valid_regex)
         @router = router
-        @split_regex = split_regex
+        @split_regex = Regexp.new('((:|\*)?' + valid_regex + '|' + router.delimiters_regex + '|\(|\)|\||\{)')
         @delimiters_regex = Regexp.new(router.delimiters_regex)
       end
 

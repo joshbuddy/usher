@@ -56,7 +56,7 @@ class Usher
     @routes = []
     @grapher = Grapher.new(self)
     @priority_lookups = false
-    @parser = Util::Parser.for_delimiters(self, valid_regex)
+    @parser = Util::Parser.new(self, valid_regex)
   end
 
   # Creates a route set, with options
@@ -348,7 +348,7 @@ class Usher
 
   def valid_regex=(valid_regex)
     @valid_regex = valid_regex
-    @splitter = Splitter.for_delimiters(self.delimiters)
+    @splitter = Splitter.new(self.delimiters)
     @valid_regex
   end
 

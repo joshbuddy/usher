@@ -1,7 +1,7 @@
 class Usher
   class Splitter
 
-    def self.for_delimiters(delimiters_array)
+    def self.new(delimiters_array)
       delimiters = Delimiters.new(delimiters_array)
       delimiters.any?{|d| d.size > 1} ?
         MultiCharacterSplitterInstance.new(delimiters) :
@@ -13,7 +13,7 @@ class Usher
       def initialize(delimiters)
         @url_split_regex = Regexp.new("[^#{delimiters.regexp_char_class}]+|[#{delimiters.regexp_char_class}]")
       end
-      
+        
       def split(path)
         path.scan(@url_split_regex)
       end
