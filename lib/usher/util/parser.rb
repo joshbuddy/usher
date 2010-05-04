@@ -95,12 +95,10 @@ class Usher
           end
 
           case part[0]
-          when ?*
+          when ?*, ?:
+            variable_class = part[0] == ?* ? Usher::Route::Variable::Glob : Usher::Route::Variable::Single
             var_name = part[1, part.size - 1].to_sym
-            current_group << Usher::Route::Variable::Glob.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
-          when ?:
-            var_name = part[1, part.size - 1].to_sym
-            current_group << Usher::Route::Variable::Single.new(part[1, part.size - 1], nil, requirements && requirements[var_name])
+            current_group << variable_class.new(part[1, part.size - 1], requirements && requirements[var_name].is_a?(Regexp) ? requirements[var_name] : nil, requirements && requirements[var_name])
           when ?{
             pattern = ''
             count = 1
@@ -124,6 +122,7 @@ class Usher
               when ?: then Usher::Route::Variable::Single
               end
               variable_name = variable[0, variable.size - 1].to_sym
+              raise DoubleRegexpException.new("#{variable_name} has two regex validators, #{pattern} and #{requirements[variable_name]}") if requirements && requirements[variable_name] && requirements[variable_name].is_a?(Regexp)
               current_group << variable_class.new(variable_name, Regexp.new(pattern), requirements && requirements[variable_name])
             elsif simple
               static = Usher::Route::Static::Greedy.new(pattern)

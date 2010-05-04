@@ -12,7 +12,7 @@ class Usher
         include Validator
         def valid!(val)
           begin
-            @validator.call(val)
+            @validator.call(val) or raise(ValidationException.new("#{val} does not conform to #{@validator}"))
           rescue Exception => e
             raise ValidationException.new("#{val} does not conform to #{@validator}, root cause #{e.inspect}")
           end

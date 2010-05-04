@@ -288,9 +288,18 @@ describe "Usher route recognition" do
     result.params.should == [[:name, "homer"],[:surname, "simpson"]]
   end
 
-  it "should should raise if malformed variables are used" do
+  it "should use a regexp requirement as part of recognition" do
     @route_set.add_route('/products/show/:id', :id => /\d+/, :conditions => {:method => 'get'})
-    proc {@route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'}))}.should raise_error
+    @route_set.recognize(build_request({:method => 'get', :path => '/products/show/qweasd', :domain => 'admin.host.com'})).should be_nil
+  end
+
+  it "should use a inline regexp and proc requirement as part of recognition" do
+    @route_set.add_route('/products/show/{:id,^\d+$}', :id => proc{|v| v == '123'}, :conditions => {:method => 'get'})
+    proc { @route_set.recognize(build_request({:method => 'get', :path => '/products/show/234', :domain => 'admin.host.com'}))}.should raise_error(Usher::ValidationException)
+  end
+
+  it "should not allow the use of an inline regexp and regexp requirement as part of recognition" do
+    proc { @route_set.add_route('/products/show/{:id,^\d+$}', :id => /\d+/, :conditions => {:method => 'get'}) }.should raise_error(Usher::DoubleRegexpException)
   end
 
   it "should recognize multiple optional parts" do
