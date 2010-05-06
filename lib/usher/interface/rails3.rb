@@ -35,7 +35,7 @@ class Usher
       
       # Generates a url from Rack env and identifiers or significant keys.
       #
-      # To generate a url by named route, pass the name in as a +Symbol+.
+      # To generate a url by named route, pass the name in as a `Symbol`.
       #   url(env, :dashboard) # => "/dashboard"
       #
       # Additional parameters can be passed in as a hash

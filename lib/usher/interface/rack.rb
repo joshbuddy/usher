@@ -23,7 +23,7 @@ class Usher
       # * <tt>generator</tt> - Route generator to use. (Default <tt>Usher::Util::Generators::URL.new</tt>)
       # * <tt>allow_identical_variable_names</tt> - Option to prevent routes with identical variable names to be added. eg, /:variable/:variable would raise an exception if this option is not enabled. (Default <tt>false</tt>)
       def initialize(options = {}, &blk)
-        @_app = options[:default_app] || proc{|env| ::Rack::Response.new("No route found", 404).finish }
+        @_app = options[:default_app] || proc{|env| ::Rack::Response.new("Not Found", 404).finish }
         @use_destinations = options.key?(:use_destinations) ? options.delete(:use_destinations) : true
         @router_key = options.delete(:router_key) || ENV_KEY_DEFAULT_ROUTER
         request_methods = options.delete(:request_methods) || [:request_method, :host, :port, :scheme]
@@ -56,14 +56,14 @@ class Usher
         new_one
       end
       
-      # Adds a route to the route set with a +path+ and optional +options+.
+      # Adds a route to the route set with a `path` and optional `options`.
       # See <tt>Usher#add_route</tt> for more details about the format of the route and options accepted here.
       def add(path, options = nil)
         @router.add_route(path, options)
       end
       alias_method :path, :add
 
-      # Sets the default application when route matching is unsuccessful. Accepts either an application +app+ or a block to call.
+      # Sets the default application when route matching is unsuccessful. Accepts either an application `app` or a block to call.
       #
       # default { |env| ... }
       # default DefaultApp
@@ -79,27 +79,27 @@ class Usher
       # it returns route, and because you may want to work with the route,
       # for example give it a name, we returns the route with GET request
 
-      # Convenience method for adding a route that only matches request method +GET+.
+      # Convenience method for adding a route that only matches request method `GET`.
       def only_get(path, options = {})
         add(path, options.merge!(:conditions => {:request_method => ["GET"]}))
       end
 
-      # Convenience method for adding a route that only matches request methods +GET+ and +HEAD+.
+      # Convenience method for adding a route that only matches request methods `GET` and `HEAD`.
       def get(path, options = {})
         add(path, options.merge!(:conditions => {:request_method => ["HEAD", "GET"]}))
       end
 
-      # Convenience method for adding a route that only matches request method +POST+.
+      # Convenience method for adding a route that only matches request method `POST`.
       def post(path, options = {})
         add(path, options.merge!(:conditions => {:request_method => "POST"}))
       end
 
-      # Convenience method for adding a route that only matches request method +PUT+.
+      # Convenience method for adding a route that only matches request method `PUT`.
       def put(path, options = {})
         add(path, options.merge!(:conditions => {:request_method => "PUT"}))
       end
 
-      # Convenience method for adding a route that only matches request method +DELETE+.
+      # Convenience method for adding a route that only matches request method `DELETE`.
       def delete(path, options = {})
         add(path, options.merge!(:conditions => {:request_method => "DELETE"}))
       end
@@ -167,7 +167,7 @@ class Usher
         elsif usable_response && response.destination.respond_to?(:args) && response.destination.args.first.respond_to?(:call)
           response.args.first
         elsif !response.succeeded? && response.request_method?
-          rack_response = ::Rack::Response.new("Method not allowed", 405)
+          rack_response = ::Rack::Response.new("Method Not Allowed", 405)
           rack_response['Allow'] = response.acceptable_responses_only_strings.join(", ")
           proc { |env| rack_response.finish }
         else
@@ -177,8 +177,8 @@ class Usher
 
       # Consume the path from path_info to script_name
       def consume_path!(request, response)
-        request.env["SCRIPT_NAME"] = (request.env["SCRIPT_NAME"] + response.matched_path)   || ""
-        request.env["PATH_INFO"] = response.remaining_path    || ""
+        request.env["SCRIPT_NAME"] = (request.env["SCRIPT_NAME"] + response.matched_path)
+        request.env["PATH_INFO"] = response.remaining_path || ""
       end
 
       def default_app

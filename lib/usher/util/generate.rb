@@ -75,7 +75,7 @@ class Usher
           result << generate_path(path, params)
         end
 
-        # Generates a completed URL based on a +route+ or set of optional +params+
+        # Generates a completed URL based on a `route` or set of optional `params`
         #
         #   set = Usher.new
         #   route = set.add_named_route(:test_route, '/:controller/:action')

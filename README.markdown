@@ -143,7 +143,7 @@ In your config/initializers/usher.rb (create if it doesn't exist) add:
 
 ## Sinatra
 
-In Sinatra, you get the extra method, +generate+, which lets you generate a url. Name your routes with `:name` when you define them.
+In Sinatra, you get the extra method, `generate`, which lets you generate a url. Name your routes with `:name` when you define them.
 
     require 'rubygems'
     require 'usher'
