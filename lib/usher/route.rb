@@ -6,7 +6,7 @@ require File.join('usher', 'route', 'request_method')
 
 class Usher
   class Route
-    attr_reader   :original_path, :paths, :requirements, :conditions, :named, :generate_with, :default_values, :match_partially, :destination, :priority
+    attr_reader   :original_path, :paths, :requirements, :conditions, :named, :generate_with, :default_values, :match_partially, :destination, :priority, :when_proc
     attr_accessor :parent_route, :router, :recognizable
 
     class GenerateWith < Struct.new(:scheme, :port, :host)
@@ -15,11 +15,22 @@ class Usher
       end
     end
 
+    def ==(other_route)
+      if other_route.is_a?(Route)
+        original_path == other_route.original_path && requirements == other_route.requirements && conditions == other_route.conditions && match_partially == other_route.match_partially && recognizable == other_route.recognizable && parent_route == other_route.parent_route && generate_with == other_route.generate_with
+      end
+    end
+
     def initialize(original_path, parsed_paths, router, conditions, requirements, default_values, generate_with, match_partially, priority)
       @original_path, @router, @requirements, @conditions, @default_values, @match_partially, @priority = original_path, router, requirements, conditions, default_values, match_partially, priority
       @recognizable = true
       @paths = parsed_paths.collect {|path| Path.new(self, path)}
       @generate_with = GenerateWith.new(generate_with[:scheme], generate_with[:port], generate_with[:host]) if generate_with
+    end
+
+    def when(&block)
+      @when_proc = block
+      self
     end
 
     def destination_keys

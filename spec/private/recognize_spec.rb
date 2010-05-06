@@ -84,6 +84,15 @@ describe "Usher route recognition" do
     end
   end
 
+  describe 'when proc' do
+
+    it "pick the correct route" do
+      not_target_route = @route_set.add_route('/sample').when{|r| r.protocol == 'https'}
+      target_route =     @route_set.add_route('/sample').when{|r| r.protocol == 'http'}
+      @route_set.recognize(build_request({:method => 'get', :path => '/sample', :protocol => 'http'})).path.route.should == target_route
+    end
+  end
+
   it "should recognize path with a trailing slash" do
     @route_set = Usher.new(:request_methods => [:protocol, :domain, :port, :query_string, :remote_ip, :user_agent, :referer, :method, :subdomains], :ignore_trailing_delimiters => true)
 
@@ -399,14 +408,14 @@ describe "Usher route recognition" do
 
     it "should not add routes added to the dup to the original" do
       @r2.add_route("/bar", :bar => "bar")
-      @r2.recognize(        build_request(:path => "/bar")).path.route.destination.should == {:bar => "bar"}
-      @route_set.recognize(  build_request(:path => "/bar")).should == nil
+      @r2.recognize(       build_request(:path => "/bar")).path.route.destination.should == {:bar => "bar"}
+      @route_set.recognize(build_request(:path => "/bar")).should == nil
     end
 
     it "should not delete routes added to the dup to the original" do
       @r2.delete_route("/foo")
-      @route_set.recognize(  build_request(:path => "/foo")).path.route.destination.should == {:foo => "foo"}
-      @r2.recognize(        build_request(:path => "/foo")).should == nil
+      @route_set.recognize(build_request(:path => "/foo")).path.route.destination.should == {:foo => "foo"}
+      @r2.recognize(       build_request(:path => "/foo")).should == nil
     end
 
 

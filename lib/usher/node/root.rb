@@ -12,15 +12,15 @@ class Usher
       end
       
       def add(route)
-        route.paths.each { |path| set_path_with_destination(path) }
+        get_nodes_for_route(route) {|p, n| n.add_terminate(p)}
       end
 
       def delete(route)
-        route.paths.each { |path| set_path_with_destination(path, nil) }
+        get_nodes_for_route(route) {|p, n| n.remove_terminate(p)}
       end
 
       def unique_routes(node = self, routes = [])
-        routes << node.terminates.route if node.terminates
+        routes.concat(node.unique_terminating_routes.to_a) if node.unique_terminating_routes
         [:normal, :greedy, :request].each { |type| node.send(type).values.each { |v| unique_routes(v, routes) } if node.send(type) }
         routes.uniq!
         routes
@@ -33,16 +33,22 @@ class Usher
       private
       
       def set_path_with_destination(path, destination = path)
-        nodes = [path.parts ? path.parts.inject(self){ |node, key| process_path_part(node, key)} : self]
-        nodes = process_request_parts(nodes, request_methods_for_path(path)) if request_methods
-        nodes.each do |node|
-          while node.request_method_type
-            node = (node.request[nil] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)))
-          end
-          node.terminates = destination
-        end
+        get_nodes(path) {|n| n.add_terminate(destination)}
       end
 
+      def get_nodes_for_route(route)
+        route.paths.each do |path|
+          nodes = [path.parts ? path.parts.inject(self){ |node, key| process_path_part(node, key)} : self]
+          nodes = process_request_parts(nodes, request_methods_for_path(path)) if request_methods
+          nodes.each do |node|
+            while node.request_method_type
+              node = (node.request[nil] ||= Node.new(node, Route::RequestMethod.new(node.request_method_type, nil)))
+            end
+            yield path, node
+          end
+        end
+      end
+      
       def request_method_index(type)
         request_methods.index(type)
       end

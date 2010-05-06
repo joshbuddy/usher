@@ -11,6 +11,10 @@ class Usher
         build_generator
       end
 
+      def ==(other_path)
+        other_path.is_a?(Path) ? route == other_path.route && parts == other_path.parts : nil
+      end
+      
       def convert_params_array(ary)
         ary.empty? ? ary : dynamic_keys.zip(ary)
       end

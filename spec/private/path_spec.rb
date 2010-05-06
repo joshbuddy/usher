@@ -36,7 +36,7 @@ describe "Usher route adding" do
     route_set.add_named_route(:route, '/bad/route', :controller => 'sample').should == route_set.named_routes[:route]
   end
 
-  it "should allow named routes to be added" do
+  it "should allow named routes to be deleted" do
     route_set.add_named_route(:route, '/bad/route', :controller => 'sample').should == route_set.named_routes[:route]
     route_set.route_count.should == 1
     route_set.named_routes.size == 1
