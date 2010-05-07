@@ -23,7 +23,7 @@ class Usher
 
     Terminates = Struct.new(:choices, :default)
 
-    attr_reader :normal, :greedy, :request, :terminates, :unique_terminating_routes
+    attr_reader :normal, :greedy, :request, :terminates, :unique_terminating_routes, :meta
     attr_accessor :default_terminates, :request_method_type, :parent, :value, :request_methods
 
     def initialize(parent, value)
@@ -40,6 +40,10 @@ class Usher
         end if send(node_type)
       end
       out
+    end
+
+    def add_meta(obj)
+      create_meta << obj
     end
 
     def add_terminate(path)
@@ -64,6 +68,10 @@ class Usher
     def create_terminate
       @unique_terminating_routes ||= Set.new
       @terminates ||= Terminates.new([], nil)
+    end
+    
+    def create_meta
+      @meta ||= []
     end
     
     def depth
@@ -94,18 +102,19 @@ class Usher
       @route_set ||= root.route_set
     end
 
-    def find(request_object, original_path, path, params = [])
+    def find(request_object, original_path, path, params = [], gathered_meta = [])
+      gathered_meta.concat(meta) if meta
       # terminates or is partial
       if terminating_path = pick_terminate(request_object) and (path.empty? || terminating_path.route.partial_match?)
         response = terminating_path.route.partial_match? ?
-          Response.new(terminating_path, params, path.join, original_path[0, original_path.size - path.join.size]) :
-          Response.new(terminating_path, params, nil, original_path)
+          Response.new(terminating_path, params, path.join, original_path[0, original_path.size - path.join.size], false, gathered_meta) :
+          Response.new(terminating_path, params, nil, original_path, false, gathered_meta)
       # terminates or is partial
       elsif !path.empty? and greedy and match_with_result_output = greedy.match_with_result(whole_path = path.join)
         child_node, matched_part = match_with_result_output
         whole_path.slice!(0, matched_part.size)
         params << matched_part if child_node.value.is_a?(Route::Variable)
-        child_node.find(request_object, original_path, whole_path.empty? ? whole_path : route_set.splitter.split(whole_path), params)
+        child_node.find(request_object, original_path, whole_path.empty? ? whole_path : route_set.splitter.split(whole_path), params, gathered_meta)
       elsif !path.empty? and normal and child_node = normal[path.first] || normal[nil]
         part = path.shift
         case child_node.value
@@ -134,22 +143,22 @@ class Usher
             end
           end
         end
-        child_node.find(request_object, original_path, path, params)
+        child_node.find(request_object, original_path, path, params, gathered_meta)
       elsif request_method_type
         if route_set.priority_lookups?
           route_candidates = []
-          if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup)
+          if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params.dup, gathered_meta.dup)
             route_candidates << ret
           end
-          if general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup)
+          if general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params.dup, gathered_meta.dup)
             route_candidates << ret
           end
           route_candidates.sort!{|r1, r2| r1.path.route.priority <=> r2.path.route.priority}
           request_method_respond(route_candidates.last, request_method_type)
         else
-          if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params && params.dup)
+          if specific_node = request[request_object.send(request_method_type)] and ret = specific_node.find(request_object, original_path, path.dup, params.dup, gathered_meta.dup)
             ret
-          elsif general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params && params.dup)
+          elsif general_node = request[nil] and ret = general_node.find(request_object, original_path, path.dup, params.dup, gathered_meta.dup)
             request_method_respond(ret, request_method_type)
           else
             request_method_respond(nil, request_method_type)

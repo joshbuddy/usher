@@ -252,6 +252,11 @@ class Usher
     route
   end
 
+  def add_meta(meta, path, options = nil)
+    route = get_route(path, options)
+    root.add_meta(route, meta)
+  end
+
   # Recognizes a `request`
   # @param request [#path] The request object. Must minimally respond to #path if no path argument is supplied here.
   # @param path [String] The path to be recognized.

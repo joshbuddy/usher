@@ -19,6 +19,10 @@ class Usher
         get_nodes_for_route(route) {|p, n| n.remove_terminate(p)}
       end
 
+      def add_meta(route, obj)
+        get_nodes_for_route(route) {|p, n| n.add_meta(obj)}
+      end
+
       def unique_routes(node = self, routes = [])
         routes.concat(node.unique_terminating_routes.to_a) if node.unique_terminating_routes
         [:normal, :greedy, :request].each { |type| node.send(type).values.each { |v| unique_routes(v, routes) } if node.send(type) }

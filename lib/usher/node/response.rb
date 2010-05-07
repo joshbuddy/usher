@@ -1,7 +1,7 @@
 class Usher
   class Node
     # The response from {Usher::Node::Root#lookup}. Adds some convenience methods for common parameter manipulation.
-    class Response < Struct.new(:path, :params_as_array, :remaining_path, :matched_path, :only_trailing_delimiters)
+    class Response < Struct.new(:path, :params_as_array, :remaining_path, :matched_path, :only_trailing_delimiters, :meta)
       
       # The success of the response
       # @return [Boolean] Always returns true
