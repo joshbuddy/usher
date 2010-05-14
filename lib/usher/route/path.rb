@@ -83,35 +83,39 @@ class Usher
         @dynamic = @parts && @parts.any?{|p| p.is_a?(Variable)}
       end
       
-      def build_generator
-        if parts
-          interpolating_path = ''
-        
+      def interpolating_path
+        unless @interpolating_path
+          @interpolating_path = ''
           parts.each_with_index do |part, index|
             case part
             when String
-              interpolating_path << part
+              @interpolating_path << part
             when Static::Greedy
-              interpolating_path << part.generate_with
+              @interpolating_path << part.generate_with
             when Variable::Glob
-              interpolating_path << '#{('
-              interpolating_path << "Array(arg#{index})"
+              @interpolating_path << '#{('
+              @interpolating_path << "Array(arg#{index})"
               if part.default_value
-                interpolating_path << ' || '
-                interpolating_path << part.default_value.inspect
+                @interpolating_path << ' || '
+                @interpolating_path << part.default_value.inspect
               end
-              interpolating_path << ').join(route.router.delimiters.first)}'
+              @interpolating_path << ').join(route.router.delimiters.first)}'
             when Variable
-              interpolating_path << '#{'
-              interpolating_path << "arg#{index}"
+              @interpolating_path << '#{'
+              @interpolating_path << "arg#{index}"
               if part.default_value
-                interpolating_path << ' || '
-                interpolating_path << part.default_value.inspect
+                @interpolating_path << ' || '
+                @interpolating_path << part.default_value.inspect
               end
-              interpolating_path << '}'
+              @interpolating_path << '}'
             end
           end
-        
+        end
+        @interpolating_path
+      end
+      
+      def build_generator
+        if parts
           generating_method =  "def generate"
           if dynamic?
             generating_method << "("
