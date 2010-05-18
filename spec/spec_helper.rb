@@ -1,6 +1,8 @@
 libdir = File.expand_path("lib")
 $:.unshift(libdir) unless $:.include?(libdir)
 
+require 'usher'
+
 module CallWithMockRequestMixin
   def call_with_mock_request(url = "/sample", method = "GET", params = Hash.new)
     params.merge!(:method => method)

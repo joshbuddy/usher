@@ -25,4 +25,12 @@ describe "Usher (for rails 2.3) URL generation" do
     route_set.generate({:action => 'thingy'}, {:controller => 'sample', :action => 'index', :id => 123}, :generate).should == '/sample/thingy'
   end
 
+  it "should generate routes based on name with a hash" do
+    route_set.add_named_route(:test, '/:test1/:test2', :controller => 'sample', :action => 'index')
+    generator = Class.new
+    route_set.install_helpers(generator, true)
+    generator.new.test_url('one', 'two').should == '/one/two'
+    generator.new.test_url('one', 'two', :three => 'four').should == '/one/two?three=four'
+  end
+
 end

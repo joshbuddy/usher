@@ -9,7 +9,7 @@ YARD::Rake::YardocTask.new do |t|
   t.options = ['--markup=markdown'] # optional
 end
 
-task :spec => ['spec:private', 'spec:rails2_2:cleanup', 'spec:rails2_3:cleanup']
+task :spec => ['spec:private', 'spec:rails2_2:spec', 'spec:rails2_3:spec']
 namespace(:spec) do
   Spec::Rake::SpecTask.new(:private) do |t|
     t.spec_opts ||= []
@@ -24,7 +24,7 @@ namespace(:spec) do
       sh('unzip -qq spec/rails2_2/vendor.zip -dspec/rails2_2')
     end
 
-    Spec::Rake::SpecTask.new(:spec) do |t|
+    Spec::Rake::SpecTask.new(:only_spec) do |t|
       t.spec_opts ||= []
       t.spec_opts << "-rubygems"
       t.spec_opts << "--options" << "spec/spec.opts"
@@ -34,9 +34,8 @@ namespace(:spec) do
     task :cleanup do
       sh('rm -rf spec/rails2_2/vendor')
     end
-    
-    task :spec => :unzip
-    task :cleanup => :spec
+
+    task :spec => [:unzip, :only_spec, :cleanup]
   end
 
   namespace(:rails2_3) do
@@ -45,7 +44,7 @@ namespace(:spec) do
       sh('unzip -qq spec/rails2_3/vendor.zip -dspec/rails2_3')
     end
 
-    Spec::Rake::SpecTask.new(:spec) do |t|
+    Spec::Rake::SpecTask.new(:only_spec) do |t|
       t.spec_opts ||= []
       t.spec_opts << "-rubygems"
       t.spec_opts << "--options" << "spec/spec.opts"
@@ -55,8 +54,7 @@ namespace(:spec) do
       sh('rm -rf spec/rails2_3/vendor')
     end
 
-    task :spec => :unzip
-    task :cleanup => :spec
+    task :spec => [:unzip, :only_spec, :cleanup]
   end
   
   

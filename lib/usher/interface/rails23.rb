@@ -93,11 +93,11 @@ class Usher
         Array(destinations).each do |d| d.module_eval { include Helpers }
           @router.named_routes.keys.each do |name|
             @module.module_eval <<-end_eval # We use module_eval to avoid leaks
-              def #{name}_url(options = {})
-                ActionController::Routing::Routes.generate(options, {}, :generate, :#{name})
+              def #{name}_url(*args)
+                UsherRailsRouter.generate(args, {}, :generate, :#{name})
               end
-              def #{name}_path(options = {})
-                ActionController::Routing::Routes.generate(options, {}, :generate, :#{name})
+              def #{name}_path(*args)
+                UsherRailsRouter.generate(args, {}, :generate, :#{name})
               end
             end_eval
           end
@@ -107,12 +107,24 @@ class Usher
               { }
             end
           "
+          unless @module.const_defined?(:UsherRailsRouter)
+            @module.const_set(:UsherRailsRouter, self)
+          end
+          
           @router.named_routes.helpers.__send__(:extend, @module)
         end
       end
 
-      def generate(options, recall = {}, method = :generate, route_name = nil)
-        route = if(route_name)
+      def generate(args, recall = {}, method = :generate, route_name = nil)
+        if args.is_a?(Hash)
+          options = args
+          args = nil
+        else
+          args = Array(args)
+          options = args.last.is_a?(Hash) ? args.pop : {}
+        end
+          
+        route = if route_name
           @router.named_routes[route_name]
         else
           merged_options = options
@@ -125,7 +137,7 @@ class Usher
         case method
           when :generate
             merged_options ||= recall.merge(options)
-            url = generate_url(route, merged_options)
+            url = generate_url(route, args ? args << merged_options : merged_options)
             url.slice!(-1) if url[-1] == ?/
             url
           else
