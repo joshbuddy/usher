@@ -43,14 +43,16 @@ class Usher
             part.default_value = default_values[part.name] if part.is_a?(Usher::Route::Variable) && default_values && default_values[part.name]
             case part
             when Usher::Route::Variable::Glob
-              if part.look_ahead && !part.look_ahead_priority
+              possible_look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
+              if part.look_ahead && !part.look_ahead_priority && possible_look_ahead != part.look_ahead
                 part.look_ahead = nil
                 part.look_ahead_priority = true
               else
                 part.look_ahead = path[index + 1, path.size].find{|p| !p.is_a?(Usher::Route::Variable) && !router.delimiters.unescaped.include?(p)} || nil
               end
             when Usher::Route::Variable
-              if part.look_ahead && !part.look_ahead_priority
+              possible_look_ahead = router.delimiters.first_in(path[index + 1, path.size]) || router.delimiters.unescaped.first
+              if part.look_ahead && !part.look_ahead_priority && possible_look_ahead != part.look_ahead
                 part.look_ahead = nil
                 part.look_ahead_priority = true
               else

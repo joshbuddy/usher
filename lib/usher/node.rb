@@ -126,7 +126,7 @@ class Usher
             next_path_part = path.shift                             # and until they are satified,
             part << next_path_part
           end if variable.look_ahead
-          params << part                                              # because its a variable, we need to add it to the params array
+          params << part                                            # because its a variable, we need to add it to the params array
         when Route::Variable::Glob
           params << []
           loop do

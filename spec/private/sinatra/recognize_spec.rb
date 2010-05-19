@@ -112,7 +112,6 @@ describe "Usher (for Sinatra) route recognition" do
       response = @app.call_with_mock_request('/hi/foo/bar/baz')
       response.status.should == 200
       response.body.should == "/foo/bar/baz/"
-      pending("got 404")
       response = @app.call_with_mock_request('/hi/foo/bar-bax/baz')
       response.status.should == 200
       response.body.should == "/foo/bar-bax/baz/"
