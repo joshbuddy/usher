@@ -106,6 +106,17 @@ describe "Usher (for Sinatra) route recognition" do
       response.status.should == 200
       response.body.should == "/hi-18"
     end
+
+    it "should map route with complex params" do
+      @app.get('/hi/:foo/:bar/:baz(.:format)') { "/#{params[:foo]}/#{params[:bar]}/#{params[:baz]}/#{params[:format]}" }
+      response = @app.call_with_mock_request('/hi/foo/bar/baz')
+      response.status.should == 200
+      response.body.should == "/foo/bar/baz/"
+      pending("got 404")
+      response = @app.call_with_mock_request('/hi/foo/bar-bax/baz')
+      response.status.should == 200
+      response.body.should == "/foo/bar-bax/baz/"
+    end
   end
 
   describe "not found" do
@@ -128,5 +139,4 @@ describe "Usher (for Sinatra) route recognition" do
       response.body.should_not match(/__sinatra__/)
     end
   end
-
 end
