@@ -19,8 +19,12 @@ class Usher
         end
         
         def serves_static_from(root)
-          match_partially!
-          @destination = ::Rack::File.new(root)
+          if File.directory?(root)
+            match_partially!
+            @destination = ::Rack::File.new(root)
+          else
+            @destination = proc{|env| env['PATH_INFO'] = File.basename(root); ::Rack::File.new(File.dirname(root)).call(env)}
+          end
         end
       end
     end
