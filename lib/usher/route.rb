@@ -83,15 +83,10 @@ class Usher
     end
 
     def find_matching_path(params)
-      #if router.find_matching_paths_based_on_destination_keys?
       matching_path = if params.nil? || params.empty?
         @paths.first
       else
         @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)
-      end
-
-      if matching_path.nil? and router.find_matching_paths_based_on_destination_keys?
-        # do something
       end
 
       if parent_route
