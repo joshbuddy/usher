@@ -83,7 +83,8 @@ class Usher
     end
 
     def find_matching_path(params)
-      matching_path = if params.nil? || params.empty?
+      significant_param_keys = (params && params.is_a?(Hash)) ? (params.keys & grapher.significant_keys) : nil
+      matching_path = if significant_param_keys.nil? || significant_param_keys.empty?
         @paths.first
       else
         @paths.size == 1 ? @paths.first : grapher.find_matching_path(params)

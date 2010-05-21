@@ -19,6 +19,11 @@ describe "Usher URL generation" do
     @route_set.generator.generate(:sample, {:action => 'action'}).should == '/sample/action'
   end
 
+  it "should generate a simple URL and ignore the optional part" do
+    @route_set.add_named_route(:test, '/test1/url2(.:format)')
+    @route_set.generator.generate(:test, {:foo => 'baz'}).should == '/test1/url2?foo=baz'
+  end
+
   it "should generate a simple URL with a single variable (and escape)" do
     @route_set.add_named_route(:sample, '/sample/:action', :controller => 'sample')
     @route_set.generator.generate(:sample, {:action => 'action time'}).should == '/sample/action%20time'
