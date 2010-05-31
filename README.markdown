@@ -2,6 +2,13 @@
 
 Tree-based router library. Useful for (specifically) for Rails and Rack, but probably generally useful for anyone interested in doing routing. Based on Ilya Grigorik suggestion, turns out looking up in a hash and following a tree is faster than Krauter's massive regex approach.
 
+## The future
+
+This router has been an awful lot of fun, but a much more powerful, faster and kind-to-memory router is now available at.
+* [http://github.com/joshbuddy/http_router](http://github.com/joshbuddy/http_router)
+
+It has almost all the of the features of Usher, and quite a few more Usher doesn't have. It doesn't support Rails 2.x, and likely, never will. But if you're doing Rack routing, or Sinatra, I think you'll be quite pleased with it. Cheers!
+
 ## Features
 
 * Understands single and path-globbing variables
